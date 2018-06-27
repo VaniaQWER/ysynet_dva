@@ -6,6 +6,7 @@ import dynamic from 'dva/dynamic';
 import cloneDeep from 'lodash/cloneDeep';
 
 import Login from './routes/Login';
+// import Home from './routes/Home';
 
 import { getNavData } from './common/nav';
 import { getPlainNode } from './utils/utils';
@@ -59,6 +60,7 @@ function RouterConfig({ history, app }) {
       <Router history={history}>
         <Switch>
           <Route path="/login" component={Login}/>
+          {/* <Route path="/home" component={Home}/> */}
           {/* <Route path="/app" render={props => <WorkplaceLayout {...props} {...passProps} />} /> */}
           <Route path="/" render={props => <BasicLayout {...props} {...passProps} />} />
         </Switch>

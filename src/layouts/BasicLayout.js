@@ -2,15 +2,15 @@ import React, { PureComponent } from 'react';
 import { Route, Switch } from 'dva/router';
 import { Layout } from 'antd';
 import { connect } from 'dva';
+import HeaderTop from '../routes/Header';
 const { Header, Content } = Layout;
 class BasicLayout extends PureComponent {
   render() {
     const { getRouteData } = this.props;
-    console.log(getRouteData('BasicLayout'))
     return (
       <Layout>
-        <Header>
-          这里是头
+        <Header style={{ background:'#fff',borderBottom:'solid 1px #eaebed',boxShadow:'0px 1px 0px #eaebed'}}>
+          <HeaderTop />
         </Header>
         <Content>
           <Switch>
@@ -32,4 +32,4 @@ class BasicLayout extends PureComponent {
     )
   }
 }
-export default connect()(BasicLayout);
+export default connect(state => state)(BasicLayout);

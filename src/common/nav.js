@@ -20,6 +20,18 @@ export const getNavData = app => [
         icon: 'book',
         path: 'system',
         component: dynamicWrapper(app, [], () => import('../routes/System'))
+      },
+      {
+        name: "工作台",
+        icon: 'workplace',
+        path: 'home',
+        component: dynamicWrapper(app, [], () => import('../routes/Workplace'))
+      },
+      {
+        name: "人员",
+        icon: 'add',
+        path: 'user',
+        component: dynamicWrapper(app, ['add'], () => import('../routes/User'))
       }
     ]
   }
