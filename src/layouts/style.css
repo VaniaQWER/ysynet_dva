@@ -13,5 +13,15 @@
 
 .content {
   min-height: calc(100vh - 89px);
-  margin-top: 24px;
+  padding: 16px;
+}
+
+.sider {
+  width: 256px;
+  height: 100vh;
+}
+
+.header {
+  background: #fff;
+  height: 58px;
 }
