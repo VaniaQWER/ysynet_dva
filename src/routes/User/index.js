@@ -30,8 +30,8 @@ const EditableCell = ({ editable, value, column, onChange }) => (
   }
   </div>
 );
-@connect(({ users, app, loading })=>({
-  users, app, loading
+@connect(({ users, app })=>({
+  users, app
 }))
 @Form.create()
 class User extends PureComponent{
@@ -137,8 +137,8 @@ class User extends PureComponent{
     })
   }
   render(){
-    const { loading } = this.props;
-    const isLoading = loading.effects['users/fetch'] || loading.effects['users/updateEditFalse'];
+    // const { loading } = this.props;
+    // const isLoading = loading.effects['users/fetch'] || loading.effects['users/updateEditFalse'];
 
     const columns = [{
       title: 'Name',
@@ -265,7 +265,7 @@ class User extends PureComponent{
             <Table
               columns={columns}
               dataSource={dataSource}
-              loading={isLoading}
+              // loading={isLoading}
               size={'small'}
               pagination={{
                 pageSize: 15

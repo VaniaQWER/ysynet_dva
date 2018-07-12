@@ -1,4 +1,5 @@
 import { notification } from 'antd';
+import querystring from 'querystring';
 import fetch from 'dva/fetch';
 
 function checkStatus(response) {
@@ -29,12 +30,21 @@ export default function request(url, options) {
   };
   const newOptions = { ...defaultOptions, ...options };
   if (newOptions.method === 'POST' || newOptions.method === 'PUT') {
-    newOptions.headers = {
-      Accept: 'application/json',
-      'Content-Type': 'application/json; charset=utf-8',
-      ...newOptions.headers,
-    };
-    newOptions.body = JSON.stringify(newOptions.body);
+    if(newOptions.type === 'formData'){
+      newOptions.headers = {
+        Accept: 'application/json',
+        'Content-Type': 'application/x-www-form-urlencoded; charset=utf-8',
+        ...newOptions.headers,
+      }
+    }else{
+      newOptions.headers = {
+        Accept: 'application/json',
+        'Content-Type': 'application/json; charset=utf-8',
+        ...newOptions.headers,
+      };
+    }
+    // newOptions.body = JSON.stringify(newOptions.body);
+    newOptions.body = newOptions.type ? querystring.stringify(newOptions.body) : JSON.stringify(newOptions.body);
   }
   return fetch(url, newOptions)
     .then(checkStatus)

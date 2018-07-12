@@ -3,3 +3,150 @@
   width: 1000px;
   height: 250px;
 }
+.ysynet-siderMenu-noborder .ant-menu-inline{
+  border-right: none;
+}
+.ysynet-collapsed:hover {
+  background-color: #e6f7ff;
+}
+.ysyenert-header-icon:hover {
+  cursor: pointer;
+}
+.ysyenert-header-icon {
+  padding: 20px 12px;
+  height: 100%;
+  font-size: 20px;
+}
+.ant-btn{
+  padding: 0 16px !important;
+}
+.ant-row-bottom{
+  margin-bottom: 24px;
+}
+.ant-table-body .ant-table-thead> tr{
+  height: 40px;
+}
+.ant-table-body .ant-table-thead > tr > th{
+  font-weight: bold;
+  padding-left: 16px !important;
+}
+.ant-table-thead > tr > th, .ant-table-tbody > tr > td{
+  padding: 0 !important;
+}
+.ant-table-body .ant-table-tbody> tr{
+  height: 36px;
+}
+.ant-table-tbody .ant-table-tbody .ant-table-row >td{
+  padding: 0 0 0 16px !important;
+}
+.ant-table-body .ant-table-tbody> tr> td:not(.ant-table-selection-column){
+  padding: 6px 8px 6px 16px !important;
+}
+.ant-layout-content{
+  padding: 0 16px;
+}
+.ant-tabs .ant-tabs-bar{
+  margin: 0 0 24px 0;
+}
+.ant-menu-submenu-title .menuNode_tool {
+  display: none;
+}
+.ant-menu-submenu-title:hover .menuNode_tool{
+  display: inline-block;
+  padding-top: 4px;
+  margin-left: 8px;
+}
+
+.logo {
+  display: inline-block;
+  vertical-align: middle;
+  height: 32px;
+}
+
+.logoDesc {
+  color: #fff;
+  display: inline-block;
+  vertical-align: middle;
+  font-size: 20px;
+  margin: 0 0 0 12px;
+  font-family: 'Myriad Pro', 'Helvetica Neue', Arial, Helvetica, sans-serif;
+  font-weight: 600;
+}
+
+.logoWrapper {
+  height: 64px;
+  position: relative;
+  background-color: #002140;
+  line-height: 64px;
+  padding-left: 24px;
+  -webkit-transition: all .3s;
+  -o-transition: all .3s;
+  transition: all .3s;
+  overflow: hidden;
+}
+
+/* 
+  Modal footer 居中
+*/
+.ysynet-ant-modal .ant-modal-body{
+  background-color: #f0f2f5;
+}
+.ant-modal-center-footer .ant-modal-footer{
+  text-align: center;
+}
+.ant-modal-header .ant-modal-title{
+  font-weight: bold;
+}
+.ysynet-ant-modal .ysynet-transfer{
+  display: flex;
+  background: #fff;
+}
+.ysynet-ant-transfer .ant-transfer-list-header .ant-transfer-list-header-selected span:first-child{
+  position: absolute;
+  right: 12px;
+}
+.ysynet-ant-transfer .ant-transfer-list-header .ant-transfer-list-header-selected span.ant-transfer-list-header-title{
+  left: 40px;
+}
+.ysynet-transfer .ysynet-transfer-header{
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 16px 8px 32px;
+  border-bottom: solid 1px #ddd;
+}
+.editable-cell {
+  position: relative;
+}
+
+.editable-cell .editable-cell-icon,
+.editable-cell .editable-cell-icon-check {
+  cursor: pointer;
+}
+
+.editable-cell .editable-cell-icon {
+  line-height: 14px;
+  position: absolute;
+  margin-left: 10px;
+  top: 50%;
+  margin-top: -7px;
+  display: none;
+}
+.editable-cell .editable-cell-icon-check{
+  margin-left: 10px;
+}
+
+td:hover .editable-cell-icon {
+  display: inline-block;
+}
+
+.editable-cell-icon:hover,
+.editable-cell-icon-check:hover {
+  color: #108ee9;
+}
+/* 
+  子系统管理
+*/
+.subSystem{
+  background: #ffffff;
+  padding: 24px 0 0 24px;
+}

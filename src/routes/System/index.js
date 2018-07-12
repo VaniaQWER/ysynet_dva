@@ -1,5 +1,4 @@
 import React, { PureComponent } from 'react';
-alert(11)
 class System extends PureComponent {
   render() {
     return (

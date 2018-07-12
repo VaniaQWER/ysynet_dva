@@ -133,7 +133,7 @@ export default {
       return history.listen(({ pathname, query }) => {
         if (pathname === '/user') {
           //监听路由变化 触发 effect 
-          dispatch({ type: 'fetch', payload: query });
+          // dispatch({ type: 'fetch', payload: query });
         }
       });
     },

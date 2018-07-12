@@ -8,6 +8,7 @@
     "babel-plugin-transform-decorators-legacy": "^1.3.5",
     "dva": "^2.3.0",
     "loadsh": "^1.0.1",
+    "moment": "^2.22.2",
     "react": "^16.4.0",
     "react-app-rewire-less": "^2.1.1",
     "react-app-rewired": "^1.5.2",
@@ -23,12 +24,9 @@
     "test": "react-app-rewired test --env=jsdom",
     "eject": "react-scripts eject"
   },
-  "proxy": {
-    "api": {
-      "target": "http://localhost:7001"
-    },
-    "io": {
-      "target": "ws://localhost:7001"
-    }
-  }
+  "babel":{
+    "plugins":["transform-decorators-legacy"],
+    "presets":["react-app"]
+  },
+  "proxy": "https://www.easy-mock.com/mock/5a55af50de90b06840dd8d49/example"
 }

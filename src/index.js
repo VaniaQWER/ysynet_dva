@@ -2,6 +2,9 @@ import dva from 'dva';
 // import createLoading from 'dva-loading';
 import './index.css';
 import './fixed.css'
+import moment from 'moment';
+import 'moment/locale/zh-cn';
+moment.locale('zh-cn');
 
 // 1. Initialize
 const app = dva();
@@ -11,6 +14,7 @@ const app = dva();
 
 // 3. Model
 app.model(require('./models/login').default);
+app.model(require('./models/user').default);
 // app.model(require('./models/socket').default);
 // 4. Router
 app.router(require('./router').default);

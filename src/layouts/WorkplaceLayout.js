@@ -73,13 +73,14 @@ class WorkplaceLayout extends PureComponent {
           </Menu>
         </Sider>
         <Layout className={`${styles.layout}`}>
-          <Header style={{ background: '#fff', padding: 0 }}>
+          <Header style={{ background: '#fff', padding: 0,boxShadow:' 0px 2px 8px #e4e5e7' }}>
             <Icon
               className="trigger"
               type={this.state.collapsed ? 'menu-unfold' : 'menu-fold'}
               onClick={this.toggle}
             />
           </Header>
+          <div className={`${styles.contentTitle}`}>这里是标题</div>
           <Content className={`${styles.content}`}>
             <Switch>
               {

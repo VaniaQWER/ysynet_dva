@@ -23,3 +23,9 @@ export function updateUser(options){
     data: options
   })
 }
+export function getUserM(options){
+  return request('/user/getUserM',{
+    methods: 'POST',
+    data: options
+  })
+}
