@@ -14,7 +14,9 @@ import { getPlainNode } from './utils/utils';
 
 
 dynamic.setDefaultLoadingComponent(() => (
-  <Spin size="large"/>
+  <div className='loding-wapper'>
+    <Spin size="large"/>
+  </div>
 ))
 
 function getRouteData(navData, path) {

@@ -1,3 +1,8 @@
+/*loding页面居中*/
+.loding-wapper{
+  text-align: center;
+  padding:200px;
+}
 /* 上传背景图 */
 .max-loader .ant-upload.ant-upload-select-picture-card{
   width: 1000px;
