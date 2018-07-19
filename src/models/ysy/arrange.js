@@ -1,4 +1,4 @@
-import * as arrangeService from '../services/arrange';
+import * as arrangeService from '../../services/ysy/arrange';
 import { message } from 'antd';
 
 export default {
@@ -7,19 +7,10 @@ export default {
     dataSource: [],
     orgList: [],
     targetKeys: [],
-    addVisible: false,
-    arrangeVisible: false,
-    loading: false,
     rightTableLoading: false,
     leftTableLoading: false
   },
   reducers: {
-    fetchList(state,action){
-      return {
-        ...state,
-        dataSource: action.payload
-      }
-    },
     // 已添加机构/未添加机构
     orgList(state,action){
       let data = action.payload;
@@ -49,29 +40,6 @@ export default {
         targetKeys: []
       }
     },
-    // visible
-    visibleChange(state,action){
-      let key = action.payload.key;
-      if(key){
-        return {
-          ...state,
-          arrangeVisible: !state.arrangeVisible
-        }
-      }else{
-        return {
-          ...state,
-          addVisible: !state.addVisible
-        }
-      }
-    },
-
-    //loading
-    loadChange(state,action){
-      return {
-        ...state,
-        loading: !state.loading
-      }
-    },
     tableLoading(state,action){
       if(action.payload.key === 'right'){
         return {
@@ -87,24 +55,12 @@ export default {
     }
   },
   effects: {
-    // 获取table
-    *fetchTable({ payload },{ put, call }){
-      const data = yield call(arrangeService.searchDeployList,{ ...payload.query });
-      if(data.status){
-        yield put({ type: 'fetchList',payload: data.result })
-      }else{
-        message.error(data.msg||'获取列表失败')
-      }
-    },
     //新建部署/编辑部署
-    *saveArrange({ payload },{ put, call }){
-      yield put({ type: 'loadChange' });
+    *saveArrange({ payload, callback },{ put, call }){
       const data = yield call(arrangeService.saveDeploy,{ ...payload });
-      yield put({ type: 'loadChange' });
       if(data.status){
         message.success('操作成功');
-        yield put({ type: 'changeVisible' })
-        yield put({ type: 'fetchTable',payload:{ query: {} } })
+        if (callback) callback()
       }else{
         message.error(data.msg||'操作失败')
       }
@@ -159,13 +115,11 @@ export default {
       }
     },
 
-    *modifyOrg({ payload },{ put, call }){
-      yield put({ type: 'loadChange' });
+    *modifyOrg({ payload, callback },{ put, call }){
       const data = yield call(arrangeService.deployModifyOrg, {...payload });
-      yield put({ type: 'loadchange' });
       if(data.status){
         message.success('编辑成功');
-        yield put({ type: 'changeVisible',payload:{ key: 'arrange' } });
+        if(callback) callback();
       }else{
         message.error(data.msg||'操作失败')
       }
@@ -173,21 +127,6 @@ export default {
     *clearTable({ payload },{ put }){
       yield put({ type: 'clearTables' })
     },
-    *changeVisible({ payload },{ put }){
-      yield put({ type: 'visibleChange',payload })
-    },
-
-    /* 
-      获取所有机构列表
-    */
-   /* *fetchOrgList({ payload },{ put, call }){
-     const data = yield call(arrangeService.findOrgs, {...payload} );
-     if(data.status){
-       yield put({ type: 'orgList',payload: data.result })
-     }else{
-       message.error(data.msg||'获取机构失败')
-     }
-   } */
   },
   subscriptions: {
     setup({ dispatch, history }) {

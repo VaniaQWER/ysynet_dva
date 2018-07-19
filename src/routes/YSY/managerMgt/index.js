@@ -1,73 +1,72 @@
 import React, { PureComponent } from 'react';
-import { Input, Row, Table, Popconfirm } from 'antd';
+import { Input, Row, Popconfirm, message } from 'antd';
+import RemoteTable from '../../../components/TableGrid';
+import ysy from '../../../api/ysy'
 import { connect } from 'dva';
 const { Search } = Input;
 
-const EditableCell = ({ editable, value, onChange }) => (
-	<div>
-	{editable
-			? <Input style={{ margin: '-5px 0' }} value={value} onChange={e => onChange(e.target.value)} />
-			: value
-	}
-	</div>
-);
-
+const EditableCell = ({ value, record, index, onEditChange, column, max }) => (
+  <div>
+    {
+      (record.editable && record.index === index) ?
+      <Input style={{ margin: '-2px 0' }} defaultValue={value} onChange={e => onEditChange(e.target.value, record, index, column, max)} />
+      : 
+      value
+    }
+  </div>
+  );
 class ManagerMgt extends PureComponent{
-  componentWillMount = () =>{
-    this.searchAdminList();
+  state = {
+    query: {},
+    record: {}
   }
-  onSearch = (value) =>{
-    this.searchAdminList(value);
-  }
-  searchAdminList = (value) =>{
-    this.props.dispatch({
-      type: 'managerMgt/searchAdminList',
-      payload: {searchName: value ? value: '' }
-    })
+  renderColumns(text, record, index, column, max) {
+    return (
+      <EditableCell
+        value={ text }
+        index={index}
+        column={column}
+        record={this.state.record}
+        max={max}
+        onEditChange={(text, index, record, column, max)=>this.onCellChange(text, index, record, column, max)}
+      />
+    );
   }
   resetPwd = (record) =>{
     this.props.dispatch({
       type: 'managerMgt/resetPwd',
-      payload: { userId: record.userId,restPwd: '01' }
+      payload: { userId: record.userId,restPwd: '01' },
+      callback: ()=> this.refs.table.fetch()
     })
   }
-  handleChange(value, record, column) {
-    const { dataSource } = this.props.managerMgt;
-    const target = dataSource.filter(item => record.userId === item.userId)[0];
-    if (target) {
-      target[column] = value;
+  
+  edit = (record,stateRecord,index) =>{
+    if(stateRecord.editable){
+      let values = {};
+      values.userId = stateRecord.userId;
+      values.userName = stateRecord.userName;
+      values.mobilePhone = stateRecord.mobilePhone;
+      values.tfRemark = stateRecord.tfRemark;
       this.props.dispatch({
-        type: 'managerMgt/update',
-        payload: { target }
+        type: 'managerMgt/modifyAdmin',
+        payload: values,
+        callback: ()=> this.refs.table.fetch()
       })
+      this.setState({ record: {...record, editable: false,index } })
+    }else{
+      console.log('编辑');
+      this.setState({ record: {...record, editable: true, index } })
     }
   }
-  renderColumns(text, record, column) {
-    return (
-      <EditableCell
-        editable={record.editable}
-        value={text}
-        onChange={value => this.handleChange(value, record, column)}
-      />
-    );
-  }
-  edit = (record) =>{
-    const { dataSource } = this.props.managerMgt;
-    const target = dataSource.filter(item => record.userId === item.userId)[0];
-    if(target.editable){
-      this.props.dispatch({
-        type: 'managerMgt/updateEditFalse',
-        payload: { ...record }
-      })
+  onCellChange = (value,record,index,column,max) => {
+    if(value.length > max){
+      message.warning(`输入字符长度不能超过${max}`)
     }else{
-      this.props.dispatch({
-        type: 'managerMgt/updateEdit',
-        payload:{ userId: record.userId }
-      })
+      record[column] = value;
+      this.setState({ record });
     }
   }
   render(){
-    const { dataSource, tableLoading } = this.props.managerMgt
     const columns = [{
       title: '账号',
       dataIndex: 'userNo'
@@ -75,15 +74,15 @@ class ManagerMgt extends PureComponent{
       title: '姓名',
       dataIndex: 'userName',
       width: 150,
-      render: (text,record)=>{
-        return this.renderColumns(text,record,'userName')
+      render: (text,record,index)=>{
+        return this.renderColumns(text,record,index,'userName',50)
       }
     },{
       title: '联系电话',
       dataIndex: 'mobilePhone',
       width: 150,
-      render: (text,record)=>{
-        return this.renderColumns(text,record,'mobilePhone')
+      render: (text,record,index)=>{
+        return this.renderColumns(text,record,index,'mobilePhone')
       }
     },{
       title: '部署名称',
@@ -95,18 +94,18 @@ class ManagerMgt extends PureComponent{
       title: '备注',
       dataIndex: 'tfRemark',
       width: 200,
-      render: (text,record)=>{
-        return this.renderColumns(text,record,'tfRemark')
+      render: (text,record,index)=>{
+        return this.renderColumns(text,record,index,'tfRemark',250)
       }
     },{
       title: '操作',
       dataIndex: 'action',
-      render: (text,record) =>{
+      render: (text,record,index) =>{
         return <span>
           <Popconfirm title="是否确认重置该用户密码?" onConfirm={this.resetPwd.bind(null, record)} okText="是" cancelText="否">
             <a>重置密码</a>
           </Popconfirm>
-          <a onClick={this.edit.bind(null,record)} style={{ marginLeft: 8 }}>{ record.editable ?'保存':'编辑' }</a>
+          <a style={{ marginLeft: 8 }} onClick={this.edit.bind(null,record,this.state.record,index)}>{ this.state.record.editable && this.state.record.index===index ? '保存': '编辑' }</a>
         </span>
       }
     }]
@@ -116,20 +115,18 @@ class ManagerMgt extends PureComponent{
           <Search 
             style={{ width: 256 }}
             placeholder='账号/部署名/机构名'
-            onSearch={this.onSearch}
+            onSearch={value=>this.refs.table.fetch({ searchName: value })}
           />
         </Row>
-        <Table 
-          dataSource={dataSource}
+        <RemoteTable
+          ref='table' 
+          query={this.state.query}
+          url={ysy.SEARCHADMINLIST}
           columns={columns}
-          bordered
           rowKey='userId'
-          loading={tableLoading}
-          pagination={{
-            showSizeChanger: true,
-            showQuickJumper: true
-          }}
           size='small'
+          scroll={{ x: '100%' }}
+          showHeader={true}
         />
       </div>
     )

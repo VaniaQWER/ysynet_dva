@@ -47,7 +47,7 @@ export default function request(url, options) {
     newOptions.body = newOptions.type ? querystring.stringify(newOptions.body) : JSON.stringify(newOptions.body);
   }
   return fetch(url, newOptions)
-    .then(checkStatus)
+    .then(response=> checkStatus(response))
     .then(response => response.json())
     .catch((error) => {
       if (error.code) {

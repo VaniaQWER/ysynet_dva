@@ -1,4 +1,4 @@
-import request from '../utils/request';
+import request from '../../utils/request';
 
 export function queryMenuList(options){
   return request('/menu/queryMenuList',{ //查询菜单列表

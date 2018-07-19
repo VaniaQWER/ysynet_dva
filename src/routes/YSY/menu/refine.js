@@ -2,101 +2,30 @@
   精细化平台 Tab
 */
 import React, { PureComponent } from 'react';
-import { Table, Input, Switch, Popconfirm, Icon } from 'antd';
+import { Input, Switch, Popconfirm } from 'antd';
+import RemoteTable from '../../../components/TableGrid';
+import EditableCell from '../../../components/EditableCell';
+import ysy from '../../../api/ysy'
 import { connect } from 'dva';
-
 const { Search } = Input;
 const openTilte = '是否确认开启此状态?';
-const closeTitle = '是否确认关闭此状态?';
-const EditableCell = ({ editable, value, onChange, check, edit }) => (
-	<div className="editable-cell">
-	{editable
-    ?
-    <div className="editable-cell-input-wrapper">
-      <Input
-        value={value}
-        style={{ width: '85%',margin: '-3px 0' }}
-        onChange={e => onChange(e.target.value)}
-        onPressEnter={()=>check()}
-      />
-      <Icon
-        type="check"
-        className="editable-cell-icon-check"
-        onClick={()=>check()}
-      />
-    </div>
-    :
-    <div className="editable-cell-text-wrapper">
-      {value || ' '}
-      <Icon
-        type="edit"
-        className="editable-cell-icon"
-        onClick={()=> edit()}
-      />
-    </div>
-	}
-	</div>
-);
+// const closeTitle = '是否确认关闭此状态?';
 class Refine extends PureComponent{
   state = {
     title: openTilte,
-    isopen: false
+    isopen: false,
   }
-  componentWillMount = () =>{
-    this.genMenuList();
-  }
-  genMenuList = (value) =>{
-    this.props.dispatch({
-      type: 'menu/queryMenuList',
-      payload: { searchName: value ? value: '' }
-    })
-  }
-  onSearch = (value) =>{
-    this.genMenuList(value)
-  }
-  handleChange = (value, record,column) =>{
-    const { dataSource } = this.props.menu;
-    const target = dataSource.filter(item => record.menuId === item.menuId)[0];
-    if (target) {
-      target[column] = value;
-      this.props.dispatch({
-        type: 'menu/updateMenuInfo',
-        payload: { ...target }
-      })
-    }
-  }
-  check = (value, record, column) =>{
-    const { dataSource } = this.props.menu;
-    const target = dataSource.filter(item => record.menuId === item.menuId)[0];
+  onCellChange = (value,record,) => {
+    let values = {};
+    values.menuId = record.menuId;
+    values.tfRemark = value;
     this.props.dispatch({
       type: 'menu/modifyMenu',
-      payload: {...target }
+      payload: values,
+      callback: () => this.refs.table.fetch()
     })
   }
-  edit = (value, record, column) =>{
-    const { dataSource } = this.props.menu;
-    const target = dataSource.filter(item => record.menuId === item.menuId)[0];
-    if (target) {
-      target[column] = value;
-      this.props.dispatch({
-        type: 'menu/update',
-        payload: { ...target }
-      })
-    }
-  }
-  renderColumns(text, record, column) {
-    return (
-      <EditableCell
-        editable={record.editable}
-        value={text}
-        onChange={value => this.handleChange(value, record, column)}
-        check={()=>this.check(text, record, column)}
-        edit={()=>this.edit(text,record,column)}
-      />
-    );
-  }
   render(){
-    const { dataSource, tableLoading } = this.props.menu;
     const columns = [{
       title: '菜单名称',
       width: '20%',
@@ -132,32 +61,36 @@ class Refine extends PureComponent{
       title:'备注',
       dataIndex: 'tfRemark',
       width: 280,
-      render: (text,record)=>{
-        return this.renderColumns(text,record,'tfRemark')
+      render: (text,record,index)=>{
+        return (
+          <EditableCell
+            value={ text }
+            record={record}
+            index={index}
+            max='250'
+            cb={(record)=>this.setState({ record })}
+            onEditChange={(index,record,editable)=>this.onCellChange(index, record, editable)}
+          />
+        )
       }
     }]
 
     return (
     <div>
       <Search 
-        style={{ width: 300 }}
-        onSearch={this.onSearch}
+        style={{ width: 300,marginBottom: 24 }}
         placeholder='请输入菜单名称/路径/编号'
+        onSearch={value=> this.refs.table.fetch({ searchName: value })}
       />
-      <Table 
-        style={{ marginTop: 10 }}
-        columns={columns}
-        loading={tableLoading}
-        rowKey={'menuId'}
-        bordered
-        dataSource={dataSource}
-        pagination={{
-          showSizeChanger: true,
-          showQuickJumper: true
-        }}
-        size='small'
-        scroll={{ x: "100%" }}
-      />
+        <RemoteTable 
+          ref='table'
+          url={ysy.QUERYMENULIST}
+          size={'small'}
+          scroll={{ x: '100%' }}
+          columns={columns}
+          rowKey={'menuId'}
+          showHeader={true}
+        />
     </div>
     )
   }

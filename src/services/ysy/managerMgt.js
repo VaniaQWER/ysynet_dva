@@ -1,4 +1,4 @@
-import request from '../utils/request';
+import request from '../../utils/request';
 
 export function searchAdminList(options) {
   return request(`/user/searchAdminList`, {//查询管理员列表

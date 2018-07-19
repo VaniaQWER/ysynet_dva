@@ -1,4 +1,4 @@
-import request from '../utils/request';
+import request from '../../utils/request';
 
 export function saveDeploy(options) {
   return request(`/deploy/saveDeploy`, {//添加或编辑部署

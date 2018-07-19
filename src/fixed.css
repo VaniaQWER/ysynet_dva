@@ -26,7 +26,7 @@
 .ant-table-body .ant-table-thead> tr{
   height: 40px;
 }
-.ant-table-body .ant-table-thead > tr > th{
+.ant-table-body .ant-table-thead > tr > th, .ant-table-content .ant-table-fixed-right .ant-table-thead > tr > th{
   font-weight: bold;
   padding-left: 16px !important;
 }
@@ -36,7 +36,7 @@
 .ant-table-body .ant-table-tbody> tr{
   height: 36px;
 }
-.ant-table-tbody .ant-table-tbody .ant-table-row >td{
+.ant-table-tbody .ant-table-tbody .ant-table-row >td, .ant-table-content .ant-table-fixed-right .ant-table-tbody > tr > td{
   padding: 0 0 0 16px !important;
 }
 .ant-table-body .ant-table-tbody> tr> td:not(.ant-table-selection-column){
@@ -48,13 +48,13 @@
 .ant-tabs .ant-tabs-bar{
   margin: 0 0 24px 0;
 }
-.ant-menu-submenu-title .menuNode_tool {
+.ant-menu-item .menuNode_tool {
   display: none;
 }
-.ant-menu-submenu-title:hover .menuNode_tool{
+.ant-menu-item:hover .menuNode_tool{
   display: inline-block;
   padding-top: 4px;
-  margin-left: 8px;
+  margin-left: 12px;
 }
 
 .logo {
@@ -85,6 +85,23 @@
   overflow: hidden;
 }
 
+/*lable显示文字时 left*/
+.ant-form-item-label-left{
+  text-align: left;
+  vertical-align: bottom;
+  line-height: 39px;
+  display: inline-block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+
+}
+.ant-form-item-label-left:after{
+    content: ":";
+    margin: 0 8px 0 2px;
+    position: relative;
+    top: -0.5px;
+}
 /* 
   Modal footer 居中
 */
@@ -113,6 +130,51 @@
   justify-content: space-between;
   padding: 8px 16px 8px 32px;
   border-bottom: solid 1px #ddd;
+}
+.ysysnet-accredit-subMenu{
+  padding: 0 0 0 40px !important;
+}
+.ysy-accredit-list .ant-list-item .ant-list-item-content{
+  display: flex;
+}
+.ysy-accredit-list .ant-list-item-content-single{
+  justify-content: center;
+}
+.ysy-accredit-card{
+  width: 130px;
+  height: 130px;
+  border: 1px solid #e8e8e8;
+  padding-top: 30px;
+  text-align: center;
+  position: relative;
+}
+.ysy-accredit-card:hover{
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0,0,0,.09);
+  border-color: rgba(0,0,0,.09)
+}
+.ysy-triangle{
+  width: 0px;
+  height: 0px;
+  border-top: solid 10px transparent;
+  border-left: solid 10px red;
+  border-bottom: solid 10px transparent;
+  transform: rotate(45deg);
+  position: absolute;
+  bottom: -6px;
+  right: -2px;
+}
+.ysy-triangle-disabled{
+  border-left: solid 10px #d9d9d9;
+}
+.ysy-triangle:after{
+  content: '\2713';
+  position: absolute;
+  right: 3px;
+  bottom: -7px;
+  color: #fff;
+  font-size: 12px;
+  transform: rotate(-45deg);
 }
 .editable-cell {
   position: relative;
@@ -148,5 +210,4 @@ td:hover .editable-cell-icon {
 */
 .subSystem{
   background: #ffffff;
-  padding: 24px 0 0 24px;
 }

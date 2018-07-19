@@ -1,8 +1,10 @@
 import React, { PureComponent } from 'react';
 import { Button, Row, Col, Form, Input, Table, DatePicker, Modal, Checkbox } from 'antd';
-import { connect } from 'dva';
+import RemoteTable from '../../../components/TableGrid';
 import  FetchSelect from '../../../components/FetchSelect'
 import { formItemLayout } from '../../../utils/commonStyles';
+import ysy from '../../../api/ysy'
+import { connect } from 'dva';
 import moment from 'moment';
 const { Search,TextArea } = Input;
 const FormItem = Form.Item;
@@ -74,6 +76,8 @@ const ModalColumns = [{
 class Arrange extends PureComponent{
   state = {
     addVisible: false,
+    arrangeVisible: false,
+    saveLoading: false,
     isEdit: false,
     leftSelected: [],
     leftSelectedRows: [],
@@ -83,23 +87,9 @@ class Arrange extends PureComponent{
     leftCheckAll: false,
     rightIndeterminate: true,
     rightCheckAll: false,
-    record: {}
-  }
-  
-  componentWillMount = () =>{
-    /*  查询表格列表 */
-    this.genTable();
-    // 查询所有的机构列表
-    
-  }
-  queryHandler = (query) =>{
-    this.genTable(query)
-  }
-  genTable = (query) =>{
-    this.props.dispatch({
-      type: 'arrange/fetchTable',
-      payload: { query }
-    })
+    title: '新建部署',
+    record: {},
+    query: {}
   }
   /* 
     获取所有机构列表
@@ -118,21 +108,17 @@ class Arrange extends PureComponent{
         values.startTime = values.usefulDate[0].format('YYYY-DD-MM');
         values.endTime = values.usefulDate[1].format('YYYY-DD-MM');
         delete values.usefulDate;
+        this.setState({ saveLoading: true });
         console.log(values,'values');
         this.props.dispatch({
           type: 'arrange/saveArrange',
-          payload: { ...values }
+          payload: values,
+          callback: ()=>{
+            this.setState({ saveLoading: false, addVisible: false });
+            this.refs.table.fetch();
+          }
         })
       }
-    })
-  }
-  /* 
-    更改visible 
-  */
-  changeVisible = (key) =>{
-    this.props.dispatch({
-      type: 'arrange/changeVisible',
-      payload: { key: key }
     })
   }
   onLeftCheckAllChange = (e) => {
@@ -156,6 +142,9 @@ class Arrange extends PureComponent{
       rightIndeterminate: false,
       rightCheckAll: e.target.checked,
     });
+  }
+  leftSearch = (value) =>{
+    this.search('left',value)
   }
   rightSearch = (value) =>{
     this.search('right',value)
@@ -193,9 +182,14 @@ class Arrange extends PureComponent{
     let values = {};
     values.deployId = this.state.record.deployId;
     values.addOrgIds = addOrgIds;
+    this.setState({ saveLoading: true });
     this.props.dispatch({
       type: 'arrange/modifyOrg',
-      payload: values
+      payload: values,
+      callback: ()=>{
+        this.setState({ saveLoading: false,arrangeVisible: false });
+        this.refs.table.fetch();
+      }
     })
   }
   //清空模态框部署机构表格
@@ -206,8 +200,8 @@ class Arrange extends PureComponent{
     })
   }
   render(){
-    const { dataSource, addVisible, arrangeVisible, loading, leftTableLoading, rightTableLoading, orgList, targetKeys } = this.props.arrange;
-    const { record, isEdit } = this.state;
+    const { leftTableLoading, rightTableLoading, orgList, targetKeys } = this.props.arrange;
+    const { record, isEdit, addVisible, arrangeVisible, title } = this.state;
     const columns = [{
       title:'部署名称',
       dataIndex: 'deployName'
@@ -235,12 +229,10 @@ class Arrange extends PureComponent{
       render:(text,record)=>{
         return <span>
           <a onClick={()=>{
-            this.changeVisible();
-            this.setState({ record,isEdit: true })
+            this.setState({ title: '编辑部署', record,isEdit: true,addVisible: true })
           }}>编辑</a>
           <a style={{ marginLeft: 8 }} onClick={()=>{
-            this.setState({ record })
-            this.changeVisible('org');
+            this.setState({ record,arrangeVisible: true })
             this.clearTable();
             this.searchLeftOrgList(record);
           }}>部署机构</a>
@@ -252,31 +244,31 @@ class Arrange extends PureComponent{
       <Row className='ant-row-bottom'>
         <Col span={4}>
           <Button type='primary' icon='plus' onClick={()=>{
-            if(this.AddOrEditforms){
-              this.AddOrEditforms.resetFields();
-            }
-            this.changeVisible();
-            this.setState({ record: {},isEdit: false })
-          }}>添加</Button>
+              if(this.AddOrEditforms){
+                this.AddOrEditforms.resetFields();
+              }
+              this.setState({ title: '新建部署',record: {},isEdit: false,addVisible: true })
+            }}>添加
+          </Button>
         </Col>
         <Col span={20} style={{ textAlign:'right' }}>
           <Search 
             style={{ width: 300 }}
             placeholder='部署名称/授权码/管理员账号'
-            onSearch={value =>  {this.queryHandler({'searchName':value})}}
+            onSearch={value =>  this.refs.table.fetch({ searchName: value })}
           />
         </Col>
       </Row>
       <Modal
-        title='添加部署'
+        title={title}
         className='ant-modal-center-footer'
         visible={addVisible}
-        onCancel={()=>this.changeVisible()}
+        onCancel={()=>this.setState({ addVisible: false })}
         footer={[
-          <Button key="submit" type='primary' loading={loading} onClick={this.saveDeploy}>
-              保存
+          <Button key="submit" type='primary' loading={this.state.saveLoading} onClick={this.saveDeploy}>
+            保存
           </Button>,
-          <Button key="back"  type='default' onClick={()=>this.changeVisible()}>关闭</Button>
+          <Button key="back"  type='default' onClick={()=>this.setState({ addVisible: false })}>关闭</Button>
         ]}
       >
         <WrapperModalForm 
@@ -289,14 +281,14 @@ class Arrange extends PureComponent{
       <Modal
         className='ysynet-ant-modal'
         title='部署机构'
-        width={1200}
+        width={1100}
         visible={arrangeVisible}
-        onCancel={()=>this.changeVisible('org')}
+        onCancel={()=>this.setState({ arrangeVisible: false })}
         footer={[
-          <Button key="submit" type='primary' loading={loading} onClick={this.modifyOrg}>
-              保存
+          <Button key="submit" type='primary' loading={this.state.saveLoading} onClick={this.modifyOrg}>
+            保存
           </Button>,
-          <Button key="back"  type='default' onClick={()=>this.changeVisible('org')}>取消</Button>
+          <Button key="back"  type='default' onClick={()=>this.setState({ arrangeVisible: false })}>取消</Button>
         ]}
       >
         <h3 style={{ padding: '10px 0 10px 10px',background:'#fff' }}>{ record.deployName}</h3>
@@ -318,7 +310,9 @@ class Arrange extends PureComponent{
             </div>
             <Search 
               style={{ margin: '10px 0' }}
-              placeholder='请输入搜索内容'/>
+              placeholder='请输入搜索内容'
+              onSearch={this.leftSearch}
+            />
             <Table 
               dataSource={orgList}
               columns={ModalColumns}
@@ -383,19 +377,15 @@ class Arrange extends PureComponent{
           </Col>
         </Row>
       </Modal>
-      <Table 
+      <RemoteTable 
+        ref='table'
+        url={ysy.SEARCHDEPLOYLIST}
         columns={columns}
+        query={this.state.query}
         rowKey={'deployId'}
-        pagination={{
-          showSizeChanger: true,
-          showQuickJumper: true
-        }}
-        bordered
         size={'small'}
-        dataSource={dataSource}
+        showHeader={true}
       />
-      
-    
     </div>
     )
   }

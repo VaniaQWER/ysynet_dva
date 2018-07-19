@@ -4,6 +4,7 @@ class EditableCell extends PureComponent {
   state = {
     value: this.props.value,
     record: this.props.record,
+    index: this.props.index,
     editable: false,
     max:this.props.max
   }
@@ -35,6 +36,7 @@ class EditableCell extends PureComponent {
           editable ?
             <div className="editable-cell-input-wrapper">
               <Input
+                style={{ width: '85%' }}
                 value={value}
                 max={max}
                 onChange={this.handleChange}
