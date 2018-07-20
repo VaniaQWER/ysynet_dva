@@ -5,6 +5,7 @@ class EditableCell extends PureComponent {
     value: this.props.value,
     record: this.props.record,
     index: this.props.index,
+    columns: this.props.columns,
     editable: false,
     max:this.props.max
   }
@@ -22,8 +23,8 @@ class EditableCell extends PureComponent {
         return  message.warning('字符长度不能超过'+this.state.max);
     };
     this.setState({ editable: false });
-    const { value, record } = this.state;
-    this.props.onEditChange(value,record);
+    const { value, record, columns } = this.state;
+    this.props.onEditChange(value, record, columns);
   }
   edit = () => {
     this.setState({ editable: true });

@@ -79,19 +79,19 @@ export const getNavData = app => [
         name: "子系统管理",
         icon: 'setting',
         path: 'jxh/subSystemMgt',
-        component: dynamicWrapper(app, [], () => import('../routes/Manager/subSystemMgt'))
+        component: dynamicWrapper(app, ['manager/subSystemMgt'], () => import('../routes/Manager/subSystemMgt'))
       },
       {
         name: "子系统管理员",
         icon: 'setting',
         path: 'jxh/subSystemMgter',
-        component: dynamicWrapper(app, [], () => import('../routes/Manager/subSystemManager'))
+        component: dynamicWrapper(app, ['manager/subSystemManager'], () => import('../routes/Manager/subSystemManager'))
       },
       {
         name: "科室管理",
         icon: 'setting',
         path: 'jxh/dpetMgt',
-        component: dynamicWrapper(app, [], () => import('../routes/Manager/deptMgt'))
+        component: dynamicWrapper(app, ['manager/deptMgt'], () => import('../routes/Manager/deptMgt'))
       }
     ]
   }

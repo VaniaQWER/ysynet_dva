@@ -10,6 +10,7 @@ const createMenu = menuList => {
       return (
         menu.subMenus && menu.name ? (
           <SubMenu
+            className='ysy-menu-Item'
             key={menu.key} 
             title={<span><Icon type={menu.icon} /><span>{menu.name}</span></span>}
           >
@@ -17,14 +18,14 @@ const createMenu = menuList => {
           </SubMenu>
         ) : (
           menu.name ? 
-          <Menu.Item key={menu.key}>
+          <Menu.Item name={menu.name} key={menu.key} className='ysy-subMneu-Item'>
             <Icon type={menu.icon} />
             <span> { menu.name } </span>
           </Menu.Item> : null
         )
       )
     }) : (
-      <Menu.Item key={menuList.key}>
+      <Menu.Item name={menuList.name} key={menuList.key}>
         <Icon type={menuList.icon} />
         <span> { menuList.name } </span>
       </Menu.Item>
@@ -36,20 +37,36 @@ class SiderMenu extends PureComponent{
   state = {
     selectedKeys: [],
     openKeys: [],
+    firstTime: true,
     recordKeys: []//修复官方hover bug
   };
+  setSubTitle = (menuList,path) =>{
+    let pathname = path ? path : window.location.href.split('#')[1];
+    console.log(pathname,'pathname')
+    let target = {};
+    if(menuList.length){
+      menuList.map((item,index)=>{
+        let { subMenus } = item;
+        subMenus.map((menu,idx)=>{
+          if(menu.path === pathname){
+            target.mainTitle = item.name;
+            target.subTitle = menu.name
+          }
+          return null;
+        });
+        return null;
+      });
+    }
+    this.props.cb(target)
+  }
   changeActiveKeys = () => {
     const href = window.location.href;
     const pathname = href.split('#')[1];
     const { openKeys } = this.state;
     const keys = pathname.split('/');
-    // console.log(keys,'keys');
-    // console.log(openKeys,'openKeys')
     let selectedKeys = '', newOpenKeys = [];
     selectedKeys = pathname;
-    // console.log(selectedKeys,'selectedKeys')
-    newOpenKeys = openKeys.length ? openKeys : [ keys.slice(0, 2).join('/') ];  
-    // console.log(newOpenKeys,'newOpenKeys')
+    newOpenKeys = openKeys.length ? openKeys : [ keys.slice(0, 2).join('/') ];
     this.setState({selectedKeys, openKeys: newOpenKeys});
   }
   componentWillMount = () => {
@@ -76,14 +93,18 @@ class SiderMenu extends PureComponent{
     })
   }
   componentWillReceiveProps = (nextProps) => {
-    // console.log(nextProps,'nextProps')
     this.changeActiveKeys();
     if (nextProps.collapsed) {
       this.setState({ openKeys: [] })
     }
+    if( this.state.firstTime && nextProps.users.menuList !== this.props.users.menuList){
+      this.setSubTitle(nextProps.users.menuList);
+      this.setState({ firstTime: false })
+    }
   }
   render(){
-    const { menuList, history } = this.props;
+    const { history } = this.props;
+    const { menuList } = this.props.users;
     const { selectedKeys, openKeys } = this.state;
     return (
     <div>
@@ -100,10 +121,9 @@ class SiderMenu extends PureComponent{
           onOpenChange={this.onOpenChange}
           openKeys={openKeys}
           onClick={item => {
-            // console.log(item,'item')
-            const { pathname } = this.props.history.location; 
-            // console.log(pathname,'pathname')
+            const { pathname } = this.props.history.location;
             if (pathname !== item.key){
+              this.setSubTitle(this.props.users.menuList, `${item.key}`)
               history.push({pathname: `${item.key}`})
             }else{
               message.info('您正位于该页面')

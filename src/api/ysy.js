@@ -15,5 +15,5 @@ export default {
 
   ITEMSDATA_LIST: `${_local}/staticData/searchStaticInfo`,//查询所有数据字典类型
 
-
+ 
 }

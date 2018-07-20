@@ -8,6 +8,28 @@
   width: 1000px;
   height: 250px;
 }
+.ant-menu-submenu-popup{
+  display: none !important;
+}
+.ysy-text-overflow{
+  width: 270px;
+  max-width: 270px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap
+}
+.ysy-subMneu-Item{
+  padding-left: 20px !important;
+  margin: 0 !important;
+}
+.ysy-menu-Item{
+  margin: 0 !important;
+}
+.ysy-menu-Item .ant-menu-submenu-title{
+  height: 54px !important;
+  line-height: 54px !important;
+  margin: 0 !important;
+}
 .ysynet-siderMenu-noborder .ant-menu-inline{
   border-right: none;
 }
@@ -126,6 +148,7 @@
 .ysynet-ant-modal .ysynet-transfer{
   display: flex;
   background: #fff;
+  padding: 16px 0px;
 }
 .ysynet-ant-transfer .ant-transfer-list-header .ant-transfer-list-header-selected span:first-child{
   position: absolute;
@@ -197,13 +220,13 @@
 .editable-cell .editable-cell-icon {
   line-height: 14px;
   position: absolute;
-  margin-left: 10px;
+  margin-left: 16px;
   top: 50%;
   margin-top: -7px;
   display: none;
 }
 .editable-cell .editable-cell-icon-check{
-  margin-left: 10px;
+  margin-left: 16px;
 }
 
 td:hover .editable-cell-icon {

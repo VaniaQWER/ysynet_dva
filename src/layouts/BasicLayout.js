@@ -7,7 +7,8 @@ import styles from './style.css';
 const { Header, Content, Sider } = Layout;
 class BasicLayout extends PureComponent {
   state = {
-    collapsed: false
+    collapsed: false,
+    title: {}
   }
   componentWillMount = () =>{
     this.props.dispatch({
@@ -21,19 +22,19 @@ class BasicLayout extends PureComponent {
     });
   }
   render() {
-    const { getRouteData, users } = this.props;
-    const { menuList } = users;
+    const { getRouteData } = this.props;
+    const { title } = this.state;
     return (
       <Layout>
         <Sider
           trigger={null}
           collapsible
           collapsed={this.state.collapsed}
-          // className={`${styles.sider}`}
         >
           <SiderMenu 
             history={this.props.history}
-            menuList={menuList}/>
+            cb={(title)=> this.setState({ title })}
+          />
         </Sider>
         <Content>
           <Header className={`${styles.header}`} style={{ marginBottom: 3,padding: 0 }}>
@@ -46,9 +47,9 @@ class BasicLayout extends PureComponent {
               }}
               className='ysyenert-header-icon ysynet-collapsed'
               type={this.state.collapsed ? 'menu-unfold' : 'menu-fold'} 
-            /> 这是一级菜单 </Header>
-          <Header className={`${styles.header}`}>
-            这里有个头
+            /> {title.mainTitle} </Header>
+          <Header className={`${styles.subHeader}`}>
+            {title.subTitle}
           </Header>
           <Content className={`${styles.content}`}>
             <Switch>

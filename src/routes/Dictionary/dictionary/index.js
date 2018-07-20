@@ -2,7 +2,7 @@
   @file 字典管理
 */
 import React, { PureComponent } from 'react';
-import { Row, Col, Input, Button,Layout,Tree,Icon,message, Spin, Form,Modal } from 'antd';
+import { Row, Col, Input, Button,Layout,Tree,Icon, Spin, Form,Modal } from 'antd';
 import RemoteTable from '../../../components/TableGrid';
 import ysy from '../../../api/ysy'
 import { connect } from 'dva';

@@ -1,5 +1,5 @@
 import * as classifyService from '../../services/dictionary/classifyMgt';
-import { message } from 'antd';
+// import { message } from 'antd';
 
 export default {
   namespace: 'classify',
