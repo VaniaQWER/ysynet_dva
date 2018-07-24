@@ -8,7 +8,7 @@ const dynamicWrapper = (app, models, component) => dynamic({
 });
 
 // nav data
-export const getNavData = app => [
+export const getNavData2 = app => [
   {
     component: dynamicWrapper(app, [], () => import('../layouts/BasicLayout')),
     layout: 'BasicLayout',
@@ -158,38 +158,7 @@ export const getNavData = app => [
                 }
               ]
             },
-            {
-              name: "盘点损益",
-              icon: 'setting',
-              path: '/checkDecrease',
-              component: dynamicWrapper(app, [], () => import('../routes/DrugStorage/checkDecrease/newInventory')),
-              children: [
-                {
-                  name: "新建盘点",
-                  icon: 'setting',
-                  path: '/newInventory',
-                  component: dynamicWrapper(app, [], () => import('../routes/DrugStorage/checkDecrease/newInventory'))
-                },
-                {
-                  name: "盘点审核",
-                  icon: 'setting',
-                  path: '/inventoryAudit',
-                  component: dynamicWrapper(app, [], () => import('../routes/DrugStorage/checkDecrease/inventoryAudit'))
-                },
-                {
-                  name: "盘后调整",
-                  icon: 'setting',
-                  path: '/afterAdjustment',
-                  component: dynamicWrapper(app, [], () => import('../routes/DrugStorage/checkDecrease/afterAdjustment'))
-                },
-                {
-                  name: "损益记录",
-                  icon: 'setting',
-                  path: '/profiLossRecord',
-                  component: dynamicWrapper(app, [], () => import('../routes/DrugStorage/checkDecrease/profiLossRecord'))
-                },
-              ]
-            },
+           
           ]
         },
       ]},{
@@ -206,3 +175,64 @@ export const getNavData = app => [
     ]
   },
 ];
+
+
+
+export const getNavData = app => [
+  {
+  component: dynamicWrapper(app, [], () => import('../layouts/BasicLayout')),
+  layout: 'BasicLayout',
+  path: '/',
+  name: '工作台',
+  children: [
+    /*药库 */
+    {
+      name: '药库',
+      icon: 'table',
+      path: '/drugStorage',
+      component: dynamicWrapper(app, [], () => import('../routes/DrugStorage/configMgt'))
+    },
+    {
+      name: "配置管理",//药库-配置管理
+      icon: 'setting',
+      path: '/drugStorage/configMgt',
+      component: dynamicWrapper(app, [], () => import('../routes/DrugStorage/configMgt'))
+    },
+    {
+      name: "药库管理",//药库-药库管理
+      icon: 'setting',
+      path: '/drugStorage/drugStorageManage',
+      component: dynamicWrapper(app, [], () => import('../routes/DrugStorage/manage/drugDirectory')),
+    },
+    {
+      name: "药品目录",//药库-药库管理-药品目录
+      icon: 'setting',
+      path: '/drugStorage/drugStorageManage/drugDirectory',
+      component: dynamicWrapper(app, [], () => import('../routes/DrugStorage/manage/drugDirectory')),
+    },
+    {
+      name: "药品目录-编辑",//药库-药库管理-药品目录-编辑
+      icon: 'setting',
+      path: '/drugStorage/drugStorageManage/drugDirectory/edit',
+      component: dynamicWrapper(app, [], () => import('../routes/DrugStorage/manage/drugDirectory/edit'))
+    },
+
+
+    /*药房 */
+    {
+      name: '药房',
+      icon: 'table',
+      path: '/pharmacy',
+      children: []
+    },
+    {
+      name: '配置管理',//药房-配置管理
+      icon: 'setting',
+      path: '/pharmacy/configMgt',
+      component: dynamicWrapper(app, [], () => import('../routes/Pharmacy/configMgt'))
+    }
+  ]
+}]
+
+
+
