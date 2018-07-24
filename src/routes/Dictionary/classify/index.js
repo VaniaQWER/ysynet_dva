@@ -1,5 +1,5 @@
 import React, { PureComponent } from 'react';
-import { Row, Col, Input, Button, Icon, Form, Modal,Select } from 'antd';
+import { Row, Col, Input, Button, Form, Modal,Select } from 'antd';
 import  FetchSelect from '../../../components/FetchSelect'
 import RemoteTable from '../../../components/TableGrid';
 import ysy from '../../../api/ysy'
@@ -204,7 +204,7 @@ class ClassifyMgt extends PureComponent{
     })
   }
   render(){
-    const { query, title, record, isEdit, dirtyClick, visible, cloneVisible } = this.state;
+    const { query, title, isEdit, visible, cloneVisible } = this.state;
     const { selectDatas } = this.props.classify;
     const columns = [{
       title: '编码',
@@ -279,7 +279,7 @@ class ClassifyMgt extends PureComponent{
             newTreeData={selectDatas}
           />
         </Modal>
-        {/* <RemoteTable 
+        <RemoteTable 
           query={query}
           ref='table'
           columns={columns}
@@ -287,7 +287,7 @@ class ClassifyMgt extends PureComponent{
           scroll={this.props.scroll || { x: '100%' }}
           url={ysy.ITEMSDATA_LIST}
           rowKey='staticId'
-        /> */}
+        />
       </div>
     )
   }

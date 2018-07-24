@@ -2,7 +2,7 @@
   精细化平台 Tab
 */
 import React, { PureComponent } from 'react';
-import { Input, Switch, Popconfirm } from 'antd';
+import { Input, Switch } from 'antd';
 import RemoteTable from '../../../components/TableGrid';
 import EditableCell from '../../../components/EditableCell';
 import ysy from '../../../api/ysy'

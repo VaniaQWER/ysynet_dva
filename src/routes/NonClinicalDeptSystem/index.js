@@ -2,7 +2,7 @@ import React, { PureComponent } from 'react';
 import { Row, Col, Input, Button, Select,Popconfirm,message } from 'antd';
 import RemoteTable from '../../components/TableGrid';
 import { CommonData } from '../../utils/utils';
-import jxh from '../../api/jxh'
+// import jxh from '../../api/jxh'
 import { connect } from 'dva';
 const { Search } = Input;
 const { Option } = Select;

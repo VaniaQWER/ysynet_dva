@@ -105,7 +105,7 @@ class SiderMenu extends PureComponent{
   }
   render(){
     const { history } = this.props;
-    const { menuList } = this.props.users;
+    // const { menuList } = this.props.users;
     const { selectedKeys, openKeys } = this.state;
     return (
     <div>
