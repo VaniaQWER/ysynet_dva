@@ -82,7 +82,7 @@ class DetailsRefund extends PureComponent{
       onOk:()=>{
         message.success('操作成功！')
         const { history } = this.props;
-        history.push({pathname:"/drugStorage/drugStorageManage/applyAccept"})
+        history.push({pathname:"/drugStorage/drugStorageManage/refund"})
       },
       onCancel:()=>{}
     })
@@ -94,7 +94,7 @@ class DetailsRefund extends PureComponent{
       onOk:()=>{
         message.success('操作成功！')
         const { history } = this.props;
-        history.push({pathname:"/drugStorage/drugStorageManage/applyAccept"})
+        history.push({pathname:"/drugStorage/drugStorageManage/refund"})
       },
       onCancel:()=>{}
     })

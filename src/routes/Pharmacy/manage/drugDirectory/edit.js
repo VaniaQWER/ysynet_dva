@@ -16,7 +16,7 @@ class EditDrugDirectory extends PureComponent{
       content:"确认保存吗？",
       onOk:()=>{
         const { history } = this.props;
-        history.push({pathname:"/drugStorage/drugStorageManage/drugDirectory"})
+        history.push({pathname:"/pharmacy/manage/drugDirectory"})
       },
       onCancel:()=>{}
     })

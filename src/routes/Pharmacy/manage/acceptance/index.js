@@ -122,7 +122,7 @@ class SearchFormWrapper extends PureComponent {
      <Form onSubmit={this.handleSearch}>
        <Row>
          <Col span={8}>
-           <FormItem label={`单号`} {...formItemLayout}>
+           <FormItem label={`单据`} {...formItemLayout}>
              {getFieldDecorator('assetCode', {})(
               <Input placeholder='入库单/配送单/订单号'/>
              )}

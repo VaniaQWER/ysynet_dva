@@ -87,7 +87,7 @@ class DetailsOutput extends PureComponent{
       onOk:()=>{
         message.success('操作成功！')
         const { history } = this.props;
-        history.push({pathname:"/drugStorage/drugStorageManage/applyAccept"})
+        history.push({pathname:"/drugStorage/drugStorageManage/output"})
       },
       onCancel:()=>{}
     })
@@ -99,7 +99,7 @@ class DetailsOutput extends PureComponent{
       onOk:()=>{
         message.success('操作成功！')
         const { history } = this.props;
-        history.push({pathname:"/drugStorage/drugStorageManage/applyAccept"})
+        history.push({pathname:"/drugStorage/drugStorageManage/output"})
       },
       onCancel:()=>{}
     })

@@ -199,7 +199,7 @@ class AddOutput extends PureComponent{
         />
 
         <Affix offsetBottom={0} className='affix'>共10种产品
-         <Button  style={{float:'right'}} onClick={() => {}}>
+         <Button  style={{float:'right'}}  onClick={() => this.onSubmit()}>
             取消
           </Button>
           <Button  type="primary" className='button-gap' style={{float:'right'}} onClick={() => this.onSubmit()}>

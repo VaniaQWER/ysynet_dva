@@ -5,7 +5,7 @@
  */
 
 import React, { PureComponent } from 'react';
-import { Table , Form, Input , Row, Col, Button, Icon, Select , Modal , message  , Popconfirm } from 'antd';
+import { Table , Form, Input , Row, Col, Button, Select , Modal , message  , Popconfirm } from 'antd';
 import { formItemLayout } from '../../../../utils/commonStyles';
 import { createData } from '../../../../common/data';
 const FormItem = Form.Item;
@@ -199,7 +199,6 @@ class SearchFormWrapper extends PureComponent {
  }
 
  render() {
-   const { display } = this.state;
    const { getFieldDecorator } = this.props.form;
    return (
      <Form onSubmit={this.handleSearch}>
@@ -211,7 +210,7 @@ class SearchFormWrapper extends PureComponent {
              )}
            </FormItem>
          </Col>
-         <Col span={8} style={{display: display}}>
+         <Col span={8}>
            <FormItem label={`状态`} {...formItemLayout}>
              {getFieldDecorator('time')(
               <Select 
@@ -230,9 +229,9 @@ class SearchFormWrapper extends PureComponent {
          <Col span={8} style={{ float:'right',textAlign: 'right', marginTop: 4}} >
            <Button type="primary" htmlType="submit">查询</Button>
            <Button style={{marginLeft: 30}} onClick={this.handleReset}>重置</Button>
-           <a style={{marginLeft: 30, fontSize: 14}} onClick={this.toggle}>
+          {/* <a style={{marginLeft: 30, fontSize: 14}} onClick={this.toggle}>
              {this.state.expand ? '收起' : '展开'} <Icon type={this.state.expand ? 'up' : 'down'} />
-           </a>
+           </a>*/}
          </Col>
        </Row>
      </Form>

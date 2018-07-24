@@ -25,7 +25,7 @@ class DetailsPicking extends PureComponent{
       onOk:()=>{
         message.success('操作成功！')
         const { history } = this.props;
-        history.push({pathname:"/drugStorage/drugStorageManage/applyAccept"})
+        history.push({pathname:"/drugStorage/drugStorageManage/picking"})
       },
       onCancel:()=>{}
     })
@@ -37,7 +37,7 @@ class DetailsPicking extends PureComponent{
       onOk:()=>{
         message.success('操作成功！')
         const { history } = this.props;
-        history.push({pathname:"/drugStorage/drugStorageManage/applyAccept"})
+        history.push({pathname:"/drugStorage/drugStorageManage/picking"})
       },
       onCancel:()=>{}
     })
