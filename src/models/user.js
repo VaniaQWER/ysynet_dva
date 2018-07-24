@@ -6,7 +6,8 @@ export default {
   state:{
     menuList: [],
     userInfo: {},
-    subSystemList: []
+    subSystemList: [],
+    orgName: ''
   },
   reducers: {
     userMenu(state,action){
@@ -26,6 +27,12 @@ export default {
         ...state,
         subSystemList: action.payload
       }
+    },
+    orgName(state,action){
+      return {
+        ...state,
+        orgName: action.payload
+      }
     }
   },
   effects:{
@@ -39,6 +46,14 @@ export default {
         }else{
           message.error(data.msg|| '获取菜单失败')
         }
+      }
+    },
+    *getOrgName({ payload },{ call, put }){
+      const data = yield call(usersService.getDeployOrgName);
+      if(data.status){
+        yield put({ type: 'orgName',payload: data.result });
+      }else{
+        message.error(data.msg||'获取机构名称失败')
       }
     },
     *userLogin({ payload, callback }, { call, put }) {  // eslint-disable-line

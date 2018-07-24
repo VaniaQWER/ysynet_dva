@@ -71,7 +71,9 @@ class BasicLayout extends PureComponent {
           </Header>
           <Header className={`${styles.subHeader}`}>
             <Tooltip title='返回' placement='bottom'>
-              <Icon type="arrow-left" onClick={()=>this.props.history.go(-1)} style={{ fontSize: 18, marginRight: 16 }}/>
+              <a onClick={()=>this.props.history.go(-1)}>
+                <Icon type="arrow-left"  style={{ fontSize: 18, marginRight: 16 }}/>
+              </a>
             </Tooltip>
             <span>{title.subTitle}</span>
           </Header>

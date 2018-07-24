@@ -11,6 +11,12 @@ class Login extends PureComponent{
   state = {
     loading: false
   }
+  componentWillMount = () =>{
+    /* this.props.dispatch({
+      type: 'users/getOrgName',
+      payload: {},
+    }) */
+  }
   handleSubmit = (e) =>{
     e.preventDefault();
     this.props.form.validateFields((err, values) => {
@@ -73,6 +79,7 @@ class Login extends PureComponent{
   }
   render(){
     const { getFieldDecorator } = this.props.form;
+    // const { orgName } = this.props.users;
     const wrapperLayout = {
       wrapperCol:{ span: 15, offset: 5 }
     }
@@ -81,6 +88,7 @@ class Login extends PureComponent{
          <div className={styles['ysy-Login-bg']} style={{ width: '62%' }}></div>
          <div className={styles['ysy-Login-form']} style={{ width: '38%' }}>
             <div className={styles['ysy-Login-form-top']}>
+              {/* <span className={styles['ysy-orgName']}>{orgName}</span> */}
               <span className={styles['ysy-lgo']}></span>
               {/* <span className={styles['ysy-login-logo']}></span> */}
             </div>
