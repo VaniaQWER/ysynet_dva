@@ -347,6 +347,34 @@ export const getNavData = app => [
       path: '/drugStorage/checkDecrease/profiLossRecord',
       component: dynamicWrapper(app, [], () => import('../routes/DrugStorage/checkDecrease/profiLossRecord')),
     },
+    //药库 - 库存查询
+    {
+      name: "库存查询",
+      icon: "setting",
+      path: '/drugStorage/stockInquiry',
+      component: dynamicWrapper(app, [], () => import('../routes/DrugStorage/stockInquiry'))
+    },
+    //药库 - 库存查询 - 详情
+    {
+      name: '详情',
+      icon: "setting",
+      path: '/drugStorage/stockInquiry/details',
+      component: dynamicWrapper(app, [], () => import('../routes/DrugStorage/stockInquiry/details'))
+    },
+    //药库 - 结算管理
+    {
+      name: '结算管理',
+      icon: 'setting',
+      path: '/drugStorage/settlementMgt/',
+      component: dynamicWrapper(app, [], () => import('../routes/DrugStorage/settlementMgt'))
+    },
+    //药库 - 结算管理 - 详情
+    {
+      name: '详情',
+      icon: 'setting',
+      path: '/drugStorage/settlementMgt/details',
+      component: dynamicWrapper(app, [], () => import('../routes/DrugStorage/settlementMgt/details'))
+    },
 
     /*药房 */
     {

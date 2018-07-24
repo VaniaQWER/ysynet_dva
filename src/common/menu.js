@@ -137,6 +137,44 @@ const menu = [
         "parentId": "m307"
       },
     ]
+  },{
+    "path": "/drugStorage/stockInquiry",
+    "level": 1,
+    "fsort": 30105,
+    "name": "库存查询",
+    "id": "30105",
+    "key": "/drugStorage/stockInquiry",
+    "parentId": "m301",
+    "subMenus": [
+      {
+        "path": "/drugStorage/stockInquiry",
+        "level": 2,
+        "fsort": 30105,
+        "name": "库存查询",
+        "id": "30105",
+        "key": "/drugStorage/stockInquiry",
+        "parentId": "m302"
+      }
+    ]
+  },{
+    "path": "/drugStorage/settlementMgt",
+    "level": 1,
+    "fsort": 30106,
+    "name": "结算管理",
+    "id": "30106",
+    "key": "/drugStorage/settlementMgt",
+    "parentId": "m301",
+    "subMenus": [
+      {
+        "path": "/drugStorage/settlementMgt",
+        "level": 2,
+        "fsort": 30106,
+        "name": "结算管理",
+        "id": "30106",
+        "key": "/drugStorage/settlementMgt",
+        "parentId": "m302"
+      }
+    ]
   }],
   "level": 0,
   "fsort": 301,
