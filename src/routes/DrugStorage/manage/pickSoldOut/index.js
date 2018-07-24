@@ -5,66 +5,69 @@
  */
 
 import React, { PureComponent } from 'react';
-import { Table , Form, Row, Col, Button, Icon, Select , Modal , message } from 'antd';
+import { Table , Form, Row, Col, Button, Icon, Select , Input , DatePicker ,} from 'antd';
 import { Link } from 'react-router-dom'
+import { formItemLayout } from '../../../../utils/commonStyles';
+import { createData } from '../../../../common/data';
+const RangePicker = DatePicker.RangePicker;
 const FormItem = Form.Item;
 const Option = Select.Option;
 const columns = [
   {
-   title: '通用名称',
+   title: '申领药房',
    dataIndex: 'index',
+   width:150
   },
   {
-    title: '商品名称',
-    dataIndex: 'assetsRecord',
+    title: '配货单',
+    dataIndex: 'medicinalCode',
+    width:150
   },
   {
-    title: '规格',
-    dataIndex: 'useFstate',
+    title: '申领单',
+    dataIndex: 'medicinalCode123',
+    width:120
   },
   {
-    title: '剂型',
-    dataIndex: 'equipmentStandardName',
+    title: '状态',
+    dataIndex: 'fstate',
+    width:120
   },
   {
-    title: '包装单位',
-    dataIndex: 'spec',
+    title: '类型',
+    dataIndex: 'equipmfmodalentStandardName',
+    width:120
   },
   {
-    title: '最小单位',
+    title: '制单人',
+    dataIndex: 'spec123',
+    width:120
+  },
+  {
+    title: '制单时间',
     dataIndex: 'custodian',
+    width:150
   },
   {
-    title: '批准文号',
+    title: '拣货人',
     dataIndex: 'bDept',
+    width:120
   },
   {
-   title: '库存上限',
-   dataIndex: 'useDept',
+    title: '拣货时间',
+    dataIndex: 'time',
+    width:120
   },
- {
-  title: '库存下限',
-  dataIndex: 'useDept1',
- },
  {
   title: '操作',
+  width:120,
   dataIndex: 'RN',
   render: (text, record) => 
     <span>
-      <Link to={{pathname: `/deptwork/myProfile/details/${record.assetsRecordGuid}`}}>编辑</Link>
+      <Link to={{pathname: `/drugStorage/drugStorageManage/pickSoldOut/details`}}>详情</Link>
     </span>  
   }
 ];
-const formItemLayout = {
- labelCol: {
-   xs: { span: 24 },
-   sm: { span: 8 },
- },
- wrapperCol: {
-   xs: { span: 24 },
-   sm: { span: 16 },
- },
-};
 
 class PickSoldOut extends PureComponent{
 
@@ -82,48 +85,19 @@ class PickSoldOut extends PureComponent{
     this.setState({ query:query })
   }
 
-  //批量编辑 - 打开弹窗
-  showModal = () =>{
-    const { selectedRowKeys } = this.state;
-    if(selectedRowKeys.length>0){
-      this.setState({visible:true})
-    }else{
-      message.warn('最少选择一条数据进行编辑！')
-    }
-  }
-
   render(){
-    const { visible } = this.state;
     return (
       <div>
         <SearchForm query={this.queryHandler} />
-        <Row>
-          <Button type='primary' onClick={()=>this.showModal()}>批量编辑</Button>
-        </Row>
         <Table
-          rowSelection={
-            {
-              onChange:(selectedRowKeys)=>{
-                //选中编辑的内容
-                this.setState({selectedRowKeys})
-              }
-            }
-          }
+          dataSource={createData()}
+          bordered
           loading={ this.state.loading}
-          ref='table'
-          query={this.state.query}
-          scroll={{x: '100%', y : document.body.clientHeight - 311}}
+          scroll={{x: '100%'}}
           columns={columns}
-          rowKey={'assetsRecordGuid'}
+          rowKey={'id'}
           style={{marginTop: 20}}
-        /> 
-        <Modal
-         visible={visible}
-         title='批量编辑'
-         onCancel={()=>this.setState({visible:false})}
-         onOk={()=>this.setState({visible:false})}>
-          12313123
-        </Modal>
+        />
       </div>
     )
   }
@@ -158,10 +132,10 @@ class SearchFormWrapper extends PureComponent {
    const { display } = this.state;
    const { getFieldDecorator } = this.props.form;
    return (
-     <Form onSubmit={this.handleSearch}>
+    <Form onSubmit={this.handleSearch}>
        <Row>
          <Col span={8}>
-           <FormItem label={`名称`} {...formItemLayout}>
+           <FormItem label={`申领药房`} {...formItemLayout}>
              {getFieldDecorator('assetCode', {})(
               <Select 
                 showSearch
@@ -175,8 +149,8 @@ class SearchFormWrapper extends PureComponent {
            </FormItem>
          </Col>
          <Col span={8}>
-           <FormItem label={`剂型`} {...formItemLayout}>
-             {getFieldDecorator('assetName', {})(
+           <FormItem label={`状态`} {...formItemLayout}>
+             {getFieldDecorator('fstate', {})(
               <Select 
                 showSearch
                 placeholder={'请选择'}
@@ -184,12 +158,14 @@ class SearchFormWrapper extends PureComponent {
                 filterOption={(input, option) => option.props.children.indexOf(input) >= 0}
                 >
                     <Option key="" value="">全部</Option>
+                    <Option key="01" value="01">待确认</Option>
+                    <Option key="02" value="02">已确认</Option> 
               </Select>
              )}
            </FormItem>
          </Col>
          <Col span={8} style={{display: display}}>
-           <FormItem label={`规格`} {...formItemLayout}>
+           <FormItem label={`类型`} {...formItemLayout}>
              {getFieldDecorator('spec')(
               <Select 
                 showSearch
@@ -198,35 +174,22 @@ class SearchFormWrapper extends PureComponent {
                 filterOption={(input, option) => option.props.children.indexOf(input) >= 0}
                 >
                 <Option key="" value="">全部</Option>
+                <Option key="01" value="02">申领</Option>
               </Select>
              )}
            </FormItem>
          </Col>
          <Col span={8} style={{display: display}}>
-           <FormItem label={`状态`} {...formItemLayout}>
-             {getFieldDecorator('manageDeptGuid')(
-              <Select 
-                showSearch
-                placeholder={'请选择'}
-                optionFilterProp="children"
-                filterOption={(input, option) => option.props.children.indexOf(input) >= 0}
-              >
-              <Option key="" value="">全部</Option>
-            </Select>
+           <FormItem label={`单据号`} {...formItemLayout}>
+             {getFieldDecorator('danjuhao')(
+              <Input/>
              )}
            </FormItem>
          </Col>
          <Col span={8} style={{display: display}}>
-           <FormItem label={`备货选项`} {...formItemLayout}>
-             {getFieldDecorator('useDeptGuid')(
-              <Select 
-                showSearch
-                placeholder={'请选择'}
-                optionFilterProp="children"
-                filterOption={(input, option) => option.props.children.indexOf(input) >= 0}
-                >
-                <Option key="" value="">全部</Option>
-              </Select>
+           <FormItem label={`制单时间`} {...formItemLayout}>
+             {getFieldDecorator('time')(
+              <RangePicker/>
              )}
            </FormItem>
          </Col>
