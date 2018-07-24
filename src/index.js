@@ -13,7 +13,6 @@ const app = dva();
 // app.use(createLoading());
 
 // 3. Model
-app.model(require('./models/login').default);
 app.model(require('./models/user').default);
 // app.model(require('./models/socket').default);
 // 4. Router

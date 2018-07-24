@@ -1,15 +1,11 @@
 import React, { PureComponent } from 'react';
-import { Row, Col, Select, Input, Popconfirm, message, Modal, Button, Form } from 'antd';
-import RemoteTable from '../../../components/TableGrid';
-import { CommonData } from '../../../utils/utils';
-import ysy from '../../../api/ysy';
-import { formItemLayout } from '../../../utils/commonStyles';
+import { Row, Col, Input, Button, Select,Popconfirm,message } from 'antd';
+import RemoteTable from '../../components/TableGrid';
+import { CommonData } from '../../utils/utils';
+import jxh from '../../api/jxh'
 import { connect } from 'dva';
-
-const FormItem = Form.Item;
-const { Option } = Select;
 const { Search } = Input;
-
+const { Option } = Select;
 const EditableCell = ({ value, record, index, onEditChange, options, column, max }) => (
   <div>
     {
@@ -32,29 +28,10 @@ const EditableCell = ({ value, record, index, onEditChange, options, column, max
     }
   </div>
 );
-
-class JXHPlate extends PureComponent{
+class ClinicalDeptSystem extends PureComponent{
   state = {
-    searchName: '',
-    record: {},
-    options: [],
-    visible: false,
-    loading: false
-  }
-  componentWillMount = () =>{
-    this.genSubSystemList();
-  }
-  genSubSystemList = () =>{
-    this.props.dispatch({
-      type: 'subSystemConfig/subSystemList',
-      payload: {}
-    })
-  }
-  onSelect = (value) =>{
-    this.props.dispatch({
-      type: 'subSystemConfig/subSystemId',
-      payload: value
-    })
+    query: {},
+    record: {}
   }
   edit = (record,stateRecord,index)=>{
     if(stateRecord.editable){
@@ -81,7 +58,6 @@ class JXHPlate extends PureComponent{
       this.setState({ record: {...record, editable: true, index } })
     }
   }
-  // 删除
   delete = (record)=>{
     let values = {};
     values.dsGuid = record.dsGuid;
@@ -118,28 +94,7 @@ class JXHPlate extends PureComponent{
       />
     );
   }
-  // 添加子系统
-  newAdd = () =>{
-    this.props.form.validateFields( (err,values) =>{
-      if(!err){
-        console.log(values,'values');
-        // values.subSystemId = subSystemId;
-        this.setState({ loading: true })
-        this.props.dispatch({
-          type: 'subSystemConfig/saveConfig',
-          payload: values,
-          callback: ()=> {
-            this.refs.table.fetch();
-            this.setState({ visible: false,loading: false })
-          }
-        })
-      }
-    })
-  }
   render(){
-    const { subSystemOptions, subSystemId } = this.props.subSystemConfig;
-    const { visible, loading } = this.state;
-    const { getFieldDecorator } = this.props.form;
     const columns = [{
       title: '编号',
       dataIndex: 'No',
@@ -192,87 +147,32 @@ class JXHPlate extends PureComponent{
         </span>
       }
     }]
-
+    const { query } = this.state;
     return (
       <div>
-        <Modal
-          title={'新建'}
-          width={488}
-          visible={visible}
-          onCancel={()=>this.setState({ visible: false })}
-          footer={[
-            <Button key="submit" type='primary' onClick={this.newAdd}>
-                确认
-            </Button>,
-            <Button key="back"  type='default' onClick={()=>this.setState({ visible: false })}>取消</Button>
-          ]}
-        >
-          <Form>
-            <FormItem {...formItemLayout} label={`参数名称`}>
-              {
-                getFieldDecorator(`configName`,{
-                  initialValue: '',
-                  rules: [{ required: true,message: '请输入参数名称' }]
-                })(
-                  <Input placeholder='请输入'/>
-                )
-              }
-            </FormItem>
-            <FormItem {...formItemLayout} label={`备注`}>
-              {
-                getFieldDecorator(`tfRemark`,{
-                  initialValue: '',
-                })(
-                  <Input placeholder='请输入'/>
-                )
-              }
-            </FormItem>
-          </Form>
-        </Modal>
         <Row className='ant-row-bottom'>
-          <Col span={2}>
-            <Button type='primary' icon='plus' loading={loading} onClick={()=>this.setState({ visible: true })}>新建</Button>
+          <Col span={4}>
+            <Button type='primary' onClick={()=>this.refs.table.fetch()}>更新</Button>
           </Col>
-          <Col span={22} style={{ textAlign: 'right' }}>
-            <Select 
-              value={subSystemId}
-              onSelect={(value)=> {
-                this.onSelect(value);
-                this.refs.table.fetch({ subSystemId: value  })
-              }}
-              style={{ width: 248 }}>
-              {
-                subSystemOptions.map((item,index)=>{
-                  return <Option key={index} value={item.value}>{ item.text }</Option>
-                })
-              }
-            </Select>
+          <Col span={20} style={{ textAlign: 'right' }}>
             <Search 
-              style={{ width: 248, marginLeft: 8 }}
+              style={{ width: 256 }}
               placeholder='请输入参数名称/参数分类'
-              onSearch={(value)=>{
-                let { subSystemId } = this.props.subSystemConfig;
-                this.refs.table.fetch({ subSystemId,searchName: value })
-              }}
+              onSearch={value => this.refs.table.fetch({ searchName: value }) }
             />
           </Col>
         </Row>
-        {
-          subSystemId
-          &&
-          <RemoteTable 
-            ref='table'
-            url={ysy.FINDSUBSYSTEMOCNFIGLIST}
-            rowKey={'dsGuid'}
-            scroll={{ x:'100%' }}
-            query={{ subSystemId, searchName: this.state.searchName }}
-            columns={columns}
-            showHeader={true}
-          />
-        }
+        <RemoteTable 
+          ref='table'
+          url={'/Configure/findSubSystemConfigList'}
+          rowKey={'dsGuid'}
+          scroll={{ x:'100%' }}
+          query={query}
+          columns={columns}
+          showHeader={true}
+        />
       </div>
     )
   }
 }
-export default connect(state =>  state)(Form.create()(JXHPlate));
-
+export default connect(state =>  state)(ClinicalDeptSystem);

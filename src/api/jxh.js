@@ -6,4 +6,6 @@ export default {
  FINDSUBSYSTEMMANAGER : `${_local}/hscmSubSystemController/findSubSystemsManager`,// 精细化--子系统管理员 子系统管理员列表
 
  DEPT_LIST: `${_local}/departmentController/findOrgDeptList4kehu`,//查询科室信息列表
+
+ 
 }

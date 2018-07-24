@@ -28,5 +28,5 @@
     "plugins":["transform-decorators-legacy"],
     "presets":["react-app"]
   },
-  "proxy": "https://www.easy-mock.com/mock/5a55af50de90b06840dd8d49/example"
+  "proxy":"https://www.easy-mock.com/mock/5a55af50de90b06840dd8d49/example"
 }

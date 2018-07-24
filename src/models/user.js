@@ -4,12 +4,27 @@ import { message } from 'antd';
 export default {
   namespace: 'users',
   state:{
-    menuList: []
+    menuList: [],
+    userInfo: {},
+    subSystemList: []
   },
   reducers: {
     userMenu(state,action){
       return {
+        ...state,
         menuList: action.payload
+      }
+    },
+    userInfo(state,action){
+      return {
+        ...state,
+        userInfo: action.payload
+      }
+    },
+    subSystem(state,action){
+      return {
+        ...state,
+        subSystemList: action.payload
       }
     }
   },
@@ -25,16 +40,31 @@ export default {
           message.error(data.msg|| '获取菜单失败')
         }
       }
+    },
+    *userLogin({ payload, callback }, { call, put }) {  // eslint-disable-line
+      const data = yield call(usersService.login,payload);
+      if(data.status){
+        if (!data.result.userInfo) {
+          message.error(data.result.loginResult)
+        }else{
+          if(!data.result.subSystemFlag){
+            yield put({ type: 'getSubSystem' })
+          }
+          if(callback) callback();
+          yield put({ type: 'userInfo',payload: data.result })
+        }
+      }
+    },
+    *getSubSystem({ payload, callback },{ put,call }){
+      const data = yield call(usersService.getUserSubSystem, payload );
+      if(data.status){
+        if (callback) callback();
+        yield put({ type: 'subSystem',payload: data.result })
+      }
     }
+    
   },
   subscriptions: {
-    setup({ dispatch, history }) {
-      return history.listen(({ pathname, query }) => {
-        if (pathname === '/'|| pathname[0] === '/') {
-          //监听路由变化 触发 effect 
-          dispatch({ type: 'fetch', payload: query });
-        }
-      });
-    },
+    
   }
 }

@@ -36,12 +36,12 @@ class Dictionary extends PureComponent{
     record: {}
   }
   componentWillMount = () =>{
-    /* this.setState({ loading: true })
+    this.setState({ loading: true })
     this.props.dispatch({
       type: 'dictionary/searchTree',
       payload: {},
       callback: ()=>this.setState({ loading: false })
-    }) */
+    })
   }
   onSelect = (selectedKeys, info) => {
     this.setState({
@@ -126,8 +126,8 @@ class Dictionary extends PureComponent{
     return (
       <div>
         {
-          // defaultExpandedKeys === "" || defaultSelectedKeys === "" ? null
-          // :
+          defaultExpandedKeys === "" || defaultSelectedKeys === "" ? null
+          :
           <Layout style={{background:'#fff'}}>
           <Sider style={{ overflow: 'auto' ,background:'#fff',border:'1px solid #ddd'}}>
             <Spin tip='数据加载中' spinning={loading}>

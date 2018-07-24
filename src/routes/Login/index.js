@@ -1,12 +1,12 @@
 import React, { PureComponent } from 'react';
-import { Form, Button, Checkbox,Input,Icon } from 'antd';
+import { Form, Button, Checkbox, Input, Icon, message } from 'antd';
 import { connect } from 'dva';
+import querystring from 'querystring';
 import shajs from 'sha.js'
+import ysy from '../../api/ysy';
 import styles from './style.css';
 const FormItem = Form.Item;
 
-@connect()
-@Form.create()
 class Login extends PureComponent{
   state = {
     loading: false
@@ -20,20 +20,36 @@ class Login extends PureComponent{
         const userInfo = {
           userNo: userName, 
           pwd: shajs('sha256').update(password).digest('hex'),
-          token: 'vania'
+          // token: 'vania'
         }
-        console.log(userInfo,'userInfo')
-        this.props.dispatch({
-          type: 'loginCheck/fetch',
-          payload: { userInfo }
-        });
-        setTimeout(()=>{
+        console.log(userInfo,'userInfo');
+        this.setState({ loading: true });
+        fetch(ysy.USERLOGIN,{
+          credentials: 'include',
+          method: 'post',
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+          },
+          body: querystring.stringify(userInfo)
+        })
+        .then((res)=>res.json())
+        .then((data)=>{
           this.setState({ loading: false });
-          this.props.history.push({
-            pathname:'/home'
-          });
-        },1000)
-       
+          if(!data.result.loginResult){
+            message.error(data.result.loginResult)
+          }else{
+            if(!data.result.subSystemFlag){
+              // 跳转到选择子系统页面
+              this.props.dispatch({
+                type: 'users/getSubSystem',
+                payload: {},
+                callback: () => this.props.history.push({ pathname: '/subSystem' })
+              })
+            }else{
+              this.props.history.push({ pathname: '/' })
+            }
+          }
+        })
       }
     })
   }
@@ -85,5 +101,5 @@ class Login extends PureComponent{
     )
   }
 }
-export default Login;
+export default connect( state => state)(Form.create()(Login));
 

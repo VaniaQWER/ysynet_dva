@@ -16,12 +16,6 @@ export const getNavData = app => [
     name: '工作台',
     children: [
       {
-        name: '子系统菜单',
-        icon: 'book',
-        path: 'system',
-        component: dynamicWrapper(app, [], () => import('../routes/System'))
-      },
-      {
         name: "工作台",
         icon: 'workplace',
         path: 'home',
@@ -92,7 +86,19 @@ export const getNavData = app => [
         icon: 'setting',
         path: 'jxh/dpetMgt',
         component: dynamicWrapper(app, ['manager/deptMgt'], () => import('../routes/Manager/deptMgt'))
+      },
+      {
+        name: "配置管理",
+        icon: 'setting',
+        path: 'flcksSubSystem/configMgt',
+        component: dynamicWrapper(app, ['manager/deptMgt'], () => import('../routes/NonClinicalDeptSystem'))
+      },
+      {
+        name: "配置管理",
+        icon: 'setting',
+        path: 'lcksSubSystem/configMgt',
+        component: dynamicWrapper(app, ['manager/deptMgt'], () => import('../routes/ClinicalDeptSystem'))
       }
     ]
-  }
+  },
 ];

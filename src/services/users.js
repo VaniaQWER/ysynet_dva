@@ -1,31 +1,27 @@
 import request from '../utils/request';
+import { _local } from '../api/local'
 
-export function fetchUser(options){
-  return request('/api/users',options)
-}
 export function login(options){
-  return request('/login/userLogin',{
+  return request(`${_local}/login/subSystemLogin`,{ //用户登陆
     methods: 'POST',
-    data: options
+    type: 'formData',
+    body: options
   })
 }
 
-export function fetch() {
-  return request(`/login/getUserInfo`,{
-    methods: 'POST',
-    data: {}
-  })
-}
-
-export function updateUser(options){
-  return request('/user/updateUser',{
-    methods: 'POST',
-    data: options
-  })
-}
 export function getUserM(options){
-  return request('/user/getUserM',{
+  return request(`${_local}/user/getUserM`,{ // 获取菜单
     methods: 'POST',
-    data: options
+    type: 'formData',
+    body: options
+  })
+}
+
+
+export function getUserSubSystem(options){
+  return request(`${_local}/login/getUserSubSystem`,{ //获取子系统
+    methods: 'POST',
+    type: 'formData',
+    body: options
   })
 }

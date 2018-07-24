@@ -1,25 +1,7 @@
 import React, { PureComponent } from 'react';
 import { connect } from 'dva';
 import CardItem from '../../components/LoginCard';
-
-const cardList = [{
-  title: "总务物资管理系统",
-  subTitle: 'Supersystem',
-  key:'zongwu'
-},{
-  title: "临床科室物资管理系统",
-  subTitle: 'Supersystem',
-  key:'linchuang'
-},{
-  title: "临床科室物资管理系统",
-  subTitle: 'Supersystem'
-},{
-  title: "临床科室物资管理系统",
-  subTitle: 'Supersystem'
-},{
-  title: "临床科室物资管理系统",
-  subTitle: 'Supersystem'
-},]
+const cardList = [];
 @connect()
 class Workplace extends PureComponent {
   onClick = (item,index) =>{
@@ -40,4 +22,4 @@ class Workplace extends PureComponent {
   }
 }
 
-export default Workplace;
+export default connect(state=> state)(Workplace);
