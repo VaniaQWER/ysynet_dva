@@ -39,6 +39,7 @@ const menu = [
     "id": "30102",
     "key": "/drugStorage/replenishment",
     "parentId": "m301",
+    "icon": "calendar",
     "subMenus": [
       {
         "path": "/drugStorage/replenishment/replenishmentPlan",
@@ -95,6 +96,7 @@ const menu = [
     "id": "30102",
     "key": "/drugStorage/drugStorageManage",
     "parentId": "m302",
+    "icon": "medicine-box",
     "subMenus":[
       {
         "path": "/drugStorage/drugStorageManage/drugDirectory",
@@ -177,6 +179,7 @@ const menu = [
     "id": "30103",
     "key": "/drugStorage/checkDecrease",
     "parentId": "m303",
+    "icon": "hourglass",
     "subMenus":[
       {
         "path": "/drugStorage/checkDecrease/newInventory",
@@ -215,46 +218,48 @@ const menu = [
         "parentId": "m307"
       },
     ]
-  }, ,
+  },
   {
+    "path": "/drugStorage/stockInquiry",
+    "level": 1,
+    "fsort": 30104,
+    "name": "库存查询",
+    "id": "30104",
+    "key": "/drugStorage/stockInquiry",
+    "parentId": "m304",
+    "icon": "search",
+    "subMenus": [
+      {
         "path": "/drugStorage/stockInquiry",
-        "level": 1,
+        "level": 2,
         "fsort": 30104,
         "name": "库存查询",
         "id": "30104",
         "key": "/drugStorage/stockInquiry",
-        "parentId": "m304",
-        "subMenus": [
-          {
-            "path": "/drugStorage/stockInquiry",
-            "level": 2,
-            "fsort": 30104,
-            "name": "库存查询",
-            "id": "30104",
-            "key": "/drugStorage/stockInquiry",
-            "parentId": "m304"
-          }
-        ]
-      }, {
+        "parentId": "m304"
+      }
+    ]
+  }, {
+    "path": "/drugStorage/settlementMgt",
+    "level": 1,
+    "fsort": 30105,
+    "name": "结算管理",
+    "id": "30105",
+    "key": "/drugStorage/settlementMgt",
+    "parentId": "m305",
+    "icon": "wallet",
+    "subMenus": [
+      {
         "path": "/drugStorage/settlementMgt",
-        "level": 1,
+        "level": 2,
         "fsort": 30105,
         "name": "结算管理",
-        "id": "30105",
+        "id": "30106",
         "key": "/drugStorage/settlementMgt",
-        "parentId": "m305",
-        "subMenus": [
-          {
-            "path": "/drugStorage/settlementMgt",
-            "level": 2,
-            "fsort": 30105,
-            "name": "结算管理",
-            "id": "30106",
-            "key": "/drugStorage/settlementMgt",
-            "parentId": "m305"
-          }
-        ]
+        "parentId": "m305"
       }
+    ]
+  }
 ],
   "level": 0,
   "fsort": 301,
@@ -274,7 +279,8 @@ const menu = [
       "name": "配置管理",
       "id": "30101",
       "key": "/pharmacy/configMgt",
-      "parentId": "m301"
+      "parentId": "m301",
+      "icon": "setting",
     },
     {
       "path": "/pharmacy/checkDecrease",
@@ -284,6 +290,7 @@ const menu = [
       "id": "30103",
       "key": "/pharmacy/checkDecrease",
       "parentId": "m303",
+      "icon": "hourglass",
       "subMenus":[
         {
           "path": "/pharmacy/checkDecrease/newInventory",
@@ -329,6 +336,7 @@ const menu = [
           "id": "30104",
           "key": "/drugStorage/stockInquiry",
           "parentId": "m304",
+          "icon": "search",
           "subMenus": [
             {
               "path": "/drugStorage/stockInquiry",
@@ -348,6 +356,7 @@ const menu = [
           "id": "30105",
           "key": "/drugStorage/settlementMgt",
           "parentId": "m305",
+          "icon": "wallet",
           "subMenus": [
             {
               "path": "/drugStorage/settlementMgt",
@@ -370,6 +379,7 @@ const menu = [
         "id": "30106",
         "key": "/pharmacy/manage",
         "parentId": "m305",
+        "icon": "medicine-box",
         "subMenus":[
           {
             "path": "/pharmacy/manage/drugDirectory",
