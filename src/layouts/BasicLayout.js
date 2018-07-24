@@ -1,5 +1,5 @@
 import React, { PureComponent } from 'react';
-import { Route, Switch } from 'dva/router';
+import { Route, Switch, Redirect } from 'dva/router';
 import { Layout, Icon, Row, Col, Tooltip  } from 'antd';
 import { connect } from 'dva';
 import SiderMenu from '../components/SiderMenu';
@@ -68,6 +68,7 @@ class BasicLayout extends PureComponent {
           </Header>
           <Content className={`${styles.content}`}>
             <Switch>
+              <Redirect from="/" to="/login" exact={true}/>
               {
                 getRouteData('BasicLayout').map(item =>
                   (
@@ -80,6 +81,7 @@ class BasicLayout extends PureComponent {
                   )
                 )
               }
+              <Route component={() => <div>404</div>} />
             </Switch>
           </Content>
         </Content>
