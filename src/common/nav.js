@@ -261,6 +261,18 @@ export const getNavData = app => [
       path: '/drugStorage/replenishment/psListCheck',
       component: dynamicWrapper(app, [], () => import('../routes/DrugStorage/replenishment/psListCheck')),
     },
+    {
+      name: '配送单验收--新建',
+      iocn: 'setting',
+      path: '/drugStorage/replenishment/psListCheck/add',
+      component: dynamicWrapper(app, [], () => import('../routes/DrugStorage/replenishment/psListCheck/add')),
+    },
+    {
+      name: '配送单验收--详情',
+      iocn: 'setting',
+      path: '/drugStorage/replenishment/psListCheck/detail',
+      component: dynamicWrapper(app, [], () => import('../routes/DrugStorage/replenishment/psListCheck/detail')),
+    },
     /*   补货管理  结束    */
     {
       name: "药库管理",//药库-药库管理

@@ -2,7 +2,7 @@
  * @Author: wwb 
  * @Date: 2018-07-24 20:15:54 
  * @Last Modified by: wwb
- * @Last Modified time: 2018-07-24 20:38:22
+ * @Last Modified time: 2018-07-24 22:01:35
  */
 /* 
   @file 补货计划 详情
@@ -148,6 +148,11 @@ class ReplenishmentDetail extends PureComponent{
             scroll={{x: '100%'}}
             columns={columns}
             rowKey={'id'}
+            pagination={{
+              size: 'small',
+              showQuickJumper: true,
+              showSizeChanger: true
+            }}
             style={{marginTop: 24}}
           />
       </div>

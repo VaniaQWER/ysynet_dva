@@ -2,7 +2,7 @@
  * @Author: wwb 
  * @Date: 2018-07-24 20:15:54 
  * @Last Modified by: wwb
- * @Last Modified time: 2018-07-24 22:01:28
+ * @Last Modified time: 2018-07-24 22:00:26
  */
 /* 
   @file 补货计划 详情
@@ -12,55 +12,70 @@ import { Table ,Row, Col } from 'antd';
 import { createData } from '../../../../common/data';
 const columns = [
   {
-   title: '申领数量',
-   width:150,
-   dataIndex: 'medicinalCode',
-  },
-  {
-    title: '库存数量',
-    width:120,
-    dataIndex: 'assetsRecord',
-  },
-  {
     title: '通用名称',
-    width:100,
-    dataIndex: 'productName1',
-    render:(text,record)=>record.productName
+    dataIndex: 'geName',
+    width:200,
   },
   {
-    title: '商品名称',
-    width:150,
-    dataIndex: 'productName',
+    title: '商品名',
+    width:220,
+    dataIndex: 'productName'
   },
   {
     title: '规格',
-    width:150,
     dataIndex: 'spec',
+    width: 180,
   },
   {
     title: '剂型',
-    width:150,
-    dataIndex: 'fmodal',
+    dataIndex: 'fmodel',
+    width: 180,
   },
   {
     title: '包装单位',
-    width:150,
     dataIndex: 'unit',
-    render:(text)=>'g'
-  },
-  {
-    title: '批准文号',
-    width:150,
-    dataIndex: 'approvalNo',
+    width:120,
   },
   {
     title: '生产厂家',
-    width:150,
-    dataIndex: 'productCompany',
+    width:180,
+    dataIndex: 'productCompany'
+  },
+  {
+    title: '批准文号',
+    width:180,
+    dataIndex: 'approvalNo',
+  },
+  {
+    title: '生产日期',
+    dataIndex: 'produceTime',
+    width: 180,
+    render: (text,record,index)=> `2017-11-24 15:00`
+  },
+  {
+    title: '有效日期',
+    dataIndex: 'UserfulDate',
+    width: 180,
+    render: (text,record,index)=> `2021-11-25 14:00`
+  },
+  {
+    title: '价格',
+    dataIndex: 'price',
+    render: (text,record,index)=> `10`
+  },
+  {
+    title: '配送金额',
+    dataIndex: 'total',
+    render: (text,record,index)=> `1200.00`
+  },
+  {
+    title: '供应商',
+    dataIndex: 'fOrgName',
+    render: (text,record)=> `武汉供应商`
   }
 ];
 
-class ReplenishmentDetail extends PureComponent{
+class PslistCheck extends PureComponent{
   render(){
     return (
       <div className='fullCol fadeIn'>
@@ -69,7 +84,15 @@ class ReplenishmentDetail extends PureComponent{
           <Row>
             <Col span={8}>
                 <div className="ant-form-item-label ant-col-xs-24 ant-col-sm-5">
-                    <label>申领单</label>
+                    <label>配送单</label>
+                </div>
+                <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
+                  <div className='ant-form-item-control'>PA002211807000086U</div>
+                </div>
+            </Col>
+            <Col span={8}>
+                <div className="ant-form-item-label ant-col-xs-24 ant-col-sm-5">
+                    <label>订单号</label>
                 </div>
                 <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
                   <div className='ant-form-item-control'>PA002211807000086U</div>
@@ -80,15 +103,23 @@ class ReplenishmentDetail extends PureComponent{
                     <label>状态</label>
                 </div>
                 <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
-                  <div className='ant-form-item-control'>待确认</div>
+                  <div className='ant-form-item-control'>订单完成</div>
                 </div>
             </Col>
             <Col span={8}>
                 <div className="ant-form-item-label ant-col-xs-24 ant-col-sm-5">
-                    <label>申领药房</label>
+                    <label>类型</label>
                 </div>
                 <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
-                  <div className='ant-form-item-control'>门诊药房</div>
+                  <div className='ant-form-item-control'>药品配送单</div>
+                </div>
+            </Col>
+            <Col span={8}>
+                <div className="ant-form-item-label ant-col-xs-24 ant-col-sm-5">
+                    <label>供应商</label>
+                </div>
+                <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
+                  <div className='ant-form-item-control'>国药药业集团</div>
                 </div>
             </Col>
             <Col span={8}>
@@ -96,7 +127,7 @@ class ReplenishmentDetail extends PureComponent{
                     <label>制单人</label>
                 </div>
                 <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
-                  <div className='ant-form-item-control'>张三三</div>
+                  <div className='ant-form-item-control'>制单人</div>
                 </div>
             </Col>
             <Col span={8}>
@@ -110,10 +141,19 @@ class ReplenishmentDetail extends PureComponent{
             </Col>
             <Col span={8}>
                 <div className="ant-form-item-label ant-col-xs-24 ant-col-sm-5">
-                    <label>联系电话</label>
+                    <label>验收人</label>
                 </div>
                 <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
-                  <div className='ant-form-item-control'>13020082008</div>
+                  <div className='ant-form-item-control'>高晓松
+                  </div>
+                </div>
+            </Col>
+            <Col span={8}>
+                <div className="ant-form-item-label ant-col-xs-24 ant-col-sm-5">
+                    <label>验收时间</label>
+                </div>
+                <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
+                  <div className='ant-form-item-control'>2018-07-12 17:09:15</div>
                 </div>
             </Col>
             <Col span={8}>
@@ -124,39 +164,23 @@ class ReplenishmentDetail extends PureComponent{
                   <div className='ant-form-item-control'>这是一个药房的地址</div>
                 </div>
             </Col>
-            <Col span={8}>
-                <div className="ant-form-item-label ant-col-xs-24 ant-col-sm-5">
-                    <label>受理人</label>
-                </div>
-                <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
-                  <div className='ant-form-item-control'></div>
-                </div>
-            </Col>
-            <Col span={8}>
-                <div className="ant-form-item-label ant-col-xs-24 ant-col-sm-5">
-                    <label>受理时间</label>
-                </div>
-                <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
-                  <div className='ant-form-item-control'></div>
-                </div>
-            </Col>
           </Row>
         </div>
           <Table
             dataSource={createData()}
             bordered
-            scroll={{x: '100%'}}
+            scroll={{x: '150%'}}
             columns={columns}
-            rowKey={'id'}
             pagination={{
               size: 'small',
               showQuickJumper: true,
               showSizeChanger: true
             }}
+            rowKey={'id'}
             style={{marginTop: 24}}
           />
       </div>
     )
   }
 }
-export default ReplenishmentDetail;
+export default PslistCheck;
