@@ -67,7 +67,7 @@ const menu = [
         "key": "/drugStorage/replenishment/confirmPlan",
         "parentId": "m301"
       },
-      {
+     /*  {
         "path": "/drugStorage/replenishment/planOrder",
         "level": 2,
         "fsort": 30102,
@@ -75,7 +75,7 @@ const menu = [
         "id": "30102",
         "key": "/drugStorage/replenishment/planOrder",
         "parentId": "m301"
-      },
+      }, */
       {
         "path": "/drugStorage/replenishment/psListCheck",
         "level": 2,

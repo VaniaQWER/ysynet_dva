@@ -220,10 +220,28 @@ export const getNavData = app => [
       component: dynamicWrapper(app, [], () => import('../routes/DrugStorage/replenishment/replenishmentPlan/add')),
     },
     {
+      name: '补货计划详情',
+      iocn: 'setting',
+      path: '/drugStorage/replenishment/replenishmentPlan/detail',
+      component: dynamicWrapper(app, [], () => import('../routes/DrugStorage/replenishment/replenishmentPlan/detail')),
+    },
+    {
       name: '采购计划',
       iocn: 'setting',
       path: '/drugStorage/replenishment/purchasePlan',
       component: dynamicWrapper(app, [], () => import('../routes/DrugStorage/replenishment/purchasePlan')),
+    },
+    {
+      name: '采购计划--添加',
+      iocn: 'setting',
+      path: '/drugStorage/replenishment/purchasePlan/add',
+      component: dynamicWrapper(app, [], () => import('../routes/DrugStorage/replenishment/purchasePlan/add')),
+    },
+    {
+      name: '采购计划--详情',
+      iocn: 'setting',
+      path: '/drugStorage/replenishment/purchasePlan/detail',
+      component: dynamicWrapper(app, [], () => import('../routes/DrugStorage/replenishment/purchasePlan/detail')),
     },
     {
       name: '确认计划',
@@ -232,13 +250,13 @@ export const getNavData = app => [
       component: dynamicWrapper(app, [], () => import('../routes/DrugStorage/replenishment/confirmPlan')),
     },
     {
-      name: '计划订单',
+      name: '确认计划--详情',
       iocn: 'setting',
-      path: '/drugStorage/replenishment/planOrder',
-      component: dynamicWrapper(app, [], () => import('../routes/DrugStorage/replenishment/planOrder')),
+      path: '/drugStorage/replenishment/confirmPlan/detail',
+      component: dynamicWrapper(app, [], () => import('../routes/DrugStorage/replenishment/confirmPlan/detail')),
     },
     {
-      name: '计划订单',
+      name: '配送单验收',
       iocn: 'setting',
       path: '/drugStorage/replenishment/psListCheck',
       component: dynamicWrapper(app, [], () => import('../routes/DrugStorage/replenishment/psListCheck')),

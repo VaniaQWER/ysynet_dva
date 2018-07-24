@@ -2,22 +2,21 @@
  * @Author: wwb 
  * @Date: 2018-07-24 16:08:53 
  * @Last Modified by: wwb
- * @Last Modified time: 2018-07-24 19:13:36
+ * @Last Modified time: 2018-07-24 21:02:27
  */
 
 /**
  * @file 药库 - 补货管理--补货计划
  */
 import React, { PureComponent } from 'react';
-import { Form, Row, Col, Button, Input, DatePicker, Select, Icon, Table, message  } from 'antd';
-import { formItemLayout } from '../../../../utils/commonStyles'
-import moment from 'moment'; 
+import { Form, Button, Table, message  } from 'antd';
+import { Link } from 'react-router-dom';
+import SearchForm from '../commomSearchForm'
+// import moment from 'moment'; 
 import { createData } from '../../../../common/data';
-const FormItem = Form.Item;
-const { RangePicker } = DatePicker;
-const { Option } = Select;
 
-class SearchForm extends PureComponent{
+
+/* class SearchForm extends PureComponent{
   state = {
     display: 'none'
   }
@@ -93,7 +92,7 @@ class SearchForm extends PureComponent{
       </Form>
     )
   }
-}
+} */
 const WrapperForm = Form.create()(SearchForm);
 class ReplenishmentPlan extends PureComponent{
   state = {
@@ -128,8 +127,11 @@ class ReplenishmentPlan extends PureComponent{
     const columns = [{
       title: '计划单号',
       dataIndex: 'planNo',
+      width: 180,
       render: (text,record) =>{
-        return <a>{text}</a>
+        return <span>
+          <Link to={{pathname: `/drugStorage/replenishment/replenishmentPlan/detail`}}>{text}</Link>
+        </span>  
       }
     },{
       title: '状态',
@@ -164,7 +166,6 @@ class ReplenishmentPlan extends PureComponent{
       title: '驳回原因',
       dataIndex: 'planReject'
     }];
-    
     return (
       <div>
          <WrapperForm />
