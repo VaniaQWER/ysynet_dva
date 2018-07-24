@@ -452,8 +452,9 @@ class AfterAdjustment extends PureComponent{
       <div>
         <SearchFormWarp />
         <Table
+          bordered
           loading={ this.state.loading}
-          scroll={{x: '100%'}}
+          scroll={{x: '140%'}}
           columns={columns}
           // rowKey={'oddGuid'}
           style={{marginTop: 20}}

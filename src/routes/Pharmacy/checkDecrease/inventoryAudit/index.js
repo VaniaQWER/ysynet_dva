@@ -467,7 +467,7 @@ class InventoryAudit extends PureComponent {
         <SearchFormWarp />
         <Table
           loading={ this.state.loading}
-          scroll={{x: '100%'}}
+          scroll={{x: '140%'}}
           columns={columns}
           style={{marginTop: 20}}
           dataSource={dataSource}

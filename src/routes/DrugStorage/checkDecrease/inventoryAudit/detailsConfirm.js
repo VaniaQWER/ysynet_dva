@@ -2,7 +2,7 @@
  * @file 药库 - 盘点损益 - 盘点审核 - 详情(已审批)
  */
 import React, { PureComponent } from 'react';
-import { Table ,Row, Col, Input } from 'antd';
+import { Table ,Row, Col, Input, Tooltip } from 'antd';
 import { createData } from '../../../../common/data';
 
 class DetailsConfirm extends PureComponent {
@@ -19,7 +19,11 @@ class DetailsConfirm extends PureComponent {
       },
       {
         title: '规格',
-        dataIndex: 'spec'
+        dataIndex: 'spec',
+        className:'ellipsis',
+        render:(text)=>(
+          <Tooltip placement="topLeft" title={text}>{text}</Tooltip>
+        )
       },
       {
         title: '剂型',

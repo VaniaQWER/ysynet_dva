@@ -475,7 +475,7 @@ class NewInventory extends PureComponent {
         <div><Button type='primary' onClick={()=>this.setState({ visible: true })}><Icon type="plus" />新建</Button></div>
         <Table
           loading={ this.state.loading}
-          scroll={{x: '100%'}}
+          scroll={{x: '140%'}}
           columns={columns}
           // rowKey={'oddGuid'}
           style={{marginTop: 20}}
