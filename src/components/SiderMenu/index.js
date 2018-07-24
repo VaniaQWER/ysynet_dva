@@ -42,6 +42,7 @@ class SiderMenu extends PureComponent{
     recordKeys: []//修复官方hover bug
   };
   setSubTitle = (menuList,path) =>{
+    console.log(menuList,path)
     let pathname = path ? path : window.location.href.split('#')[1];
     console.log(pathname,'pathname')
     let target = {};
@@ -49,15 +50,27 @@ class SiderMenu extends PureComponent{
       menuList.map((item,index)=>{
         let { subMenus } = item;
         subMenus.map((menu,idx)=>{
-          if(menu.path === pathname){
-            target.mainTitle = item.name;
-            target.subTitle = menu.name
+          if(menu.subMenus&& menu.subMenus.length){
+              let childMenu = menu.subMenus;
+              childMenu.map(d=>{
+                if(d.path === pathname){
+                  target.mainTitle = item.name;
+                  target.subTitle = d.name
+                }
+                return null;
+              })
+          }else{
+            if(menu.path === pathname){
+              target.mainTitle = item.name;
+              target.subTitle = menu.name
+            }
           }
           return null;
         });
         return null;
       });
     }
+    console.log(target,'target')
     this.props.cb(target)
   }
   changeActiveKeys = () => {
