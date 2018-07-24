@@ -1,15 +1,93 @@
 const menu = [
   {
   "path": "/drugStorage",
-  "subMenus": [{
+  "subMenus": [
+    /* {
     "path": "/drugStorage/configMgt",
     "level": 1,
     "fsort": 30101,
     "name": "配置管理",
     "id": "30101",
     "key": "/drugStorage/configMgt",
-    "parentId": "m301"
-  },{
+    "parentId": "m301",
+    "subMenus": [
+      {
+        "path": "/drugStorage/configMgt/drugStorageConfig",
+        "level": 2,
+        "fsort": 3010101,
+        "name": "药库配置",
+        "id": "3010101",
+        "key": "/drugStorage/configMgt/drugStorageConfig",
+        "parentId": "m303"
+      },
+      {
+        "path": "/drugStorage/configMgt/drugStorageMaintain",
+        "level": 2,
+        "fsort": 3010101,
+        "name": "药库维护",
+        "id": "3010102",
+        "key": "/drugStorage/configMgt/drugStorageMaintain",
+        "parentId": "m303"
+      }
+    ]
+  }, */
+  {
+    "path": "/drugStorage/replenishment",
+    "level": 1,
+    "fsort": 30102,
+    "name": "补货管理",
+    "id": "30102",
+    "key": "/drugStorage/replenishment",
+    "parentId": "m301",
+    "subMenus": [
+      {
+        "path": "/drugStorage/replenishment/replenishmentPlan",
+        "level": 2,
+        "fsort": 30102,
+        "name": "补货计划",
+        "id": "30102",
+        "key": "/drugStorage/replenishment/replenishmentPlan",
+        "parentId": "m301"
+      },
+      {
+        "path": "/drugStorage/replenishment/purchasePlan",
+        "level": 2,
+        "fsort": 30102,
+        "name": "采购计划",
+        "id": "30102",
+        "key": "/drugStorage/replenishment/purchasePlan",
+        "parentId": "m301"
+      },
+      {
+        "path": "/drugStorage/replenishment/confirmPlan",
+        "level": 2,
+        "fsort": 30102,
+        "name": "确认计划",
+        "id": "30102",
+        "key": "/drugStorage/replenishment/confirmPlan",
+        "parentId": "m301"
+      },
+      {
+        "path": "/drugStorage/replenishment/planOrder",
+        "level": 2,
+        "fsort": 30102,
+        "name": "计划订单",
+        "id": "30102",
+        "key": "/drugStorage/replenishment/planOrder",
+        "parentId": "m301"
+      },
+      {
+        "path": "/drugStorage/replenishment/psListCheck",
+        "level": 2,
+        "fsort": 30102,
+        "name": "配送单验收",
+        "id": "30102",
+        "key": "/drugStorage/replenishment/psListCheck",
+        "parentId": "m301"
+      }
+    ]
+  },
+  {
     "path": "/drugStorage/drugStorageManage",
     "level": 1,
     "fsort": 30102,
@@ -146,7 +224,7 @@ const menu = [
   "key": "/drugStorage",
   "parentId": "m3"
 }, 
-{
+/* {
   "path": "/pharmacy",
   "subMenus": [{
     "path": "/pharmacy/configMgt",
@@ -164,6 +242,7 @@ const menu = [
   "id": "m301",
   "key": "/pharmacy",
   "parentId": "m3"
-}]
+} */
+]
 
 export default menu ; 

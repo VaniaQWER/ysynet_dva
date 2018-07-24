@@ -136,7 +136,7 @@ export const getNavData2 = app => [
           name: "配置管理",
           icon: 'setting',
           path: '/configMgt',
-          component: dynamicWrapper(app, [], () => import('../routes/DrugStorage/configMgt'))
+          component: dynamicWrapper(app, [], () => import('../routes/DrugStorage/configMgt/drugConfigMgt'))
         },
         {
           name: "药库管理",
@@ -186,18 +186,58 @@ export const getNavData = app => [
   name: '工作台',
   children: [
     /*药库 */
-    {
+    /* {
       name: '药库',
       icon: 'table',
       path: '/drugStorage',
       component: dynamicWrapper(app, [], () => import('../routes/DrugStorage/configMgt'))
-    },
-    {
+    }, */
+    /* {
       name: "配置管理",//药库-配置管理
       icon: 'setting',
       path: '/drugStorage/configMgt',
-      component: dynamicWrapper(app, [], () => import('../routes/DrugStorage/configMgt'))
+      component: dynamicWrapper(app, [], () => import('../routes/DrugStorage/configMgt/drugConfigMgt'))
     },
+    {
+      name: "药库维护",//药库-配置管理
+      icon: 'setting',
+      path: '/drugStorage/drugStroageMaintain',
+      component: dynamicWrapper(app, [], () => import('../routes/DrugStorage/configMgt/drugStroageMaintain'))
+    }, */
+    /*   
+        补货管理  开始
+    */
+    {
+      name: '补货计划',
+      iocn: 'setting',
+      path: '/drugStorage/replenishment/replenishmentPlan',
+      component: dynamicWrapper(app, [], () => import('../routes/DrugStorage/replenishment/replenishmentPlan')),
+    },
+    {
+      name: '采购计划',
+      iocn: 'setting',
+      path: '/drugStorage/replenishment/purchasePlan',
+      component: dynamicWrapper(app, [], () => import('../routes/DrugStorage/replenishment/purchasePlan')),
+    },
+    {
+      name: '确认计划',
+      iocn: 'setting',
+      path: '/drugStorage/replenishment/confirmPlan',
+      component: dynamicWrapper(app, [], () => import('../routes/DrugStorage/replenishment/confirmPlan')),
+    },
+    {
+      name: '计划订单',
+      iocn: 'setting',
+      path: '/drugStorage/replenishment/planOrder',
+      component: dynamicWrapper(app, [], () => import('../routes/DrugStorage/replenishment/planOrder')),
+    },
+    {
+      name: '计划订单',
+      iocn: 'setting',
+      path: '/drugStorage/replenishment/psListCheck',
+      component: dynamicWrapper(app, [], () => import('../routes/DrugStorage/replenishment/psListCheck')),
+    },
+    /*   补货管理  结束    */
     {
       name: "药库管理",//药库-药库管理
       icon: 'setting',
@@ -349,7 +389,7 @@ export const getNavData = app => [
     },
 
     /*药房 */
-    {
+    /* {
       name: '药房',
       icon: 'table',
       path: '/pharmacy',
@@ -360,7 +400,7 @@ export const getNavData = app => [
       icon: 'setting',
       path: '/pharmacy/configMgt',
       component: dynamicWrapper(app, [], () => import('../routes/Pharmacy/configMgt'))
-    }
+    } */
   ]
 }]
 
