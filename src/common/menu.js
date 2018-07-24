@@ -280,6 +280,45 @@ const menu = [
         "key": "/pharmacy/checkDecrease/profiLossRecord",
         "parentId": "m307"
       },
+      {
+        "path": "/drugStorage/stockInquiry",
+        "level": 1,
+        "fsort": 30104,
+        "name": "库存查询",
+        "id": "30104",
+        "key": "/drugStorage/stockInquiry",
+        "parentId": "m304",
+        "subMenus": [
+          {
+            "path": "/drugStorage/stockInquiry",
+            "level": 2,
+            "fsort": 30104,
+            "name": "库存查询",
+            "id": "30104",
+            "key": "/drugStorage/stockInquiry",
+            "parentId": "m304"
+          }
+        ]
+      }, {
+        "path": "/drugStorage/settlementMgt",
+        "level": 1,
+        "fsort": 30105,
+        "name": "结算管理",
+        "id": "30105",
+        "key": "/drugStorage/settlementMgt",
+        "parentId": "m305",
+        "subMenus": [
+          {
+            "path": "/drugStorage/settlementMgt",
+            "level": 2,
+            "fsort": 30105,
+            "name": "结算管理",
+            "id": "30106",
+            "key": "/drugStorage/settlementMgt",
+            "parentId": "m305"
+          }
+        ]
+      }
     ]
   }
 ],
