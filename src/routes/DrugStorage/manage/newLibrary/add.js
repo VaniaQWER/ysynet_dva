@@ -4,10 +4,9 @@
 * @Last Modified time: 2018-07-24 13:13:55 
  */
 import React, { PureComponent } from 'react';
-import { Table , Col, Button, Modal , message, Input , Select , Affix , Row, Icon , Card} from 'antd';
+import { Table , Col, Button, Modal , message, Input , Affix , Row, Icon } from 'antd';
 import { createData } from '../../../../common/data';
 const Conform = Modal.confirm;
-const Option = Select.Option;
 const columns = [
   {
     title: '通用名称',
