@@ -2,9 +2,9 @@ import React, {PureComponent} from 'react';
 
 import {Link} from 'react-router-dom';
 
-import { Form, Row, Col, Input, Button, Icon, Table, DatePicker, Modal } from 'antd';
+import { Form, Row, Col, Input, Button, Table, DatePicker, Modal } from 'antd';
 
-import {createData} from '../../../common/data.js';
+// import {createData} from '../../../common/data.js';
 
 const FormItem = Form.Item;
 
