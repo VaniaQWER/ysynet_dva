@@ -253,7 +253,7 @@ const menu = [
         "path": "/drugStorage/settlementMgt",
         "level": 2,
         "fsort": 30105,
-        "name": "结算管理",
+        "name": "结算汇总",
         "id": "30106",
         "key": "/drugStorage/settlementMgt",
         "parentId": "m305"
@@ -327,49 +327,58 @@ const menu = [
           "id": "30103",
           "key": "/pharmacy/checkDecrease/profiLossRecord",
           "parentId": "m307"
-        },
-        {
-          "path": "/drugStorage/stockInquiry",
-          "level": 1,
-          "fsort": 30104,
-          "name": "库存查询",
-          "id": "30104",
-          "key": "/drugStorage/stockInquiry",
-          "parentId": "m304",
-          "icon": "search",
-          "subMenus": [
-            {
-              "path": "/drugStorage/stockInquiry",
-              "level": 2,
-              "fsort": 30104,
-              "name": "库存查询",
-              "id": "30104",
-              "key": "/drugStorage/stockInquiry",
-              "parentId": "m304"
-            }
-          ]
-        }, {
-          "path": "/drugStorage/settlementMgt",
-          "level": 1,
-          "fsort": 30105,
-          "name": "结算管理",
-          "id": "30105",
-          "key": "/drugStorage/settlementMgt",
-          "parentId": "m305",
-          "icon": "wallet",
-          "subMenus": [
-            {
-              "path": "/drugStorage/settlementMgt",
-              "level": 2,
-              "fsort": 30105,
-              "name": "结算管理",
-              "id": "30106",
-              "key": "/drugStorage/settlementMgt",
-              "parentId": "m305"
-            }
-          ]
         }
       ]
+      },
+      {
+        "path": "/pharmacy/stockInquiry",
+        "level": 1,
+        "fsort": 30104,
+        "name": "库存查询",
+        "id": "30104",
+        "key": "/pharmacy/stockInquiry",
+        "parentId": "m304",
+        "icon": "search",
+        "subMenus": [
+          {
+            "path": "/pharmacy/stockInquiry",
+            "level": 2,
+            "fsort": 30104,
+            "name": "库存查询",
+            "id": "30104",
+            "key": "/pharmacy/stockInquiry",
+            "parentId": "m304"
+          }
+        ]
+      }, {
+        "path": "/pharmacy/settlementMgt",
+        "level": 1,
+        "fsort": 30105,
+        "name": "结算管理",
+        "id": "30105",
+        "key": "/pharmacy/settlementMgt",
+        "parentId": "m305",
+        "icon": "wallet",
+        "subMenus": [
+          {
+            "path": "/pharmacy/settlementMgt/dayStatements",
+            "level": 2,
+            "fsort": 30105,
+            "name": "日对账单",
+            "id": "30106",
+            "key": "/pharmacy/settlementMgt/dayStatements",
+            "parentId": "m305"
+          },
+          {
+            "path": "/pharmacy/settlementMgt/statements",
+            "level": 2,
+            "fsort": 30105,
+            "name": "结算单",
+            "id": "30106",
+            "key": "/pharmacy/settlementMgt/statements",
+            "parentId": "m305"
+          }
+        ]
       },
       {
         "path": "/pharmacy/manage",

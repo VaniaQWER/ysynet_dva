@@ -1,3 +1,6 @@
+/**
+ * @file 结算管理 - 结算单
+ */
 import React, {PureComponent} from 'react';
 
 import {Link} from 'react-router-dom';
@@ -367,7 +370,10 @@ class SettlementMgt extends PureComponent {
                     </Row>
                 </Form>
                 <Row style={{paddingLeft: 32, marginBottom: 30}}>
-                    <Button type="primary" onClick={this.showNewSummary}>新建汇总</Button>
+                    <Button type="primary" onClick={() => {
+                        const { history } = this.props;
+                        history.push({pathname:"/pharmacy/settlementMgt/statements/newSettlement"});
+                    }}>新建结算</Button>
                     <Modal
                         title="单据信息"
                         visible={this.state.showNewSummary}
