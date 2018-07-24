@@ -44,8 +44,35 @@ const menu = [
         "name": "新建盘点",
         "id": "30103",
         "key": "/drugStorage/checkDecrease/newInventory",
-        "parentId": "m303"
-      }
+        "parentId": "m304"
+      },
+      {
+        "path": "/drugStorage/checkDecrease/inventoryAudit",
+        "level": 2,
+        "fsort": 30103,
+        "name": "盘点审核",
+        "id": "30103",
+        "key": "/drugStorage/checkDecrease/inventoryAudit",
+        "parentId": "m305"
+      },
+      {
+        "path": "/drugStorage/checkDecrease/afterAdjustment",
+        "level": 2,
+        "fsort": 30103,
+        "name": "盘后调整",
+        "id": "30103",
+        "key": "/drugStorage/checkDecrease/afterAdjustment",
+        "parentId": "m306"
+      },
+      {
+        "path": "/drugStorage/checkDecrease/profiLossRecord",
+        "level": 2,
+        "fsort": 30103,
+        "name": "损益记录",
+        "id": "30103",
+        "key": "/drugStorage/checkDecrease/profiLossRecord",
+        "parentId": "m307"
+      },
     ]
   }],
   "level": 0,

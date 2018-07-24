@@ -231,6 +231,27 @@ export const getNavData = app => [
       path: '/drugStorage/checkDecrease/newInventory',
       component: dynamicWrapper(app, [], () => import('../routes/DrugStorage/checkDecrease/newInventory')),
     },
+    // 药库 - 盘点损益 - 盘点审核
+    {
+      name: "盘点审核",
+      icon: 'setting',
+      path: '/drugStorage/checkDecrease/inventoryAudit',
+      component: dynamicWrapper(app, [], () => import('../routes/DrugStorage/checkDecrease/inventoryAudit')),
+    },
+    // 药库 - 盘点损益 - 盘后调整
+    {
+      name: "盘后调整",
+      icon: 'setting',
+      path: '/drugStorage/checkDecrease/afterAdjustment',
+      component: dynamicWrapper(app, [], () => import('../routes/DrugStorage/checkDecrease/afterAdjustment')),
+    },
+    // 药库 - 盘点损益 - 损益记录
+    {
+      name: "损益记录",
+      icon: 'setting',
+      path: '/drugStorage/checkDecrease/profiLossRecord',
+      component: dynamicWrapper(app, [], () => import('../routes/DrugStorage/checkDecrease/profiLossRecord')),
+    },
 
     /*药房 */
     {
