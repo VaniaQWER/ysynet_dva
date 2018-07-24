@@ -214,6 +214,12 @@ export const getNavData = app => [
       component: dynamicWrapper(app, [], () => import('../routes/DrugStorage/replenishment/replenishmentPlan')),
     },
     {
+      name: '补货计划添加',
+      iocn: 'setting',
+      path: '/drugStorage/replenishment/replenishmentPlan/add',
+      component: dynamicWrapper(app, [], () => import('../routes/DrugStorage/replenishment/replenishmentPlan/add')),
+    },
+    {
       name: '采购计划',
       iocn: 'setting',
       path: '/drugStorage/replenishment/purchasePlan',
