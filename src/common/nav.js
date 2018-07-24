@@ -126,41 +126,41 @@ export const getNavData = app => [
               path: '/configMgt',
               component: dynamicWrapper(app, ['manager/deptMgt'], () => import('../routes/ClinicalDeptSystem'))
             }]
-        },{
-          name: '药库',
-          icon: 'table',
-          path: '/drugStorage',
-          children: [{
-            name: "配置管理",
-            icon: 'setting',
-            path: '/configMgt',
-            component: dynamicWrapper(app, [], () => import('../routes/DrugStorage/configMgt'))
-          },
-          {
-            name: "药库管理",
-            icon: 'setting',
-            path: '/drugStorageManage',
-            component: dynamicWrapper(app, [], () => import('../routes/DrugStorage/manage/drugDirectory')),
-            children: [
-              {
-                name: "药品目录",
-                icon: 'setting',
-                path: '/drugDirectory',
-                component: dynamicWrapper(app, [], () => import('../routes/DrugStorage/manage/drugDirectory'))
-              }
-            ]
-          },
-        ]
-        },{
-          name: '药房',
-          icon: 'table',
-          path: '/pharmacy',
-          children: [{
-            name: '配置管理',
-            icon: 'setting',
-            path: '/configMgt',
-            component: dynamicWrapper(app, [], () => import('../routes/Pharmacy/configMgt'))
-          }]
+        },]
+      },
+      {
+        name: '药库',
+        icon: 'table',
+        path: '/drugStorage',
+        children: [{
+          name: "配置管理",
+          icon: 'setting',
+          path: '/configMgt',
+          component: dynamicWrapper(app, [], () => import('../routes/DrugStorage/configMgt'))
+        },
+        {
+          name: "药库管理",
+          icon: 'setting',
+          path: '/drugStorageManage',
+          component: dynamicWrapper(app, [], () => import('../routes/DrugStorage/manage/drugDirectory')),
+          children: [
+            {
+              name: "药品目录",
+              icon: 'setting',
+              path: '/drugDirectory',
+              component: dynamicWrapper(app, [], () => import('../routes/DrugStorage/manage/drugDirectory'))
+            }
+          ]
+        },
+      ]},{
+        name: '药房',
+        icon: 'table',
+        path: '/pharmacy',
+        children: [{
+          name: '配置管理',
+          icon: 'setting',
+          path: '/configMgt',
+          component: dynamicWrapper(app, [], () => import('../routes/Pharmacy/configMgt'))
         }]
       }
     ]
