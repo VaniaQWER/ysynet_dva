@@ -148,8 +148,17 @@ export const getNavData = app => [
               name: "药品目录",
               icon: 'setting',
               path: '/drugDirectory',
-              component: dynamicWrapper(app, [], () => import('../routes/DrugStorage/manage/drugDirectory'))
-            }
+              component: dynamicWrapper(app, [], () => import('../routes/DrugStorage/manage/drugDirectory')),
+              children:[
+                {
+                  name: "药品目录-编辑",
+                  icon: 'setting',
+                  path: '/edit',
+                  component: dynamicWrapper(app, [], () => import('../routes/DrugStorage/manage/drugDirectory/edit'))
+                }
+              ]
+            },
+           
           ]
         },
       ]},{

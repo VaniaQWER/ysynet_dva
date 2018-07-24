@@ -16,7 +16,18 @@ const menu = [
     "name": "药库管理",
     "id": "30102",
     "key": "/drugStorage/drugStorageManage",
-    "parentId": "m302"
+    "parentId": "m302",
+    "subMenus":[
+      {
+        "path": "/drugStorage/drugStorageManage/drugDirectory",
+        "level": 2,
+        "fsort": 30102,
+        "name": "药品目录",
+        "id": "30102",
+        "key": "/drugStorage/drugStorageManage/drugDirectory",
+        "parentId": "m303"
+      }
+    ]
   }],
   "level": 0,
   "fsort": 301,
