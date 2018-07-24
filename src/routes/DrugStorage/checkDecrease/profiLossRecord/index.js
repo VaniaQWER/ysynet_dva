@@ -97,32 +97,260 @@ class ProfiLossRecord extends PureComponent {
       {
         title: '损益单',
         dataIndex: 'syNo',
+        key: 'syNo'
       },
       {
         title: '盘点单',
         dataIndex: 'odd',
+        key: 'odd'
       },
       {
         title: '类型',
         dataIndex: 'types',
+        key: 'types'
       },
       {
         title: '部门',
         dataIndex: 'dept',
+        key: 'dept'
       },
       {
         title: '生成人',
         dataIndex: 'generatedUser',
+        key: 'generatedUser'
+      },
+      {
+        title: '生成人',
+        dataIndex: 'generatedTime',
+        key: 'generatedTime'
       },
       {
         title: '操作',
         dataIndex: 'RN',
         render: (text, record) =>
           <span>
-            <Link to={{ pathname: `/checkDecrease/newInventory/add/${record.oddGuid}` }}>详情</Link>
+            <Link to={{ pathname: `/drugStorage/checkDecrease/profiLossRecord/details` }}>详情</Link>
           </span>
       }
     ];
+    const dataSource = [
+      {
+        key: '1',
+        syNo: 'SY0022118070000383',
+        odd: 'KP0022118070000383',
+        types: '明盘全盘',
+        dept: '药库',
+        generatedUser: '张三三',
+        generatedTime: '2018-7-24 20:06'
+      },
+      {
+        key: '2',
+        syNo: 'SY00221180700002DN',
+        odd: 'KP00221180700002DN',
+        types: '暗盘动销盘',
+        dept: '药库',
+        generatedUser: '张三三',
+        generatedTime: '2018-7-24 20:06'
+      },
+      {
+        key: '3',
+        syNo: 'SY00221180700001CW',
+        odd: 'KP00221180700001CW',
+        types: '明盘动盘',
+        dept: '药库',
+        generatedUser: '张三三',
+        generatedTime: '2018-7-24 20:06'
+      },
+      {
+        key: '4',
+        syNo: 'SY0022118070000383',
+        odd: 'KP0022118070000383',
+        types: '明盘全盘',
+        dept: '药库',
+        generatedUser: '张三三',
+        generatedTime: '2018-7-24 20:06'
+      },
+      {
+        key: '5',
+        syNo: 'SY00221180700002DN',
+        odd: 'KP00221180700002DN',
+        types: '暗盘动销盘',
+        dept: '药库',
+        generatedUser: '张三三',
+        generatedTime: '2018-7-24 20:06'
+      },
+      {
+        key: '6',
+        syNo: 'SY00221180700001CW',
+        odd: 'KP00221180700001CW',
+        types: '明盘动盘',
+        dept: '药库',
+        generatedUser: '张三三',
+        generatedTime: '2018-7-24 20:06'
+      },
+      {
+        key: '7',
+        syNo: 'SY0022118070000383',
+        odd: 'KP0022118070000383',
+        types: '明盘全盘',
+        dept: '药库',
+        generatedUser: '张三三',
+        generatedTime: '2018-7-24 20:06'
+      },
+      {
+        key: '8',
+        syNo: 'SY00221180700002DN',
+        odd: 'KP00221180700002DN',
+        types: '暗盘动销盘',
+        dept: '药库',
+        generatedUser: '张三三',
+        generatedTime: '2018-7-24 20:06'
+      },
+      {
+        key: '9',
+        syNo: 'SY00221180700001CW',
+        odd: 'KP00221180700001CW',
+        types: '明盘动盘',
+        dept: '药库',
+        generatedUser: '张三三',
+        generatedTime: '2018-7-24 20:06'
+      },
+      {
+        key: '10',
+        syNo: 'SY0022118070000383',
+        odd: 'KP0022118070000383',
+        types: '明盘全盘',
+        dept: '药库',
+        generatedUser: '张三三',
+        generatedTime: '2018-7-24 20:06'
+      },
+      {
+        key: '11',
+        syNo: 'SY00221180700002DN',
+        odd: 'KP00221180700002DN',
+        types: '暗盘动销盘',
+        dept: '药库',
+        generatedUser: '张三三',
+        generatedTime: '2018-7-24 20:06'
+      },
+      {
+        key: '12',
+        syNo: 'SY00221180700001CW',
+        odd: 'KP00221180700001CW',
+        types: '明盘动盘',
+        dept: '药库',
+        generatedUser: '张三三',
+        generatedTime: '2018-7-24 20:06'
+      },
+      {
+        key: '13',
+        syNo: 'SY0022118070000383',
+        odd: 'KP0022118070000383',
+        types: '明盘全盘',
+        dept: '药库',
+        generatedUser: '张三三',
+        generatedTime: '2018-7-24 20:06'
+      },
+      {
+        key: '14',
+        syNo: 'SY00221180700002DN',
+        odd: 'KP00221180700002DN',
+        types: '暗盘动销盘',
+        dept: '药库',
+        generatedUser: '张三三',
+        generatedTime: '2018-7-24 20:06'
+      },
+      {
+        key: '15',
+        syNo: 'SY00221180700001CW',
+        odd: 'KP00221180700001CW',
+        types: '明盘动盘',
+        dept: '药库',
+        generatedUser: '张三三',
+        generatedTime: '2018-7-24 20:06'
+      },
+      {
+        key: '16',
+        syNo: 'SY0022118070000383',
+        odd: 'KP0022118070000383',
+        types: '明盘全盘',
+        dept: '药库',
+        generatedUser: '张三三',
+        generatedTime: '2018-7-24 20:06'
+      },
+      {
+        key: '17',
+        syNo: 'SY00221180700002DN',
+        odd: 'KP00221180700002DN',
+        types: '暗盘动销盘',
+        dept: '药库',
+        generatedUser: '张三三',
+        generatedTime: '2018-7-24 20:06'
+      },
+      {
+        key: '18',
+        syNo: 'SY00221180700001CW',
+        odd: 'KP00221180700001CW',
+        types: '明盘动盘',
+        dept: '药库',
+        generatedUser: '张三三',
+        generatedTime: '2018-7-24 20:06'
+      },
+      {
+        key: '19',
+        syNo: 'SY0022118070000383',
+        odd: 'KP0022118070000383',
+        types: '明盘全盘',
+        dept: '药库',
+        generatedUser: '张三三',
+        generatedTime: '2018-7-24 20:06'
+      },
+      {
+        key: '20',
+        syNo: 'SY00221180700002DN',
+        odd: 'KP00221180700002DN',
+        types: '暗盘动销盘',
+        dept: '药库',
+        generatedUser: '张三三',
+        generatedTime: '2018-7-24 20:06'
+      },
+      {
+        key: '21',
+        syNo: 'SY00221180700001CW',
+        odd: 'KP00221180700001CW',
+        types: '明盘动盘',
+        dept: '药库',
+        generatedUser: '张三三',
+        generatedTime: '2018-7-24 20:06'
+      },
+      {
+        key: '22',
+        syNo: 'SY0022118070000383',
+        odd: 'KP0022118070000383',
+        types: '明盘全盘',
+        dept: '药库',
+        generatedUser: '张三三',
+        generatedTime: '2018-7-24 20:06'
+      },
+      {
+        key: '23',
+        syNo: 'SY00221180700002DN',
+        odd: 'KP00221180700002DN',
+        types: '暗盘动销盘',
+        dept: '药库',
+        generatedUser: '张三三',
+        generatedTime: '2018-7-24 20:06'
+      },
+      {
+        key: '24',
+        syNo: 'SY00221180700001CW',
+        odd: 'KP00221180700001CW',
+        types: '明盘动盘',
+        dept: '药库',
+        generatedUser: '张三三',
+        generatedTime: '2018-7-24 20:06'
+      }
+    ]
     return (
       <div>
         <SearchFormWarp />
@@ -130,8 +358,9 @@ class ProfiLossRecord extends PureComponent {
           loading={ this.state.loading}
           scroll={{x: '100%'}}
           columns={columns}
-          rowKey={'syNoGuid'}
+          // rowKey={'syNoGuid'}
           style={{marginTop: 20}}
+          dataSource={dataSource}
         />
       </div>
     )

@@ -62,7 +62,7 @@ class SearchForm extends PureComponent {
               })(
                 <Select>
                   <Option value={''}>全部</Option>
-                  <Option value={'01'}>待审核</Option>
+                  <Option value={'01'}>已审核</Option>
                   <Option value={'02'}>已审核</Option>
                 </Select>
               )}
@@ -150,9 +150,306 @@ class AfterAdjustment extends PureComponent{
         title: '操作',
         dataIndex: 'RN',
         render: (text, record) =>
-          <span>
-            <Link to={{ pathname: `/checkDecrease/newInventory/add/${record.oddGuid}` }}>详情</Link>
-          </span>
+          <span><Link to={{ pathname: `/drugStorage/checkDecrease/afterAdjustment/details` }}>详情</Link></span>
+      }
+    ];
+    const dataSource = [
+      {
+        key: '1',
+        odd: 'KP0022118070000383',
+        status: '已审核',
+        types: '明盘全盘',
+        dept: '药库',
+        oddUser: '张三三',
+        makingTime: '2018-7-24 16:45',
+        startTime: '2018-7-24 16:45',
+        remark: '我是盘后调整列表'
+      },
+      {
+        key: '2',
+        odd: 'KP00221180700002DN',
+        status: '已审核',
+        types: '暗盘动销盘',
+        dept: '药库',
+        oddUser: '张三三',
+        makingTime: '2018-7-24 16:45',
+        startTime: '2018-7-24 16:45',
+        remark: '我是盘后调整列表'
+      },
+      {
+        key: '3',
+        odd: 'KP00221180700001CW',
+        status: '已审核',
+        types: '明盘动盘',
+        dept: '药库',
+        oddUser: '张三三',
+        makingTime: '2018-7-24 16:45',
+        startTime: '2018-7-24 16:45',
+        remark: '我是盘后调整列表'
+      },
+      {
+        key: '4',
+        odd: 'KP0022118070000383',
+        status: '已审核',
+        types: '明盘全盘',
+        dept: '药库',
+        oddUser: '张三三',
+        makingTime: '2018-7-24 16:45',
+        startTime: '2018-7-24 16:45',
+        remark: '我是盘后调整列表'
+      },
+      {
+        key: '5',
+        odd: 'KP00221180700002DN',
+        status: '已审核',
+        types: '暗盘动销盘',
+        dept: '药库',
+        oddUser: '张三三',
+        makingTime: '2018-7-24 16:45',
+        startTime: '2018-7-24 16:45',
+        remark: '我是盘后调整列表'
+      },
+      {
+        key: '6',
+        odd: 'KP00221180700001CW',
+        status: '已审核',
+        types: '明盘动盘',
+        dept: '药库',
+        oddUser: '张三三',
+        makingTime: '2018-7-24 16:45',
+        startTime: '2018-7-24 16:45',
+        remark: '我是盘后调整列表'
+      },
+      {
+        key: '7',
+        odd: 'KP0022118070000383',
+        status: '已审核',
+        types: '明盘全盘',
+        dept: '药库',
+        oddUser: '张三三',
+        makingTime: '2018-7-24 16:45',
+        startTime: '2018-7-24 16:45',
+        remark: '我是盘后调整列表'
+      },
+      {
+        key: '8',
+        odd: 'KP00221180700002DN',
+        status: '已审核',
+        types: '暗盘动销盘',
+        dept: '药库',
+        oddUser: '张三三',
+        makingTime: '2018-7-24 16:45',
+        startTime: '2018-7-24 16:45',
+        remark: '我是盘后调整列表'
+      },
+      {
+        key: '9',
+        odd: 'KP00221180700001CW',
+        status: '已审核',
+        types: '明盘动盘',
+        dept: '药库',
+        oddUser: '张三三',
+        makingTime: '2018-7-24 16:45',
+        startTime: '2018-7-24 16:45',
+        remark: '我是盘后调整列表'
+      },
+      {
+        key: '10',
+        odd: 'KP0022118070000383',
+        status: '已审核',
+        types: '明盘全盘',
+        dept: '药库',
+        oddUser: '张三三',
+        makingTime: '2018-7-24 16:45',
+        startTime: '2018-7-24 16:45',
+        remark: '我是盘后调整列表'
+      },
+      {
+        key: '11',
+        odd: 'KP00221180700002DN',
+        status: '已审核',
+        types: '暗盘动销盘',
+        dept: '药库',
+        oddUser: '张三三',
+        makingTime: '2018-7-24 16:45',
+        startTime: '2018-7-24 16:45',
+        remark: '我是盘后调整列表'
+      },
+      {
+        key: '12',
+        odd: 'KP00221180700001CW',
+        status: '已审核',
+        types: '明盘动盘',
+        dept: '药库',
+        oddUser: '张三三',
+        makingTime: '2018-7-24 16:45',
+        startTime: '2018-7-24 16:45',
+        remark: '我是盘后调整列表'
+      },
+      {
+        key: '13',
+        odd: 'KP0022118070000383',
+        status: '已审核',
+        types: '明盘全盘',
+        dept: '药库',
+        oddUser: '张三三',
+        makingTime: '2018-7-24 16:45',
+        startTime: '2018-7-24 16:45',
+        remark: '我是盘后调整列表'
+      },
+      {
+        key: '14',
+        odd: 'KP00221180700002DN',
+        status: '已审核',
+        types: '暗盘动销盘',
+        dept: '药库',
+        oddUser: '张三三',
+        makingTime: '2018-7-24 16:45',
+        startTime: '2018-7-24 16:45',
+        remark: '我是盘后调整列表'
+      },
+      {
+        key: '15',
+        odd: 'KP00221180700001CW',
+        status: '已审核',
+        types: '明盘动盘',
+        dept: '药库',
+        oddUser: '张三三',
+        makingTime: '2018-7-24 16:45',
+        startTime: '2018-7-24 16:45',
+        remark: '我是盘后调整列表'
+      },
+      {
+        key: '16',
+        odd: 'KP0022118070000383',
+        status: '已审核',
+        types: '明盘全盘',
+        dept: '药库',
+        oddUser: '张三三',
+        makingTime: '2018-7-24 16:45',
+        startTime: '2018-7-24 16:45',
+        remark: '我是盘后调整列表'
+      },
+      {
+        key: '17',
+        odd: 'KP00221180700002DN',
+        status: '已审核',
+        types: '暗盘动销盘',
+        dept: '药库',
+        oddUser: '张三三',
+        makingTime: '2018-7-24 16:45',
+        startTime: '2018-7-24 16:45',
+        remark: '我是盘后调整列表'
+      },
+      {
+        key: '18',
+        odd: 'KP00221180700001CW',
+        status: '已审核',
+        types: '明盘动盘',
+        dept: '药库',
+        oddUser: '张三三',
+        makingTime: '2018-7-24 16:45',
+        startTime: '2018-7-24 16:45',
+        remark: '我是盘后调整列表'
+      },
+      {
+        key: '19',
+        odd: 'KP0022118070000383',
+        status: '已审核',
+        types: '明盘全盘',
+        dept: '药库',
+        oddUser: '张三三',
+        makingTime: '2018-7-24 16:45',
+        startTime: '2018-7-24 16:45',
+        remark: '我是盘后调整列表'
+      },
+      {
+        key: '20',
+        odd: 'KP00221180700002DN',
+        status: '已审核',
+        types: '暗盘动销盘',
+        dept: '药库',
+        oddUser: '张三三',
+        makingTime: '2018-7-24 16:45',
+        startTime: '2018-7-24 16:45',
+        remark: '我是盘后调整列表'
+      },
+      {
+        key: '21',
+        odd: 'KP00221180700001CW',
+        status: '已审核',
+        types: '明盘动盘',
+        dept: '药库',
+        oddUser: '张三三',
+        makingTime: '2018-7-24 16:45',
+        startTime: '2018-7-24 16:45',
+        remark: '我是盘后调整列表'
+      },
+      {
+        key: '22',
+        odd: 'KP0022118070000383',
+        status: '已审核',
+        types: '明盘全盘',
+        dept: '药库',
+        oddUser: '张三三',
+        makingTime: '2018-7-24 16:45',
+        startTime: '2018-7-24 16:45',
+        remark: '我是盘后调整列表'
+      },
+      {
+        key: '23',
+        odd: 'KP00221180700002DN',
+        status: '已审核',
+        types: '暗盘动销盘',
+        dept: '药库',
+        oddUser: '张三三',
+        makingTime: '2018-7-24 16:45',
+        startTime: '2018-7-24 16:45',
+        remark: '我是盘后调整列表'
+      },
+      {
+        key: '24',
+        odd: 'KP00221180700001CW',
+        status: '已审核',
+        types: '明盘动盘',
+        dept: '药库',
+        oddUser: '张三三',
+        makingTime: '2018-7-24 16:45',
+        startTime: '2018-7-24 16:45',
+        remark: '我是盘后调整列表'
+      },
+      {
+        key: '25',
+        odd: 'KP0022118070000383',
+        status: '已审核',
+        types: '明盘全盘',
+        dept: '药库',
+        oddUser: '张三三',
+        makingTime: '2018-7-24 16:45',
+        startTime: '2018-7-24 16:45',
+        remark: '我是盘后调整列表'
+      },
+      {
+        key: '26',
+        odd: 'KP00221180700002DN',
+        status: '已审核',
+        types: '暗盘动销盘',
+        dept: '药库',
+        oddUser: '张三三',
+        makingTime: '2018-7-24 16:45',
+        startTime: '2018-7-24 16:45',
+        remark: '我是盘后调整列表'
+      },
+      {
+        key: '27',
+        odd: 'KP00221180700001CW',
+        status: '已审核',
+        types: '明盘动盘',
+        dept: '药库',
+        oddUser: '张三三',
+        makingTime: '2018-7-24 16:45',
+        startTime: '2018-7-24 16:45',
+        remark: '我是盘后调整列表'
       }
     ];
     return (
@@ -162,8 +459,9 @@ class AfterAdjustment extends PureComponent{
           loading={ this.state.loading}
           scroll={{x: '100%'}}
           columns={columns}
-          rowKey={'oddGuid'}
+          // rowKey={'oddGuid'}
           style={{marginTop: 20}}
+          dataSource={dataSource}
         />
       </div>
     )

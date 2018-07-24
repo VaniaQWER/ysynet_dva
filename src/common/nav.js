@@ -437,7 +437,7 @@ export const getNavData = app => [
     },
 
     /*药房 */
-    /* {
+    {
       name: '药房',
       icon: 'table',
       path: '/pharmacy',
@@ -448,7 +448,7 @@ export const getNavData = app => [
       icon: 'setting',
       path: '/pharmacy/configMgt',
       component: dynamicWrapper(app, [], () => import('../routes/Pharmacy/configMgt'))
-    } */
+    }
   ]
 }]
 
