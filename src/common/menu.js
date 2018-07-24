@@ -234,7 +234,55 @@ const menu = [
     "id": "30101",
     "key": "/pharmacy/configMgt",
     "parentId": "m301"
-  }],
+  },
+  {
+    "path": "/pharmacy/checkDecrease",
+    "level": 1,
+    "fsort": 30103,
+    "name": "盘点损益",
+    "id": "30103",
+    "key": "/pharmacy/checkDecrease",
+    "parentId": "m303",
+    "subMenus":[
+      {
+        "path": "/pharmacy/checkDecrease/newInventory",
+        "level": 2,
+        "fsort": 30103,
+        "name": "新建盘点",
+        "id": "30103",
+        "key": "/pharmacy/checkDecrease/newInventory",
+        "parentId": "m304"
+      },
+      {
+        "path": "/pharmacy/checkDecrease/inventoryAudit",
+        "level": 2,
+        "fsort": 30103,
+        "name": "盘点审核",
+        "id": "30103",
+        "key": "/pharmacy/checkDecrease/inventoryAudit",
+        "parentId": "m305"
+      },
+      {
+        "path": "/pharmacy/checkDecrease/afterAdjustment",
+        "level": 2,
+        "fsort": 30103,
+        "name": "盘后调整",
+        "id": "30103",
+        "key": "/pharmacy/checkDecrease/afterAdjustment",
+        "parentId": "m306"
+      },
+      {
+        "path": "/pharmacy/checkDecrease/profiLossRecord",
+        "level": 2,
+        "fsort": 30103,
+        "name": "损益记录",
+        "id": "30103",
+        "key": "/pharmacy/checkDecrease/profiLossRecord",
+        "parentId": "m307"
+      },
+    ]
+  }
+],
   "level": 0,
   "fsort": 301,
   "name": "药房",
@@ -247,4 +295,4 @@ const menu = [
 
 
 
-export default menu ; 
+export default menu; 

@@ -448,7 +448,84 @@ export const getNavData = app => [
       icon: 'setting',
       path: '/pharmacy/configMgt',
       component: dynamicWrapper(app, [], () => import('../routes/Pharmacy/configMgt'))
-    }
+    },
+    // 药房 - 盘点损益
+    {
+      name: "盘点损益",
+      icon: 'setting',
+      path: '/pharmacy/checkDecrease',
+      component: dynamicWrapper(app, [], () => import('../routes/Pharmacy/checkDecrease/newInventory')),
+    },
+    // 药房 - 盘点损益 - 新建盘点
+    {
+      name: "新建盘点",
+      icon: 'setting',
+      path: '/pharmacy/checkDecrease/newInventory',
+      component: dynamicWrapper(app, [], () => import('../routes/Pharmacy/checkDecrease/newInventory')),
+    },
+    // 药房 - 盘点损益 - 新建盘点 - 详情(待确认)
+    {
+      name: "新建盘点-详情(待确认)",
+      icon: 'setting',
+      path: '/pharmacy/checkDecrease/newInventory/details',
+      component: dynamicWrapper(app, [], () => import('../routes/Pharmacy/checkDecrease/newInventory/details')),
+    },
+    // 药房 - 盘点损益 - 新建盘点 - 详情(已确认)
+    {
+      name: "新建盘点-详情(已确认)",
+      icon: 'setting',
+      path: '/pharmacy/checkDecrease/newInventory/detailsConfirm',
+      component: dynamicWrapper(app, [], () => import('../routes/Pharmacy/checkDecrease/newInventory/detailsConfirm')),
+    },
+    // 药房 - 盘点损益 - 盘点审核
+    {
+      name: "盘点审核",
+      icon: 'setting',
+      path: '/pharmacy/checkDecrease/inventoryAudit',
+      component: dynamicWrapper(app, [], () => import('../routes/Pharmacy/checkDecrease/inventoryAudit')),
+    },
+    // 药房 - 盘点损益 - 盘点审核 - 详情(待审核)
+    {
+      name: "盘点审核-详情(待审核)",
+      icon: 'setting',
+      path: '/pharmacy/checkDecrease/inventoryAudit/details',
+      component: dynamicWrapper(app, [], () => import('../routes/Pharmacy/checkDecrease/inventoryAudit/details')),
+    },
+    // 药房 - 盘点损益 - 盘点审核 - 详情(已审核)
+    {
+      name: "盘点审核-详情(已审核)",
+      icon: 'setting',
+      path: '/pharmacy/checkDecrease/inventoryAudit/detailsConfirm',
+      component: dynamicWrapper(app, [], () => import('../routes/Pharmacy/checkDecrease/inventoryAudit/detailsConfirm')),
+    },
+    // 药房 - 盘点损益 - 盘后调整
+    {
+      name: "盘后调整",
+      icon: 'setting',
+      path: '/pharmacy/checkDecrease/afterAdjustment',
+      component: dynamicWrapper(app, [], () => import('../routes/Pharmacy/checkDecrease/afterAdjustment')),
+    },
+    // 药房 - 盘点损益 - 盘后调整 - 详情
+    {
+      name: "盘后调整-详情",
+      icon: 'setting',
+      path: '/pharmacy/checkDecrease/afterAdjustment/details',
+      component: dynamicWrapper(app, [], () => import('../routes/Pharmacy/checkDecrease/afterAdjustment/details')),
+    },
+    // 药房 - 盘点损益 - 损益记录
+    {
+      name: "损益记录",
+      icon: 'setting',
+      path: '/pharmacy/checkDecrease/profiLossRecord',
+      component: dynamicWrapper(app, [], () => import('../routes/Pharmacy/checkDecrease/profiLossRecord')),
+    },
+    // 药房 - 盘点损益 - 损益记录 - 详情
+    {
+      name: "损益记录-详情",
+      icon: 'setting',
+      path: '/pharmacy/checkDecrease/profiLossRecord/details',
+      component: dynamicWrapper(app, [], () => import('../routes/Pharmacy/checkDecrease/profiLossRecord/details')),
+    },
   ]
 }]
 
