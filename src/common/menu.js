@@ -28,6 +28,25 @@ const menu = [
         "parentId": "m303"
       }
     ]
+  },{
+    "path": "/drugStorage/checkDecrease",
+    "level": 1,
+    "fsort": 30103,
+    "name": "盘点损益",
+    "id": "30103",
+    "key": "/drugStorage/checkDecrease",
+    "parentId": "m303",
+    "subMenus":[
+      {
+        "path": "/drugStorage/checkDecrease/newInventory",
+        "level": 2,
+        "fsort": 30103,
+        "name": "新建盘点",
+        "id": "30103",
+        "key": "/drugStorage/checkDecrease/newInventory",
+        "parentId": "m303"
+      }
+    ]
   }],
   "level": 0,
   "fsort": 301,

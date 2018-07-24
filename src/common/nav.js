@@ -158,7 +158,38 @@ export const getNavData = app => [
                 }
               ]
             },
-           
+            {
+              name: "盘点损益",
+              icon: 'setting',
+              path: '/checkDecrease',
+              component: dynamicWrapper(app, [], () => import('../routes/DrugStorage/checkDecrease/newInventory')),
+              children: [
+                {
+                  name: "新建盘点",
+                  icon: 'setting',
+                  path: '/newInventory',
+                  component: dynamicWrapper(app, [], () => import('../routes/DrugStorage/checkDecrease/newInventory'))
+                },
+                {
+                  name: "盘点审核",
+                  icon: 'setting',
+                  path: '/inventoryAudit',
+                  component: dynamicWrapper(app, [], () => import('../routes/DrugStorage/checkDecrease/inventoryAudit'))
+                },
+                {
+                  name: "盘后调整",
+                  icon: 'setting',
+                  path: '/afterAdjustment',
+                  component: dynamicWrapper(app, [], () => import('../routes/DrugStorage/checkDecrease/afterAdjustment'))
+                },
+                {
+                  name: "损益记录",
+                  icon: 'setting',
+                  path: '/profiLossRecord',
+                  component: dynamicWrapper(app, [], () => import('../routes/DrugStorage/checkDecrease/profiLossRecord'))
+                },
+              ]
+            },
           ]
         },
       ]},{
