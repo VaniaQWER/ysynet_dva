@@ -43,10 +43,20 @@ class Login extends PureComponent{
               this.props.dispatch({
                 type: 'users/getSubSystem',
                 payload: {},
-                callback: () => this.props.history.push({ pathname: '/subSystem' })
+                callback: () => {
+                  this.props.dispatch({
+                    type: 'users/fetch',
+                    payload: {}
+                  });
+                  this.props.history.push({ pathname: '/subSystem' })
+                }
               })
             }else{
-              this.props.history.push({ pathname: '/' })
+              this.props.dispatch({
+                type: 'users/fetch',
+                payload: {}
+              });
+              this.props.history.push({ pathname: '/home' });
             }
           }
         })
