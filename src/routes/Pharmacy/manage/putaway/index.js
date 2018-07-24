@@ -52,7 +52,7 @@ class Putaway extends PureComponent{
   render(){
     const columns = [
       {
-       title: '配送单',
+       title: '药库出库单',
        width:150,
        dataIndex: 'medicinalCode',
       },
@@ -141,9 +141,7 @@ class Putaway extends PureComponent{
         dataIndex: 'RN',
         render: (text, record) => 
           <span>
-            <Popconfirm title="确定提交吗？" okText="是" cancelText="否"  onConfirm={()=>this.confirmOk(record)}>
-              确认
-            </Popconfirm>
+            <Popconfirm title="确定提交吗？" okText="是" cancelText="否"  onConfirm={()=>this.confirmOk(record)}>确认</Popconfirm>
           </span>  
       }
     ];
@@ -207,23 +205,9 @@ class SearchFormWrapper extends PureComponent {
      <Form onSubmit={this.handleSearch}>
        <Row>
          <Col span={8}>
-           <FormItem label={`配送单`} {...formItemLayout}>
+           <FormItem label={`出库单`} {...formItemLayout}>
              {getFieldDecorator('assetCode', {})(
               <Input/>
-             )}
-           </FormItem>
-         </Col>
-         <Col span={8}>
-           <FormItem label={`供应商`} {...formItemLayout}>
-             {getFieldDecorator('assetName', {})(
-              <Select 
-                showSearch
-                placeholder={'请选择'}
-                optionFilterProp="children"
-                filterOption={(input, option) => option.props.children.indexOf(input) >= 0}
-                >
-                    <Option key="" value="">全部</Option>
-              </Select>
              )}
            </FormItem>
          </Col>

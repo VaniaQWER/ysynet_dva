@@ -573,6 +573,122 @@ export const getNavData = app => [
       path: '/pharmacy/checkDecrease/profiLossRecord/details',
       component: dynamicWrapper(app, [], () => import('../routes/Pharmacy/checkDecrease/profiLossRecord/details')),
     },
+    /*药房 --药房管理 -- 开始*/
+    {
+      name: '药房管理',//药房-药房管理
+      icon: 'setting',
+      path: '/pharmacy/manage',
+      component: dynamicWrapper(app, [], () => import('../routes/Pharmacy/manage/drugDirectory'))
+    },
+    {
+      name: "药品目录",//药房-药房管理-药品目录
+      icon: 'setting',
+      path: '/pharmacy/manage/drugDirectory',
+      component: dynamicWrapper(app, [], () => import('../routes/Pharmacy/manage/drugDirectory')),
+    },
+    {
+      name: "药品目录-编辑",//药房-药房管理-药品目录-编辑
+      icon: 'setting',
+      path: '/pharmacy/manage/drugDirectory/edit',
+      component: dynamicWrapper(app, [], () => import('../routes/Pharmacy/manage/drugDirectory/edit')),
+    },
+    {
+      name: "退库",//药库-药房管理-退库
+      icon: 'setting',
+      path: '/pharmacy/manage/refund',
+      component: dynamicWrapper(app, [], () => import('../routes/Pharmacy/manage/refund')),
+    },
+    {
+      name: "退库-新增",//药库-药房管理-退库-新增
+      icon: 'setting',
+      path: '/pharmacy/manage/refund/add',
+      component: dynamicWrapper(app, [], () => import('../routes/Pharmacy/manage/refund/add')),
+    },
+    {
+      name: "退库-详情",//药库-药房管理-退库-详情
+      icon: 'setting',
+      path: '/pharmacy/manage/refund/details',
+      component: dynamicWrapper(app, [], () => import('../routes/Pharmacy/manage/refund/details')),
+    },
+    {
+      name: "发药出库",//药库-药房管理-发药出库
+      icon: 'setting',
+      path: '/pharmacy/manage/output',
+      component: dynamicWrapper(app, [], () => import('../routes/Pharmacy/manage/output')),
+    },
+    {
+      name: "发药出库-详情",//药库-药房管理-发药出库-详情
+      icon: 'setting',
+      path: '/pharmacy/manage/output/details',
+      component: dynamicWrapper(app, [], () => import('../routes/Pharmacy/manage/output/details')),
+    },
+    {
+      name: "新建入库",//药库-药房管理-新建入库
+      icon: 'setting',
+      path: '/pharmacy/manage/newLibrary',
+      component: dynamicWrapper(app, [], () => import('../routes/Pharmacy/manage/newLibrary')),
+    },
+    {
+      name: "新建入库-新增",//药库-药房管理-新建入库-新增
+      icon: 'setting',
+      path: '/pharmacy/manage/newLibrary/add',
+      component: dynamicWrapper(app, [], () => import('../routes/Pharmacy/manage/newLibrary/add')),
+    },
+    {
+      name: "新建入库-详情",//药库-药房管理-新建入库-详情
+      icon: 'setting',
+      path: '/pharmacy/manage/newLibrary/details',
+      component: dynamicWrapper(app, [], () => import('../routes/Pharmacy/manage/newLibrary/details')),
+    },
+    {
+      name: "上架",//药库-药房管理-上架
+      icon: 'setting',
+      path: '/pharmacy/manage/putaway',
+      component: dynamicWrapper(app, [], () => import('../routes/Pharmacy/manage/putaway')),
+    },
+    {
+      name: "验收",//药库-药房管理-验收
+      icon: 'setting',
+      path: '/pharmacy/manage/acceptance',
+      component: dynamicWrapper(app, [], () => import('../routes/Pharmacy/manage/acceptance')),
+    },
+    {
+      name: "验收-新增",//药库-药房管理-验收-新增
+      icon: 'setting',
+      path: '/pharmacy/manage/acceptance/add',
+      component: dynamicWrapper(app, [], () => import('../routes/Pharmacy/manage/acceptance/add')),
+    },
+    {
+      name: "验收-编辑",//药库-药房管理-验收-编辑
+      icon: 'setting',
+      path: '/pharmacy/manage/acceptance/details',
+      component: dynamicWrapper(app, [], () => import('../routes/Pharmacy/manage/acceptance/details')),
+    },
+    {
+      name: "药品申领 ",//药库-药房管理-药品申领 
+      icon: 'setting',
+      path: '/pharmacy/manage/drugsFor',
+      component: dynamicWrapper(app, [], () => import('../routes/Pharmacy/manage/drugsFor')),
+    },
+    {
+      name: "药品申领 -新增",//药库-药房管理-药品申领 -新增
+      icon: 'setting',
+      path: '/pharmacy/manage/drugsFor/add',
+      component: dynamicWrapper(app, [], () => import('../routes/Pharmacy/manage/drugsFor/add')),
+    },
+    {
+      name: "药品申领 -编辑",//药库-药房管理-药品申领 -编辑
+      icon: 'setting',
+      path: '/pharmacy/manage/drugsFor/details',
+      component: dynamicWrapper(app, [], () => import('../routes/Pharmacy/manage/drugsFor/details')),
+    }
+     /*药房 --药房管理 -- 结束*/
+
+
+
+
+
+    
   ]
 }]
 
