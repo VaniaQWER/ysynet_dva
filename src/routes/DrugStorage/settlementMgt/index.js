@@ -147,7 +147,12 @@ const columns = [
     {
     title: '汇总单',
     dataIndex: 'summarySheet',
-    key: 'summarySheet'
+    key: 'summarySheet',
+    render: (text) => (
+        <span>
+            <Link to={{ pathname: `/drugStorage/settlementMgt/details`}}>{text}</Link>
+        </span>
+    )
 }, {
     title: '库房',
     dataIndex: 'warehouse',
@@ -164,15 +169,6 @@ const columns = [
     title: '汇总时间',
     dataIndex: 'summaryData',
     key: 'summaryData'
-}, {
-    title: '操作',
-    dataIndex: 'details',
-    key: 'details',
-    render: (text) => (
-        <span>
-            <Link to={{ pathname: `/drugStorage/settlementMgt/details`}}>详情</Link>
-        </span>
-    )
 }]
 
 const columns2 = [

@@ -32,8 +32,7 @@ dataSource = dataSource.map((item) => {
     floorInventory: 222,
     dateOfManu: '2017-8-23',
     validUntil: '2018-8-23',
-    supplier: '国药药业集团',
-    operation: '查看'
+    supplier: '国药药业集团'
   }
 })
 
@@ -42,6 +41,13 @@ const columns = [
   title: '通用名',
   dataIndex: 'name',
   key: 'name',
+  render: (text, record) => {
+    return (
+      <span>
+        <Link to={{pathname: `/drugStorage/stockInquiry/details`}}>{text}</Link>
+      </span>  
+    )
+  }
 }, {
   title: '商品名',
   dataIndex: 'productName',
@@ -90,18 +96,6 @@ const columns = [
   title: '供应商',
   dataIndex: 'supplier',
   key: 'supplier',
-}, {
-  title: '操作',
-  dataIndex: 'details',
-  key: 'details',
-  render: (text, record) => {
-    console.log(record)
-    return (
-      <span>
-        <Link to={{pathname: `/drugStorage/stockInquiry/details`}}>查看</Link>
-      </span>  
-    )
-  }
 }];
 
 
