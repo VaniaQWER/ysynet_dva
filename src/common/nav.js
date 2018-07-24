@@ -22,52 +22,64 @@ export const getNavData = app => [
         component: dynamicWrapper(app, [], () => import('../routes/Workplace'))
       },
       {
-        name: "菜单管理",
+        name: "医商云",
         icon: 'add',
-        path: 'ysy/menu',
-        component: dynamicWrapper(app, ['ysy/menu'], () => import('../routes/YSY/menu'))
-      },
-      {
-        name: "子系统管理",
-        icon: 'add',
-        path: 'ysy/subSystem',
-        component: dynamicWrapper(app, ['ysy/subSystem'], () => import('../routes/YSY/subSystem'))
-      },
-      {
-        name: "部署管理",
-        icon: 'add',
-        path: 'ysy/arrange',
-        component: dynamicWrapper(app, ['ysy/arrange'], () => import('../routes/YSY/arrange'))
-      },
-      {
-        name: "授权管理",
-        icon: 'add',
-        path: 'ysy/accredit',
-        component: dynamicWrapper(app, ['ysy/accredit'], () => import('../routes/YSY/accredit'))
-      },
-      {
-        name: "管理员管理",
-        icon: 'add',
-        path: 'ysy/managerMgt',
-        component: dynamicWrapper(app, ['ysy/managerMgt'], () => import('../routes/YSY/managerMgt'))
+        path: 'ysy',
+        children: [{
+          name: '菜单管理',
+          icon: 'add',
+          path: '/menu',
+          component: dynamicWrapper(app, ['ysy/menu'], () => import('../routes/YSY/menu')),
+        },{
+          name: "子系统管理",
+          icon: 'add',
+          path: '/subSystem',
+          component: dynamicWrapper(app, ['ysy/subSystem'], () => import('../routes/YSY/subSystem'))
+        },{
+          name: "部署管理",
+          icon: 'add',
+          path: '/arrange',
+          component: dynamicWrapper(app, ['ysy/arrange'], () => import('../routes/YSY/arrange'))
+        },{
+          name: "授权管理",
+          icon: 'add',
+          path: '/accredit',
+          component: dynamicWrapper(app, ['ysy/accredit'], () => import('../routes/YSY/accredit'))
+        },{
+          name: "管理员管理",
+          icon: 'add',
+          path: '/managerMgt',
+          component: dynamicWrapper(app, ['ysy/managerMgt'], () => import('../routes/YSY/managerMgt'))
+        }]
       },
       {
         name: "子系统配置",
         icon: 'setting',
-        path: 'configure/subSystemConfigure',
-        component: dynamicWrapper(app, ['config/subSystemConfig'], () => import('../routes/Configure/subSystemConfig'))
+        path: '/configure',
+        children: [{
+          name: "子系统配置",
+          icon: 'add',
+          path: '/subSystemConfigure',
+          component: dynamicWrapper(app, ['config/subSystemConfig'], () => import('../routes/Configure/subSystemConfig'))
+        },{
+          
+        }],
       },
       {
         name: "数据字典",
         icon: 'setting',
-        path: 'dictionary/dictionaryMgt',
-        component: dynamicWrapper(app, ['dictionary/dictionary'], () => import('../routes/Dictionary/dictionary'))
-      },
-      {
-        name: "分类管理",
-        icon: 'setting',
-        path: 'dictionary/classifyMgt',
-        component: dynamicWrapper(app, ['dictionary/classifyMgt'], () => import('../routes/Dictionary/classify'))
+        path: 'dictionary',
+        children: [{
+          name: "数据字典",
+          icon: 'setting',
+          path: '/dictionaryMgt',
+          component: dynamicWrapper(app, ['dictionary/dictionary'], () => import('../routes/Dictionary/dictionary'))
+        },{
+          name: "分类管理",
+          icon: 'setting',
+          path: '/classifyMgt',
+          component: dynamicWrapper(app, ['dictionary/classifyMgt'], () => import('../routes/Dictionary/classify'))
+        }]
       },
       {
         name: "子系统管理",
