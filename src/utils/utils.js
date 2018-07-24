@@ -78,3 +78,5 @@ export const objCompare = (obj1, obj2) => {
   }  
   return true;
 }
+
+export const getMenuData  = (key, menuList) => menuList.filter(item => item.path === `/${key}`)[0].subMenus

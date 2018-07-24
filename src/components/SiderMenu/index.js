@@ -3,7 +3,7 @@ import { Menu, Icon, message, Spin } from 'antd';
 import { connect } from 'dva';
 import menu from '../../common/menu';
 import styles from './style.css';
-console.log(styles)
+import { getMenuData } from '../../utils/utils'
 const SubMenu = Menu.SubMenu;
 // 使用递归创建菜单
 const createMenu = menuList => {
@@ -145,8 +145,7 @@ class SiderMenu extends PureComponent{
           }}
         >
           {
-            createMenu(menu)
-            // createMenu(menuList)
+            createMenu(getMenuData(history.location.pathname.split('/')[1], menu))
           }
           </Menu> :
           <Spin tip="数据加载中" style={{width: '100%', height: 200, marginTop: 200}}/>

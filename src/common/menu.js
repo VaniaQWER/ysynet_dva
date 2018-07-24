@@ -224,7 +224,7 @@ const menu = [
   "key": "/drugStorage",
   "parentId": "m3"
 }, 
-/* {
+{
   "path": "/pharmacy",
   "subMenus": [{
     "path": "/pharmacy/configMgt",
@@ -242,7 +242,9 @@ const menu = [
   "id": "m301",
   "key": "/pharmacy",
   "parentId": "m3"
-} */
+}
 ]
+
+
 
 export default menu ; 
