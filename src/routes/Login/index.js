@@ -1,9 +1,9 @@
 import React, { PureComponent } from 'react';
 import { Form, Button, Checkbox, Input, Icon, message } from 'antd';
 import { connect } from 'dva';
-import querystring from 'querystring';
-import shajs from 'sha.js'
-import ysy from '../../api/ysy';
+// import querystring from 'querystring';
+// import shajs from 'sha.js'
+// import ysy from '../../api/ysy';
 import styles from './style.css';
 const FormItem = Form.Item;
 
@@ -17,49 +17,53 @@ class Login extends PureComponent{
       if(!err){
         this.setState({ loading: true });
         const { userName, password } = values;
-        const userInfo = {
-          userNo: userName, 
-          pwd: shajs('sha256').update(password).digest('hex'),
-          // token: 'vania'
+        // const userInfo = {
+        //   userNo: userName, 
+        //   pwd: shajs('sha256').update(password).digest('hex'),
+        //   // token: 'vania'
+        // }
+        if ( userName === 'admin' &&  password === 'admin' ) {
+          this.props.history.push({ pathname: '/subSystem' })
+        } else {
+          message.error('账号或密码错误！')
         }
-        console.log(userInfo,'userInfo');
-        this.setState({ loading: true });
-        fetch(ysy.USERLOGIN,{
-          credentials: 'include',
-          method: 'post',
-          headers: {
-            'Content-Type': 'application/x-www-form-urlencoded'
-          },
-          body: querystring.stringify(userInfo)
-        })
-        .then((res)=>res.json())
-        .then((data)=>{
-          this.setState({ loading: false });
-          if(!data.result.loginResult){
-            message.error(data.result.loginResult)
-          }else{
-            if(!data.result.subSystemFlag){
-              // 跳转到选择子系统页面
-              this.props.dispatch({
-                type: 'users/getSubSystem',
-                payload: {},
-                callback: () => {
-                  this.props.dispatch({
-                    type: 'users/fetch',
-                    payload: {}
-                  });
-                  this.props.history.push({ pathname: '/subSystem' })
-                }
-              })
-            }else{
-              this.props.dispatch({
-                type: 'users/fetch',
-                payload: {}
-              });
-              this.props.history.push({ pathname: '/home' });
-            }
-          }
-        })
+        this.setState({ loading: false });
+        // fetch(ysy.USERLOGIN,{
+        //   credentials: 'include',
+        //   method: 'post',
+        //   headers: {
+        //     'Content-Type': 'application/x-www-form-urlencoded'
+        //   },
+        //   body: querystring.stringify(userInfo)
+        // })
+        // .then((res)=>res.json())
+        // .then((data)=>{
+        //   this.setState({ loading: false });
+        //   if(!data.result.loginResult){
+        //     message.error(data.result.loginResult)
+        //   }else{
+        //     if(!data.result.subSystemFlag){
+        //       // 跳转到选择子系统页面
+        //       this.props.dispatch({
+        //         type: 'users/getSubSystem',
+        //         payload: {},
+        //         callback: () => {
+        //           this.props.dispatch({
+        //             type: 'users/fetch',
+        //             payload: {}
+        //           });
+        //           this.props.history.push({ pathname: '/subSystem' })
+        //         }
+        //       })
+        //     }else{
+        //       this.props.dispatch({
+        //         type: 'users/fetch',
+        //         payload: {}
+        //       });
+        //       this.props.history.push({ pathname: '/home' });
+        //     }
+        //   }
+        // })
       }
     })
   }
@@ -74,7 +78,7 @@ class Login extends PureComponent{
          <div className={styles['ysy-Login-form']} style={{ width: '38%' }}>
             <div className={styles['ysy-Login-form-top']}>
               <span className={styles['ysy-lgo']}></span>
-              <span className={styles['ysy-login-logo']}></span>
+              {/* <span className={styles['ysy-login-logo']}></span> */}
             </div>
             <Form onSubmit={this.handleSubmit}>
               <FormItem {...wrapperLayout}>

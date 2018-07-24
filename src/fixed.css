@@ -94,7 +94,7 @@
 }
 
 .logoDesc {
-  color: #fff;
+  color: #f2a11c;
   display: inline-block;
   vertical-align: middle;
   font-size: 20px;
@@ -104,15 +104,17 @@
 }
 
 .logoWrapper {
-  height: 64px;
+  height: 61px;
   position: relative;
-  background-color: #002140;
+  /* background-color: #fff; */
+  color: #000;
   line-height: 64px;
   padding-left: 24px;
   -webkit-transition: all .3s;
   -o-transition: all .3s;
   transition: all .3s;
   overflow: hidden;
+  border-bottom: 3px solid #f0f2f5;
 }
 
 /*lable显示文字时 left*/

@@ -2,8 +2,9 @@ import React, { PureComponent } from 'react';
 import { Menu, Icon, message, Spin } from 'antd';
 import { connect } from 'dva';
 import menu from '../../common/menu';
+import styles from './style.css';
+console.log(styles)
 const SubMenu = Menu.SubMenu;
-
 // 使用递归创建菜单
 const createMenu = menuList => {
   return (
@@ -126,7 +127,8 @@ class SiderMenu extends PureComponent{
       {
         menu && menu.length ? //menuList && menuList.length ?
         <Menu 
-          theme="dark" 
+          className={styles.fullscreen}
+          theme="light" 
           mode="inline"
           selectedKeys={[selectedKeys]}
           onOpenChange={this.onOpenChange}
