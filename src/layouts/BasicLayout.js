@@ -2,6 +2,7 @@ import React, { PureComponent } from 'react';
 import { Route, Switch, Redirect } from 'dva/router';
 import { Layout, Icon, Row, Col, Tooltip  } from 'antd';
 import { connect } from 'dva';
+import Profile from '../components/profile'
 import SiderMenu from '../components/SiderMenu';
 import styles from './style.css';
 const { Header, Content, Sider } = Layout;
@@ -54,17 +55,25 @@ class BasicLayout extends PureComponent {
                   type={this.state.collapsed ? 'menu-unfold' : 'menu-fold'} 
                 /> {title.mainTitle}
               </Col>
-              <Col span={18} style={{textAlign: 'right'}}>
-                <Tooltip title="子系统切换">
-                  <Icon type="sync" className={styles.icon} onClick={() => this.props.history.push({
-                    pathname: '/subSystem'
-                  })}/> 
-                </Tooltip>
+              <Col span={20} style={{textAlign: 'right'}}>
+                <div className={styles.profile}>
+                  <div>
+                    <Tooltip title="子系统切换">
+                      <Icon type="sync" className={styles.icon} onClick={() => this.props.history.push({
+                        pathname: '/subSystem'
+                      })}/> 
+                    </Tooltip>
+                  </div>
+                  <Profile userName={'系统管理员'}/>
+                </div>
               </Col>
             </Row>
           </Header>
           <Header className={`${styles.subHeader}`}>
-            {title.subTitle}
+            <Tooltip title='返回' placement='bottom'>
+              <Icon type="arrow-left" onClick={()=>this.props.history.go(-1)} style={{ fontSize: 18, marginRight: 16 }}/>
+            </Tooltip>
+            <span>{title.subTitle}</span>
           </Header>
           <Content className={`${styles.content}`}>
             <Switch>

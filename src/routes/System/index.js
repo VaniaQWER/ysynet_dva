@@ -42,7 +42,7 @@ class SubSystem extends PureComponent {
                 ) */
               }
               <div className={styles.cardItem} onClick={() => {
-                this.props.history.push({ pathname: '/drugStorage/configMgt' })
+                this.props.history.push({ pathname: '/drugStorage/replenishment/replenishmentPlan' })
               }}></div>
               <div className={styles.cardItemTwo} onClick={() => {
                 this.props.history.push({ pathname: '/pharmacy/configMgt' })

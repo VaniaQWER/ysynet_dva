@@ -23,11 +23,15 @@ class Login extends PureComponent{
         //   // token: 'vania'
         // }
         if ( userName === 'admin' &&  password === 'admin' ) {
-          this.props.history.push({ pathname: '/subSystem' })
+          setTimeout(()=>{
+            this.setState({ loading: false  })
+            this.props.history.push({ pathname: '/subSystem' })
+          },500)
         } else {
-          message.error('账号或密码错误！')
+          this.setState({ loading: false  })
+          message.error('账号或密码错误！');
         }
-        this.setState({ loading: false });
+        // this.setState({ loading: false });
         // fetch(ysy.USERLOGIN,{
         //   credentials: 'include',
         //   method: 'post',

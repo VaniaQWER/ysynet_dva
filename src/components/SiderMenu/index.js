@@ -83,6 +83,7 @@ class SiderMenu extends PureComponent{
   }
   componentWillMount = () => {
     this.changeActiveKeys();
+    this.setSubTitle(menu)
   }
   onOpenChange = openKeys => {
     let changeKey = openKeys.length ? openKeys[openKeys.length - 1] : [];
@@ -109,14 +110,13 @@ class SiderMenu extends PureComponent{
     if (nextProps.collapsed) {
       this.setState({ openKeys: [] })
     }
-    if( this.state.firstTime && nextProps.users.menuList !== this.props.users.menuList){
+    /* if( this.state.firstTime && nextProps.users.menuList !== this.props.users.menuList){
       this.setSubTitle(nextProps.users.menuList);
       this.setState({ firstTime: false })
-    }
+    } */
   }
   render(){
     const { history } = this.props;
-    // const { menuList } = this.props.users;
     const { selectedKeys, openKeys } = this.state;
     return (
     <div>

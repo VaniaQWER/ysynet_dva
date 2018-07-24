@@ -2,13 +2,13 @@
  * @Author: wwb 
  * @Date: 2018-07-24 18:49:01 
  * @Last Modified by: wwb
- * @Last Modified time: 2018-07-24 20:28:20
+ * @Last Modified time: 2018-07-24 23:23:07
  */
 /**
  * @file 药库 - 补货管理--补货计划--新建计划
  */
 import React, { PureComponent } from 'react';
-import { Form, Row, Col, Button, Input, Table, Modal, Icon,  } from 'antd';
+import { Form, Row, Col, Button, Input, Table, Modal, Icon, Tooltip  } from 'antd';
 import { formItemLayout } from '../../../../utils/commonStyles'
 import { createData } from '../../../../common/data';
 const FormItem = Form.Item;
@@ -36,7 +36,11 @@ class NewAdd extends PureComponent{
       dataIndex: 'productName'
     },{
       title: '规格',
-      dataIndex: 'spec'
+      dataIndex: 'spec',
+      className:'ellipsis',
+      render:(text)=>(
+        <Tooltip placement="topLeft" title={text}>{text}</Tooltip>
+      )
     },{
       title: '剂型',
       dataIndex: 'fmodal',

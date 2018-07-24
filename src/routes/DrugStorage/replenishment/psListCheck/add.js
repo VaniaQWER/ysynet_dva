@@ -2,13 +2,13 @@
  * @Author: wwb 
  * @Date: 2018-07-24 20:15:54 
  * @Last Modified by: wwb
- * @Last Modified time: 2018-07-24 22:24:12
+ * @Last Modified time: 2018-07-24 23:25:24
  */
 /* 
   @file 验收 新建验收
 */
 import React, { PureComponent } from 'react';
-import { Table ,Row, Col, Input, DatePicker } from 'antd';
+import { Table ,Row, Col, Input, DatePicker,Tooltip } from 'antd';
 import moment from 'moment';
 import { createData } from '../../../../common/data';
 const columns = [
@@ -26,6 +26,10 @@ const columns = [
     title: '规格',
     dataIndex: 'spec',
     width: 180,
+    className:'ellipsis',
+    render:(text)=>(
+      <Tooltip placement="topLeft" title={text}>{text}</Tooltip>
+    )
   },
   {
     title: '剂型',
