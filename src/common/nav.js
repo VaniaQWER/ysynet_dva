@@ -82,34 +82,71 @@ export const getNavData = app => [
         }]
       },
       {
-        name: "子系统管理",
+        name: '精细化',
         icon: 'setting',
-        path: 'jxh/subSystemMgt',
-        component: dynamicWrapper(app, ['manager/subSystemMgt'], () => import('../routes/Manager/subSystemMgt'))
-      },
-      {
-        name: "子系统管理员",
-        icon: 'setting',
-        path: 'jxh/subSystemMgter',
-        component: dynamicWrapper(app, ['manager/subSystemManager'], () => import('../routes/Manager/subSystemManager'))
-      },
-      {
-        name: "科室管理",
-        icon: 'setting',
-        path: 'jxh/dpetMgt',
-        component: dynamicWrapper(app, ['manager/deptMgt'], () => import('../routes/Manager/deptMgt'))
-      },
-      {
-        name: "配置管理",
-        icon: 'setting',
-        path: 'flcksSubSystem/configMgt',
-        component: dynamicWrapper(app, ['manager/deptMgt'], () => import('../routes/NonClinicalDeptSystem'))
-      },
-      {
-        name: "配置管理",
-        icon: 'setting',
-        path: 'lcksSubSystem/configMgt',
-        component: dynamicWrapper(app, ['manager/deptMgt'], () => import('../routes/ClinicalDeptSystem'))
+        path: 'jxh',
+        children: [
+          {
+            name: '管理员',
+            icon: 'user',
+            path: '/manager',
+            children: [{
+              name: '子系统管理',
+              icon: 'setting',
+              path: '/subSystemMgt',
+              component: dynamicWrapper(app, ['manager/subSystemMgt'], () => import('../routes/Manager/subSystemMgt'))
+            },{
+              name: "子系统管理员",
+              icon: 'setting',
+              path: '/subSystemMgter',
+              component: dynamicWrapper(app, ['manager/subSystemManager'], () => import('../routes/Manager/subSystemManager'))
+            },{
+              name: "科室管理",
+              icon: 'setting',
+              path: '/dpetMgt',
+              component: dynamicWrapper(app, ['manager/deptMgt'], () => import('../routes/Manager/deptMgt'))
+            }]
+          },{
+            name: '非临床科室子系统',
+            icon: 'table',
+            path: '/flcksSubSystem',
+            children: [{
+              name: "配置管理",
+              icon: 'setting',
+              path: '/configMgt',
+              component: dynamicWrapper(app, ['manager/deptMgt'], () => import('../routes/NonClinicalDeptSystem'))
+            }]
+        },{
+            name: '临床科室子系统',
+            icon: 'table',
+            path: '/lcksSubSystem',
+            children: [{
+              name: "配置管理",
+              icon: 'setting',
+              path: '/configMgt',
+              component: dynamicWrapper(app, ['manager/deptMgt'], () => import('../routes/ClinicalDeptSystem'))
+            }]
+        },{
+          name: '药库',
+          icon: 'table',
+          path: '/drugStorage',
+          children: [{
+            name: "配置管理",
+            icon: 'setting',
+            path: '/configMgt',
+            component: dynamicWrapper(app, [], () => import('../routes/DrugStorage/configMgt'))
+          }]
+        },{
+          name: '药房',
+          icon: 'table',
+          path: '/pharmacy',
+          children: [{
+            name: '配置管理',
+            icon: 'setting',
+            path: '/configMgt',
+            component: dynamicWrapper(app, [], () => import('../routes/Pharmacy/configMgt'))
+          }]
+        }]
       }
     ]
   },
