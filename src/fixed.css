@@ -8,9 +8,6 @@
   width: 1000px;
   height: 250px;
 }
-.ant-menu-submenu-popup{
-  display: none !important;
-}
 .ysy-text-overflow{
   width: 270px;
   max-width: 270px;
@@ -87,7 +84,9 @@
   padding-top: 4px;
   margin-left: 12px;
 }
-
+.ant-menu-submenu-title{
+  padding-left:  24px !important; 
+}
 .logo {
   display: inline-block;
   vertical-align: middle;
