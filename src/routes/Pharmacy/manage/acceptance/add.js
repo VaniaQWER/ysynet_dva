@@ -4,7 +4,7 @@
 * @Last Modified time: 2018-07-24 13:13:55 
  */
 import React, { PureComponent } from 'react';
-import { Table , Col, Button, Modal , message, Input , Affix , Row, Icon } from 'antd';
+import { Table , Col, Button, Modal , message, Input , Affix , Row, Icon , Tooltip } from 'antd';
 import { createData } from '../../../../common/data';
 const Conform = Modal.confirm;
 const columns = [
@@ -33,6 +33,10 @@ const columns = [
     title: '规格',
     width:150,
     dataIndex: 'spec',
+    className:'ellipsis',
+    render:(text)=>(
+      <Tooltip placement="topLeft" title={text}>{text}</Tooltip>
+    )
   },
   {
     title: '剂型',

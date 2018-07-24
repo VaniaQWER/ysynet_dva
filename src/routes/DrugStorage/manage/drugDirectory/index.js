@@ -5,7 +5,7 @@
  */
 
 import React, { PureComponent } from 'react';
-import { Table , Form, Row, Col, Button, Icon, Select , Modal , Input , message } from 'antd';
+import { Table , Form, Row, Col, Button, Icon, Select , Modal , Input , message , Tooltip} from 'antd';
 import { Link } from 'react-router-dom';
 import { formItemLayout } from '../../../../utils/commonStyles';
 import { createData } from '../../../../common/data';
@@ -27,6 +27,10 @@ const columns = [
     title: '规格',
     width:150,
     dataIndex: 'spec',
+    className:'ellipsis',
+    render:(text)=>(
+      <Tooltip placement="topLeft" title={text}>{text}</Tooltip>
+    )
   },
   {
     title: '剂型',

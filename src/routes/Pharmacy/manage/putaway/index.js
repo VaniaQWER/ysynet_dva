@@ -5,7 +5,7 @@
  */
 
 import React, { PureComponent } from 'react';
-import { Table , Form, Input , Row, Col, Button, Select , Modal , message  , Popconfirm } from 'antd';
+import { Table , Form, Input , Row, Col, Button, Select , Modal , message  , Popconfirm , Tooltip } from 'antd';
 import { formItemLayout } from '../../../../utils/commonStyles';
 import { createData } from '../../../../common/data';
 const FormItem = Form.Item;
@@ -77,6 +77,10 @@ class Putaway extends PureComponent{
         title: '规格',
         width:150,
         dataIndex: 'spec',
+        className:'ellipsis',
+        render:(text)=>(
+          <Tooltip placement="topLeft" title={text}>{text}</Tooltip>
+        )
       },
       {
         title: '剂型',
