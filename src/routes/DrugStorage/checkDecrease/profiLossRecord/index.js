@@ -97,7 +97,11 @@ class ProfiLossRecord extends PureComponent {
       {
         title: '损益单',
         dataIndex: 'syNo',
-        key: 'syNo'
+        key: 'syNo',
+        render: (text, record) =>
+          <span>
+            <Link to={{ pathname: `/drugStorage/checkDecrease/profiLossRecord/details` }}>{text}</Link>
+          </span>
       },
       {
         title: '盘点单',
@@ -123,14 +127,6 @@ class ProfiLossRecord extends PureComponent {
         title: '生成人',
         dataIndex: 'generatedTime',
         key: 'generatedTime'
-      },
-      {
-        title: '操作',
-        dataIndex: 'RN',
-        render: (text, record) =>
-          <span>
-            <Link to={{ pathname: `/drugStorage/checkDecrease/profiLossRecord/details` }}>详情</Link>
-          </span>
       }
     ];
     const dataSource = [

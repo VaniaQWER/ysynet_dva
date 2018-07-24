@@ -110,7 +110,14 @@ class InventoryAudit extends PureComponent {
       {
         title: '盘点单',
         dataIndex: 'odd',
-        key: 'odd'
+        key: 'odd',
+        render: (text, record) => {
+          if (record.status === '已审核') {
+            return <span><Link to={{ pathname: `/drugStorage/checkDecrease/inventoryAudit/detailsConfirm` }}>{text}</Link></span>
+          } else {
+            return <span><Link to={{ pathname: `/drugStorage/checkDecrease/inventoryAudit/details` }}>{text}</Link></span>
+          }
+        }
       },
       {
         title: '状态',
@@ -154,17 +161,6 @@ class InventoryAudit extends PureComponent {
         title: '备注',
         dataIndex: 'remark',
         key: 'remark'
-      },
-      {
-        title: '操作',
-        dataIndex: 'RN',
-        render: (text, record) => {
-          if (record.status === '已审核') {
-            return <span><Link to={{ pathname: `/drugStorage/checkDecrease/inventoryAudit/detailsConfirm` }}>详情</Link></span>
-          } else {
-            return <span><Link to={{ pathname: `/drugStorage/checkDecrease/inventoryAudit/details` }}>详情</Link></span>
-          }
-        }
       }
     ];
     const dataSource = [

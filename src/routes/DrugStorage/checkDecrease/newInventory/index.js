@@ -125,7 +125,14 @@ class NewInventory extends PureComponent {
       {
         title: '盘点单',
         dataIndex: 'odd',
-        key: 'odd'
+        key: 'odd',
+        render: (text, record) => {
+          if (record.status === '已确认') {
+            return <span><Link to={{ pathname: `/drugStorage/checkDecrease/newInventory/detailsConfirm`}}>{text}</Link></span>
+          } else {
+            return <span><Link to={{ pathname: `/drugStorage/checkDecrease/newInventory/details`}}>{text}</Link></span>
+          }
+        }
       },
       {
         title: '状态',
@@ -161,17 +168,6 @@ class NewInventory extends PureComponent {
         title: '备注',
         dataIndex: 'remark',
         key: 'remark'
-      },
-      {
-        title: '操作',
-        dataIndex: 'RN',
-        render: (text, record) => {
-          if (record.status === '已确认') {
-            return <span><Link to={{ pathname: `/drugStorage/checkDecrease/newInventory/detailsConfirm`}}>详情</Link></span>
-          } else {
-            return <span><Link to={{ pathname: `/drugStorage/checkDecrease/newInventory/details`}}>详情</Link></span>
-          }
-        }
       }
     ];
     const dataSource = [
