@@ -1,28 +1,29 @@
 import React, { PureComponent } from 'react';
-import { Input, Button, Row, Col, Form, Table, Select } from 'antd';
+import { Input, Button, Row, Col, Form, Table, Select, message } from 'antd';
 import { connect } from 'dva';
-import { formItemLayout } from '../../../utils/commonStyles';
+import { formItemLayout } from '../../../../utils/commonStyles';
 const FormItem = Form.Item
 const { Option } = Select;
 const dataSource = [];
 for (let i = 0; i < 18; i++) {
   dataSource.push({
     key: i,
-    configType: `上架${i+1}`,
-    configName: `上架要求 ${i+2}`,
+    configType:  i % 3 ===0 ? `上架`: i % 2 === 0 ? `上架`: `结算`,
+    configName:  i % 3 ===0 ? `上架要求`: i % 2 === 0 ? `上架方式`: `结算方式`,
+    configValue: i % 3 ===0 ? `1`: i % 2 === 0 ? `2`: `3`,
     option: [{
-      text: '上架',
-      value: '1'
+      TF_CLO_NAME: '上架',
+      TF_CLO_CODE: '1'
     },{
-      text: '纸单上架',
-      value: '2'
+      TF_CLO_NAME: '纸单上架',
+      TF_CLO_CODE: '2'
     },{
-      text: '出库结算',
-      value: '3'
+      TF_CLO_NAME: '出库结算',
+      TF_CLO_CODE: '3'
     }],
     configCode: `Accredit${i*2}`,
-    configValueName: `上架要求${i}`,
-    tfRemark: `备注测试${i+5}`
+    configValueName: i % 3 ===0 ? `上架`: i % 2 === 0 ? `纸单上架`: `出库结算`,
+    tfRemark: i % 3 ===0 ? `上架备注`: i % 2 === 0 ? `纸单备注`: `出库备注一下`,
   });
 }
 
@@ -41,7 +42,13 @@ const EditableCell = ({ value, record, index, onEditChange, options, column, max
         }
       </Select>
       :
-      value
+      options.map((item)=>{
+        if(item.TF_CLO_CODE === value){
+          return item.TF_CLO_NAME
+        }
+        return null
+      })
+      
     }
   </div>
 );
@@ -49,7 +56,8 @@ class DrugStorageConfigMgt extends PureComponent{
   state = {
     record: {},
     options: [],
-    loading: false
+    loading: false,
+    dataSource: dataSource
   }
   onCellChange = (value,record,index,column,max) => {
     record[column] = value;
@@ -61,7 +69,7 @@ class DrugStorageConfigMgt extends PureComponent{
         value={ text }
         index={index}
         column={column}
-        options={this.state.options}
+        options={record.option}
         record={this.state.record}
         max={max}
         onEditChange={(text, index, record, column, max)=>this.onCellChange(text, index, record, column, max)}
@@ -72,8 +80,16 @@ class DrugStorageConfigMgt extends PureComponent{
     e.preventDefault();
     this.props.form.validateFields((err,values)=>{
       this.setState({ loading: true });
+      let { searchName } = values;
+      let newDataSource = [];
+      dataSource.map(item=>{
+        if(item.configName.includes(searchName)){
+          newDataSource.push(item);
+        }
+        return null;
+      })
       setTimeout(()=>{
-        this.setState({ loading: false })
+        this.setState({ loading: false,dataSource: newDataSource })
       },500)
     })
   }
@@ -81,15 +97,26 @@ class DrugStorageConfigMgt extends PureComponent{
     this.setState({ loading: true })
     this.props.form.resetFields();
     setTimeout(()=>{
-      this.setState({ loading: false })
+      this.setState({ loading: false, dataSource: dataSource })
     },500)
   }
-  edit = () =>{
-
+  edit = (record,stateRecord,index) =>{
+    if(stateRecord.editable){
+      this.setState({ loading: true });
+      let { dataSource } = this.state;
+      let newDataSource = [...dataSource];
+      newDataSource[index] = stateRecord;
+      setTimeout(()=>{
+        message.success('操作成功');
+        this.setState({ loading: false, dataSource: newDataSource,record: {...stateRecord, editable: false,index } })
+      },500)
+    }else{
+      this.setState({ record: {...record, editable: true, index } })
+    }
   }
   render(){
     const { getFieldDecorator } = this.props.form;
-    const { loading } = this.state;
+    const { loading, dataSource } = this.state;
     const columns = [{
       title: '编号',
       dataIndex: 'No',
@@ -108,10 +135,10 @@ class DrugStorageConfigMgt extends PureComponent{
       dataIndex: 'configCode',
     },{
       title: '默认值',
-      dataIndex: 'configValueName',
+      dataIndex: 'configValue',
       width: 200,
       render: (text, record, index) => {
-        return this.renderColumns(text, record, index,'configValue')
+        return this.renderColumns(record.configValue, record, index,'configValue')
       }
     },{
       title: '备注',

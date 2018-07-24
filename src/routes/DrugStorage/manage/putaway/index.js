@@ -5,66 +5,13 @@
  */
 
 import React, { PureComponent } from 'react';
-import { Table , Form, Row, Col, Button, Icon, Select , Modal , message } from 'antd';
-import { Link } from 'react-router-dom'
+import { Table , Form, Input , Row, Col, Button, Icon, Select , Modal , message  , Popconfirm } from 'antd';
+import { Link } from 'react-router-dom';
+import { formItemLayout } from '../../../../utils/commonStyles';
+import { createData } from '../../../../common/data';
 const FormItem = Form.Item;
 const Option = Select.Option;
-const columns = [
-  {
-   title: '通用名称',
-   dataIndex: 'index',
-  },
-  {
-    title: '商品名称',
-    dataIndex: 'assetsRecord',
-  },
-  {
-    title: '规格',
-    dataIndex: 'useFstate',
-  },
-  {
-    title: '剂型',
-    dataIndex: 'equipmentStandardName',
-  },
-  {
-    title: '包装单位',
-    dataIndex: 'spec',
-  },
-  {
-    title: '最小单位',
-    dataIndex: 'custodian',
-  },
-  {
-    title: '批准文号',
-    dataIndex: 'bDept',
-  },
-  {
-   title: '库存上限',
-   dataIndex: 'useDept',
-  },
- {
-  title: '库存下限',
-  dataIndex: 'useDept1',
- },
- {
-  title: '操作',
-  dataIndex: 'RN',
-  render: (text, record) => 
-    <span>
-      <Link to={{pathname: `/deptwork/myProfile/details/${record.assetsRecordGuid}`}}>编辑</Link>
-    </span>  
-  }
-];
-const formItemLayout = {
- labelCol: {
-   xs: { span: 24 },
-   sm: { span: 8 },
- },
- wrapperCol: {
-   xs: { span: 24 },
-   sm: { span: 16 },
- },
-};
+const Confirm = Modal.confirm;
 
 class Putaway extends PureComponent{
 
@@ -83,24 +30,132 @@ class Putaway extends PureComponent{
   }
 
   //批量编辑 - 打开弹窗
-  showModal = () =>{
+  onSubmit = () =>{
     const { selectedRowKeys } = this.state;
     if(selectedRowKeys.length>0){
-      this.setState({visible:true})
+      Confirm({
+        content:"您确定要执行此操作？",
+        onOk:()=>{
+          message.success('操作成功！')
+        },
+        onCancel:()=>{}
+      })
     }else{
-      message.warn('最少选择一条数据进行编辑！')
+      message.warn('最少选择一条数据进行操作！')
     }
   }
 
+  //单行确认 
+  confirmOk = () => {
+    message.success('操作成功')
+  }
+
   render(){
-    const { visible } = this.state;
+    const columns = [
+      {
+       title: '配送单',
+       width:150,
+       dataIndex: 'medicinalCode',
+      },
+      {
+        title: '状态',
+        width:100,
+        dataIndex: 'fstate',
+        render:()=>`待上架`
+      },
+      {
+        title: '通用名称',
+        width:100,
+        dataIndex: 'productName1',
+        render:(text,record)=>record.productName
+      },
+      {
+        title: '商品名称',
+        width:150,
+        dataIndex: 'productName',
+      },
+      {
+        title: '规格',
+        width:150,
+        dataIndex: 'spec',
+      },
+      {
+        title: '剂型',
+        width:150,
+        dataIndex: 'fmodal',
+      },
+      {
+        title: '包装单位',
+        width:150,
+        dataIndex: 'unit',
+        render:(text)=>'g'
+      },
+      {
+        title: '批准文号',
+        width:150,
+        dataIndex: 'approvalNo',
+      },
+      {
+        title: '生产厂家',
+        width:150,
+        dataIndex: 'productCompany1',
+      },
+      {
+        title: '生产批号',
+        width:150,
+        dataIndex: 'productCompany2',
+      },
+      {
+        title: '生产日期',
+        width:150,
+        dataIndex: 'productCompany3',
+      },
+      {
+        title: '有效期至',
+        width:150,
+        dataIndex: 'productCompany4',
+      },
+      {
+        title: '供应商',
+        width:150,
+        dataIndex: 'productCompany41',
+      },
+      {
+        title: '上架数量',
+        width:150,
+        dataIndex: 'productCompany42',
+      },
+      {
+        title: '指示货位',
+        width:150,
+        dataIndex: 'productCompany23',
+      },
+      {
+        title: '实际货位',
+        width:150,
+        dataIndex: 'productCompany5s',
+        render:(text)=>(<Input/>)
+      },
+      {
+        title: '操作',
+        width:150,
+        dataIndex: 'RN',
+        render: (text, record) => 
+          <span>
+            <Popconfirm title="确定提交吗？" okText="是" cancelText="否"  onConfirm={()=>this.confirmOk(record)}>
+              <Link to={{pathname: `/drugStorage/drugStorageManage/applyAccept/details`}}>确认</Link>
+            </Popconfirm>
+          </span>  
+      }
+    ];
     return (
       <div>
         <SearchForm query={this.queryHandler} />
         <Row>
-          <Button type='primary' onClick={()=>this.showModal()}>批量编辑</Button>
+          <Button type='primary' onClick={()=>this.onSubmit()}>批量上架</Button>
         </Row>
         <Table
+          dataSource={createData()}
           rowSelection={
             {
               onChange:(selectedRowKeys)=>{
@@ -109,21 +164,13 @@ class Putaway extends PureComponent{
               }
             }
           }
+          bordered
           loading={ this.state.loading}
-          ref='table'
-          query={this.state.query}
-          scroll={{x: '100%', y : document.body.clientHeight - 311}}
+          scroll={{x: '200%'}}
           columns={columns}
-          rowKey={'assetsRecordGuid'}
-          style={{marginTop: 20}}
-        /> 
-        <Modal
-         visible={visible}
-         title='批量编辑'
-         onCancel={()=>this.setState({visible:false})}
-         onOk={()=>this.setState({visible:false})}>
-          12313123
-        </Modal>
+          rowKey={'id'}
+          style={{marginTop: 24}}
+        />
       </div>
     )
   }
@@ -161,21 +208,14 @@ class SearchFormWrapper extends PureComponent {
      <Form onSubmit={this.handleSearch}>
        <Row>
          <Col span={8}>
-           <FormItem label={`名称`} {...formItemLayout}>
+           <FormItem label={`配送单`} {...formItemLayout}>
              {getFieldDecorator('assetCode', {})(
-              <Select 
-                showSearch
-                placeholder={'请选择'}
-                optionFilterProp="children"
-                filterOption={(input, option) => option.props.children.indexOf(input) >= 0}
-                >
-                    <Option key="" value="">全部</Option>
-              </Select>
+              <Input/>
              )}
            </FormItem>
          </Col>
          <Col span={8}>
-           <FormItem label={`剂型`} {...formItemLayout}>
+           <FormItem label={`供应商`} {...formItemLayout}>
              {getFieldDecorator('assetName', {})(
               <Select 
                 showSearch
@@ -189,48 +229,22 @@ class SearchFormWrapper extends PureComponent {
            </FormItem>
          </Col>
          <Col span={8} style={{display: display}}>
-           <FormItem label={`规格`} {...formItemLayout}>
-             {getFieldDecorator('spec')(
-              <Select 
-                showSearch
-                placeholder={'请选择'}
-                optionFilterProp="children"
-                filterOption={(input, option) => option.props.children.indexOf(input) >= 0}
-                >
-                <Option key="" value="">全部</Option>
-              </Select>
-             )}
-           </FormItem>
-         </Col>
-         <Col span={8} style={{display: display}}>
            <FormItem label={`状态`} {...formItemLayout}>
-             {getFieldDecorator('manageDeptGuid')(
-              <Select 
-                showSearch
-                placeholder={'请选择'}
-                optionFilterProp="children"
-                filterOption={(input, option) => option.props.children.indexOf(input) >= 0}
-              >
-              <Option key="" value="">全部</Option>
-            </Select>
-             )}
-           </FormItem>
-         </Col>
-         <Col span={8} style={{display: display}}>
-           <FormItem label={`备货选项`} {...formItemLayout}>
-             {getFieldDecorator('useDeptGuid')(
+             {getFieldDecorator('time')(
               <Select 
                 showSearch
                 placeholder={'请选择'}
                 optionFilterProp="children"
                 filterOption={(input, option) => option.props.children.indexOf(input) >= 0}
                 >
-                <Option key="" value="">全部</Option>
+                    <Option key="" value="">全部</Option>
+                    <Option key="01" value="01">待上架</Option>
+                    <Option key="02" value="02">已上架</Option>
               </Select>
              )}
            </FormItem>
          </Col>
-         <Col span={8} style={{ textAlign: 'right', marginTop: 4}} >
+         <Col span={8} style={{ float:'right',textAlign: 'right', marginTop: 4}} >
            <Button type="primary" htmlType="submit">查询</Button>
            <Button style={{marginLeft: 30}} onClick={this.handleReset}>重置</Button>
            <a style={{marginLeft: 30, fontSize: 14}} onClick={this.toggle}>

@@ -94,7 +94,7 @@
 }
 
 .logoDesc {
-  color: #fff;
+  color: #f2a11c;
   display: inline-block;
   vertical-align: middle;
   font-size: 20px;
@@ -104,15 +104,17 @@
 }
 
 .logoWrapper {
-  height: 64px;
+  height: 61px;
   position: relative;
-  background-color: #002140;
+  /* background-color: #fff; */
+  color: #000;
   line-height: 64px;
   padding-left: 24px;
   -webkit-transition: all .3s;
   -o-transition: all .3s;
   transition: all .3s;
   overflow: hidden;
+  border-bottom: 3px solid #f0f2f5;
 }
 
 /*lable显示文字时 left*/
@@ -241,4 +243,51 @@ td:hover .editable-cell-icon {
 */
 .subSystem{
   background: #ffffff;
+}
+
+/*通栏样式*/
+.fullCol{
+  position: relative;
+}
+.fullCol-fullChild{
+  position: relative;
+  top: -15px;
+  margin-left: -33px;
+  margin-right: -33px;
+  background: #fff;
+  margin-top: -17px;
+  padding: 12px 32px 32px;
+  border-top: 1px solid #f0f2f5;
+  min-height: 78px;
+}
+.fullCol-fullChild::after{
+  content: "";
+  width:100%;
+  position: absolute;
+  left: 0;
+  bottom:0;
+  height:20px;
+  background:#f0f2f5;
+}
+.button-gap{
+  margin-right:8px;
+}
+.hr{
+  height: 0 !important;
+  border: none !important;
+  border-top:1px solid #ddd !important;
+  margin:20px 0 !important;
+}
+.affix{
+  background:#fff;
+  padding:12px 33px;
+  min-height: 32px;
+  vertical-align: baseline
+}
+.affix .ant-affix {
+  left: 200px !important;
+  width: 1319px !important;
+  padding:12px 33px;
+  min-height: 32px;
+  background:#fff;
 }

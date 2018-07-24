@@ -2,8 +2,9 @@ import React, { PureComponent } from 'react';
 import { Menu, Icon, message, Spin } from 'antd';
 import { connect } from 'dva';
 import menu from '../../common/menu';
+import styles from './style.css';
+console.log(styles)
 const SubMenu = Menu.SubMenu;
-
 // 使用递归创建菜单
 const createMenu = menuList => {
   return (
@@ -42,9 +43,7 @@ class SiderMenu extends PureComponent{
     recordKeys: []//修复官方hover bug
   };
   setSubTitle = (menuList,path) =>{
-    console.log(menuList,path)
     let pathname = path ? path : window.location.href.split('#')[1];
-    console.log(pathname,'pathname')
     let target = {};
     if(menuList.length){
       menuList.map((item,index)=>{
@@ -70,7 +69,6 @@ class SiderMenu extends PureComponent{
         return null;
       });
     }
-    console.log(target,'target')
     this.props.cb(target)
   }
   changeActiveKeys = () => {
@@ -129,7 +127,8 @@ class SiderMenu extends PureComponent{
       {
         menu && menu.length ? //menuList && menuList.length ?
         <Menu 
-          theme="dark" 
+          className={styles.fullscreen}
+          theme="light" 
           mode="inline"
           selectedKeys={[selectedKeys]}
           onOpenChange={this.onOpenChange}
