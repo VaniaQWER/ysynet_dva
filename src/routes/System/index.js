@@ -21,7 +21,7 @@ class SubSystem extends PureComponent {
         </div>
         <div className={styles.content}>
           <div className={styles.contentHeader}>
-            <span>武大口腔医院管理系统</span>
+            <span>医商云平台</span>
           </div>
           <div className={styles.cardContent}>
             <div className={styles.cardList}>
@@ -41,8 +41,12 @@ class SubSystem extends PureComponent {
                 )
                 ) */
               }
-              <div className={styles.cardItem}></div>
-              <div className={styles.cardItemTwo}></div>
+              <div className={styles.cardItem} onClick={() => {
+                this.props.history.push({ pathname: '/drugStorage/configMgt' })
+              }}></div>
+              <div className={styles.cardItemTwo} onClick={() => {
+                this.props.history.push({ pathname: '/pharmacy/configMgt' })
+              }}></div>
             </div>
           </div>
         </div>

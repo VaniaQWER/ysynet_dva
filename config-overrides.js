@@ -40,7 +40,7 @@ module.exports = function override(config, env) {
           loader: require.resolve('less-loader'),
           options: {
             // theme vars, also can use theme.js instead of this.
-            // modifyVars: { "@primary-color": "#1DA57A" },
+            modifyVars: { "@primary-color": "#f2a11c" },
           },
         },
       ]

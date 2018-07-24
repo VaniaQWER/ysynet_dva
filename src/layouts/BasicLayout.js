@@ -30,6 +30,9 @@ class BasicLayout extends PureComponent {
           trigger={null}
           collapsible
           collapsed={this.state.collapsed}
+          style={{
+            backgroundColor: '#fff'
+          }}
         >
           <SiderMenu 
             history={this.props.history}
