@@ -25,6 +25,7 @@ const columns = [
   },
   {
     title: '规格',
+    width:150,
     dataIndex: 'spec',
   },
   {

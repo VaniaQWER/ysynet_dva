@@ -254,7 +254,9 @@ td:hover .editable-cell-icon {
   margin-right: -33px;
   background: #fff;
   margin-top: -17px;
-  padding: 0 32px 32px;
+  padding: 12px 32px 32px;
+  border-top: 1px solid #f0f2f5;
+  min-height: 78px;
 }
 .fullCol-fullChild::after{
   content: "";
@@ -273,4 +275,17 @@ td:hover .editable-cell-icon {
   border: none !important;
   border-top:1px solid #ddd !important;
   margin:20px 0 !important;
+}
+.affix{
+  background:#fff;
+  padding:12px 33px;
+  min-height: 32px;
+  vertical-align: baseline
+}
+.affix .ant-affix {
+  left: 200px !important;
+  width: 1319px !important;
+  padding:12px 33px;
+  min-height: 32px;
+  background:#fff;
 }
