@@ -5,13 +5,12 @@
  */
 
 import React, { PureComponent } from 'react';
-import { Table , Form, Row, Col, Button, Icon, Select , Input , DatePicker } from 'antd';
+import { Table , Form, Row, Col, Button, Icon, Input , DatePicker } from 'antd';
 import { Link } from 'react-router-dom';
 import { formItemLayout } from '../../../../utils/commonStyles';
 import { createData } from '../../../../common/data';
 const RangePicker = DatePicker.RangePicker;
 const FormItem = Form.Item;
-const Option = Select.Option;
 const columns = [
   {
    title: '发药单',
@@ -94,7 +93,6 @@ class SearchFormWrapper extends PureComponent {
  }
 
  render() {
-   const { display } = this.state;
    const { getFieldDecorator } = this.props.form;
    return (
      <Form onSubmit={this.handleSearch}>

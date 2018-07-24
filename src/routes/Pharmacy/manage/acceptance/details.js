@@ -4,7 +4,7 @@
 * @Last Modified time: 2018-07-24 13:13:55 
  */
 import React, { PureComponent } from 'react';
-import { Table ,Row, Col, Button, Modal , message} from 'antd';
+import { Table ,Row, Col,  Modal , message} from 'antd';
 import { createData } from '../../../../common/data';
 const Conform = Modal.confirm;
 const columns = [
