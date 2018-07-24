@@ -366,12 +366,40 @@ export const getNavData = app => [
       path: '/drugStorage/checkDecrease/newInventory',
       component: dynamicWrapper(app, [], () => import('../routes/DrugStorage/checkDecrease/newInventory')),
     },
+    // 药库 - 盘点损益 - 新建盘点 - 详情(待确认)
+    {
+      name: "新建盘点-详情(待确认)",
+      icon: 'setting',
+      path: '/drugStorage/checkDecrease/newInventory/details',
+      component: dynamicWrapper(app, [], () => import('../routes/DrugStorage/checkDecrease/newInventory/details')),
+    },
+    // 药库 - 盘点损益 - 新建盘点 - 详情(已确认)
+    {
+      name: "新建盘点-详情(已确认)",
+      icon: 'setting',
+      path: '/drugStorage/checkDecrease/newInventory/detailsConfirm',
+      component: dynamicWrapper(app, [], () => import('../routes/DrugStorage/checkDecrease/newInventory/detailsConfirm')),
+    },
     // 药库 - 盘点损益 - 盘点审核
     {
       name: "盘点审核",
       icon: 'setting',
       path: '/drugStorage/checkDecrease/inventoryAudit',
       component: dynamicWrapper(app, [], () => import('../routes/DrugStorage/checkDecrease/inventoryAudit')),
+    },
+    // 药库 - 盘点损益 - 盘点审核 - 详情(待审核)
+    {
+      name: "盘点审核-详情(待审核)",
+      icon: 'setting',
+      path: '/drugStorage/checkDecrease/inventoryAudit/details',
+      component: dynamicWrapper(app, [], () => import('../routes/DrugStorage/checkDecrease/inventoryAudit/details')),
+    },
+    // 药库 - 盘点损益 - 盘点审核 - 详情(已审核)
+    {
+      name: "盘点审核-详情(已审核)",
+      icon: 'setting',
+      path: '/drugStorage/checkDecrease/inventoryAudit/detailsConfirm',
+      component: dynamicWrapper(app, [], () => import('../routes/DrugStorage/checkDecrease/inventoryAudit/detailsConfirm')),
     },
     // 药库 - 盘点损益 - 盘后调整
     {
@@ -380,12 +408,26 @@ export const getNavData = app => [
       path: '/drugStorage/checkDecrease/afterAdjustment',
       component: dynamicWrapper(app, [], () => import('../routes/DrugStorage/checkDecrease/afterAdjustment')),
     },
+    // 药库 - 盘点损益 - 盘后调整 - 详情
+    {
+      name: "盘后调整-详情",
+      icon: 'setting',
+      path: '/drugStorage/checkDecrease/afterAdjustment/details',
+      component: dynamicWrapper(app, [], () => import('../routes/DrugStorage/checkDecrease/afterAdjustment/details')),
+    },
     // 药库 - 盘点损益 - 损益记录
     {
       name: "损益记录",
       icon: 'setting',
       path: '/drugStorage/checkDecrease/profiLossRecord',
       component: dynamicWrapper(app, [], () => import('../routes/DrugStorage/checkDecrease/profiLossRecord')),
+    },
+    // 药库 - 盘点损益 - 损益记录 - 详情
+    {
+      name: "损益记录-详情",
+      icon: 'setting',
+      path: '/drugStorage/checkDecrease/profiLossRecord/details',
+      component: dynamicWrapper(app, [], () => import('../routes/DrugStorage/checkDecrease/profiLossRecord/details')),
     },
 
     /*药房 */
