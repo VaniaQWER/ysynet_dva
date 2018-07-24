@@ -242,3 +242,35 @@ td:hover .editable-cell-icon {
 .subSystem{
   background: #ffffff;
 }
+
+/*通栏样式*/
+.fullCol{
+  position: relative;
+}
+.fullCol-fullChild{
+  position: relative;
+  top: -15px;
+  margin-left: -33px;
+  margin-right: -33px;
+  background: #fff;
+  margin-top: -17px;
+  padding: 0 32px 32px;
+}
+.fullCol-fullChild::after{
+  content: "";
+  width:100%;
+  position: absolute;
+  left: 0;
+  bottom:0;
+  height:20px;
+  background:#f0f2f5;
+}
+.button-gap{
+  margin-right:8px;
+}
+.hr{
+  height: 0 !important;
+  border: none !important;
+  border-top:1px solid #ddd !important;
+  margin:20px 0 !important;
+}
