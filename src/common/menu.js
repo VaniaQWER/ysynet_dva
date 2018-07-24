@@ -26,7 +26,70 @@ const menu = [
         "id": "30102",
         "key": "/drugStorage/drugStorageManage/drugDirectory",
         "parentId": "m303"
-      }
+      },
+      {
+        "path": "/drugStorage/drugStorageManage/applyAccept",
+        "level": 2,
+        "fsort": 30102,
+        "name": "申请受理",
+        "id": "30102",
+        "key": "/drugStorage/drugStorageManage/applyAccept",
+        "parentId": "m303"
+      },
+      {
+        "path": "/drugStorage/drugStorageManage/picking",
+        "level": 2,
+        "fsort": 30102,
+        "name": "配货",
+        "id": "30102",
+        "key": "/drugStorage/drugStorageManage/picking",
+        "parentId": "m303"
+      },
+      {
+        "path": "/drugStorage/drugStorageManage/pickSoldOut",
+        "level": 2,
+        "fsort": 30102,
+        "name": "拣货下架",
+        "id": "30102",
+        "key": "/drugStorage/drugStorageManage/pickSoldOut",
+        "parentId": "m303"
+      },
+      {
+        "path": "/drugStorage/drugStorageManage/output",
+        "level": 2,
+        "fsort": 30102,
+        "name": "出库管理",
+        "id": "30102",
+        "key": "/drugStorage/drugStorageManage/output",
+        "parentId": "m303"
+      },
+      {
+        "path": "/drugStorage/drugStorageManage/refund",
+        "level": 2,
+        "fsort": 30102,
+        "name": "退货",
+        "id": "30102",
+        "key": "/drugStorage/drugStorageManage/refund",
+        "parentId": "m303"
+      },
+      {
+        "path": "/drugStorage/drugStorageManage/putaway",
+        "level": 2,
+        "fsort": 30102,
+        "name": "上架",
+        "id": "30102",
+        "key": "/drugStorage/drugStorageManage/putaway",
+        "parentId": "m303"
+      },
+      {
+        "path": "/drugStorage/drugStorageManage/newLibrary",
+        "level": 2,
+        "fsort": 30102,
+        "name": "新建入库",
+        "id": "30102",
+        "key": "/drugStorage/drugStorageManage/newLibrary",
+        "parentId": "m303"
+      },
     ]
   },{
     "path": "/drugStorage/checkDecrease",

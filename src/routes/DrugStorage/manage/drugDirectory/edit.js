@@ -4,7 +4,6 @@
 * @Last Modified time: 2018-07-24 10:58:49 
  */
 import React, { PureComponent } from 'react';
-alert(11111)
 class EditDrugDirectory extends PureComponent{
   render(){
     return (

@@ -216,7 +216,102 @@ export const getNavData = app => [
       path: '/drugStorage/drugStorageManage/drugDirectory/edit',
       component: dynamicWrapper(app, [], () => import('../routes/DrugStorage/manage/drugDirectory/edit'))
     },
-
+    {
+      name: "申请受理",//药库-药库管理-申请受理
+      icon: 'setting',
+      path: '/drugStorage/drugStorageManage/applyAccept',
+      component: dynamicWrapper(app, [], () => import('../routes/DrugStorage/manage/applyAccept')),
+    },
+    {
+      name: "申请受理详情",//药库-药库管理-申请受理
+      icon: 'setting',
+      path: '/drugStorage/drugStorageManage/applyAccept/details',
+      component: dynamicWrapper(app, [], () => import('../routes/DrugStorage/manage/applyAccept/details')),
+    },
+    {
+      name: "配货",//药库-药库管理-配货
+      icon: 'setting',
+      path: '/drugStorage/drugStorageManage/picking',
+      component: dynamicWrapper(app, [], () => import('../routes/DrugStorage/manage/picking')),
+    },
+    {
+      name: "配货详情",//药库-药库管理-配货详情
+      icon: 'setting',
+      path: '/drugStorage/drugStorageManage/picking/details',
+      component: dynamicWrapper(app, [], () => import('../routes/DrugStorage/manage/picking/details')),
+    },
+    {
+      name: "拣货下架",//药库-药库管理-拣货下架
+      icon: 'setting',
+      path: '/drugStorage/drugStorageManage/pickSoldOut',
+      component: dynamicWrapper(app, [], () => import('../routes/DrugStorage/manage/pickSoldOut')),
+    },
+    {
+      name: "拣货下架详情",//药库-药库管理-拣货下架详情
+      icon: 'setting',
+      path: '/drugStorage/drugStorageManage/pickSoldOut/details',
+      component: dynamicWrapper(app, [], () => import('../routes/DrugStorage/manage/pickSoldOut/details')),
+    },
+    {
+      name: "出库管理",//药库-药库管理-出库管理
+      icon: 'setting',
+      path: '/drugStorage/drugStorageManage/output',
+      component: dynamicWrapper(app, [], () => import('../routes/DrugStorage/manage/output')),
+    },
+    {
+      name: "出库管理-新增",//药库-药库管理-出库管理-新增
+      icon: 'setting',
+      path: '/drugStorage/drugStorageManage/output/add',
+      component: dynamicWrapper(app, [], () => import('../routes/DrugStorage/manage/output/add')),
+    },
+    {
+      name: "出库管理-详情",//药库-药库管理-出库管理-详情
+      icon: 'setting',
+      path: '/drugStorage/drugStorageManage/output/details',
+      component: dynamicWrapper(app, [], () => import('../routes/DrugStorage/manage/output/details')),
+    },
+    {
+      name: "退货",//药库-药库管理-退货
+      icon: 'setting',
+      path: '/drugStorage/drugStorageManage/refund',
+      component: dynamicWrapper(app, [], () => import('../routes/DrugStorage/manage/refund')),
+    },
+    {
+      name: "退货-新增",//药库-药库管理-退货-新增
+      icon: 'setting',
+      path: '/drugStorage/drugStorageManage/refund/add',
+      component: dynamicWrapper(app, [], () => import('../routes/DrugStorage/manage/refund/add')),
+    },
+    {
+      name: "退货-详情",//药库-药库管理-退货-详情
+      icon: 'setting',
+      path: '/drugStorage/drugStorageManage/refund/details',
+      component: dynamicWrapper(app, [], () => import('../routes/DrugStorage/manage/refund/details')),
+    },
+    {
+      name: "上架",//药库-药库管理-上架
+      icon: 'setting',
+      path: '/drugStorage/drugStorageManage/putaway',
+      component: dynamicWrapper(app, [], () => import('../routes/DrugStorage/manage/putaway')),
+    },
+    {
+      name: "新建入库",//药库-药库管理-新建入库
+      icon: 'setting',
+      path: '/drugStorage/drugStorageManage/newLibrary',
+      component: dynamicWrapper(app, [], () => import('../routes/DrugStorage/manage/newLibrary')),
+    },
+    {
+      name: "新建入库-新增",//药库-药库管理-新建入库-新增
+      icon: 'setting',
+      path: '/drugStorage/drugStorageManage/newLibrary/add',
+      component: dynamicWrapper(app, [], () => import('../routes/DrugStorage/manage/newLibrary/add')),
+    },
+    {
+      name: "新建入库-详情",//药库-药库管理-新建入库-详情
+      icon: 'setting',
+      path: '/drugStorage/drugStorageManage/newLibrary/details',
+      component: dynamicWrapper(app, [], () => import('../routes/DrugStorage/manage/newLibrary/details')),
+    },
     // 药库 - 盘点损益
     {
       name: "盘点损益",

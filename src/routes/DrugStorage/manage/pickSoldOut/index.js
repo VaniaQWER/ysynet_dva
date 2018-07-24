@@ -1,7 +1,7 @@
 /*
- * @Author: yuwei - 药品目录 - drugDirectory
- * @Date: 2018-07-24 10:16:46 
-* @Last Modified time: 2018-07-24 10:16:46 
+ * @Author: yuwei  拣货下架 /pickSoldOut
+ * @Date: 2018-07-24 13:12:15 
+* @Last Modified time: 2018-07-24 13:12:15 
  */
 
 import React, { PureComponent } from 'react';
@@ -66,7 +66,7 @@ const formItemLayout = {
  },
 };
 
-class DrugDirectory extends PureComponent{
+class PickSoldOut extends PureComponent{
 
   constructor(props) {
     super(props);
@@ -128,7 +128,7 @@ class DrugDirectory extends PureComponent{
     )
   }
 }
-export default DrugDirectory;
+export default PickSoldOut;
 
 /* 搜索 - 表单 */
 class SearchFormWrapper extends PureComponent {
