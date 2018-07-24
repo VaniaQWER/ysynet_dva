@@ -356,3 +356,12 @@ td:hover .editable-cell-icon {
 .ant-table-selection {
   margin-right: 15px;
 }
+.ellipsis{
+  width: 270px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.ant-table-fixed{
+  table-layout: fixed;
+}
