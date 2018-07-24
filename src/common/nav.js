@@ -217,6 +217,20 @@ export const getNavData = app => [
       component: dynamicWrapper(app, [], () => import('../routes/DrugStorage/manage/drugDirectory/edit'))
     },
 
+    // 药库 - 盘点损益
+    {
+      name: "盘点损益",
+      icon: 'setting',
+      path: '/drugStorage/checkDecrease',
+      component: dynamicWrapper(app, [], () => import('../routes/DrugStorage/checkDecrease/newInventory')),
+    },
+    // 药库 - 盘点损益 - 新建盘点
+    {
+      name: "新建盘点",
+      icon: 'setting',
+      path: '/drugStorage/checkDecrease/newInventory',
+      component: dynamicWrapper(app, [], () => import('../routes/DrugStorage/checkDecrease/newInventory')),
+    },
 
     /*药房 */
     {
