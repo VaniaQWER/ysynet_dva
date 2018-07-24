@@ -135,7 +135,22 @@ export const getNavData = app => [
             icon: 'setting',
             path: '/configMgt',
             component: dynamicWrapper(app, [], () => import('../routes/DrugStorage/configMgt'))
-          }]
+          },
+          {
+            name: "药库管理",
+            icon: 'setting',
+            path: '/drugStorageManage',
+            component: dynamicWrapper(app, [], () => import('../routes/DrugStorage/manage/drugDirectory')),
+            children: [
+              {
+                name: "药品目录",
+                icon: 'setting',
+                path: '/drugDirectory',
+                component: dynamicWrapper(app, [], () => import('../routes/DrugStorage/manage/drugDirectory'))
+              }
+            ]
+          },
+        ]
         },{
           name: '药房',
           icon: 'table',

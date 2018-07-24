@@ -1,6 +1,7 @@
 import React, { PureComponent } from 'react';
 import { Menu, Icon, message, Spin } from 'antd';
 import { connect } from 'dva';
+import menu from '../../common/menu';
 const SubMenu = Menu.SubMenu;
 
 // 使用递归创建菜单
@@ -113,7 +114,7 @@ class SiderMenu extends PureComponent{
         <h1 className='logoDesc'>P H X L</h1>
       </div>
       {
-        menuList && menuList.length ?
+        menu && menu.length ? //menuList && menuList.length ?
         <Menu 
           theme="dark" 
           mode="inline"
@@ -123,7 +124,8 @@ class SiderMenu extends PureComponent{
           onClick={item => {
             const { pathname } = this.props.history.location;
             if (pathname !== item.key){
-              this.setSubTitle(this.props.users.menuList, `${item.key}`)
+              // this.setSubTitle(this.props.users.menuList, `${item.key}`)
+              this.setSubTitle(menu, `${item.key}`)
               history.push({pathname: `${item.key}`})
             }else{
               message.info('您正位于该页面')
@@ -131,7 +133,8 @@ class SiderMenu extends PureComponent{
           }}
         >
           {
-            createMenu(menuList)
+            createMenu(menu)
+            // createMenu(menuList)
           }
           </Menu> :
           <Spin tip="数据加载中" style={{width: '100%', height: 200, marginTop: 200}}/>
