@@ -260,7 +260,7 @@ td:hover .editable-cell-icon {
   border-top: 1px solid #f0f2f5;
   min-height: 78px;
 }
-.fullCol-fullChild::after{
+.fullCol-fullChild::after,.fullCol-gap-firstChild::after{
   content: "";
   width:100%;
   position: absolute;
@@ -268,6 +268,11 @@ td:hover .editable-cell-icon {
   bottom:0;
   height:20px;
   background:#f0f2f5;
+}
+.fullCol-gap-firstChild{
+  position: relative;
+  margin:-16px -16px 24px;
+  padding:25px 30px 40px;
 }
 .button-gap{
   margin-right:8px;

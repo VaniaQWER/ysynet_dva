@@ -150,11 +150,19 @@ class AddOutput extends PureComponent{
     })
   }
 
-  //添加产品
-
+  //添加产品 到 主表
+  addToMain = () => {
+    const { selectedRowKey } =this.state;
+    if(selectedRowKey.length>0){
+      this.setState({visible:false,selectedRowKey:[]})
+      
+    }else{
+      message.warn('最少选择一个产品添加！')
+    }
+  }
 
   render(){
-    const { visible } = this.state; 
+    const { visible , selectedRowKey } = this.state; 
     return (
       <div className='fullCol'>
         <div className='fullCol-fullChild' style={{height:70}}>
@@ -200,12 +208,15 @@ class AddOutput extends PureComponent{
         </Affix>
 
         {/*选择产品-弹窗*/}
-        <Modal title='选择页面' visible={visible} width={980}>
+        <Modal title='选择页面' visible={visible} width={980}
+          onOk={()=>this.addToMain()}
+          onCancel={()=>this.setState({visible:false,selectedRowKey:[]})}>
           <Row>
             <Input placeholder='通用名/商品名' style={{width:200}}/>
           </Row>
           <Table
             rowSelection={{
+              selectedRowKeys:selectedRowKey,
               onChange:(selectedRowKey)=>{
                 this.setState({selectedRowKey})
               }
