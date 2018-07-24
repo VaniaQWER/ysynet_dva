@@ -12,10 +12,8 @@ class SubSystem extends PureComponent {
   }
  
   render() {
-    // console.log(this.props.users,'users')
     console.log(this.state.subSystemList,'subSystemList')
-    
-    const { subSystemList } = this.props.users;
+    // const { subSystemList } = this.props.users;
     return (
       <div className={styles.container}>
         <div className={styles.header}>
@@ -28,7 +26,7 @@ class SubSystem extends PureComponent {
           <div className={styles.cardContent}>
             <div className={styles.cardList}>
               {
-                subSystemList.map(item => (
+                /* subSystemList.map(item => (
                   <div key={item.subSystemId} className={styles.cardItem}>
                     <div className={styles.upperCon}>
                       <div className={styles.cardBackground}></div>
@@ -41,8 +39,10 @@ class SubSystem extends PureComponent {
                     </div>
                   </div>
                 )
-                )
+                ) */
               }
+              <div className={styles.cardItem}></div>
+              <div className={styles.cardItemTwo}></div>
             </div>
           </div>
         </div>

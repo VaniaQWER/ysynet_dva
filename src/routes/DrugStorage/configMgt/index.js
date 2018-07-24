@@ -5,11 +5,21 @@ import { formItemLayout } from '../../../utils/commonStyles';
 const FormItem = Form.Item
 const { Option } = Select;
 const dataSource = [];
-for (let i = 0; i < 20; i++) {
+for (let i = 0; i < 18; i++) {
   dataSource.push({
     key: i,
     configType: `上架${i+1}`,
     configName: `上架要求 ${i+2}`,
+    option: [{
+      text: '上架',
+      value: '1'
+    },{
+      text: '纸单上架',
+      value: '2'
+    },{
+      text: '出库结算',
+      value: '3'
+    }],
     configCode: `Accredit${i*2}`,
     configValueName: `上架要求${i}`,
     tfRemark: `备注测试${i+5}`
@@ -142,7 +152,7 @@ class DrugStorageConfigMgt extends PureComponent{
         </Form>
         <Table 
           columns={columns}
-          size='small'
+          bordered
           loading={loading}
           dataSource={dataSource}
           scroll={{ x:'100%' }}

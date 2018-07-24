@@ -8,7 +8,7 @@ export const createData = () => (
       fmodal: '胶囊剂',  // 剂型
       productCompany: '保定天浩制药有限公司', // 生产单位
       medicinalCode: '86902551000259', // 药品编码
-      remark: '' // 药品编码备注
+      remark: '', // 药品编码备注
     },
     {
       id: 2,
