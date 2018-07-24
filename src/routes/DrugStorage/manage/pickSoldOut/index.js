@@ -21,7 +21,12 @@ const columns = [
   {
     title: '配货单',
     dataIndex: 'medicinalCode',
-    width:150
+    width:150,
+    render:(text)=>(
+      <span>
+        <Link to={{pathname: `/drugStorage/drugStorageManage/pickSoldOut/details`}}>{text}</Link>
+      </span> 
+    )
   },
   {
     title: '申领单',
@@ -57,15 +62,6 @@ const columns = [
     title: '拣货时间',
     dataIndex: 'time',
     width:120
-  },
- {
-  title: '操作',
-  width:120,
-  dataIndex: 'RN',
-  render: (text, record) => 
-    <span>
-      <Link to={{pathname: `/drugStorage/drugStorageManage/pickSoldOut/details`}}>详情</Link>
-    </span>  
   }
 ];
 

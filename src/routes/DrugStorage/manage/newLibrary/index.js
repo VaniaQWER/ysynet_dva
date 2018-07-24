@@ -17,6 +17,10 @@ const columns = [
    title: '入库单',
    dataIndex: 'medicinalCode',
    width:150,
+   render: (text, record) => 
+   <span>
+     <Link to={{pathname: `/drugStorage/drugStorageManage/newLibrary/details`}}>{text}</Link>
+   </span>
   },
   {
     title: '配送单',
@@ -41,7 +45,7 @@ const columns = [
   },
   {
     title: '供应商',
-    dataIndex: 'spec1',
+    dataIndex: 'spec1232',
   },
   {
     title: '入库人',
@@ -57,16 +61,7 @@ const columns = [
   title: '备注',
   width:100,
   dataIndex: 'useDept1',
- },
- {
-  title: '操作',
-  width:100,
-  dataIndex: 'RN',
-  render: (text, record) => 
-    <span>
-      <Link to={{pathname: `/drugStorage/drugStorageManage/newLibrary/details`}}>详情</Link>
-    </span>
-  }
+ }
 ];
 
 class NewLibrary extends PureComponent{

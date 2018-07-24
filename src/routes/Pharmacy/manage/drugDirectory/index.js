@@ -16,12 +16,16 @@ const columns = [
    title: '通用名称',
    dataIndex: 'index',
    width:150,
-   render:(text,record)=>record.productName
+   render: (text, record) => 
+    <span>
+      <Link to={{pathname: `/pharmacy/manage/drugDirectory/edit`}}>{record.productName}</Link>
+    </span>
   },
   {
     title: '商品名称',
     width:150,
     dataIndex: 'productName',
+    
   },
   {
     title: '规格',
@@ -62,16 +66,7 @@ const columns = [
   title: '库存下限',
   width:100,
   dataIndex: 'useDept1',
- },
- {
-  title: '操作',
-  width:100,
-  dataIndex: 'RN',
-  render: (text, record) => 
-    <span>
-      <Link to={{pathname: `/pharmacy/manage/drugDirectory/edit`}}>编辑</Link>
-    </span>
-  }
+ }
 ];
 
 class DrugDirectory extends PureComponent{

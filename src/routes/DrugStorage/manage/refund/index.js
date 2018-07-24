@@ -22,6 +22,10 @@ const columns = [
    title: '出库单',
    dataIndex: 'medicinalCode',
    width:150,
+   render: (text, record) => 
+   <span>
+     <Link to={{pathname: `/drugStorage/drugStorageManage/refund/details`}}>{text}</Link>
+   </span>
   },
   {
     title: '配货单',
@@ -70,17 +74,8 @@ const columns = [
  {
   title: '复核时间',
   width:100,
-  dataIndex: 'useDept1',
- },
- {
-  title: '操作',
-  width:100,
-  dataIndex: 'RN',
-  render: (text, record) => 
-    <span>
-      <Link to={{pathname: `/drugStorage/drugStorageManage/refund/details`}}>详情</Link>
-    </span>
-  }
+  dataIndex: 'useDept123',
+ }
 ];
 
 class Refund extends PureComponent{

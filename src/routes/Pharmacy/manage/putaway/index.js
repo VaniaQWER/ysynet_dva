@@ -145,7 +145,7 @@ class Putaway extends PureComponent{
         dataIndex: 'RN',
         render: (text, record) => 
           <span>
-            <Popconfirm title="确定提交吗？" okText="是" cancelText="否"  onConfirm={()=>this.confirmOk(record)}>确认</Popconfirm>
+            <Popconfirm title="确定提交吗？" okText="是" cancelText="否"  onConfirm={()=>this.confirmOk(record)}><a>确认</a></Popconfirm>
           </span>  
       }
     ];

@@ -18,6 +18,10 @@ const columns = [
    title: '申领单',
    width:150,
    dataIndex: 'medicinalCode',
+   render:(text)=>
+   <span>
+      <Link to={{pathname: `/drugStorage/drugStorageManage/applyAccept/details`}}>{text}</Link>
+    </span> 
   },
   {
     title: '申领药房',
@@ -48,16 +52,6 @@ const columns = [
     title: '受理时间',
     width:150,
     dataIndex: 'bDept',
-  },
-  
- {
-  title: '操作',
-  width:150,
-  dataIndex: 'RN',
-  render: (text, record) => 
-    <span>
-      <Link to={{pathname: `/drugStorage/drugStorageManage/applyAccept/details`}}>详情</Link>
-    </span>  
   }
 ];
 class ApplyAccept extends PureComponent{

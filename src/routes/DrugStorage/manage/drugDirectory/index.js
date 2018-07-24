@@ -16,7 +16,11 @@ const columns = [
    title: '通用名称',
    dataIndex: 'index',
    width:150,
-   render:(text,record)=>record.productName
+   render:(text,record)=>(
+    <span>
+      <Link to={{pathname: `/drugStorage/drugStorageManage/drugDirectory/edit`}}>{record.productName}</Link>
+    </span>
+   )
   },
   {
     title: '商品名称',
@@ -62,16 +66,7 @@ const columns = [
   title: '库存下限',
   width:100,
   dataIndex: 'useDept1',
- },
- {
-  title: '操作',
-  width:100,
-  dataIndex: 'RN',
-  render: (text, record) => 
-    <span>
-      <Link to={{pathname: `/drugStorage/drugStorageManage/drugDirectory/edit`}}>编辑</Link>
-    </span>
-  }
+ }
 ];
 
 class DrugDirectory extends PureComponent{

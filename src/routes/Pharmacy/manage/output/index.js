@@ -17,7 +17,7 @@ const columns = [
    dataIndex: 'medicinalCode',
    width:150,
    render:(text)=>(
-    <Link to={{pathname: `/pharmacy/manage/output/details`}}>详情</Link>
+    <Link to={{pathname: `/pharmacy/manage/output/details`}}>{text}</Link>
    )
   },
   {
