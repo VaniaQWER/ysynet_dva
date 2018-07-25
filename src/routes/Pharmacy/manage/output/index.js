@@ -36,6 +36,7 @@ const columns = [
    title: '发药时间',
    width:100,
    dataIndex: 'useDept',
+   render: (text, record, index) => '2018-7-25 21:53'
   }
 ];
 

@@ -51,21 +51,25 @@ const columns = [
     title: '最小单位',
     width:100,
     dataIndex: 'custodian',
+    render: (text, record, index) => '个'
   },
   {
     title: '批准文号',
     width:100,
     dataIndex: 'bDept',
+    render: (text, record, index) => '批准文号' + index + 1
   },
   {
    title: '库存上限',
    width:100,
    dataIndex: 'useDept',
+   render: (text, record, index) => index + 0.5
   },
  {
   title: '库存下限',
   width:100,
   dataIndex: 'useDept1',
+  render: (text, record, index) => index + 0.1
  }
 ];
 

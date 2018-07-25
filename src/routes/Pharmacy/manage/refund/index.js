@@ -49,21 +49,25 @@ const columns = [
     title: '制单人',
     width:100,
     dataIndex: 'bDept',
+    render: (text, record, index) => '王文斌'
   },
   {
    title: '制单时间',
    width:100,
    dataIndex: 'useDept',
+   render: (text, record, index) => '2018-7-25 21:57'
   },
  {
   title: '确认人',
   width:100,
   dataIndex: 'useDept1',
+  render: (text, record, index) => '花花'
  },
  {
   title: '确认时间',
   width:100,
   dataIndex: 'useDept123',
+  render: (text, record, index) => '2018-7-25 21:58'
  }
 ];
 

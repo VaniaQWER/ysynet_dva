@@ -31,6 +31,7 @@ const columns = [
     title: '订单',
     width:150,
     dataIndex: 'productName1',
+    render: (text, record, index) => '8690255100025' + index
   },
   {
     title: '入库分类',
@@ -41,26 +42,32 @@ const columns = [
   {
     title: '库房',
     dataIndex: 'spec1',
+    width: 80,
     render:(text)=>'药库'
   },
   {
     title: '供应商',
     dataIndex: 'spec1232',
+    width: 80,
+    render: (text, record, index) => index
   },
   {
     title: '入库人',
     width:100,
     dataIndex: 'custodian',
+    render: (text, record, index) => '张三三'
   },
   {
    title: '入库时间',
-   width:100,
+   width:120,
    dataIndex: 'useDept',
+   render: (text, record, index) => '2018-7-25 21:34'
   },
  {
   title: '备注',
   width:100,
   dataIndex: 'useDept1',
+  render: (text, record, index) => '加班'
  }
 ];
 

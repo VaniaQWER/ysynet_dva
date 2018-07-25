@@ -151,11 +151,13 @@ class InventoryAudit extends PureComponent {
       },{
         title: '审核人',
         dataIndex: 'auditor',
-        key: 'auditor'
+        key: 'auditor',
+        render: () => '王力宏'
       },{
         title: '审核时间',
         dataIndex: 'auditorTime',
-        key: 'auditorTime'
+        key: 'auditorTime',
+        render: () => '2018-7-25 21:45'
       },
       {
         title: '备注',

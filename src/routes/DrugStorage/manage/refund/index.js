@@ -31,10 +31,11 @@ const columns = [
     title: '配货单',
     dataIndex: 'medicinalCode2  ',
     width:150,
+    render: (text, record, index) => '1000000000000' + index
    },
   {
     title: '库房',
-    width:150,
+    width:100,
     dataIndex: 'spec1',
     render:(text)=>'药库'
     
@@ -55,26 +56,31 @@ const columns = [
     title: '供应商',
     width:100,
     dataIndex: 'custodian',
+    render: (text, record, index) => 'PHXL'
   },
   {
     title: '制单人',
     width:100,
     dataIndex: 'bDept',
+    render: (text, record, index) => 'wang' + index
   },
   {
    title: '制单时间',
-   width:100,
+   width:110,
    dataIndex: 'useDept',
+   render: (text, record, index) => '2018-7-25 21:47'
   },
  {
   title: '复核人',
   width:100,
   dataIndex: 'useDept1',
+  render: (text, record, index) => 'wang' + index
  },
  {
   title: '复核时间',
-  width:100,
+  width:110,
   dataIndex: 'useDept123',
+  render: (text, record, index) => '2018-7-25 21:47'
  }
 ];
 

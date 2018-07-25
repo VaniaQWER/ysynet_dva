@@ -102,42 +102,49 @@ class Putaway extends PureComponent{
         title: '生产厂家',
         width:150,
         dataIndex: 'productCompany1',
+        render: (text, record, index) => '生产厂家'
       },
       {
         title: '生产批号',
         width:150,
         dataIndex: 'productCompany2',
+        render: (text, record, index) => index
       },
       {
         title: '生产日期',
         width:150,
         dataIndex: 'productCompany3',
+        render: (text, record, index) => '2018-7-25 21:30'
       },
       {
         title: '有效期至',
         width:150,
         dataIndex: 'productCompany4',
+        render: (text, record, index) => '2018-7-25'
       },
       {
         title: '供应商',
         width:150,
         dataIndex: 'productCompany41',
+        render: (text, record, index) => index
       },
       {
         title: '上架数量',
         width:150,
         dataIndex: 'productCompany42',
+        render: (text, record, index) => index
       },
       {
         title: '指示货位',
         width:150,
         dataIndex: 'productCompany23',
+        render: (text, record, index) => index
       },
       {
         title: '实际货位',
         width:150,
         dataIndex: 'productCompany5s',
-        render:(text)=>(<Input/>)
+        render:(text)=>(<Input defaultValue={1}/>)
       },
       {
         title: '操作',

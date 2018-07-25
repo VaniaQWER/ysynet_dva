@@ -28,6 +28,7 @@ const columns = [
     title: '申领单',
     width:150,
     dataIndex: 'productName1',
+    render: (text, record, index) => '申领入库'
   },
   {
     title: '入库分类',
@@ -38,22 +39,26 @@ const columns = [
   {
     title: '库房',
     dataIndex: 'spec1',
+    width:100,
     render:(text)=>'药库'
   },
   {
     title: '入库人',
     width:100,
     dataIndex: 'custodian',
+    render: (text, record, index) => '王美丽'
   },
   {
    title: '入库时间',
-   width:100,
+   width:120,
    dataIndex: 'useDept',
+   render: (text, record, index) => '2018-7-25 21:51'
   },
  {
   title: '备注',
   width:100,
   dataIndex: 'useDept1',
+  render: (text, record, index) => '小可耐'
  }
 ];
 

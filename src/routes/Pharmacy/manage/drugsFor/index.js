@@ -22,38 +22,45 @@ const columns = [
   },
   {
     title: '申领药房',
-    width:120,
+    width:100,
     dataIndex: 'assetsRecord',
+    render: (text, record, index) => '药房'
   },
   {
     title: '药库',
-    width:120,
+    width:100,
     dataIndex: 'assetsRecord123',
+    render: (text, record, index) => '药房'
   },
   {
     title: '状态',
     width:100,
     dataIndex: 'fstate',
+    render: (text, record, index) => text === '00' ? '已申领' : '未申领'
   },
   {
     title: '制单人',
-    width:150,
+    width:100,
     dataIndex: 'equipmentStandardName',
+    render: (text, record, index) => '未申领'
   },
   {
     title: '制单时间',
     width:150,
     dataIndex: 'time',
+    render: (text, record, index) => '2018-7-25 21:49'
   },
   {
     title: '受理人',
-    width:150,
+    width:100,
     dataIndex: 'custodian',
+    render: (text, record, index) => '已申领'
   },
   {
     title: '受理时间',
     width:150,
     dataIndex: 'bDept',
+    render: (text, record, index) => '2018-7-25 21:49'
   }
 ];
 class DrugsFor extends PureComponent{

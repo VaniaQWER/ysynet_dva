@@ -140,9 +140,11 @@ class AfterAdjustment extends PureComponent{
       },{
         title: '审核人',
         dataIndex: 'auditor',
+        render: () => '王力宏'
       },{
         title: '审核时间',
         dataIndex: 'auditorTime',
+        render: () => '2018-7-25 21:40'
       },
       {
         title: '备注',

@@ -26,7 +26,7 @@ const columns = [
   },
   {
     title: '药库',
-    width:150,
+    width:100,
     dataIndex: 'productName1',
     render:()=>`药库`
   },
@@ -40,20 +40,25 @@ const columns = [
     title: '制单人',
     width:100,
     dataIndex: 'fmodal2',
+    render: () => '墨瞳'
   },
   {
     title: '制单时间',
     dataIndex: 'spec1',
+    width:120,
+    render: () => '2018-7-25 21:42'
   },
   {
     title: '验收人',
     width:100,
     dataIndex: 'custodian',
+    render: () => '墨瞳'
   },
   {
    title: '验收时间',
-   width:100,
+   width:120,
    dataIndex: 'useDept',
+   render: () => '2018-7-25 21:42'
   }
 ];
 
