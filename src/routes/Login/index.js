@@ -120,7 +120,7 @@ class Login extends PureComponent{
               </FormItem>
             </Form>
             <div style={{ textAlign:'center',fontSize: 12,height: 70,paddingTop: 50  }}>
-              <span>版权所有&nbsp;@普华信联&nbsp;( 武汉 )&nbsp;科技有限公司&nbsp;保留一切权力</span>
+              {/* <span>版权所有&nbsp;@普华信联&nbsp;( 武汉 )&nbsp;科技有限公司&nbsp;保留一切权力</span> */}
             </div>
          </div>
       </div>

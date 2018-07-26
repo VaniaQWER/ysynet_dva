@@ -121,8 +121,9 @@ class SiderMenu extends PureComponent{
     return (
     <div>
       <div className='logoWrapper'>
-        <img src={require('../../assets/logo.png')} alt='logo' className='logo'/>
-        <h1 className='logoDesc'>P H X L</h1>
+        {/* <img src={require('../../assets/logo.png')} alt='logo' className='logo'/>
+        <h1 className='logoDesc'>P H X L</h1> */}
+        <div className='logo'></div>
       </div>
       {
         menu && menu.length ? //menuList && menuList.length ?
