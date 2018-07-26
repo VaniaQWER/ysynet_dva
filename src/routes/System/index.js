@@ -21,7 +21,7 @@ class SubSystem extends PureComponent {
         </div>
         <div className={styles.content}>
           <div className={styles.contentHeader}>
-            <span>医商云平台</span>
+            <span>药品物流管理系统</span>
           </div>
           <div className={styles.cardContent}>
             <div className={styles.cardList}>

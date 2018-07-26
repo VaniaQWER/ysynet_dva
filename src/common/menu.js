@@ -273,14 +273,79 @@ const menu = [
   "path": "/pharmacy",
   "subMenus": [
     {
-      "path": "/pharmacy/configMgt",
-      "level": 1,
-      "fsort": 30101,
-      "name": "配置管理",
-      "id": "30101",
-      "key": "/pharmacy/configMgt",
-      "parentId": "m301",
-      "icon": "setting",
+      "path": "/pharmacy/manage",
+      "level": 2,
+      "fsort": 30105,
+      "name": "药房管理",
+      "id": "30106",
+      "key": "/pharmacy/manage",
+      "parentId": "m305",
+      "icon": "medicine-box",
+      "subMenus":[
+        {
+          "path": "/pharmacy/manage/drugDirectory",
+          "level": 2,
+          "fsort": 30105,
+          "name": "药房目录",
+          "id": "30106",
+          "key": "/pharmacy/manage/drugDirectory",
+          "parentId": "m305"
+        },
+        {
+          "path": "/pharmacy/manage/drugsFor",
+          "level": 2,
+          "fsort": 30105,
+          "name": "药品申领",
+          "id": "30106",
+          "key": "/pharmacy/manage/drugsFor",
+          "parentId": "m305"
+        },
+        {
+          "path": "/pharmacy/manage/acceptance",
+          "level": 2,
+          "fsort": 30105,
+          "name": "验收",
+          "id": "30106",
+          "key": "/pharmacy/manage/acceptance",
+          "parentId": "m305"
+        },
+        {
+          "path": "/pharmacy/manage/putaway",
+          "level": 2,
+          "fsort": 30105,
+          "name": "上架",
+          "id": "30106",
+          "key": "/pharmacy/manage/putaway",
+          "parentId": "m305"
+        },
+        {
+          "path": "/pharmacy/manage/newLibrary",
+          "level": 2,
+          "fsort": 30105,
+          "name": "新建入库",
+          "id": "30106",
+          "key": "/pharmacy/manage/newLibrary",
+          "parentId": "m305"
+        },
+        {
+          "path": "/pharmacy/manage/output",
+          "level": 2,
+          "fsort": 30105,
+          "name": "发药出库",
+          "id": "30106",
+          "key": "/pharmacy/manage/output",
+          "parentId": "m305"
+        },
+        {
+          "path": "/pharmacy/manage/refund",
+          "level": 2,
+          "fsort": 30105,
+          "name": "退库",
+          "id": "30106",
+          "key": "/pharmacy/manage/refund",
+          "parentId": "m305"
+        },
+      ]
     },
     {
       "path": "/pharmacy/checkDecrease",
@@ -380,81 +445,7 @@ const menu = [
           }
         ]
       },
-      {
-        "path": "/pharmacy/manage",
-        "level": 2,
-        "fsort": 30105,
-        "name": "药房管理",
-        "id": "30106",
-        "key": "/pharmacy/manage",
-        "parentId": "m305",
-        "icon": "medicine-box",
-        "subMenus":[
-          {
-            "path": "/pharmacy/manage/drugDirectory",
-            "level": 2,
-            "fsort": 30105,
-            "name": "药房目录",
-            "id": "30106",
-            "key": "/pharmacy/manage/drugDirectory",
-            "parentId": "m305"
-          },
-          {
-            "path": "/pharmacy/manage/drugsFor",
-            "level": 2,
-            "fsort": 30105,
-            "name": "药品申领",
-            "id": "30106",
-            "key": "/pharmacy/manage/drugsFor",
-            "parentId": "m305"
-          },
-          {
-            "path": "/pharmacy/manage/acceptance",
-            "level": 2,
-            "fsort": 30105,
-            "name": "验收",
-            "id": "30106",
-            "key": "/pharmacy/manage/acceptance",
-            "parentId": "m305"
-          },
-          {
-            "path": "/pharmacy/manage/putaway",
-            "level": 2,
-            "fsort": 30105,
-            "name": "上架",
-            "id": "30106",
-            "key": "/pharmacy/manage/putaway",
-            "parentId": "m305"
-          },
-          {
-            "path": "/pharmacy/manage/newLibrary",
-            "level": 2,
-            "fsort": 30105,
-            "name": "新建入库",
-            "id": "30106",
-            "key": "/pharmacy/manage/newLibrary",
-            "parentId": "m305"
-          },
-          {
-            "path": "/pharmacy/manage/output",
-            "level": 2,
-            "fsort": 30105,
-            "name": "发药出库",
-            "id": "30106",
-            "key": "/pharmacy/manage/output",
-            "parentId": "m305"
-          },
-          {
-            "path": "/pharmacy/manage/refund",
-            "level": 2,
-            "fsort": 30105,
-            "name": "退库",
-            "id": "30106",
-            "key": "/pharmacy/manage/refund",
-            "parentId": "m305"
-          },
-        ]
-      },
+     
   ],
   "level": 0,
   "fsort": 301,

@@ -93,8 +93,8 @@
 .logo {
   height: 100%;
   vertical-align: middle;
-  background: url('./assets/img/logo2.png') 10px center no-repeat;
-  background-size: contain;
+  background: url('./assets/img/logo3.png') 10px center no-repeat;
+  background-size: 85% 100%;
 }
 /* .logo{
   display: inline-block;
@@ -118,7 +118,7 @@
   /* background-color: #fff; */
   color: #000;
   line-height: 64px;
-  padding-left: 24px;
+  /* padding-left: 24px; */
   -webkit-transition: all .3s;
   -o-transition: all .3s;
   transition: all .3s;
