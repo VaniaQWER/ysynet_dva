@@ -27,6 +27,8 @@ class Dictionary extends PureComponent{
     staticId:'' ,
     ExpandedKeys:[],
     SelectedKeys:[],
+    defaultExpandedKeys: '',
+    defaultSelectedKeys: '',
     loading: false,
     visible: false,
     gridData: false,
@@ -40,7 +42,16 @@ class Dictionary extends PureComponent{
     this.props.dispatch({
       type: 'dictionary/searchTree',
       payload: {},
-      callback: ()=>this.setState({ loading: false })
+      callback: (expandKey,selectKey)=>{
+        this.setState({ 
+          loading: false,
+          query: { staticId: selectKey },
+          ExpandedKeys: [expandKey],
+          SelectedKeys: [selectKey],
+          defaultExpandedKeys: expandKey,
+          defaultSelectedKeys: selectKey
+        })
+      }
     })
   }
   onSelect = (selectedKeys, info) => {
@@ -73,7 +84,7 @@ class Dictionary extends PureComponent{
             type: 'dictionary/updateStaticData',
             payload: values,
             callback: ()=> {
-              this.setState({ dirtyClick: false });
+              this.setState({ dirtyClick: false, visible: false });
               this.refs.table.fetch();
             }
           })
@@ -84,7 +95,7 @@ class Dictionary extends PureComponent{
             type: 'dictionary/insertData',
             payload: values,
             callback: ()=> {
-              this.setState({ dirtyClick: false });
+              this.setState({ dirtyClick: false,visible: false });
               this.refs.table.fetch();
             }
           })
@@ -94,11 +105,9 @@ class Dictionary extends PureComponent{
   }
   render(){
     const { getFieldDecorator } = this.props.form;
-    const { defaultExpandedKeys, defaultSelectedKeys, treeData } = this.props.dictionary;
-    let { query,ExpandedKeys,SelectedKeys, loading, title, visible, isEdit, record, dirtyClick } = this.state;
-    ExpandedKeys = [defaultExpandedKeys];
-    SelectedKeys = [defaultSelectedKeys];
-    query.staticId = defaultSelectedKeys;
+    const { treeData } = this.props.dictionary;
+    let { defaultExpandedKeys, defaultSelectedKeys, query,ExpandedKeys,SelectedKeys, 
+      loading, title, visible, isEdit, record, dirtyClick } = this.state;
     const columns = [{
       title: '编码',
       dataIndex: 'tfCloCode',

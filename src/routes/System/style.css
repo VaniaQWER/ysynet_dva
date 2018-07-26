@@ -40,7 +40,8 @@
   cursor: pointer;
   margin: 0 20px;
   box-shadow: 0 2px 8px rgba(0,0,0,.09);
-  background: #fff url('../../assets/img/subSystem1.png') no-repeat;
+  /* background: #fff url('../../assets/img/subSystem1.png') no-repeat; */
+  background: #fff;
 }
 .cardItemTwo{
   width: 260px;

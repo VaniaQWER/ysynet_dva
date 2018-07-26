@@ -25,3 +25,38 @@ export function insertData(options){
     body: options
   })
 }
+
+/* 
+  分类管理
+*/
+export function orgStaticInfo(options){
+  return request(`${_local}/staticData/orgStaticInfo`,{ //查询机构字典下拉框
+    methods: 'POST',
+    type: 'formData',
+    body: options
+  })
+}
+
+export function insertStaticInfo(options){
+  return request(`${_local}/staticData/insertStaticInfo`,{ //新增数据字典类型
+    methods: 'POST',
+    type: 'formData',
+    body: options
+  })
+}
+
+export function updateStaticInfo(options){
+  return request(`${_local}/staticData/updateStaticInfo`,{ //编辑数据字典类型
+    methods: 'POST',
+    type: 'formData',
+    body: options
+  })
+}
+
+export function copyStaticInfo(options){
+  return request(`${_local}/staticData/copyStaticInfo`,{ //克隆数据字典
+    methods: 'POST',
+    type: 'formData',
+    body: options
+  })
+}

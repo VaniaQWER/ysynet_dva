@@ -26,7 +26,15 @@ export function getUserM(options){
 
 
 export function getUserSubSystem(options){
-  return request(`${_local}/login/getUserSubSystem`,{ //获取子系统
+  return request(`/login/getUserSubSystem`,{ //获取子系统
+    methods: 'POST',
+    type: 'formData',
+    body: options
+  })
+}
+
+export function findMenusByUser(options){
+  return request(`/login/findMenusByUser`,{ // 获取用户模块和权限
     methods: 'POST',
     type: 'formData',
     body: options

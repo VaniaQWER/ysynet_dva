@@ -8,7 +8,7 @@ const dynamicWrapper = (app, models, component) => dynamic({
 });
 
 // nav data
-export const getNavData2 = app => [
+export const getNavData = app => [
   {
     component: dynamicWrapper(app, [], () => import('../layouts/BasicLayout')),
     layout: 'BasicLayout',
@@ -22,163 +22,103 @@ export const getNavData2 = app => [
         component: dynamicWrapper(app, [], () => import('../routes/Workplace'))
       },
       {
-        name: "医商云",
+        name: "医商云-菜单管理",
         icon: 'add',
-        path: 'ysy',
-        children: [{
-          name: '菜单管理',
-          icon: 'add',
-          path: '/menu',
-          component: dynamicWrapper(app, ['ysy/menu'], () => import('../routes/YSY/menu')),
-        },{
-          name: "子系统管理",
-          icon: 'add',
-          path: '/subSystem',
-          component: dynamicWrapper(app, ['ysy/subSystem'], () => import('../routes/YSY/subSystem'))
-        },{
-          name: "部署管理",
-          icon: 'add',
-          path: '/arrange',
-          component: dynamicWrapper(app, ['ysy/arrange'], () => import('../routes/YSY/arrange'))
-        },{
-          name: "授权管理",
-          icon: 'add',
-          path: '/accredit',
-          component: dynamicWrapper(app, ['ysy/accredit'], () => import('../routes/YSY/accredit'))
-        },{
-          name: "管理员管理",
-          icon: 'add',
-          path: '/managerMgt',
-          component: dynamicWrapper(app, ['ysy/managerMgt'], () => import('../routes/YSY/managerMgt'))
-        }]
+        path: 'ysy/menu',
+        component: dynamicWrapper(app, ['ysy/menu'], () => import('../routes/YSY/menu')),
+      },
+      {
+        name: "医商云-子系统管理",
+        icon: 'add',
+        path: 'ysy/subSystem',
+        component: dynamicWrapper(app, ['ysy/subSystem'], () => import('../routes/YSY/subSystem'))
+      },
+      {
+        name: "医商云-部署管理",
+        icon: 'add',
+        path: 'ysy/arrange',
+        component: dynamicWrapper(app, ['ysy/arrange'], () => import('../routes/YSY/arrange'))
+      },
+      {
+        name: "医商云-授权管理",
+        icon: 'add',
+        path: 'ysy/accredit',
+        component: dynamicWrapper(app, ['ysy/accredit'], () => import('../routes/YSY/accredit'))
+      },
+      {
+        name: "医商云-管理员管理",
+        icon: 'add',
+        path: 'ysy/managerMgt',
+        component: dynamicWrapper(app, ['ysy/managerMgt'], () => import('../routes/YSY/managerMgt'))
       },
       {
         name: "子系统配置",
         icon: 'setting',
-        path: '/configure',
-        children: [{
-          name: "子系统配置",
-          icon: 'add',
-          path: '/subSystemConfigure',
-          component: dynamicWrapper(app, ['config/subSystemConfig'], () => import('../routes/Configure/subSystemConfig'))
-        },{
-          
-        }],
+        path: '/configure/subSystemConfigure',
+        component: dynamicWrapper(app, ['config/subSystemConfig'], () => import('../routes/Configure/subSystemConfig'))
       },
       {
-        name: "数据字典",
+        name: "数据字典-字典管理",
         icon: 'setting',
-        path: 'dictionary',
-        children: [{
-          name: "数据字典",
-          icon: 'setting',
-          path: '/dictionaryMgt',
-          component: dynamicWrapper(app, ['dictionary/dictionary'], () => import('../routes/Dictionary/dictionary'))
-        },{
-          name: "分类管理",
-          icon: 'setting',
-          path: '/classifyMgt',
-          component: dynamicWrapper(app, ['dictionary/classifyMgt'], () => import('../routes/Dictionary/classify'))
-        }]
+        path: '/dictionary/dictionaryMgt',
+        component: dynamicWrapper(app, ['dictionary/dictionary'], () => import('../routes/Dictionary/dictionary'))
       },
       {
-        name: '精细化',
+        name: "数据字典--分类管理",
         icon: 'setting',
-        path: 'jxh',
-        children: [
-          {
-            name: '管理员',
-            icon: 'user',
-            path: '/manager',
-            children: [{
-              name: '子系统管理',
-              icon: 'setting',
-              path: '/subSystemMgt',
-              component: dynamicWrapper(app, ['manager/subSystemMgt'], () => import('../routes/Manager/subSystemMgt'))
-            },{
-              name: "子系统管理员",
-              icon: 'setting',
-              path: '/subSystemMgter',
-              component: dynamicWrapper(app, ['manager/subSystemManager'], () => import('../routes/Manager/subSystemManager'))
-            },{
-              name: "科室管理",
-              icon: 'setting',
-              path: '/dpetMgt',
-              component: dynamicWrapper(app, ['manager/deptMgt'], () => import('../routes/Manager/deptMgt'))
-            }]
-          },{
-            name: '非临床科室子系统',
-            icon: 'table',
-            path: '/flcksSubSystem',
-            children: [{
-              name: "配置管理",
-              icon: 'setting',
-              path: '/configMgt',
-              component: dynamicWrapper(app, ['manager/deptMgt'], () => import('../routes/NonClinicalDeptSystem'))
-            }]
-        },{
-            name: '临床科室子系统',
-            icon: 'table',
-            path: '/lcksSubSystem',
-            children: [{
-              name: "配置管理",
-              icon: 'setting',
-              path: '/configMgt',
-              component: dynamicWrapper(app, ['manager/deptMgt'], () => import('../routes/ClinicalDeptSystem'))
-            }]
-        },]
+        path: '/dictionary/classifyMgt',
+        component: dynamicWrapper(app, ['dictionary/dictionary'], () => import('../routes/Dictionary/classify'))
       },
       {
-        name: '药库',
-        icon: 'table',
-        path: '/drugStorage',
-        children: [{
-          name: "配置管理",
-          icon: 'setting',
-          path: '/configMgt',
-          component: dynamicWrapper(app, [], () => import('../routes/DrugStorage/configMgt/drugConfigMgt'))
-        },
-        {
-          name: "药库管理",
-          icon: 'setting',
-          path: '/drugStorageManage',
-          component: dynamicWrapper(app, [], () => import('../routes/DrugStorage/manage/drugDirectory')),
-          children: [
-            {
-              name: "药品目录",
-              icon: 'setting',
-              path: '/drugDirectory',
-              component: dynamicWrapper(app, [], () => import('../routes/DrugStorage/manage/drugDirectory')),
-              children:[
-                {
-                  name: "药品目录-编辑",
-                  icon: 'setting',
-                  path: '/edit',
-                  component: dynamicWrapper(app, [], () => import('../routes/DrugStorage/manage/drugDirectory/edit'))
-                }
-              ]
-            },
-           
-          ]
-        },
-      ]},{
-        name: '药房',
-        icon: 'table',
-        path: '/pharmacy',
-        children: [{
-          name: '配置管理',
-          icon: 'setting',
-          path: '/configMgt',
-          component: dynamicWrapper(app, [], () => import('../routes/Pharmacy/configMgt'))
-        }]
-      }
+        name: '管理员--子系统管理',
+        icon: 'user',
+        path: '/manager/subSystemMgt',
+        component: dynamicWrapper(app, ['manager/subSystemMgt'], () => import('../routes/Manager/subSystemMgt'))
+      },
+      {
+        name: '管理员--子系统管理员',
+        icon: 'user',
+        path: '/manager/subSystemMgter',
+        component: dynamicWrapper(app, ['manager/subSystemManager'], () => import('../routes/Manager/subSystemManager'))
+      },
+      {
+        name: '管理员--科室管理',
+        icon: 'user',
+        path: '/manager/dpetMgt',
+        component: dynamicWrapper(app, ['manager/deptMgt'], () => import('../routes/Manager/deptMgt'))
+      },
+      {
+        name: '精细化--临床科室子系统--配置管理',
+        icon: 'user',
+        path: '/lcksSubSystem/configMgt',
+        component: dynamicWrapper(app, ['clinicalSubSystem/index'], () => import('../routes/ClinicalDeptSystem/configMgt'))
+      },
+      {
+        name: '精细化--临床科室子系统--用户管理',
+        icon: 'user',
+        path: '/lcksSubSystem/userMgt',
+        component: dynamicWrapper(app, ['clinicalSubSystem/index'], () => import('../routes/ClinicalDeptSystem/userMgt'))
+      },
+      {
+        name: '精细化--非临床科室子系统--配置管理',
+        icon: 'user',
+        path: '/flcksSubSystem/configMgt',
+        component: dynamicWrapper(app, ['clinicalSubSystem/index'], () => import('../routes/NonClinicalDeptSystem/configMgt'))
+      },
+      {
+        name: '精细化--非临床科室子系统--用户管理',
+        icon: 'user',
+        path: '/flcksSubSystem/userMgt',
+        component: dynamicWrapper(app, ['clinicalSubSystem/index'], () => import('../routes/NonClinicalDeptSystem/userMgt'))
+      },
     ]
   },
 ];
 
 
+export const getNavData2 = app => [
 
-export const getNavData = app => [
+// export const getNavData = app => [
   {
   component: dynamicWrapper(app, [], () => import('../layouts/BasicLayout')),
   layout: 'BasicLayout',

@@ -1,5 +1,5 @@
 import React, { PureComponent } from 'react';
-import { Row, Col, Form, Input, Button, Select, Modal, Table, Popconfirm, Checkbox, message } from 'antd';
+import { Row, Col, Form, Input, Button, Select, Modal, Table, Popconfirm, Checkbox, message,Tooltip } from 'antd';
 import RemoteTable from '../../../components/TableGrid';
 import jxh from '../../../api/jxh';
 import { connect } from 'dva';
@@ -368,9 +368,11 @@ class DeptMgt extends PureComponent{
         dataIndex: 'fqun'
     },{
         title : '默认地址',
-        className: 'ysy-text-overflow',
+        width: 270,
+        className: 'ellipsis',
         dataIndex : 'defaultAddress',
-        render: text => <span title={text}>{text}</span>
+        render: (text,record) =>
+        <Tooltip placement="topLeft" title={text}>{text}</Tooltip>
     },{
         title: '操作',
         dataIndex: 'actions',

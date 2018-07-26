@@ -53,7 +53,7 @@ export default {
         message.error(data.msg|| '删除失败');
       }
       if (callback) callback()
-    }
+    },
   },
   subscriptions: {
     setup({ dispatch, history }) {

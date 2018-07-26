@@ -2,7 +2,7 @@ import React, { PureComponent } from 'react';
 import { connect } from 'dva';
 import CardItem from '../../components/LoginCard';
 const cardList = [];
-@connect()
+// @connect()
 class Workplace extends PureComponent {
   onClick = (item,index) =>{
     this.props.history.push({
@@ -21,5 +21,5 @@ class Workplace extends PureComponent {
     )
   }
 }
-
+// export default Workplace;
 export default connect(state=> state)(Workplace);

@@ -10,10 +10,14 @@ export default {
   SEARCHDEPLOYLIST: `${_local}/deploy/searchDeployList`, // 部署管理 部署列表查询
 
   SEARCHADMINLIST: `${_local}/user/searchAdminList`, // 部署管理 部署列表查询
+  
+  ORG_LIST: `${_local}/orgInfoController/findOrgs`,//查询所有机构列表
 
   ITEMSDATADETAILS_LIST: `${_local}/staticData/searchStaticData`,//数据字典内容查询
 
   ITEMSDATA_LIST: `${_local}/staticData/searchStaticInfo`,//查询所有数据字典类型
 
   USERLOGIN: `${_local}/login/subSystemLogin` // 用户登陆
+  // USERLOGIN: `${_local}/login/userLogin` // 用户登陆
+
 }

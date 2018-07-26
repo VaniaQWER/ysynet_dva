@@ -7,5 +7,9 @@ export default {
 
  DEPT_LIST: `${_local}/departmentController/findOrgDeptList4kehu`,//查询科室信息列表
 
- 
+ FINDDEPTCONFIGLIST:`${_local}/Configure/findDeptConfigList`,//查询临床科室子系统配置管理页面列表
+
+ SAVEDEPTCONFIG:`${_local}/Configure/saveDeptConfig`,//保存科室子系统配置
+
+ FINDSTORAGECONFIGLIST: `${_local}/Configure/findStorageConfigList`,//查询 非 临床科室子系统配置管理页面列表
 }

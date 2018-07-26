@@ -19,15 +19,31 @@ const formItemLayout = {
 }
 
 class AddOrEditForm extends PureComponent{
+  state = {
+    orgId: '',
+    orgType: ''
+  }
+  handleSubmit = (e) =>{
+    e.preventDefault();
+    this.props.form.validateFields((err,values)=>{
+      if(!err){
+        values.orgId = this.state.orgId;
+        console.log(values,'values');
+        this.props.addFunc(values);
+      }
+    })
+  }
   render(){
     const { isEdit, form, data } = this.props;
+    console.log(isEdit,'isEdit')
     const { getFieldDecorator } = form;
     return (
-      <Form>
+      <Form onSubmit={this.handleSubmit}>
         <FormItem {...formItemLayout} label="所属机构" hasFeedback>
           <FetchSelect  defaultValue={isEdit ? data.orgName: ''} ref='fetchs' url={ysy.ORG_LIST}
               parmas={'orgType'}
-              cb={(value,orgType) => this.setState({orgId: value,orgType: orgType})}/>
+              cb={(value,orgType) => this.setState({orgId: value,orgType: orgType})}
+              />
         </FormItem>
         {
           this.state.orgType === '09'
@@ -97,7 +113,7 @@ class AddOrEditForm extends PureComponent{
           )}
         </FormItem>
         <FormItem wrapperCol={{ span: 22,offset: 2 }}>
-          <Button type="primary" htmlType="submit" style={{ width: '95%' }}>保存</Button>
+          <Button type="primary" htmlType="submit" loading={this.props.dirtyClick} style={{ width: '95%' }}>保存</Button>
         </FormItem>
       </Form>
     )
@@ -107,26 +123,42 @@ class AddOrEditForm extends PureComponent{
 const WrapperForm = Form.create()(AddOrEditForm);
 
 class CloneForm extends PureComponent{
+  handleSubmit = (e) =>{
+    e.preventDefault();
+    this.props.form.validateFields((err,values)=>{
+      if(!err){
+        let postData = {};
+        postData.sourceOrgId = this.props.data.sourceOrgId
+        postData.newOrgId = this.props.data.newOrgId;
+        postData.sourceStaticId = values.sourceStaticId;
+        postData.newStaticId = values.newStaticId
+        console.log(postData,'postData');
+        this.props.clone(postData);
+      }
+    })
+  }
   render(){
     const { getFieldDecorator } = this.props.form;
     return (
       <Form style={{marginTop: '16px'}} onSubmit={this.handleSubmit}>
-        <FormItem {...formItemLayout} label="待客隆的机构" hasFeedback >
+        <FormItem labelCol={{ span: 6 }} wrapperCol={{ span: 16 }} label="待客隆的机构" hasFeedback >
           <FetchSelect  ref='fetchs' url={ysy.ORG_LIST} 
                 cb={(value) => this.props.cb({ sourceOrgId: value })}/>
         </FormItem>
-        <FormItem {...formItemLayout} label="待客隆的类型" >
+        <FormItem labelCol={{ span: 6 }} wrapperCol={{ span: 16 }} label="待客隆的类型" >
           {
             getFieldDecorator('sourceStaticId',{
               rules: [{ required: true, message: '请选择!' }],
             })(
                 <Select 
                   onFocus={this.props.onFocusSelectSource}
-                  disabled={this.state.sourceOrgId === "" ? true : false}
+                  disabled={this.props.data.sourceOrgId === "" ? true : false}
                   allowClear={true}
+                  showSearch
+                  filterOption={(input, option) => option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0}
                 >
                 {
-                  this.props.parentData.map((item,index) => {
+                  this.props.data.parentData.map((item,index) => {
                     return <Option key={index} value={item.value}>{item.text}</Option>
                   })
                 }
@@ -134,20 +166,22 @@ class CloneForm extends PureComponent{
             )
           }
         </FormItem>
-        <FormItem {...formItemLayout} label="需要克隆机构" hasFeedback>
+        <FormItem labelCol={{ span: 6 }} wrapperCol={{ span: 16 }} label="需要克隆机构" hasFeedback>
           <FetchSelect   ref='fetchs' url={ysy.ORG_LIST} 
               cb={(value) => this.props.cb({ newOrgId: value  })}/>
         </FormItem>
-        <FormItem {...formItemLayout} label="新机构的类型" >
+        <FormItem labelCol={{ span: 6 }} wrapperCol={{ span: 16 }} label="新机构的类型" >
           {
             getFieldDecorator('newStaticId')(
               <Select 
                 onFocus={this.props.onFocusSelectNew}
-                disabled={this.state.newOrgId===""? true : false}
+                disabled={this.props.data.newOrgId===""? true : false}
+                showSearch
+                filterOption={(input, option) => option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0}
                 allowClear={true}
               >
                 {
-                  this.props.newTreeData.map((item,index) => {
+                  this.props.data.newTreeData.map((item,index) => {
                     return <Option key={index} value={item.value}>{item.text}</Option>
                   })
                 }
@@ -156,7 +190,7 @@ class CloneForm extends PureComponent{
           }
         </FormItem>
       <FormItem wrapperCol={{ span: 22,offset: 2 }}>
-        <Button type="primary" htmlType="submit" style={{ width: '95%' }} loading={this.state.dirtyClick}>保存</Button>
+        <Button type="primary" htmlType="submit" style={{ width: '95%' }} >保存</Button>
       </FormItem>
     </Form>
     )
@@ -187,25 +221,63 @@ class ClassifyMgt extends PureComponent{
       postData.staticType = this.props.form.getFieldValue('staticType');
     }
     this.props.dispatch({
-      type: 'classify/orgStaticInfo',
+      type: 'dictionary/orgStaticInfo',
       payload: postData,
     })
   }
   onFocusSelectSource = () =>{
     this.props.dispatch({
-      type: 'classify/orgStaticInfo',
+      type: 'dictionary/orgStaticInfo',
       payload: { orgId: this.state.sourceOrgId }
     })
   }
   onFocusSelectNew = () =>{
     this.props.dispatch({
-      type: 'classify/orgStaticInfo',
+      type: 'dictionary/orgStaticInfo',
       payload: { orgId: this.state.newOrgId }
     })
   }
+  // 新增数据字典
+  submit = (values) =>{
+    console.log(values,'values');
+    this.setState({ dirtyClick: true })
+    if(this.state.isEdit){
+      //编辑
+      values.staticId = this.state.record.staticId
+      this.props.dispatch({
+        type: 'dictionary/updateStaticInfo',
+        payload: values,
+        callback: () =>{
+          this.setState({ visible: false,dirtyClick: false });
+          this.refs.table.fetch();
+        }
+      })
+    }else{
+      console.log('新增')
+      this.props.dispatch({
+        type: 'dictionary/insertStaticInfo',
+        payload: values,
+        callback: ()=>{
+          this.setState({ visible: false,dirtyClick: false });
+          this.refs.table.fetch();
+        }
+      })
+    }
+  }
+  // 克隆机构
+  clone = (values) =>{
+    this.props.dispatch({
+      type: 'dictionary/copyStaticInfo',
+      payload: values,
+      callback: () =>{
+        this.setState({ cloneVisible: false });
+        this.refs.table.fetch();
+      }
+    })
+  }
   render(){
-    const { query, title, isEdit, visible, cloneVisible } = this.state;
-    const { selectDatas } = this.props.classify;
+    const { query, title, isEdit, visible, cloneVisible,sourceOrgId,newOrgId } = this.state;
+    const { selectDatas } = this.props.dictionary;
     const columns = [{
       title: '编码',
       dataIndex: 'tfClo',
@@ -242,12 +314,14 @@ class ClassifyMgt extends PureComponent{
           </Col>
           <Col span={10} offset={4} style={{textAlign: 'right'}}>
             <Button type='primary' icon='plus' onClick={()=>{
-                this.props.form.resetFields();
+                if(this.addOrEditForm){
+                  this.addOrEditForm.resetFields();
+                }
                 this.setState({ visible: true,title: '新建字典',isEdit: false });
               }}>
               {'新建分类'}
             </Button>
-            <Button type='default' style={{ marginLeft: 8,marginRight: 8 }}>{'克隆'}</Button>
+            <Button type='default' onClick={()=>this.setState({ cloneVisible: true })} style={{ marginLeft: 8,marginRight: 8 }}>{'克隆'}</Button>
           </Col>
         </Row>
         <Modal
@@ -260,7 +334,10 @@ class ClassifyMgt extends PureComponent{
           <WrapperForm 
             selectDatas={selectDatas}
             isEdit={isEdit}
+            addFunc={this.submit}
+            orgId={this.state.orgId}
             data={this.state.record}
+            dirtyClick={this.state.dirtyClick}
             ref={(form) => this.addOrEditForm = form}
           />
         </Modal>
@@ -275,8 +352,13 @@ class ClassifyMgt extends PureComponent{
             onFocusSelectSource={this.onFocusSelectSource}
             onFocusSelectNew={this.onFocusSelectNew}
             cb={value=> this.setState(value)}
-            parentData={selectDatas}
-            newTreeData={selectDatas}
+            clone={this.clone}
+            data={{
+              sourceOrgId,
+              newOrgId,
+              parentData: selectDatas,
+              newTreeData: selectDatas
+            }}
           />
         </Modal>
         <RemoteTable 
