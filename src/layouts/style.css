@@ -33,4 +33,14 @@
   height: 52px;
   background: #fff;
   line-height: 52px;
+  margin-left: -50px;
+}
+
+.icon:hover {
+  cursor: pointer;
+}
+.profile{
+  display: flex;
+  justify-content: flex-end;
+  margin-right: 16px;
 }

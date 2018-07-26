@@ -17,6 +17,10 @@ const columns = [
    title: '出库单',
    dataIndex: 'medicinalCode',
    width:150,
+   render:(text)=>
+   <span>
+      <Link to={{pathname: `/drugStorage/drugStorageManage/output/details`}}>{text}</Link>
+    </span>
   },
   {
     title: '配货单',
@@ -26,8 +30,8 @@ const columns = [
   {
     title: '库房',
     dataIndex: 'spec1',
+    width:50,
     render:(text)=>'药库'
-    
   },
   {
     title: '出库分类',
@@ -45,36 +49,32 @@ const columns = [
     title: '申领药房',
     width:100,
     dataIndex: 'custodian',
+    render: (text, record, index) => '药库'
   },
   {
     title: '制单人',
     width:100,
     dataIndex: 'bDept',
+    render: (text, record, index) => '王文斌'
   },
   {
    title: '制单时间',
-   width:100,
+   width:110,
    dataIndex: 'useDept',
+   render: (text, record, index) => '2018-7-25 21:17'
   },
  {
   title: '复核人',
   width:100,
   dataIndex: 'useDept1',
+  render: (text, record, index) => '张冰冰'
  },
  {
   title: '复核时间',
-  width:100,
+  width:110,
   dataIndex: 'useDept21',
- },
- {
-  title: '操作',
-  width:100,
-  dataIndex: 'RN',
-  render: (text, record) => 
-    <span>
-      <Link to={{pathname: `/drugStorage/drugStorageManage/output/details`}}>详情</Link>
-    </span>
-  }
+  render: (text, record, index) => '2018-7-25 21:17'
+ }
 ];
 
 class Output extends PureComponent{

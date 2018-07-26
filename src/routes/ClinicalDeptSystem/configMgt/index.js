@@ -1,8 +1,8 @@
 import React, { PureComponent } from 'react';
-import { Row, Col, Input, Button, Select,Popconfirm,message } from 'antd';
-import RemoteTable from '../../components/TableGrid';
-import { CommonData } from '../../utils/utils';
-// import jxh from '../../api/jxh'
+import { Row, Col, Input, Button, Select,message } from 'antd';
+import RemoteTable from '../../../components/TableGrid';
+import { CommonData } from '../../../utils/utils';
+import jxh from '../../../api/jxh'
 import { connect } from 'dva';
 const { Search } = Input;
 const { Option } = Select;
@@ -28,26 +28,35 @@ const EditableCell = ({ value, record, index, onEditChange, options, column, max
     }
   </div>
 );
-class NonClinicalDeptSystem extends PureComponent{
+class ConfigMgt extends PureComponent{
   state = {
-    query: {},
-    record: {}
+    query: {
+      deptGuid: this.props.users.subSystem.deptGuid
+    },
+    record: {},
+    options: []
   }
   edit = (record,stateRecord,index)=>{
     if(stateRecord.editable){
       let values = {};
-      values.dsGuid = stateRecord.dsGuid;
       values.configName = stateRecord.configName;
-      values.tfRemark = stateRecord.tfRemark;
+      values.configCode = stateRecord.configCode;
       values.configValue = stateRecord.configValue;
-      values.dsType = stateRecord.dsType;
+      values.configType = stateRecord.configType;
+      values.tfRemark = stateRecord.tfRemark;
+      values.deptGuid = this.props.users.subSystem.deptGuid;
+      if(stateRecord.configGuid){
+        values.configGuid = stateRecord.configGuid;
+      }
       console.log(values,'values');
       this.props.dispatch({
-        type: 'subSystemConfig/saveConfig',
+        type: 'clinicalSystem/saveDeptConfig',
         payload: values,
-        callback: () => this.refs.table.fetch()
+        callback: () => {
+          this.setState({ record: {...record, editable: false,index } })
+          this.refs.table.fetch()
+        }
       })
-      this.setState({ record: {...record, editable: false,index } })
     }else{
       console.log('编辑')
       if(record.configCode){
@@ -57,16 +66,6 @@ class NonClinicalDeptSystem extends PureComponent{
       }
       this.setState({ record: {...record, editable: true, index } })
     }
-  }
-  delete = (record)=>{
-    let values = {};
-    values.dsGuid = record.dsGuid;
-    values.dsType = record.dsType;
-    this.props.dispatch({
-      type: 'subSystemConfig/deleteRecord',
-      payload: values,
-      callback: () => this.refs.table.fetch()
-    })
   }
   onCellChange = (value,record,index,column,max) => {
     if(column !== 'configValue'){
@@ -98,12 +97,13 @@ class NonClinicalDeptSystem extends PureComponent{
     const columns = [{
       title: '编号',
       dataIndex: 'No',
+      width: 90,
       render: (text,record,index)=>{
         return index + 1;
       }
     },{
       title: '参数分类',
-      dataIndex: 'configType',
+      dataIndex: 'configTypeName',
     },{
       title: '参数名称',
       dataIndex: 'configName',
@@ -116,7 +116,7 @@ class NonClinicalDeptSystem extends PureComponent{
       dataIndex: 'configCode',
     },{
       title: '默认值',
-      dataIndex: 'configValueName',
+      dataIndex: 'configValue',
       width: 200,
       render: (text, record, index) => {
         return this.renderColumns(text, record, index,'configValue')
@@ -135,16 +135,8 @@ class NonClinicalDeptSystem extends PureComponent{
       fixed: 'right',
       render: (text,record,index)=>{
         return <span>
-          {
-            record.configCode ?
             <a onClick={this.edit.bind(null,record,this.state.record,index)}>{ this.state.record.editable && this.state.record.index===index ? '保存': '编辑' }</a>
-            :
-            <Popconfirm title="是否确认删除此条记录?" onConfirm={this.delete.bind(null, record)} okText="是" cancelText="否">
-              <a>删除</a>
-            </Popconfirm>
-          }
-          
-        </span>
+          </span>
       }
     }]
     const { query } = this.state;
@@ -164,8 +156,8 @@ class NonClinicalDeptSystem extends PureComponent{
         </Row>
         <RemoteTable 
           ref='table'
-          url={'/Configure/findSubSystemConfigList'}
-          rowKey={'dsGuid'}
+          url={jxh.FINDDEPTCONFIGLIST}
+          rowKey={'templateDcGuid'}
           scroll={{ x:'100%' }}
           query={query}
           columns={columns}
@@ -175,4 +167,4 @@ class NonClinicalDeptSystem extends PureComponent{
     )
   }
 }
-export default connect(state =>  state)(NonClinicalDeptSystem);
+export default connect(state =>  state)(ConfigMgt);

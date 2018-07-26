@@ -25,8 +25,11 @@ class SearchForm extends PureComponent {
     e.preventDefault();
     this.props.form.validateFields((err, values) => {
       if (!err) {
-        values.startTime = values.makingTime[0].format('YYYY-MM-DD HH:mm');
-        values.endTime = values.makingTime[1].format('YYYY-MM-DD HH:mm');
+        const makingTime = values.makingTime === undefined || values.makingTime === null ? "" : values.makingTime;
+        if(makingTime.length > 0) {
+          values.startMakingTime = makingTime[0].format('YYYY-MM-DD HH:mm');
+          values.endMakingTime = makingTime[1].format('YYYY-MM-DD HH:mm');
+        }
         console.log(values, '查询条件');
         this.props.query(values);
       }
@@ -122,42 +125,348 @@ class NewInventory extends PureComponent {
       {
         title: '盘点单',
         dataIndex: 'odd',
+        key: 'odd',
+        render: (text, record) => {
+          if (record.status === '已确认') {
+            return <span><Link to={{ pathname: `/drugStorage/checkDecrease/newInventory/detailsConfirm`}}>{text}</Link></span>
+          } else {
+            return <span><Link to={{ pathname: `/drugStorage/checkDecrease/newInventory/details`}}>{text}</Link></span>
+          }
+        }
       },
       {
         title: '状态',
         dataIndex: 'status',
+        key: 'status'
       },
       {
         title: '类型',
         dataIndex: 'types',
+        key: 'types'
       },
       {
         title: '部门',
         dataIndex: 'dept',
+        key: 'dept'
       },
       {
         title: '制单人',
         dataIndex: 'oddUser',
+        key: 'oddUser'
       },
       {
         title: '制单时间',
         dataIndex: 'makingTime',
+        key: 'makingTime'
       },
       {
         title: '起始时间',
         dataIndex: 'startTime',
+        key: 'startTime'
       },
       {
         title: '备注',
         dataIndex: 'remark',
+        key: 'remark'
+      }
+    ];
+    const dataSource = [
+      {
+        key: '1',
+        odd: 'KP0022118070000383',
+        status: '草稿',
+        types: '明盘全盘',
+        dept: '药库',
+        oddUser: '张三三',
+        makingTime: '2018-7-24 16:45',
+        startTime: '2018-7-24 16:45',
+        remark: '我是新建盘点列表'
       },
       {
-        title: '操作',
-        dataIndex: 'RN',
-        render: (text, record) =>
-          <span>
-            <Link to={{ pathname: `/checkDecrease/newInventory/add/${record.oddGuid}` }}>详情</Link>
-          </span>
+        key: '2',
+        odd: 'KP00221180700002DN',
+        status: '待确认',
+        types: '暗盘动销盘',
+        dept: '药库',
+        oddUser: '张三三',
+        makingTime: '2018-7-24 16:45',
+        startTime: '2018-7-24 16:45',
+        remark: '我是新建盘点列表'
+      },
+      {
+        key: '3',
+        odd: 'KP00221180700001CW',
+        status: '已确认',
+        types: '明盘动盘',
+        dept: '药库',
+        oddUser: '张三三',
+        makingTime: '2018-7-24 16:45',
+        startTime: '2018-7-24 16:45',
+        remark: '我是新建盘点列表'
+      },
+      {
+        key: '4',
+        odd: 'KP0022118070000383',
+        status: '草稿',
+        types: '明盘全盘',
+        dept: '药库',
+        oddUser: '张三三',
+        makingTime: '2018-7-24 16:45',
+        startTime: '2018-7-24 16:45',
+        remark: '我是新建盘点列表'
+      },
+      {
+        key: '5',
+        odd: 'KP00221180700002DN',
+        status: '待确认',
+        types: '暗盘动销盘',
+        dept: '药库',
+        oddUser: '张三三',
+        makingTime: '2018-7-24 16:45',
+        startTime: '2018-7-24 16:45',
+        remark: '我是新建盘点列表'
+      },
+      {
+        key: '6',
+        odd: 'KP00221180700001CW',
+        status: '已确认',
+        types: '明盘动盘',
+        dept: '药库',
+        oddUser: '张三三',
+        makingTime: '2018-7-24 16:45',
+        startTime: '2018-7-24 16:45',
+        remark: '我是新建盘点列表'
+      },
+      {
+        key: '7',
+        odd: 'KP0022118070000383',
+        status: '草稿',
+        types: '明盘全盘',
+        dept: '药库',
+        oddUser: '张三三',
+        makingTime: '2018-7-24 16:45',
+        startTime: '2018-7-24 16:45',
+        remark: '我是新建盘点列表'
+      },
+      {
+        key: '8',
+        odd: 'KP00221180700002DN',
+        status: '待确认',
+        types: '暗盘动销盘',
+        dept: '药库',
+        oddUser: '张三三',
+        makingTime: '2018-7-24 16:45',
+        startTime: '2018-7-24 16:45',
+        remark: '我是新建盘点列表'
+      },
+      {
+        key: '9',
+        odd: 'KP00221180700001CW',
+        status: '已确认',
+        types: '明盘动盘',
+        dept: '药库',
+        oddUser: '张三三',
+        makingTime: '2018-7-24 16:45',
+        startTime: '2018-7-24 16:45',
+        remark: '我是新建盘点列表'
+      },
+      {
+        key: '10',
+        odd: 'KP0022118070000383',
+        status: '草稿',
+        types: '明盘全盘',
+        dept: '药库',
+        oddUser: '张三三',
+        makingTime: '2018-7-24 16:45',
+        startTime: '2018-7-24 16:45',
+        remark: '我是新建盘点列表'
+      },
+      {
+        key: '11',
+        odd: 'KP00221180700002DN',
+        status: '待确认',
+        types: '暗盘动销盘',
+        dept: '药库',
+        oddUser: '张三三',
+        makingTime: '2018-7-24 16:45',
+        startTime: '2018-7-24 16:45',
+        remark: '我是新建盘点列表'
+      },
+      {
+        key: '12',
+        odd: 'KP00221180700001CW',
+        status: '已确认',
+        types: '明盘动盘',
+        dept: '药库',
+        oddUser: '张三三',
+        makingTime: '2018-7-24 16:45',
+        startTime: '2018-7-24 16:45',
+        remark: '我是新建盘点列表'
+      },
+      {
+        key: '13',
+        odd: 'KP0022118070000383',
+        status: '草稿',
+        types: '明盘全盘',
+        dept: '药库',
+        oddUser: '张三三',
+        makingTime: '2018-7-24 16:45',
+        startTime: '2018-7-24 16:45',
+        remark: '我是新建盘点列表'
+      },
+      {
+        key: '14',
+        odd: 'KP00221180700002DN',
+        status: '待确认',
+        types: '暗盘动销盘',
+        dept: '药库',
+        oddUser: '张三三',
+        makingTime: '2018-7-24 16:45',
+        startTime: '2018-7-24 16:45',
+        remark: '我是新建盘点列表'
+      },
+      {
+        key: '15',
+        odd: 'KP00221180700001CW',
+        status: '已确认',
+        types: '明盘动盘',
+        dept: '药库',
+        oddUser: '张三三',
+        makingTime: '2018-7-24 16:45',
+        startTime: '2018-7-24 16:45',
+        remark: '我是新建盘点列表'
+      },
+      {
+        key: '16',
+        odd: 'KP0022118070000383',
+        status: '草稿',
+        types: '明盘全盘',
+        dept: '药库',
+        oddUser: '张三三',
+        makingTime: '2018-7-24 16:45',
+        startTime: '2018-7-24 16:45',
+        remark: '我是新建盘点列表'
+      },
+      {
+        key: '17',
+        odd: 'KP00221180700002DN',
+        status: '待确认',
+        types: '暗盘动销盘',
+        dept: '药库',
+        oddUser: '张三三',
+        makingTime: '2018-7-24 16:45',
+        startTime: '2018-7-24 16:45',
+        remark: '我是新建盘点列表'
+      },
+      {
+        key: '18',
+        odd: 'KP00221180700001CW',
+        status: '已确认',
+        types: '明盘动盘',
+        dept: '药库',
+        oddUser: '张三三',
+        makingTime: '2018-7-24 16:45',
+        startTime: '2018-7-24 16:45',
+        remark: '我是新建盘点列表'
+      },
+      {
+        key: '19',
+        odd: 'KP0022118070000383',
+        status: '草稿',
+        types: '明盘全盘',
+        dept: '药库',
+        oddUser: '张三三',
+        makingTime: '2018-7-24 16:45',
+        startTime: '2018-7-24 16:45',
+        remark: '我是新建盘点列表'
+      },
+      {
+        key: '20',
+        odd: 'KP00221180700002DN',
+        status: '待确认',
+        types: '暗盘动销盘',
+        dept: '药库',
+        oddUser: '张三三',
+        makingTime: '2018-7-24 16:45',
+        startTime: '2018-7-24 16:45',
+        remark: '我是新建盘点列表'
+      },
+      {
+        key: '21',
+        odd: 'KP00221180700001CW',
+        status: '已确认',
+        types: '明盘动盘',
+        dept: '药库',
+        oddUser: '张三三',
+        makingTime: '2018-7-24 16:45',
+        startTime: '2018-7-24 16:45',
+        remark: '我是新建盘点列表'
+      },
+      {
+        key: '22',
+        odd: 'KP0022118070000383',
+        status: '草稿',
+        types: '明盘全盘',
+        dept: '药库',
+        oddUser: '张三三',
+        makingTime: '2018-7-24 16:45',
+        startTime: '2018-7-24 16:45',
+        remark: '我是新建盘点列表'
+      },
+      {
+        key: '23',
+        odd: 'KP00221180700002DN',
+        status: '待确认',
+        types: '暗盘动销盘',
+        dept: '药库',
+        oddUser: '张三三',
+        makingTime: '2018-7-24 16:45',
+        startTime: '2018-7-24 16:45',
+        remark: '我是新建盘点列表'
+      },
+      {
+        key: '24',
+        odd: 'KP00221180700001CW',
+        status: '已确认',
+        types: '明盘动盘',
+        dept: '药库',
+        oddUser: '张三三',
+        makingTime: '2018-7-24 16:45',
+        startTime: '2018-7-24 16:45',
+        remark: '我是新建盘点列表'
+      },
+      {
+        key: '25',
+        odd: 'KP0022118070000383',
+        status: '草稿',
+        types: '明盘全盘',
+        dept: '药库',
+        oddUser: '张三三',
+        makingTime: '2018-7-24 16:45',
+        startTime: '2018-7-24 16:45',
+        remark: '我是新建盘点列表'
+      },
+      {
+        key: '26',
+        odd: 'KP00221180700002DN',
+        status: '待确认',
+        types: '暗盘动销盘',
+        dept: '药库',
+        oddUser: '张三三',
+        makingTime: '2018-7-24 16:45',
+        startTime: '2018-7-24 16:45',
+        remark: '我是新建盘点列表'
+      },
+      {
+        key: '27',
+        odd: 'KP00221180700001CW',
+        status: '已确认',
+        types: '明盘动盘',
+        dept: '药库',
+        oddUser: '张三三',
+        makingTime: '2018-7-24 16:45',
+        startTime: '2018-7-24 16:45',
+        remark: '我是新建盘点列表'
       }
     ];
     return (
@@ -166,10 +475,12 @@ class NewInventory extends PureComponent {
         <div><Button type='primary' onClick={()=>this.setState({ visible: true })}><Icon type="plus" />新建</Button></div>
         <Table
           loading={ this.state.loading}
-          scroll={{x: '100%'}}
+          scroll={{x: '140%'}}
           columns={columns}
-          rowKey={'oddGuid'}
+          // rowKey={'oddGuid'}
           style={{marginTop: 20}}
+          dataSource={dataSource}
+          bordered
         />
         <Modal
           visible={this.state.visible}

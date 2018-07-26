@@ -4,7 +4,7 @@
 * @Last Modified time: 2018-07-24 13:13:55 
  */
 import React, { PureComponent } from 'react';
-import { Table ,Row, Col, Button, Modal , message } from 'antd';
+import { Table ,Row, Col, Button, Modal , message , Tooltip} from 'antd';
 import { createData } from '../../../../common/data';
 const Conform = Modal.confirm;
 const columns = [
@@ -23,6 +23,10 @@ const columns = [
     title: '规格',
     width:150,
     dataIndex: 'spec',
+    className:'ellipsis',
+    render:(text)=>(
+      <Tooltip placement="topLeft" title={text}>{text}</Tooltip>
+    )
   },
   {
     title: '剂型',
@@ -82,7 +86,7 @@ class DetailsRefund extends PureComponent{
       onOk:()=>{
         message.success('操作成功！')
         const { history } = this.props;
-        history.push({pathname:"/drugStorage/drugStorageManage/applyAccept"})
+        history.push({pathname:"/drugStorage/drugStorageManage/refund"})
       },
       onCancel:()=>{}
     })
@@ -94,7 +98,7 @@ class DetailsRefund extends PureComponent{
       onOk:()=>{
         message.success('操作成功！')
         const { history } = this.props;
-        history.push({pathname:"/drugStorage/drugStorageManage/applyAccept"})
+        history.push({pathname:"/drugStorage/drugStorageManage/refund"})
       },
       onCancel:()=>{}
     })

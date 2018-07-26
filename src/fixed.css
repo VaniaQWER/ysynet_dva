@@ -8,6 +8,9 @@
   width: 1000px;
   height: 250px;
 }
+.ysynet-formItem-width{
+  width: 248px !important;
+}
 .ysy-text-overflow{
   width: 270px;
   max-width: 270px;
@@ -88,10 +91,16 @@
   padding-left:  24px !important; 
 }
 .logo {
+  height: 100%;
+  vertical-align: middle;
+  background: url('./assets/img/logo2.png') 10px center no-repeat;
+  background-size: contain;
+}
+/* .logo{
   display: inline-block;
   vertical-align: middle;
   height: 32px;
-}
+} */
 
 .logoDesc {
   color: #f2a11c;
@@ -260,7 +269,7 @@ td:hover .editable-cell-icon {
   border-top: 1px solid #f0f2f5;
   min-height: 78px;
 }
-.fullCol-fullChild::after{
+.fullCol-fullChild::after,.fullCol-gap-firstChild::after{
   content: "";
   width:100%;
   position: absolute;
@@ -268,6 +277,11 @@ td:hover .editable-cell-icon {
   bottom:0;
   height:20px;
   background:#f0f2f5;
+}
+.fullCol-gap-firstChild{
+  position: relative;
+  margin:-16px -16px 24px;
+  padding:25px 30px 40px;
 }
 .button-gap{
   margin-right:8px;
@@ -290,4 +304,70 @@ td:hover .editable-cell-icon {
   padding:12px 33px;
   min-height: 32px;
   background:#fff;
+}
+@-webkit-keyframes bounceInLeft {
+  from,
+  60%,
+  75%,
+  90%,
+  to {
+    -webkit-animation-timing-function: cubic-bezier(0.215, 0.61, 0.355, 1);
+    animation-timing-function: cubic-bezier(0.215, 0.61, 0.355, 1);
+  }
+  from {
+    opacity: 0;
+    -webkit-transform: translate3d(100px, 0, 0);
+    transform: translate3d(100px, 0, 0);
+  }
+  to {
+    opacity: 1;
+    -webkit-transform: translate3d(0, 0, 0);
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@keyframes bounceInLeft {
+  from,
+  60%,
+  75%,
+  90%,
+  to {
+    -webkit-animation-timing-function: cubic-bezier(0.215, 0.61, 0.355, 1);
+    animation-timing-function: cubic-bezier(0.215, 0.61, 0.355, 1);
+  }
+  from {
+    opacity: 0;
+    -webkit-transform: translate3d(100px, 0, 0);
+    transform: translate3d(100px, 0, 0);
+  }
+  to {
+    opacity: 1;
+    -webkit-transform: translate3d(0, 0, 0);
+    transform: translate3d(0, 0, 0);
+  }
+}
+.fadeIn{
+  animation: bounceInLeft 1s;
+	animation-fill-mode: forwards;
+}
+
+.ant-table-thead > tr > th{
+  background: #f5f5f5 !important;
+}
+
+.ant-table-row:nth-child(even) > td {
+  background-color: #fafafa;
+}
+
+.ant-table-selection {
+  margin-right: 15px;
+}
+.ellipsis{
+  width: 270px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.ant-table-fixed{
+  table-layout: fixed;
 }

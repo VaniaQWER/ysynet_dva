@@ -4,7 +4,7 @@
 * @Last Modified time: 2018-07-24 13:13:55 
  */
 import React, { PureComponent } from 'react';
-import { Table , Col, Button, Modal , message, Input , Select , Affix , Row} from 'antd';
+import { Table , Col, Button, Modal , message, Input , Select , Affix , Row , Tooltip} from 'antd';
 import { createData } from '../../../../common/data';
 const Conform = Modal.confirm;
 const Option = Select.Option;
@@ -41,6 +41,10 @@ const columns = [
     title: '规格',
     width:150,
     dataIndex: 'spec',
+    className:'ellipsis',
+    render:(text)=>(
+      <Tooltip placement="topLeft" title={text}>{text}</Tooltip>
+    )
   },
   {
     title: '剂型',
@@ -94,6 +98,10 @@ const modalColumns = [
     title: '规格',
     width:150,
     dataIndex: 'spec',
+    className:'ellipsis',
+    render:(text)=>(
+      <Tooltip placement="topLeft" title={text}>{text}</Tooltip>
+    )
   },
   {
     title: '剂型',
@@ -150,11 +158,19 @@ class AddOutput extends PureComponent{
     })
   }
 
-  //添加产品
-
+  //添加产品 到 主表
+  addToMain = () => {
+    const { selectedRowKey } =this.state;
+    if(selectedRowKey.length>0){
+      this.setState({visible:false,selectedRowKey:[]})
+      
+    }else{
+      message.warn('最少选择一个产品添加！')
+    }
+  }
 
   render(){
-    const { visible } = this.state; 
+    const { visible , selectedRowKey } = this.state; 
     return (
       <div className='fullCol'>
         <div className='fullCol-fullChild' style={{height:70}}>
@@ -191,7 +207,7 @@ class AddOutput extends PureComponent{
         />
 
         <Affix offsetBottom={0} className='affix'>共10种产品
-         <Button  style={{float:'right'}} onClick={() => {}}>
+         <Button  style={{float:'right'}}  onClick={() => this.onSubmit()}>
             取消
           </Button>
           <Button  type="primary" className='button-gap' style={{float:'right'}} onClick={() => this.onSubmit()}>
@@ -200,12 +216,15 @@ class AddOutput extends PureComponent{
         </Affix>
 
         {/*选择产品-弹窗*/}
-        <Modal title='选择页面' visible={visible} width={980}>
+        <Modal title='选择页面' visible={visible} width={980}
+          onOk={()=>this.addToMain()}
+          onCancel={()=>this.setState({visible:false,selectedRowKey:[]})}>
           <Row>
             <Input placeholder='通用名/商品名' style={{width:200}}/>
           </Row>
           <Table
             rowSelection={{
+              selectedRowKeys:selectedRowKey,
               onChange:(selectedRowKey)=>{
                 this.setState({selectedRowKey})
               }

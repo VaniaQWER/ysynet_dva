@@ -2,19 +2,8 @@ import React from 'react';
 import { Menu, Dropdown, Icon } from 'antd';
 class DropdownList extends React.Component {
   selectHandler = (link) => {
-    /* const uri = location.hash.substring(2, location.hash.length);
-    if(uri !== link) {
-      if (link === 'login') {
-        fetchData(login.USER_LOGOUT,{},(data)=>{
-          if(data.status){
-            hashHistory.push(link);
-            window.location.reload();
-          }
-        })
-      }else{
-        hashHistory.push(link);
-      }
-    } */
+    // const uri = window.location.hash.substring(2, window.location.hash.length);
+    window.location.hash = link;
   }
   menus = () => {
     return (
@@ -41,5 +30,4 @@ class DropdownList extends React.Component {
     )
   }
 }
-
 export default DropdownList;

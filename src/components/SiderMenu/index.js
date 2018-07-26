@@ -1,9 +1,9 @@
 import React, { PureComponent } from 'react';
 import { Menu, Icon, message, Spin } from 'antd';
 import { connect } from 'dva';
-import menu from '../../common/menu';
+// import menu from '../../common/menu';
 import styles from './style.css';
-console.log(styles)
+import { getMenuData } from '../../utils/utils'
 const SubMenu = Menu.SubMenu;
 // 使用递归创建菜单
 const createMenu = menuList => {
@@ -83,6 +83,8 @@ class SiderMenu extends PureComponent{
   }
   componentWillMount = () => {
     this.changeActiveKeys();
+    // this.setSubTitle(menu)
+    this.setSubTitle(this.props.users.menuList)
   }
   onOpenChange = openKeys => {
     let changeKey = openKeys.length ? openKeys[openKeys.length - 1] : [];
@@ -109,23 +111,25 @@ class SiderMenu extends PureComponent{
     if (nextProps.collapsed) {
       this.setState({ openKeys: [] })
     }
-    if( this.state.firstTime && nextProps.users.menuList !== this.props.users.menuList){
+    /* if( this.state.firstTime && nextProps.users.menuList !== this.props.users.menuList){
       this.setSubTitle(nextProps.users.menuList);
       this.setState({ firstTime: false })
-    }
+    } */
   }
   render(){
     const { history } = this.props;
-    // const { menuList } = this.props.users;
+    const { menuList } = this.props.users;
     const { selectedKeys, openKeys } = this.state;
     return (
     <div>
       <div className='logoWrapper'>
-        <img src={require('../../assets/logo.png')} alt='logo' className='logo'/>
-        <h1 className='logoDesc'>P H X L</h1>
+        {/* <img src={require('../../assets/img/logo2.png')} alt='logo' className='logo'/> */}
+        {/* <h1 className='logoDesc'>P H X L</h1> */}
+        <div className='logo'></div>
       </div>
       {
-        menu && menu.length ? //menuList && menuList.length ?
+        // menu && menu.length ? 
+        menuList && menuList.length ?
         <Menu 
           className={styles.fullscreen}
           theme="light" 
@@ -136,8 +140,8 @@ class SiderMenu extends PureComponent{
           onClick={item => {
             const { pathname } = this.props.history.location;
             if (pathname !== item.key){
-              // this.setSubTitle(this.props.users.menuList, `${item.key}`)
-              this.setSubTitle(menu, `${item.key}`)
+              this.setSubTitle(this.props.users.menuList, `${item.key}`)
+              // this.setSubTitle(menu, `${item.key}`)
               history.push({pathname: `${item.key}`})
             }else{
               message.info('您正位于该页面')
@@ -145,8 +149,9 @@ class SiderMenu extends PureComponent{
           }}
         >
           {
-            createMenu(menu)
-            // createMenu(menuList)
+            createMenu(this.props.users.menuList)
+            // createMenu(getMenuData(history.location.pathname.split('/')[1], menu))
+            // createMenu(getMenuData(history.location.pathname.split('/')[1], this.props.users.menuList))
           }
           </Menu> :
           <Spin tip="数据加载中" style={{width: '100%', height: 200, marginTop: 200}}/>

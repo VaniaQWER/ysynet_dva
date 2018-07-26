@@ -1,7 +1,8 @@
 import React, { PureComponent } from 'react';
-import { Route, Switch } from 'dva/router';
-import { Layout,Icon } from 'antd';
+import { Route, Switch, Redirect } from 'dva/router';
+import { Layout, Icon, Row, Col, Tooltip  } from 'antd';
 import { connect } from 'dva';
+import Profile from '../components/profile'
 import SiderMenu from '../components/SiderMenu';
 import styles from './style.css';
 const { Header, Content, Sider } = Layout;
@@ -41,21 +42,44 @@ class BasicLayout extends PureComponent {
         </Sider>
         <Content>
           <Header className={`${styles.header}`} style={{ marginBottom: 3,padding: 0 }}>
-            <Icon 
-              onClick={() => {
-                const { collapsed } = this.state;
-                this.setState({
-                  collapsed: !collapsed
-                })
-              }}
-              className='ysyenert-header-icon ysynet-collapsed'
-              type={this.state.collapsed ? 'menu-unfold' : 'menu-fold'} 
-            /> {title.mainTitle} </Header>
+            <Row>
+              <Col span={4}>
+                <Icon 
+                  onClick={() => {
+                    const { collapsed } = this.state;
+                    this.setState({
+                      collapsed: !collapsed
+                    })
+                  }}
+                  className='ysyenert-header-icon ysynet-collapsed'
+                  type={this.state.collapsed ? 'menu-unfold' : 'menu-fold'} 
+                /> {title.mainTitle}
+              </Col>
+              <Col span={20} style={{textAlign: 'right'}}>
+                <div className={styles.profile}>
+                  <div>
+                    <Tooltip title="子系统切换">
+                      <Icon type="sync" className={styles.icon} onClick={() => this.props.history.push({
+                        pathname: '/subSystem'
+                      })}/> 
+                    </Tooltip>
+                  </div>
+                  <Profile userName={'系统管理员'}/>
+                </div>
+              </Col>
+            </Row>
+          </Header>
           <Header className={`${styles.subHeader}`}>
-            {title.subTitle}
+            <Tooltip title='返回' placement='bottom'>
+              <a onClick={()=>this.props.history.go(-1)}>
+                <Icon type="arrow-left"  style={{ fontSize: 18, marginRight: 16 }}/>
+              </a>
+            </Tooltip>
+            <span>{title.subTitle}</span>
           </Header>
           <Content className={`${styles.content}`}>
             <Switch>
+              <Redirect from="/" to="/login" exact={true}/>
               {
                 getRouteData('BasicLayout').map(item =>
                   (
@@ -68,6 +92,7 @@ class BasicLayout extends PureComponent {
                   )
                 )
               }
+              <Route component={() => <div>404</div>} />
             </Switch>
           </Content>
         </Content>

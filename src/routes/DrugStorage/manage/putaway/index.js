@@ -5,8 +5,7 @@
  */
 
 import React, { PureComponent } from 'react';
-import { Table , Form, Input , Row, Col, Button, Icon, Select , Modal , message  , Popconfirm } from 'antd';
-import { Link } from 'react-router-dom';
+import { Table , Form, Input , Row, Col, Button, Icon, Select , Modal , message  , Popconfirm , Tooltip} from 'antd';
 import { formItemLayout } from '../../../../utils/commonStyles';
 import { createData } from '../../../../common/data';
 const FormItem = Form.Item;
@@ -78,6 +77,10 @@ class Putaway extends PureComponent{
         title: '规格',
         width:150,
         dataIndex: 'spec',
+        className:'ellipsis',
+        render:(text)=>(
+          <Tooltip placement="topLeft" title={text}>{text}</Tooltip>
+        )
       },
       {
         title: '剂型',
@@ -99,42 +102,49 @@ class Putaway extends PureComponent{
         title: '生产厂家',
         width:150,
         dataIndex: 'productCompany1',
+        render: (text, record, index) => '生产厂家'
       },
       {
         title: '生产批号',
         width:150,
         dataIndex: 'productCompany2',
+        render: (text, record, index) => index
       },
       {
         title: '生产日期',
         width:150,
         dataIndex: 'productCompany3',
+        render: (text, record, index) => '2018-7-25 21:30'
       },
       {
         title: '有效期至',
         width:150,
         dataIndex: 'productCompany4',
+        render: (text, record, index) => '2018-7-25'
       },
       {
         title: '供应商',
         width:150,
         dataIndex: 'productCompany41',
+        render: (text, record, index) => index
       },
       {
         title: '上架数量',
         width:150,
         dataIndex: 'productCompany42',
+        render: (text, record, index) => index
       },
       {
         title: '指示货位',
         width:150,
         dataIndex: 'productCompany23',
+        render: (text, record, index) => index
       },
       {
         title: '实际货位',
         width:150,
         dataIndex: 'productCompany5s',
-        render:(text)=>(<Input/>)
+        render:(text)=>(<Input defaultValue={1}/>)
       },
       {
         title: '操作',
@@ -143,7 +153,7 @@ class Putaway extends PureComponent{
         render: (text, record) => 
           <span>
             <Popconfirm title="确定提交吗？" okText="是" cancelText="否"  onConfirm={()=>this.confirmOk(record)}>
-              <Link to={{pathname: `/drugStorage/drugStorageManage/applyAccept/details`}}>确认</Link>
+              <a>确认</a>
             </Popconfirm>
           </span>  
       }

@@ -16,51 +16,53 @@ const columns = [
   {
    title: '申请药房',
    dataIndex: 'index',
-   width:120
+   width:120,
+   render: (text, record, index) => '药库'
   },
   {
     title: '申领单',
     dataIndex: 'medicinalCode',
-    width:120
+    width:120,
+    render:(text)=>
+    <span>
+      <Link to={{pathname: `/drugStorage/drugStorageManage/picking/details`}}>{text}</Link>
+    </span>  
   },
   {
     title: '状态',
     dataIndex: 'fstate',
-    width:120
+    width:120,
+    render: (text, record, index) => text === '00' ? '已申请' : '未申请'
   },
   {
     title: '类型',
     dataIndex: 'equipmfmodalentStandardName',
-    width:150
+    width:150,
+    render: (text, record, index) => '类型' + index
   },
   {
     title: '制单人',
     dataIndex: 'spec123',
-    width:120
+    width:120,
+    render: (text, record, index) => 'cheng' + index
   },
   {
     title: '制单时间',
     dataIndex: 'custodian',
-    width:150
+    width:150,
+    render: (text, record, index) => '2018-7-25 21:17'
   },
   {
     title: '配货人',
     dataIndex: 'bDept',
-    width:120
+    width:120,
+    render: (text, record, index) => '王文斌'
   },
   {
     title: '配货时间',
     dataIndex: 'time',
-    width:120
-  },
- {
-  title: '操作',
-  width:120,
-  dataIndex: 'RN',
-  render: (text, record) => 
-    <span>
-      <Link to={{pathname: `/drugStorage/drugStorageManage/picking/details`}}>详情</Link>
-    </span>  
+    width:120,
+    render: (text, record, index) => '2018-7-25 21:17'
   }
 ];
 class Picking extends PureComponent{

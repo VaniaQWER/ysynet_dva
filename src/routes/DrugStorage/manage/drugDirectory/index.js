@@ -5,7 +5,7 @@
  */
 
 import React, { PureComponent } from 'react';
-import { Table , Form, Row, Col, Button, Icon, Select , Modal , Input , message } from 'antd';
+import { Table , Form, Row, Col, Button, Icon, Select , Modal , Input , message , Tooltip} from 'antd';
 import { Link } from 'react-router-dom';
 import { formItemLayout } from '../../../../utils/commonStyles';
 import { createData } from '../../../../common/data';
@@ -16,7 +16,11 @@ const columns = [
    title: '通用名称',
    dataIndex: 'index',
    width:150,
-   render:(text,record)=>record.productName
+   render:(text,record)=>(
+    <span>
+      <Link to={{pathname: `/drugStorage/drugStorageManage/drugDirectory/edit`}}>{record.productName}</Link>
+    </span>
+   )
   },
   {
     title: '商品名称',
@@ -27,6 +31,10 @@ const columns = [
     title: '规格',
     width:150,
     dataIndex: 'spec',
+    className:'ellipsis',
+    render:(text)=>(
+      <Tooltip placement="topLeft" title={text}>{text}</Tooltip>
+    )
   },
   {
     title: '剂型',
@@ -43,31 +51,26 @@ const columns = [
     title: '最小单位',
     width:100,
     dataIndex: 'custodian',
+    render: (text, record, index) => '个'
   },
   {
     title: '批准文号',
     width:100,
     dataIndex: 'bDept',
+    render: (text, record, index) => '批准文号' + index + 1
   },
   {
    title: '库存上限',
    width:100,
    dataIndex: 'useDept',
+   render: (text, record, index) => index + 0.5
   },
  {
   title: '库存下限',
   width:100,
   dataIndex: 'useDept1',
- },
- {
-  title: '操作',
-  width:100,
-  dataIndex: 'RN',
-  render: (text, record) => 
-    <span>
-      <Link to={{pathname: `/drugStorage/drugStorageManage/drugDirectory/edit`}}>编辑</Link>
-    </span>
-  }
+  render: (text, record, index) => index + 0.1
+ }
 ];
 
 class DrugDirectory extends PureComponent{

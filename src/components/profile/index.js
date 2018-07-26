@@ -12,9 +12,9 @@ class Profile extends PureComponent {
           </div>
           <DropdownList
               list={[
-                {link: '/persons/personal', text: '设置'}, 
-                {link: '/message/inbox', text: '收件箱'},
-                {link: 'login', text: '退出'}
+               /*  {link: '/persons/personal', text: '设置'}, 
+                {link: '/message/inbox', text: '收件箱'}, */
+                {link: '/login', text: '退出'}
               ]}
               style={{width: 100}}
               text={this.props.userName}

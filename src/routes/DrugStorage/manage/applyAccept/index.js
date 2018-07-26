@@ -18,46 +18,46 @@ const columns = [
    title: '申领单',
    width:150,
    dataIndex: 'medicinalCode',
+   render:(text)=>
+   <span>
+      <Link to={{pathname: `/drugStorage/drugStorageManage/applyAccept/details`}}>{text}</Link>
+    </span> 
   },
   {
     title: '申领药房',
     width:120,
     dataIndex: 'assetsRecord',
+    render: (text, record, index) => '药库'
   },
   {
     title: '状态',
     width:100,
     dataIndex: 'fstate',
+    render: (text, record, index) => text === '00' ? '已受理' : '未受理'
   },
   {
     title: '制单人',
     width:150,
     dataIndex: 'equipmentStandardName',
+    render: (text, record, index) => '张三三'
   },
   {
     title: '制单时间',
     width:150,
     dataIndex: 'time',
+    render: (text, record, index) => '2018-7-25 21:12'
   },
   {
     title: '受理人',
     width:150,
     dataIndex: 'custodian',
+    render: (text, record, index) => '张三三'
   },
   {
     title: '受理时间',
     width:150,
     dataIndex: 'bDept',
-  },
-  
- {
-  title: '操作',
-  width:150,
-  dataIndex: 'RN',
-  render: (text, record) => 
-    <span>
-      <Link to={{pathname: `/drugStorage/drugStorageManage/applyAccept/details`}}>详情</Link>
-    </span>  
+    render: (text, record, index) => '2018-7-25 21:12'
   }
 ];
 class ApplyAccept extends PureComponent{
