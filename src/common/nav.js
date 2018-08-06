@@ -916,6 +916,100 @@ export const getNavData = app => [
         path: '/pharmacy/goodsAdjust/adjust/detail',
         component: dynamicWrapper(app, [], () => import('../routes/Pharmacy/goodsAdjust/adjust/detail')),
       },
+      
+    /*------药房------*/
+    /*-----药房-申领入库--*/
+    {
+      name: "药品申领 ",//药库-申领入库-药品申领 
+      icon: 'setting',
+      path: '/pharmacy/wareHouse/drugsFor',
+      component: dynamicWrapper(app, [], () => import('../routes/Pharmacy/wareHouse/drugsFor')),
+    },
+    {
+      name: "药品申领 -新增",//药库-申领入库-药品申领 -新增
+      icon: 'setting',
+      path: '/pharmacy/wareHouse/drugsFor/add',
+      component: dynamicWrapper(app, [], () => import('../routes/Pharmacy/wareHouse/drugsFor/add')),
+    },
+    {
+      name: "药品申领 -编辑",//药库-申领入库-药品申领 -编辑
+      icon: 'setting',
+      path: '/pharmacy/wareHouse/drugsFor/details',
+      component: dynamicWrapper(app, [], () => import('../routes/Pharmacy/wareHouse/drugsFor/details')),
+    },
+    {
+      name: "验收",//药库-申领入库-验收
+      icon: 'setting',
+      path: '/pharmacy/wareHouse/acceptance',
+      component: dynamicWrapper(app, [], () => import('../routes/Pharmacy/wareHouse/acceptance')),
+    },
+    {
+      name: "验收-新增",//药库-申领入库-验收-新增
+      icon: 'setting',
+      path: '/pharmacy/wareHouse/acceptance/add',
+      component: dynamicWrapper(app, [], () => import('../routes/Pharmacy/wareHouse/acceptance/add')),
+    },
+    {
+      name: "验收-编辑",//药库-申领入库-验收-编辑
+      icon: 'setting',
+      path: '/pharmacy/wareHouse/acceptance/details',
+      component: dynamicWrapper(app, [], () => import('../routes/Pharmacy/wareHouse/acceptance/details')),
+    },
+    {
+      name: "上架",//药库-申领入库-上架
+      icon: 'setting',
+      path: '/pharmacy/wareHouse/putaway',
+      component: dynamicWrapper(app, [], () => import('../routes/Pharmacy/wareHouse/putaway')),
+    },
+    {
+      name: "新建入库",//药库-申领入库-新建入库
+      icon: 'setting',
+      path: '/pharmacy/wareHouse/newLibrary',
+      component: dynamicWrapper(app, [], () => import('../routes/Pharmacy/wareHouse/newLibrary')),
+    },
+    {
+      name: "新建入库-新增",//药库-申领入库-新建入库-新增
+      icon: 'setting',
+      path: '/pharmacy/wareHouse/newLibrary/add',
+      component: dynamicWrapper(app, [], () => import('../routes/Pharmacy/wareHouse/newLibrary/add')),
+    },
+    {
+      name: "新建入库-详情",//药库-申领入库-新建入库-详情
+      icon: 'setting',
+      path: '/pharmacy/wareHouse/newLibrary/details',
+      component: dynamicWrapper(app, [], () => import('../routes/Pharmacy/wareHouse/newLibrary/details')),
+    },
+     /*-----药房-出库--*/
+     {
+      name: "发药出库",//药库-出库-发药出库
+      icon: 'setting',
+      path: '/pharmacy/outStorage/output',
+      component: dynamicWrapper(app, [], () => import('../routes/Pharmacy/outStorage/output')),
+    },
+    {
+      name: "发药出库-详情",//药库-出库-发药出库-详情
+      icon: 'setting',
+      path: '/pharmacy/outStorage/output/details',
+      component: dynamicWrapper(app, [], () => import('../routes/Pharmacy/outStorage/output/details')),
+    },
+    {
+      name: "退库",//药库-出库-退库
+      icon: 'setting',
+      path: '/pharmacy/outStorage/refund',
+      component: dynamicWrapper(app, [], () => import('../routes/Pharmacy/outStorage/refund')),
+    },
+    {
+      name: "退库-新增",//药库-出库-退库-新增
+      icon: 'setting',
+      path: '/pharmacy/outStorage/refund/add',
+      component: dynamicWrapper(app, [], () => import('../routes/Pharmacy/outStorage/refund/add')),
+    },
+    {
+      name: "退库-详情",//药库-出库-退库-详情
+      icon: 'setting',
+      path: '/pharmacy/outStorage/refund/details',
+      component: dynamicWrapper(app, [], () => import('../routes/Pharmacy/outStorage/refund/details')),
+    }
   ]
 }]
 

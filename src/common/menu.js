@@ -586,7 +586,86 @@ const menu = [
           }
           
         ]
-      }
+      },
+      {//库房-申领入库
+        "path": "/pharmacy/wareHouse",
+        "level": 2,
+        "fsort": 30105,
+        "name": "申领入库",
+        "id": "30106",
+        "key": "/pharmacy/wareHouse",
+        "parentId": "m305",
+        "icon": "medicine-box",
+        "subMenus":[
+          {
+            "path": "/pharmacy/wareHouse/drugsFor",
+            "level": 2,
+            "fsort": 30105,
+            "name": "药品申领",
+            "id": "30106",
+            "key": "/pharmacy/wareHouse/drugsFor",
+            "parentId": "m305"
+          },
+          {
+            "path": "/pharmacy/wareHouse/acceptance",
+            "level": 2,
+            "fsort": 30105,
+            "name": "验收",
+            "id": "30106",
+            "key": "/pharmacy/wareHouse/acceptance",
+            "parentId": "m305"
+          },
+          {
+            "path": "/pharmacy/wareHouse/putaway",
+            "level": 2,
+            "fsort": 30105,
+            "name": "上架",
+            "id": "30106",
+            "key": "/pharmacy/wareHouse/putaway",
+            "parentId": "m305"
+          },
+          {
+            "path": "/pharmacy/wareHouse/newLibrary",
+            "level": 2,
+            "fsort": 30105,
+            "name": "入库单管理",
+            "id": "30106",
+            "key": "/pharmacy/wareHouse/newLibrary",
+            "parentId": "m305"
+          }
+        ]
+      },
+      {//库房-出库
+        "path": "/pharmacy/outStorage",
+        "level": 2,
+        "fsort": 30105,
+        "name": "出库",
+        "id": "30106",
+        "key": "/pharmacy/outStorage",
+        "parentId": "m305",
+        "icon": "medicine-box",
+        "subMenus":[
+          {
+            "path": "/pharmacy/outStorage/output",
+            "level": 2,
+            "fsort": 30105,
+            "name": "发药出库",
+            "id": "30106",
+            "key": "/pharmacy/outStorage/output",
+            "parentId": "m305"
+          },
+          {
+            "path": "/pharmacy/outStorage/refund",
+            "level": 2,
+            "fsort": 30105,
+            "name": "退库",
+            "id": "30106",
+            "key": "/pharmacy/outStorage/refund",
+            "parentId": "m305"
+          },
+        ]
+      },
+
      
   ],
   "level": 0,
