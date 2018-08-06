@@ -5,21 +5,28 @@
  */
 
 import React, { PureComponent } from 'react';
-import { Table , Form, Row, Col, Button, Icon, Input , DatePicker } from 'antd';
+import { Table , Form, Row, Col, Button, Icon, Input ,Select , DatePicker } from 'antd';
 import { Link } from 'react-router-dom';
 import { formItemLayout } from '../../../../utils/commonStyles';
 import { createData } from '../../../../common/data';
 const RangePicker = DatePicker.RangePicker;
 const FormItem = Form.Item;
+const { Option } = Select;
 const columns = [
   {
    title: '发药单',
    dataIndex: 'medicinalCode',
    width:150,
    render:(text)=>(
-    <Link to={{pathname: `/pharmacy/manage/output/details`}}>{text}</Link>
+    <Link to={{pathname: `/pharmacy/outStorage/output/details`}}>{text}</Link>
    )
   },
+  {
+    title: '发药确认单',
+    dataIndex: 'medicinalCode123',
+    width:150,
+    render:(text,record)=>`${record.medicinalCode}`
+   },
   {
     title: '药房',
     width:150,
@@ -53,7 +60,7 @@ class Output extends PureComponent{
   }
   render(){
     return (
-      <div>
+      <div  className='ysynet-main-content'>
         <SearchForm query={this.queryHandler} />
         <Table
           dataSource={createData()}
@@ -63,6 +70,11 @@ class Output extends PureComponent{
           columns={columns}
           rowKey={'id'}
           style={{marginTop: 20}}
+          pagination={{
+            size: "small",
+            showQuickJumper: true,
+            showSizeChanger: true
+          }}
         /> 
       </div>
     )
@@ -94,14 +106,15 @@ class SearchFormWrapper extends PureComponent {
  }
 
  render() {
+   const { display } = this.state;
    const { getFieldDecorator } = this.props.form;
    return (
      <Form onSubmit={this.handleSearch}>
        <Row>
          <Col span={8}>
-           <FormItem label={`发药单`} {...formItemLayout}>
+           <FormItem label={`单据`} {...formItemLayout}>
              {getFieldDecorator('assetCode', {})(
-              <Input placeholder="出库单/配货单"/>
+              <Input placeholder="出库单/发药确认单"/>
              )}
            </FormItem>
          </Col>
@@ -112,7 +125,22 @@ class SearchFormWrapper extends PureComponent {
              )}
            </FormItem>
          </Col> 
-         <Col span={8} style={{ textAlign: 'right', marginTop: 4}} >
+         <Col span={8} style={{display: display}}>
+           <FormItem label={`出库分类`} {...formItemLayout}>
+             {getFieldDecorator('assetName', {})(
+              <Select 
+                showSearch
+                placeholder={'请选择'}
+                optionFilterProp="children"
+                filterOption={(input, option) => option.props.children.indexOf(input) >= 0}
+                >
+                    <Option key="" value="">全部</Option>
+                    <Option key="01" value="01">发药出库</Option>
+              </Select>
+             )}
+           </FormItem>
+         </Col> 
+         <Col span={8} style={{float:'right', textAlign: 'right', marginTop: 4}} >
            <Button type="primary" htmlType="submit">查询</Button>
            <Button style={{marginLeft: 30}} onClick={this.handleReset}>重置</Button>
            <a style={{marginLeft: 30, fontSize: 14}} onClick={this.toggle}>

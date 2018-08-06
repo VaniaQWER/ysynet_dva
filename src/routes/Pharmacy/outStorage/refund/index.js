@@ -18,20 +18,20 @@ const columns = [
     width:150,
     dataIndex: 'applyNo',
     render:(text)=>(
-      <Link to={{pathname:`/pharmacy/manage/refund/details`}}>{text}</Link>
+      <Link to={{pathname:`/pharmacy/outStorage/refund/details`}}>{text}</Link>
     )
   },
   {
-   title: '库房',
+   title: '部门',
    dataIndex: 'medicinalCode',
-   width:150,
-   render:(text)=>'药库'
+   width:100,
+   render:(text)=>'静配中心'
   },
   {
-    title: '药房',
-    dataIndex: 'medicinalCode2  ',
-    width:150,
-    render:(text)=>'中心药房'
+    title: '配货部门',
+    dataIndex: 'medicinalCode2',
+    width:100,
+    render:(text)=>'药库'
    },
   {
     title: '出库分类',
@@ -40,32 +40,38 @@ const columns = [
     render:(text)=>'退货出库'
   },
   {
+    title: '退货原因',
+    width:100,
+    dataIndex: 'reson',
+    render:(text)=>'破损'
+  },
+  {
     title: '状态',
     width:100,
     dataIndex: 'spec21',
-    render:(text)=>'待确认'
+    render:(text)=>'待下架'
   },
   {
-    title: '制单人',
+    title: '退货人',
     width:100,
     dataIndex: 'bDept',
     render: (text, record, index) => '王文斌'
   },
   {
-   title: '制单时间',
-   width:100,
+   title: '退货时间',
+   width:130,
    dataIndex: 'useDept',
    render: (text, record, index) => '2018-7-25 21:57'
   },
  {
-  title: '确认人',
+  title: '复核人',
   width:100,
   dataIndex: 'useDept1',
   render: (text, record, index) => '花花'
  },
  {
-  title: '确认时间',
-  width:100,
+  title: '复核时间',
+  width:130,
   dataIndex: 'useDept123',
   render: (text, record, index) => '2018-7-25 21:58'
  }
@@ -84,21 +90,26 @@ class Refund extends PureComponent{
   }
   render(){
     return (
-      <div>
+      <div  className='ysynet-main-content' >
         <SearchForm query={this.queryHandler} />
         <Row>
           <Button type='primary'>
-            <Link to={{pathname:`/pharmacy/manage/refund/add`}}>新建退库</Link>
+            <Link to={{pathname:`/pharmacy/outStorage/refund/add`}}>新建退库</Link>
           </Button>
         </Row>
         <Table
           dataSource={createData()}
           bordered
           loading={ this.state.loading}
-          scroll={{x: '120%'}}
+          scroll={{x: '100%'}}
           columns={columns}
           rowKey={'id'}
           style={{marginTop: 20}}
+          pagination={{
+            size: "small",
+            showQuickJumper: true,
+            showSizeChanger: true
+          }}
         /> 
       </div>
     )
@@ -136,24 +147,16 @@ class SearchFormWrapper extends PureComponent {
      <Form onSubmit={this.handleSearch}>
        <Row>
          <Col span={8}>
-           <FormItem label={`单据号`} {...formItemLayout}>
+           <FormItem label={`退货单号`} {...formItemLayout}>
              {getFieldDecorator('assetCode', {})(
               <Input/>
              )}
            </FormItem>
          </Col>
          <Col span={8}>
-           <FormItem label={`出库分类`} {...formItemLayout}>
-             {getFieldDecorator('spec')(
-              <Select 
-                showSearch
-                placeholder={'请选择'}
-                optionFilterProp="children"
-                filterOption={(input, option) => option.props.children.indexOf(input) >= 0}
-                >
-                <Option key="" value="">全部</Option>
-                <Option key="01" value="01">退货出库</Option>
-              </Select>
+           <FormItem label={`退货原因`} {...formItemLayout}>
+             {getFieldDecorator('assetCode132', {})(
+              <Input/>
              )}
            </FormItem>
          </Col>
@@ -168,14 +171,22 @@ class SearchFormWrapper extends PureComponent {
                   >
                   <Option key="" value="">全部</Option>
                   <Option key="01" value="01">待复核</Option>
+                  <Option key="02" value="02">待下架</Option>
                 </Select>
               )}
             </FormItem>
           </Col>
          <Col span={8}  style={{display: display}}>
-           <FormItem label={`制单时间`} {...formItemLayout}>
-             {getFieldDecorator('assetName', {})(
+           <FormItem label={`退货时间`} {...formItemLayout}>
+             {getFieldDecorator('assetName23', {})(
               <RangePicker/>
+             )}
+           </FormItem>
+         </Col>
+         <Col span={8} style={{display: display}}>
+           <FormItem label={`供应商`} {...formItemLayout}>
+             {getFieldDecorator('assetCode123', {})(
+              <Input/>
              )}
            </FormItem>
          </Col>

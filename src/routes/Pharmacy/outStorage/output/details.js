@@ -34,10 +34,34 @@ const columns = [
     dataIndex: 'fmodal',
   },
   {
-    title: '包装单位',
+    title: '包装规格',
     width:150,
     dataIndex: 'unit',
     render:(text)=>'g'
+  },
+  {
+    title: '发药单位',
+    width:150,
+    dataIndex: 'unit123',
+    render:(text)=>'盒'
+  },
+  {
+    title: '发药数量',
+    width:150,
+    dataIndex: 'unit12223',
+    render:(text)=>'1'
+  },
+  {
+    title: '出库数量',
+    width:150,
+    dataIndex: 'unit1222377',
+    render:(text)=>'1'
+  },
+  {
+    title: '货位类别',
+    width:150,
+    dataIndex: 'uni123',
+    render:(text)=>'拆零货位'
   },
   {
     title: '批准文号',
@@ -52,53 +76,19 @@ const columns = [
   {
     title: '生产批号',
     width:150,
-    dataIndex: 'approvalNo2',
+    dataIndex: 'applyNo',
   },
   {
     title: '生产日期',
     width:150,
-    dataIndex: 'approvalNo3',
+    dataIndex: 'planTime',
   },
   {
     title: '有效期至',
     width:150,
-    dataIndex: 'approvalNo45',
-  },
-  {
-    title: '最小单位',
-    width:150,
-    dataIndex: 'gongyings',
-  },
-  {
-    title: '最小剂量单位',
-    width:150,
-    dataIndex: 'jiliangdanwei',
-  },
-  {
-    title: '发药单位',
-    width:150,
-    dataIndex: 'fayaodanwei',
-  },
-  {
-    title: '发药数量',
-    width:150,
-    dataIndex: 'amount',
-  },
-  {
-    title: '整货位',
-    width:150,
-    dataIndex: 'zhenghuowei',
-  },
-  {
-    title: '零货位',
-    width:150,
-    dataIndex: 'zhenghuowei123',
-  },
-  {
-    title: '机器货位',
-    width:150,
-    dataIndex: 'zhenghuowei435',
-  },
+    dataIndex: 'planTime123',
+    render:(text,record)=>`${record.planTime}`
+  }
 ];
 
 class DetailsOutput extends PureComponent{
@@ -136,7 +126,7 @@ class DetailsOutput extends PureComponent{
 
   render(){
     return (
-      <div>
+      <div  className='ysynet-main-content' >
           <h3>单据信息 </h3>
           <Row>
             <Col span={8}>
@@ -165,7 +155,7 @@ class DetailsOutput extends PureComponent{
             </Col>
             <Col span={8}>
                 <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
-                    <label>制发药时间</label>
+                    <label>发药时间</label>
                 </div>
                 <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
                   <div className='ant-form-item-control'>2018-07-12 17:09:15</div>
@@ -181,6 +171,11 @@ class DetailsOutput extends PureComponent{
             columns={columns}
             rowKey={'id'}
             style={{marginTop: 24}}
+            pagination={{
+              size: "small",
+              showQuickJumper: true,
+              showSizeChanger: true
+            }}
           />
       </div>
     )

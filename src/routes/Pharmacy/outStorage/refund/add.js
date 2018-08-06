@@ -10,15 +10,27 @@ const Conform = Modal.confirm;
 const columns = [
   {
    title: '退库数量',
-   width:150,
+   width:100,
    dataIndex: 'medicinalCode',
    render:()=>(<Input/>)
   },
   {
-    title: '包装单位',
+    title: '当前库存',
+    width:100,
+    dataIndex: 'medicinalCode123',
+    render:()=>`1200`
+   },
+  {
+    title: '单位',
     width:150,
     dataIndex: 'unit',
-    render:(text)=>'g'
+    render:(text)=>'瓶'
+  },
+  {
+    title: '包装规格',
+    width:150,
+    dataIndex: 'uni123t',
+    render:(text)=>'0.25gX12片'
   },
   {
     title: '通用名称',
@@ -48,17 +60,18 @@ const columns = [
   {
     title: '生产批号',
     width:150,
-    dataIndex: 'productCompany2',
+    dataIndex: 'planNo',
   },
   {
     title: '生产日期',
     width:150,
-    dataIndex: 'productCompany3',
+    dataIndex: 'planTime',
   },
   {
     title: '有效期至',
     width:150,
-    dataIndex: 'productCompany4',
+    dataIndex: 'planTime123',
+    render:(text,record)=>`${record.planTime}`
   },
   {
     title: '批准文号',
@@ -77,31 +90,12 @@ const columns = [
   }
 ];
 const modalColumns = [  
-  {
-    title: '生产批号',
-    width:150,
-    dataIndex: 'productCompany2',
-  },
-  {
-    title: '生产日期',
-    width:150,
-    dataIndex: 'productCompany3',
-  },
-  {
-    title: '有效期至',
-    width:150,
-    dataIndex: 'productCompany4',
-  },
+ 
   {
     title: '通用名称',
     width:100,
     dataIndex: 'productName1',
     render:(text,record)=>record.productName
-  },
-  {
-    title: '商品名称',
-    width:150,
-    dataIndex: 'productName',
   },
   {
     title: '规格',
@@ -111,6 +105,27 @@ const modalColumns = [
     render:(text)=>(
       <Tooltip placement="topLeft" title={text}>{text}</Tooltip>
     )
+  },
+  {
+    title: '入库单号',
+    width:150,
+    dataIndex: 'planNo',
+  },
+  {
+    title: '生产批号',
+    width:150,
+    dataIndex: 'applyNo',
+  },
+  {
+    title: '生产日期',
+    width:150,
+    dataIndex: 'planTime',
+  },
+  {
+    title: '有效期至',
+    width:150,
+    dataIndex: 'planTime123',
+    render:(text,record)=>`${record.planTime}`
   },
   {
     title: '剂型',
@@ -186,27 +201,36 @@ class AddRefund extends PureComponent{
     const { visible , selectedRowKey } = this.state; 
     return (
       <div className='fullCol'>
-        <div className='fullCol-fullChild' style={{height:70}}>
+        <div className='fullCol-fullChild' style={{height:120}}>
           <Col  span={4}>
             <Button type='primary' className='button-gap' onClick={()=>this.setState({visible:true})}>添加产品</Button>
             <Button onClick={()=>this.delete()} >移除</Button>
           </Col>
+          <Col  span={24}>
+            <Input placeholder='请输入退货原因' style={{width:220,marginTop:12}}/>
+          </Col>
         </div>
-        <h3>产品信息</h3>
-        <Table
-          rowSelection={{
-            onChange:(selectedRowKey)=>{
-              this.setState({selectedRowKey})
-            }
-          }}
-          dataSource={createData()}
-          bordered
-          scroll={{x: '200%'}}
-          columns={columns}
-          rowKey={'id'}
-          style={{marginTop: 24}}
-        />
-
+        <div className='detailCard'>
+          <Table
+            rowSelection={{
+              onChange:(selectedRowKey)=>{
+                this.setState({selectedRowKey})
+              }
+            }}
+            title={()=>'产品信息'}
+            dataSource={createData()}
+            bordered
+            scroll={{x: '200%'}}
+            columns={columns}
+            rowKey={'id'}
+            style={{marginTop: 24}}
+            pagination={{
+              size: "small",
+              showQuickJumper: true,
+              showSizeChanger: true
+            }}
+          />
+        </div>
         <Affix offsetBottom={0} className='affix'>共10种产品
          <Button  style={{float:'right'}} onClick={() => {}}>
             取消
@@ -235,7 +259,11 @@ class AddRefund extends PureComponent{
             scroll={{x: '200%'}}
             columns={modalColumns}
             rowKey={'id'}
-            style={{marginTop: 24}}
+            pagination={{
+              size: "small",
+              showQuickJumper: true,
+              showSizeChanger: true
+            }}
           />
         </Modal>
 
