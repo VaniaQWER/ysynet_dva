@@ -188,20 +188,22 @@ class Details extends PureComponent {
                     </Row>
                     <div style={{ borderBottom: '1px solid #d9d9d9', marginBottom: 20, marginTop: 20 }}></div>
                 </div>
-                <Table
-                    title={() => '产品信息'}
-                    dataSource={createData()}
-                    bordered
-                    scroll={{ x: '220%' }}
-                    columns={columns}
-                    rowKey={'id'}
-                    style={{ marginTop: 24 }}
-                    pagination={{
-                        size: 'small',
-                        showQuickJumper: true,
-                        showSizeChanger: true
-                    }}
-                />
+                <div className='detailCard'>
+                    <Table
+                        title={() => '产品信息'}
+                        dataSource={createData()}
+                        bordered
+                        scroll={{ x: '220%' }}
+                        columns={columns}
+                        rowKey={'id'}
+                        style={{ marginTop: 24 }}
+                        pagination={{
+                            size: 'small',
+                            showQuickJumper: true,
+                            showSizeChanger: true
+                        }}
+                    />
+                </div>
             </div>
         )
     }

@@ -4,41 +4,41 @@
 * @Last Modified time: 2018-07-24 13:13:55 
  */
 import React, { PureComponent } from 'react';
-import { Table ,Row, Col, Button, Modal , message , Input , Tooltip , Card} from 'antd';
+import { Table, Row, Col, Button, Modal, message, Input, Tooltip } from 'antd';
 import { createData } from '../../../../common/data';
 const Conform = Modal.confirm;
-class DetailsPickSoldOut extends PureComponent{
+class DetailsPickSoldOut extends PureComponent {
 
   //确认
-  onSubmit = () =>{
+  onSubmit = () => {
     Conform({
-      content:"您确定要执行此操作？",
-      onOk:()=>{
+      content: "您确定要执行此操作？",
+      onOk: () => {
         message.success('操作成功！')
         const { history } = this.props;
-        history.push({pathname:"/pharmacy/outStorage/pickingUnderShelve"})
+        history.push({ pathname: "/pharmacy/outStorage/pickingUnderShelve" })
       },
-      onCancel:()=>{}
+      onCancel: () => { }
     })
   }
 
   onPrint = () => {
     Conform({
-      content:"您确定要打印？",
-      onOk:()=>{
+      content: "您确定要打印？",
+      onOk: () => {
         message.success('打印成功！')
       },
-      onCancel:()=>{}
+      onCancel: () => { }
     })
   }
 
-  render(){
+  render() {
     const columns = [
       {
         title: '通用名称',
         width: 180,
         dataIndex: 'productName1',
-        render:(text,record)=>record.productName
+        render: (text, record) => record.productName
       },
       {
         title: '商品名称',
@@ -49,8 +49,8 @@ class DetailsPickSoldOut extends PureComponent{
         title: '规格',
         width: 150,
         dataIndex: 'spec',
-        className:'ellipsis',
-        render:(text)=>(
+        className: 'ellipsis',
+        render: (text) => (
           <Tooltip placement="topLeft" title={text}>{text}</Tooltip>
         )
       },
@@ -63,7 +63,7 @@ class DetailsPickSoldOut extends PureComponent{
         title: '包装单位',
         width: 150,
         dataIndex: 'unit',
-        render:(text)=>'g'
+        render: (text) => 'g'
       },
       {
         title: '最小单位',
@@ -109,7 +109,7 @@ class DetailsPickSoldOut extends PureComponent{
         title: '实际数量',
         width: 150,
         dataIndex: 'productCompany5',
-        render:(text)=>(<Input/>)
+        render: (text) => (<Input />)
       },
       {
         title: '申领数量',
@@ -123,12 +123,18 @@ class DetailsPickSoldOut extends PureComponent{
       }
     ];
     return (
-      <div className='bgf fadeIn'>
-        <Card>
-          <h3>单据信息 
-            <Button style={{float:'right'}} onClick={()=>this.onPrint()}>打印</Button>
-            <Button type='primary' className='button-gap' style={{float:'right'}} onClick={()=>this.onSubmit()}>拣货完成</Button>
-          </h3>
+      <div className='fullCol'>
+        <div className='fullCol-fullChild'>
+          <Row>
+            <Col span={12}>
+              <h2>单据信息</h2>
+            </Col>
+            <Col span={12} style={{ textAlign: 'right' }}>
+              <Button type='primary' style={{ marginRight: 10 }} onClick={() => this.onPrint()}>打印</Button>
+              <Button type='primary' className='button-gap' onClick={() => this.onSubmit()}>拣货完成</Button>
+
+            </Col>
+          </Row>
           <Row>
             <Col span={8}>
               <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
@@ -180,12 +186,16 @@ class DetailsPickSoldOut extends PureComponent{
               </div>
             </Col>
           </Row>
-          <hr className='hr'/>
-          <h3>产品信息</h3>
+          <div style={{ borderBottom: '1px solid #d9d9d9', marginBottom: 20, marginTop: 20 }}></div>
+        </div>
+        {/* <hr className='hr' /> */}
+        {/* <h3>产品信息</h3> */}
+        <div className='detailCard'>
           <Table
+            title={() => '产品信息'}
             dataSource={createData()}
             bordered
-            scroll={{x: '200%'}}
+            scroll={{ x: '200%' }}
             columns={columns}
             rowKey={'id'}
             pagination={{
@@ -194,7 +204,7 @@ class DetailsPickSoldOut extends PureComponent{
               showSizeChanger: true
             }}
           />
-        </Card>
+        </div>
       </div>
     )
   }

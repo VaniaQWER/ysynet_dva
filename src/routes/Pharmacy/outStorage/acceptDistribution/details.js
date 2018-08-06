@@ -4,157 +4,157 @@
 * @Last Modified time: 2018-07-24 13:16:33 
  */
 import React, { PureComponent } from 'react';
-import { Table ,Row, Col, Card , Button, Modal , Input , Tooltip} from 'antd';
+import { Table, Row, Col, Button, Modal, Input, Tooltip } from 'antd';
 import { createData } from '../../../../common/data';
 const Conform = Modal.confirm;
 
 
-class Details extends PureComponent{
+class Details extends PureComponent {
 
-  constructor(props){
+  constructor(props) {
     super(props)
-    this.state={
-      visible:true,
-      selectedRowKey:[],
-      hidden:true,//是否显示操作按钮 true 显示 false 隐藏
+    this.state = {
+      visible: true,
+      selectedRowKey: [],
+      hidden: true,//是否显示操作按钮 true 显示 false 隐藏
     }
   }
   //生成拣货单
-  onCreate = () =>{
+  onCreate = () => {
     Conform({
-      content:"您确定要执行此操作？",
-      onOk:()=>{
+      content: "您确定要执行此操作？",
+      onOk: () => {
         this.setState({
-          hidden:false
+          hidden: false
         })
       },
-      onCancel:()=>{}
+      onCancel: () => { }
     })
   }
   //确认配货/取消
-  onSubmit = (bool) =>{
+  onSubmit = (bool) => {
     Conform({
-      content:"您确定要执行此操作？",
-      onOk:()=>{
-        this.setState({visible:bool})
+      content: "您确定要执行此操作？",
+      onOk: () => {
+        this.setState({ visible: bool })
         // const { history } = this.props;
         // history.push({pathname:"/drugStorage/drugStorageManage/picking"})
       },
-      onCancel:()=>{}
+      onCancel: () => { }
     })
   }
 
-  render(){
+  render() {
     const leftColumns = [
       {
         title: '通用名称',
-        width:100,
+        width: 100,
         dataIndex: 'productName1',
-        render:(text,record)=>record.productName
+        render: (text, record) => record.productName
       },
       {
         title: '规格',
-        width:150,
+        width: 150,
         dataIndex: 'spec',
-        className:'ellipsis',
-        render:(text)=>(
+        className: 'ellipsis',
+        render: (text) => (
           <Tooltip placement="topLeft" title={text}>{text}</Tooltip>
         )
       },
       {
         title: '剂型',
-        width:150,
+        width: 150,
         dataIndex: 'fmodal',
       },
       {
         title: '生产厂家',
-        width:150,
+        width: 150,
         dataIndex: 'productCompany',
       },
       {
         title: '单位',
-        width:150,
+        width: 150,
         dataIndex: 'unit',
-        render:(text)=>'g'
+        render: (text) => 'g'
       },
       {
         title: '申领数量',
-        width:150,
+        width: 150,
         dataIndex: 'unit1',
-        render:()=>`100`
+        render: () => `100`
       },
       {
         title: '预分配数',
-        width:150,
+        width: 150,
         dataIndex: 'unit2',
-        render:()=>`80`
+        render: () => `80`
       },
       {
         title: '欠品数量',
-        width:150,
+        width: 150,
         dataIndex: 'unit3',
-        render:()=>`20`
+        render: () => `20`
       },
       {
         title: '当前库存',
-        width:150,
+        width: 150,
         dataIndex: 'unit4',
-        render:()=>`80`
+        render: () => `80`
       }
     ];
-    const rightColumns =  [
+    const rightColumns = [
       {
-       title: '序号',
-       width:80,
-       dataIndex: 'index',
-       render:(text,record,index)=>`${index+1}`
+        title: '序号',
+        width: 80,
+        dataIndex: 'index',
+        render: (text, record, index) => `${index + 1}`
       },
       {
         title: '生产批号',
-        width:150,
+        width: 150,
         dataIndex: 'medicinalCode',
       },
       {
         title: '生产日期',
-        width:100,
+        width: 100,
         dataIndex: 'planTime'
       },
       {
         title: '有效期至',
-        width:150,
+        width: 150,
         dataIndex: 'planTime1',
-        render:(text,record)=>`${record.planTime}`
+        render: (text, record) => `${record.planTime}`
       },
       {
         title: '可分配数',
-        width:150,
+        width: 150,
         dataIndex: 'fmodal',
-        render:(text,record)=>`20`
+        render: (text, record) => `20`
       },
       {
         title: '分配数',
-        width:150,
+        width: 150,
         dataIndex: 'spec',
-        render:(text)=>(
+        render: (text) => (
           <Input />
         )
       }
     ];
-    const { visible , hidden } = this.state;
+    const { visible, hidden } = this.state;
     return (
-      <div className='fadeIn'>
-        <Card>
-          <h3>单据信息 
+      <div className='fullCol'>
+        <div className='fullCol-fullChild'>
+          <h3>单据信息
           {
-            hidden?
-            <div style={{float:'right'}}>
-              <Button style={{float:'right'}} onClick={()=>this.onCreate()} disabled={visible}>生成拣货单</Button>
-              <Button className='button-gap'  style={{float:'right'}} onClick={()=>this.onSubmit(true)} disabled={visible}>取消</Button>
-              <Button type='primary' className='button-gap' style={{float:'right'}} onClick={()=>this.onSubmit(false)}>配货</Button>
-            </div>
-            :null
-          }
-            </h3>
+              hidden ?
+                <div style={{ float: 'right' }}>
+                  <Button style={{ float: 'right' }} onClick={() => this.onCreate()} disabled={visible}>生成拣货单</Button>
+                  <Button className='button-gap' style={{ float: 'right' }} onClick={() => this.onSubmit(true)} disabled={visible}>取消</Button>
+                  <Button type='primary' className='button-gap' style={{ float: 'right' }} onClick={() => this.onSubmit(false)}>配货</Button>
+                </div>
+                : null
+            }
+          </h3>
           <Row>
             <Col span={8}>
               <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
@@ -230,14 +230,18 @@ class Details extends PureComponent{
               </div>
             </Col>
           </Row>
-          <hr className='hr'/>
-          <h3>产品信息</h3>
+          <div style={{ borderBottom: '1px solid #d9d9d9', marginBottom: 20, marginTop: 20 }}></div>
+        </div>
+        {/* <hr className='hr' />
+        <h3>产品信息</h3> */}
+        <div className='detailCard'>
           <Row>
             <Col span={12} >
               <Table
+                title={() => '产品信息'}
                 dataSource={createData()}
                 bordered
-                scroll={{x: '100%'}}
+                scroll={{ x: '100%' }}
                 columns={leftColumns}
                 rowKey={'id'}
                 pagination={{
@@ -249,9 +253,10 @@ class Details extends PureComponent{
             </Col>
             <Col span={10} offset={2}>
               <Table
+                title={() => '产品信息'}
                 dataSource={createData()}
                 bordered
-                scroll={{x: '100%'}}
+                scroll={{ x: '100%' }}
                 columns={rightColumns}
                 rowKey={'id'}
                 pagination={{
@@ -262,7 +267,7 @@ class Details extends PureComponent{
               />
             </Col>
           </Row>
-        </Card>
+        </div>
       </div>
     )
   }
