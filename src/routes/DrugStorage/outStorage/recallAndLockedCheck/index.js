@@ -92,7 +92,7 @@ class RecallAndLockedCheck extends PureComponent{
         <SearchForm query={this.queryHandler} />
         <Row>
           <Button type='primary' className='button-gap'>
-            <Link to={{pathname:`/drugStorage/outStorage/backStorage/add`}}>新建召回</Link>
+            <Link to={{pathname:`/drugStorage/outStorage/recallAndLocked/add`}}>新建召回</Link>
           </Button>
           <Button onClick={()=>this.delete()}>删除</Button>
         </Row>
