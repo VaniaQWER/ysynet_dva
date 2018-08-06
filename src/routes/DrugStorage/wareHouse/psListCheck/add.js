@@ -1,11 +1,11 @@
 /*
- * @Author: wwb 
- * @Date: 2018-07-24 20:15:54 
- * @Last Modified by: wwb
- * @Last Modified time: 2018-07-24 23:25:24
+ * @Author: gaofengjiao 
+ * @Date: 2018-08-06
+ * @Last Modified by: gaofengjiao
+ * @Last Modified time: 2018-08-06
  */
 /* 
-  @file 验收 新建验收
+  @file  药库 - 入库--配送单验收-新建验收
 */
 import React, { PureComponent } from 'react';
 import { Table ,Row, Col, Input, DatePicker,Tooltip } from 'antd';
@@ -108,21 +108,21 @@ const columns = [
       return <Input defaultValue={text || 100}/>
     }
   }, 
-  {
-    title: '价格',
-    dataIndex: 'price',
-    render: (text,record,index)=> `10`
-  },
+  // {
+  //   title: '价格',
+  //   dataIndex: 'price',
+  //   render: (text,record,index)=> `10`
+  // },
   // {
   //   title: '配送金额',
   //   dataIndex: 'total',
   //   render: (text,record,index)=> `1200.00`
   // },
-  // {
-  //   title: '供应商',
-  //   dataIndex: 'fOrgName',
-  //   render: (text,record)=> `武汉供应商`
-  // },
+  {
+    title: '供应商',
+    dataIndex: 'fOrgName',
+    render: (text,record)=> `武汉供应商`
+  },
   {
     title: '操作',
     width: 120,

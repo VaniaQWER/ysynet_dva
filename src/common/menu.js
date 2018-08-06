@@ -59,15 +59,6 @@ const menu = [
         "id": "30102",
         "key": "/drugStorage/replenishment/confirmPlan",
         "parentId": "m301"
-      },
-      {
-        "path": "/drugStorage/replenishment/psListCheck",
-        "level": 2,
-        "fsort": 30102,
-        "name": "配送单验收",
-        "id": "30102",
-        "key": "/drugStorage/replenishment/psListCheck",
-        "parentId": "m301"
       }
     ]
   },

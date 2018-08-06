@@ -256,24 +256,24 @@ export const getNavData = app => [
       path: '/drugStorage/replenishment/confirmPlan/detail',
       component: dynamicWrapper(app, [], () => import('../routes/DrugStorage/replenishment/confirmPlan/detail')),
     },
-    {
-      name: '配送单验收',
-      iocn: 'setting',
-      path: '/drugStorage/replenishment/psListCheck',
-      component: dynamicWrapper(app, [], () => import('../routes/DrugStorage/replenishment/psListCheck')),
-    },
-    {
-      name: '配送单验收--新建',
-      iocn: 'setting',
-      path: '/drugStorage/replenishment/psListCheck/add',
-      component: dynamicWrapper(app, [], () => import('../routes/DrugStorage/replenishment/psListCheck/add')),
-    },
-    {
-      name: '配送单验收--详情',
-      iocn: 'setting',
-      path: '/drugStorage/replenishment/psListCheck/detail',
-      component: dynamicWrapper(app, [], () => import('../routes/DrugStorage/replenishment/psListCheck/detail')),
-    },
+    // {
+    //   name: '配送单验收',
+    //   iocn: 'setting',
+    //   path: '/drugStorage/replenishment/psListCheck',
+    //   component: dynamicWrapper(app, [], () => import('../routes/DrugStorage/replenishment/psListCheck')),
+    // },
+    // {
+    //   name: '配送单验收--新建',
+    //   iocn: 'setting',
+    //   path: '/drugStorage/replenishment/psListCheck/add',
+    //   component: dynamicWrapper(app, [], () => import('../routes/DrugStorage/replenishment/psListCheck/add')),
+    // },
+    // {
+    //   name: '配送单验收--详情',
+    //   iocn: 'setting',
+    //   path: '/drugStorage/replenishment/psListCheck/detail',
+    //   component: dynamicWrapper(app, [], () => import('../routes/DrugStorage/replenishment/psListCheck/detail')),
+    // },
     /*   补货管理  结束    */
     {
       name: "药库管理",//药库-药库管理
@@ -400,6 +400,18 @@ export const getNavData = app => [
       component: dynamicWrapper(app, [], () => import('../routes/DrugStorage/wareHouse/psListCheck')),
     },
     {
+      name: '配送单验收--新建',
+      iocn: 'setting',
+      path: '/drugStorage/wareHouse/psListCheck/add',
+      component: dynamicWrapper(app, [], () => import('../routes/DrugStorage/wareHouse/psListCheck/add')),
+    },
+    {
+      name: '配送单验收--详情',
+      iocn: 'setting',
+      path: '/drugStorage/wareHouse/psListCheck/detail',
+      component: dynamicWrapper(app, [], () => import('../routes/DrugStorage/wareHouse/psListCheck/detail')),
+    },
+    {
       name: "上架",
       icon: 'setting',
       path: '/drugStorage/wareHouse/grounding',
@@ -410,6 +422,12 @@ export const getNavData = app => [
       icon: 'setting',
       path: '/drugStorage/wareHouse/wareHouseReceiptMgt',
       component: dynamicWrapper(app, [], () => import('../routes/DrugStorage/wareHouse/wareHouseReceiptMgt')),
+    },
+    {
+      name: "入库单详情",
+      icon: 'setting',
+      path: '/drugStorage/wareHouse/wareHouseReceiptMgt/detail',
+      component: dynamicWrapper(app, [], () => import('../routes/DrugStorage/wareHouse/wareHouseReceiptMgt/detail')),
     },
     /* ***************  出库  ******************** */
     {
