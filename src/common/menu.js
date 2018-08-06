@@ -666,6 +666,37 @@ const menu = [
         ]
       },
 
+      {
+        "path": "/pharmacy/supplementDoc",
+        "level": 1,
+        "fsort": 30106,
+        "name": "补登单据",
+        "id": "30106",
+        "key": "/pharmacy/supplementDoc",
+        "parentId": "m305",
+        "icon": "wallet",
+        "subMenus": [
+          {
+            "path": "/pharmacy/supplementDoc/supplementDocuments",
+            "level": 2,
+            "fsort": 30105,
+            "name": "补登单据",
+            "id": "30106",
+            "key": "/pharmacy/supplementDoc/supplementDocuments",
+            "parentId": "m305"
+          },
+          {
+            "path": "/pharmacy/supplementDoc/supplementDocCheck",
+            "level": 2,
+            "fsort": 30105,
+            "name": "补登单审核",
+            "id": "30106",
+            "key": "/pharmacy/supplementDoc/supplementDocCheck",
+            "parentId": "m305"
+          }
+          
+        ]
+      }
      
   ],
   "level": 0,
