@@ -204,21 +204,23 @@ class Add extends PureComponent {
                         </Col>
                     </Row>
                 </div>
-                <h3>产品信息</h3>
-                <Table
-                    rowSelection={{
-                        onChange: (selectedRowKey) => {
-                            this.setState({ selectedRowKey })
-                        }
-                    }}
-                    dataSource={createData()}
-                    bordered
-                    scroll={{ x: '200%' }}
-                    columns={columns}
-                    rowKey={'id'}
-                    style={{ marginTop: 24 }}
-                />
-
+                {/* <h3>产品信息</h3> */}
+                <div className='detailCard'>
+                    <Table
+                        title={()=>'产品信息'}
+                        rowSelection={{
+                            onChange: (selectedRowKey) => {
+                                this.setState({ selectedRowKey })
+                            }
+                        }}
+                        dataSource={createData()}
+                        bordered
+                        scroll={{ x: '200%' }}
+                        columns={columns}
+                        rowKey={'id'}
+                        style={{ marginTop: 24 }}
+                    />
+                </div>
                 <Affix offsetBottom={0} className='affix'>共10种产品
              <Button style={{ float: 'right' }} onClick={() => { }}>
                         取消
