@@ -897,25 +897,7 @@ export const getNavData = app => [
       path: '/pharmacy/settlementMgt/statements/details',
       component: dynamicWrapper(app, [], () => import('../routes/Pharmacy/settlementMgt/statements/details')),
     },
-      /* ********************      货位调整      ************************** */
-      {
-        name: "货位调整",
-        icon: 'setting',
-        path: '/pharmacy/goodsAdjust/adjust',
-        component: dynamicWrapper(app, [], () => import('../routes/Pharmacy/goodsAdjust/adjust')),
-      },
-      {
-        name: "货位调整-新增",
-        icon: 'setting',
-        path: '/pharmacy/goodsAdjust/adjust/add',
-        component: dynamicWrapper(app, [], () => import('../routes/Pharmacy/goodsAdjust/adjust/add')),
-      },
-      {
-        name: "货位调整-详情",
-        icon: 'setting',
-        path: '/pharmacy/goodsAdjust/adjust/detail',
-        component: dynamicWrapper(app, [], () => import('../routes/Pharmacy/goodsAdjust/adjust/detail')),
-      },
+    
       
     /*------药房------*/
     /*-----药房-申领入库--*/
@@ -1009,7 +991,57 @@ export const getNavData = app => [
       icon: 'setting',
       path: '/pharmacy/outStorage/refund/details',
       component: dynamicWrapper(app, [], () => import('../routes/Pharmacy/outStorage/refund/details')),
-    }
+    },
+    /* ********************      货位调整      ************************** */
+    {
+      name: "货位调整",
+      icon: 'setting',
+      path: '/pharmacy/goodsAdjust/adjust',
+      component: dynamicWrapper(app, [], () => import('../routes/Pharmacy/goodsAdjust/adjust')),
+    },
+    {
+      name: "货位调整-新增",
+      icon: 'setting',
+      path: '/pharmacy/goodsAdjust/adjust/add',
+      component: dynamicWrapper(app, [], () => import('../routes/Pharmacy/goodsAdjust/adjust/add')),
+    },
+    {
+      name: "货位调整-详情",
+      icon: 'setting',
+      path: '/pharmacy/goodsAdjust/adjust/detail',
+      component: dynamicWrapper(app, [], () => import('../routes/Pharmacy/goodsAdjust/adjust/detail')),
+    },
+    /* ********************      补登单据      ************************** */
+    {
+      name: "补登单据",
+      icon: 'setting',
+      path: '/pharmacy/supplementDoc/supplementDocuments',
+      component: dynamicWrapper(app, [], () => import('../routes/Pharmacy/supplementDoc/supplementDocuments')),
+    },
+    {
+      name: "补登单据-新增",
+      icon: 'setting',
+      path: '/pharmacy/supplementDoc/supplementDocuments/add',
+      component: dynamicWrapper(app, [], () => import('../routes/Pharmacy/supplementDoc/supplementDocuments/add')),
+    },
+    {
+      name: "补登单据-详情",
+      icon: 'setting',
+      path: '/pharmacy/supplementDoc/supplementDocuments/detail',
+      component: dynamicWrapper(app, [], () => import('../routes/Pharmacy/supplementDoc/supplementDocuments/detail')),
+    },
+    {
+      name: "补登单审核",
+      icon: 'setting',
+      path: '/pharmacy/supplementDoc/supplementDocCheck',
+      component: dynamicWrapper(app, [], () => import('../routes/Pharmacy/supplementDoc/supplementDocCheck')),
+    },
+    {
+      name: "补登单审核-详情",
+      icon: 'setting',
+      path: '/pharmacy/supplementDoc/supplementDocCheck/detail',
+      component: dynamicWrapper(app, [], () => import('../routes/Pharmacy/supplementDoc/supplementDocCheck/detail')),
+    },
   ]
 }]
 
