@@ -23,7 +23,7 @@ const menu = [
         },
       ]
     },
-  {
+  /* {
     "path": "/drugStorage/replenishment",
     "level": 1,
     "fsort": 30102,
@@ -61,7 +61,7 @@ const menu = [
         "parentId": "m301"
       }
     ]
-  },
+  }, */
   {
     "path": "/drugStorage/wareHouse",
     "level": 1,
@@ -188,7 +188,7 @@ const menu = [
       },
     ]
   },
-  {
+  /* {
     "path": "/drugStorage/drugStorageManage",
     "level": 1,
     "fsort": 30102,
@@ -271,7 +271,8 @@ const menu = [
         "parentId": "m303"
       },
     ]
-  },{
+  }, */
+  {
     "path": "/drugStorage/checkDecrease",
     "level": 1,
     "fsort": 30103,
@@ -373,7 +374,7 @@ const menu = [
         },
       ]
     },
-    {
+    /* {
       "path": "/pharmacy/manage",
       "level": 2,
       "fsort": 30105,
@@ -447,98 +448,7 @@ const menu = [
           "parentId": "m305"
         },
       ]
-    },
-    {
-      "path": "/pharmacy/checkDecrease",
-      "level": 1,
-      "fsort": 30103,
-      "name": "盘点损益",
-      "id": "30103",
-      "key": "/pharmacy/checkDecrease",
-      "parentId": "m303",
-      "icon": "hourglass",
-      "subMenus":[
-        {
-          "path": "/pharmacy/checkDecrease/newInventory",
-          "level": 2,
-          "fsort": 30103,
-          "name": "新建盘点",
-          "id": "30103",
-          "key": "/pharmacy/checkDecrease/newInventory",
-          "parentId": "m304"
-        },
-        {
-          "path": "/pharmacy/checkDecrease/inventoryAudit",
-          "level": 2,
-          "fsort": 30103,
-          "name": "盘点审核",
-          "id": "30103",
-          "key": "/pharmacy/checkDecrease/inventoryAudit",
-          "parentId": "m305"
-        },
-        {
-          "path": "/pharmacy/checkDecrease/afterAdjustment",
-          "level": 2,
-          "fsort": 30103,
-          "name": "盘后调整",
-          "id": "30103",
-          "key": "/pharmacy/checkDecrease/afterAdjustment",
-          "parentId": "m306"
-        },
-        {
-          "path": "/pharmacy/checkDecrease/profiLossRecord",
-          "level": 2,
-          "fsort": 30103,
-          "name": "损益记录",
-          "id": "30103",
-          "key": "/pharmacy/checkDecrease/profiLossRecord",
-          "parentId": "m307"
-        }
-      ]
-    },
-    {
-      "path": "/pharmacy/stockInquiry",
-      "level": 1,
-      "fsort": 30104,
-      "name": "库存查询",
-      "id": "30104",
-      "key": "/pharmacy/stockInquiry",
-      "parentId": "m304",
-      "icon": "search",
-      "subMenus": [
-        {
-          "path": "/pharmacy/stockInquiry",
-          "level": 2,
-          "fsort": 30104,
-          "name": "库存查询",
-          "id": "30104",
-          "key": "/pharmacy/stockInquiry",
-          "parentId": "m304"
-        }
-      ]
-    },
-    {
-      "path": "/pharmacy/goodsAdjust",
-      "level": 1,
-      "fsort": 30106,
-      "name": "货位调整",
-      "id": "30106",
-      "key": "/pharmacy/goodsAdjust",
-      "parentId": "m305",
-      "icon": "wallet",
-      "subMenus": [
-        {
-          "path": "/pharmacy/goodsAdjust/adjust",
-          "level": 2,
-          "fsort": 30105,
-          "name": "货位调整",
-          "id": "30106",
-          "key": "/pharmacy/goodsAdjust/adjust",
-          "parentId": "m305"
-        }
-        
-      ]
-    },
+    }, */
     {//库房-申领入库
       "path": "/pharmacy/wareHouse",
       "level": 2,
@@ -672,9 +582,98 @@ const menu = [
           "key": "/pharmacy/supplementDoc/supplementDocCheck",
           "parentId": "m305"
         }
-        
       ]
-    }
+    },
+    {
+      "path": "/pharmacy/goodsAdjust",
+      "level": 1,
+      "fsort": 30106,
+      "name": "货位调整",
+      "id": "30106",
+      "key": "/pharmacy/goodsAdjust",
+      "parentId": "m305",
+      "icon": "wallet",
+      "subMenus": [
+        {
+          "path": "/pharmacy/goodsAdjust/adjust",
+          "level": 2,
+          "fsort": 30105,
+          "name": "货位调整",
+          "id": "30106",
+          "key": "/pharmacy/goodsAdjust/adjust",
+          "parentId": "m305"
+        }
+      ]
+    },
+    {
+      "path": "/pharmacy/checkDecrease",
+      "level": 1,
+      "fsort": 30103,
+      "name": "盘点损益",
+      "id": "30103",
+      "key": "/pharmacy/checkDecrease",
+      "parentId": "m303",
+      "icon": "hourglass",
+      "subMenus":[
+        {
+          "path": "/pharmacy/checkDecrease/newInventory",
+          "level": 2,
+          "fsort": 30103,
+          "name": "新建盘点",
+          "id": "30103",
+          "key": "/pharmacy/checkDecrease/newInventory",
+          "parentId": "m304"
+        },
+        {
+          "path": "/pharmacy/checkDecrease/inventoryAudit",
+          "level": 2,
+          "fsort": 30103,
+          "name": "盘点审核",
+          "id": "30103",
+          "key": "/pharmacy/checkDecrease/inventoryAudit",
+          "parentId": "m305"
+        },
+        {
+          "path": "/pharmacy/checkDecrease/afterAdjustment",
+          "level": 2,
+          "fsort": 30103,
+          "name": "盘后调整",
+          "id": "30103",
+          "key": "/pharmacy/checkDecrease/afterAdjustment",
+          "parentId": "m306"
+        },
+        {
+          "path": "/pharmacy/checkDecrease/profiLossRecord",
+          "level": 2,
+          "fsort": 30103,
+          "name": "损益记录",
+          "id": "30103",
+          "key": "/pharmacy/checkDecrease/profiLossRecord",
+          "parentId": "m307"
+        }
+      ]
+    },
+    {
+      "path": "/pharmacy/stockInquiry",
+      "level": 1,
+      "fsort": 30104,
+      "name": "库存查询",
+      "id": "30104",
+      "key": "/pharmacy/stockInquiry",
+      "parentId": "m304",
+      "icon": "search",
+      "subMenus": [
+        {
+          "path": "/pharmacy/stockInquiry",
+          "level": 2,
+          "fsort": 30104,
+          "name": "库存查询",
+          "id": "30104",
+          "key": "/pharmacy/stockInquiry",
+          "parentId": "m304"
+        }
+      ]
+    },
     ],
     "level": 0,
     "fsort": 301,

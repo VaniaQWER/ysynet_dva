@@ -206,82 +206,6 @@ export const getNavData = app => [
       component: dynamicWrapper(app, [], () => import('../routes/DrugStorage/configMgt/drugDirectory/edit'))
     },
     /* {
-      name: "药库维护",//药库-配置管理
-      icon: 'setting',
-      path: '/drugStorage/drugStroageMaintain',
-      component: dynamicWrapper(app, [], () => import('../routes/DrugStorage/configMgt/drugStroageMaintain'))
-    }, */
-    /*   
-        补货管理  开始
-    */
-    {
-      name: '补货计划',
-      iocn: 'setting',
-      path: '/drugStorage/replenishment/replenishmentPlan',
-      component: dynamicWrapper(app, [], () => import('../routes/DrugStorage/replenishment/replenishmentPlan')),
-    },
-    {
-      name: '补货计划添加',
-      iocn: 'setting',
-      path: '/drugStorage/replenishment/replenishmentPlan/add',
-      component: dynamicWrapper(app, [], () => import('../routes/DrugStorage/replenishment/replenishmentPlan/add')),
-    },
-    {
-      name: '补货计划详情',
-      iocn: 'setting',
-      path: '/drugStorage/replenishment/replenishmentPlan/detail',
-      component: dynamicWrapper(app, [], () => import('../routes/DrugStorage/replenishment/replenishmentPlan/detail')),
-    },
-    {
-      name: '采购计划',
-      iocn: 'setting',
-      path: '/drugStorage/replenishment/purchasePlan',
-      component: dynamicWrapper(app, [], () => import('../routes/DrugStorage/replenishment/purchasePlan')),
-    },
-    {
-      name: '采购计划--添加',
-      iocn: 'setting',
-      path: '/drugStorage/replenishment/purchasePlan/add',
-      component: dynamicWrapper(app, [], () => import('../routes/DrugStorage/replenishment/purchasePlan/add')),
-    },
-    {
-      name: '采购计划--详情',
-      iocn: 'setting',
-      path: '/drugStorage/replenishment/purchasePlan/detail',
-      component: dynamicWrapper(app, [], () => import('../routes/DrugStorage/replenishment/purchasePlan/detail')),
-    },
-    {
-      name: '确认计划',
-      iocn: 'setting',
-      path: '/drugStorage/replenishment/confirmPlan',
-      component: dynamicWrapper(app, [], () => import('../routes/DrugStorage/replenishment/confirmPlan')),
-    },
-    {
-      name: '确认计划--详情',
-      iocn: 'setting',
-      path: '/drugStorage/replenishment/confirmPlan/detail',
-      component: dynamicWrapper(app, [], () => import('../routes/DrugStorage/replenishment/confirmPlan/detail')),
-    },
-    // {
-    //   name: '配送单验收',
-    //   iocn: 'setting',
-    //   path: '/drugStorage/replenishment/psListCheck',
-    //   component: dynamicWrapper(app, [], () => import('../routes/DrugStorage/replenishment/psListCheck')),
-    // },
-    // {
-    //   name: '配送单验收--新建',
-    //   iocn: 'setting',
-    //   path: '/drugStorage/replenishment/psListCheck/add',
-    //   component: dynamicWrapper(app, [], () => import('../routes/DrugStorage/replenishment/psListCheck/add')),
-    // },
-    // {
-    //   name: '配送单验收--详情',
-    //   iocn: 'setting',
-    //   path: '/drugStorage/replenishment/psListCheck/detail',
-    //   component: dynamicWrapper(app, [], () => import('../routes/DrugStorage/replenishment/psListCheck/detail')),
-    // },
-    /*   补货管理  结束    */
-    {
       name: "药库管理",//药库-药库管理
       icon: 'setting',
       path: '/drugStorage/drugStorageManage',
@@ -394,7 +318,7 @@ export const getNavData = app => [
       icon: 'setting',
       path: '/drugStorage/drugStorageManage/newLibrary/details',
       component: dynamicWrapper(app, [], () => import('../routes/DrugStorage/manage/newLibrary/details')),
-    },
+    }, */
 
     /* 
       入库 
