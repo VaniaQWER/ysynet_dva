@@ -2,11 +2,11 @@
  * @Author: wwb 
  * @Date: 2018-07-24 16:08:53 
  * @Last Modified by: wwb
- * @Last Modified time: 2018-08-06 22:16:08
+ * @Last Modified time: 2018-08-06 23:17:40
  */
 
 /**
- * @file 药库 - 补货管理--补货计划
+ * @file 采购计划 - 补货管理--补货计划
  */
 import React, { PureComponent } from 'react';
 import { Form, Button, Table, message,Tooltip  } from 'antd';
@@ -96,7 +96,7 @@ class ReplenishmentPlan extends PureComponent{
       <div className='ysynet-main-content'>
          <WrapperForm />
          <div className='ant-row-bottom'>
-            <Button type='primary' onClick={this.add}>新建补货计划</Button>
+            <Button type='primary' onClick={()=>this.props.history.push({ pathname: `/createReplenishment` })}>新建补货计划</Button>
             <Button type='default' onClick={this.delete} style={{ marginLeft: 8 }}>删除</Button>
          </div>
          <Table 

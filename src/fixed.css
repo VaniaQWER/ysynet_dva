@@ -399,3 +399,11 @@ td:hover .editable-cell-icon {
 .bgf{
   background:#fff
 }
+.newPageBorder{
+  margin: 0 -24px;
+  background: #f0f2f5;
+}
+.ysynet-table-Content{
+  background: #fff;
+  padding: 0 24px;
+}

@@ -2,7 +2,7 @@
  * @Author: wwb 
  * @Date: 2018-07-24 16:08:53 
  * @Last Modified by: wwb
- * @Last Modified time: 2018-08-06 22:08:55
+ * @Last Modified time: 2018-08-06 23:22:10
  */
 
 /**
@@ -196,7 +196,7 @@ class OutCatalogPurchase extends PureComponent{
       <div className='ysynet-main-content'>
          <WrapperForm />
          <div className='ant-row-bottom'>
-            <Button type='primary' onClick={()=>this.props.history.push({ pathname: `/drugStorage/replenishment/replenishmentPlan/add` })}>新建计划</Button>
+            <Button type='primary' onClick={()=>this.props.history.push({ pathname: `/createOutCatalogPurcahsePlan` })}>新建计划</Button>
             <Button type='default' onClick={this.delete} style={{ marginLeft: 8 }}>删除</Button>
          </div>
          <Table 

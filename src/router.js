@@ -7,6 +7,8 @@ import cloneDeep from 'lodash/cloneDeep';
 
 import Login from './routes/Login';
 import SubSystem from './routes/System';
+import NewAdd from './routes/Purchase/replenishment/replenishmentPlan/add';
+import CatalogAdd from './routes/Purchase/replenishment/outCatalogPurchase/add';
 
 import { getNavData } from './common/nav';
 import { getPlainNode } from './utils/utils';
@@ -63,6 +65,8 @@ function RouterConfig({ history, app }) {
         <Switch>
           <Route path="/login" component={Login}/>
           <Route path="/subSystem" component={SubSystem}/>
+          <Route path="/createReplenishment" component={NewAdd}/>
+          <Route path="/createOutCatalogPurcahsePlan" component={CatalogAdd}/>
           {/* <Route path="/home" component={Home}/> */}
           {/* <Route path="/app" render={props => <WorkplaceLayout {...props} {...passProps} />} /> */}
           <Route path="/" render={props => <BasicLayout {...props} {...passProps} />} />

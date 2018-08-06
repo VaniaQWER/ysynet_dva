@@ -2,17 +2,18 @@
  * @Author: wwb 
  * @Date: 2018-07-24 18:49:01 
  * @Last Modified by: wwb
- * @Last Modified time: 2018-08-06 23:14:30
+ * @Last Modified time: 2018-08-06 23:28:43
  */
 /**
  * @file 药库 - 补货管理--补货计划--新建计划
  */
 import React, { PureComponent } from 'react';
-import { Form, Row, Col, Button, Input, Table, Modal, Icon, Tooltip, message  } from 'antd';
+import { Form, Row, Col, Button, Input, Select, Table, Modal, Icon, Tooltip, message  } from 'antd';
 import { formItemLayout } from '../../../../utils/commonStyles'
 import { createData } from '../../../../common/data';
 const FormItem = Form.Item;
 const { Search } = Input;
+const { Option } = Select;
 const modalData = createData().splice(5,16);
 
 class NewAdd extends PureComponent{
@@ -39,7 +40,7 @@ class NewAdd extends PureComponent{
       title: '通用名称',
       dataIndex: 'geName'
     },{
-      title: '产品名称',
+      title: '商品名',
       dataIndex: 'productName'
     },{
       title: '规格',
@@ -49,20 +50,30 @@ class NewAdd extends PureComponent{
         <Tooltip placement="topLeft" title={text}>{text}</Tooltip>
       )
     },{
-      title: '剂型',
-      dataIndex: 'fmodal',
-      width: 150
-    },{
-      title: '包装单位',
-      dataIndex: 'unit',
-      width: 100,
-    },{
       title: '批准文号',
       dataIndex: 'medicinalCode',
       width: 150,
     },{
       title: '生产厂家',
       dataIndex: 'productCompany'
+    },{
+      title: '报告药申请单号',
+      dataIndex: 'planNo',
+      render: (text,record) =>{
+        return (
+          <Input />
+        )
+      }
+    },{
+      title: '供应商',
+      dataIndex: 'fOrgName',
+      render: (text,record) =>{
+        return (
+          <Select>
+            <Option key={-1} value=''>xxxxxxxx</Option>
+          </Select>
+        )
+      }
     },{
       title: '需求数量',
       dataIndex: 'amount',
@@ -71,14 +82,13 @@ class NewAdd extends PureComponent{
         return <Input defaultValue={ text || 1} onChange={this.onChange.bind(this, record, index)}/>
       }
     },{
-      title: '当前库存',
-      dataIndex: 'kcsl',
+      title: '单价',
+      dataIndex: 'price',
+      render: (text,record) => '10.00'
     },{
-      title: '库存上限',
-      dataIndex: 'uLimit'
-    },{
-      title: '库存下限',
-      dataIndex: 'lLimit'
+      title: '金额',
+      dataIndex: 'total',
+      render: (text,record) => '2100.00'
     }];
     const modalColumns = [
       {
@@ -115,8 +125,7 @@ class NewAdd extends PureComponent{
         </div>
         <div className='ant-row-bottom'> 
           <Button type='primary' icon='plus' onClick={()=>this.setState({ visible: true })}>添加产品</Button>
-          <Button type='default' style={{ margin: '0 8px' }}>一键添加低库存产品</Button>
-          <Button type='default'>删除</Button>
+          <Button type='default' style={{ marginLeft: 8 }}>删除</Button>
         </div>
         <Modal
           title={'添加产品'}
@@ -200,7 +209,7 @@ class NewAdd extends PureComponent{
             columns={modalColumns}
             dataSource={modalData}
             bordered
-            scroll={{ x: '150%' }}
+            scroll={{ x: '130%' }}
             rowKey='id'
             pagination={{
               size: "small",
@@ -223,7 +232,7 @@ class NewAdd extends PureComponent{
               columns={columns}
               bordered
               rowKey='id'
-              scroll={{ x: '150%' }}
+              scroll={{ x: '130%' }}
               pagination={false}
               rowSelection={{
                 selectedRowKeys: this.state.selected,
