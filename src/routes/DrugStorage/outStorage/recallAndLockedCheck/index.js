@@ -1,5 +1,5 @@
 /*
- * @Author: yuwei  退货 /refund
+ * @Author: yuwei  召回及锁定审核 /recallAndLockedCheck
  * @Date: 2018-07-24 13:12:15 
 * @Last Modified time: 2018-07-24 13:12:15 
  */
@@ -19,7 +19,7 @@ const columns = [
     width:150,
     render: (text, record) => 
     <span>
-      <Link to={{pathname: `/drugStorage/outStorage/backStorage/details`}}>{text}</Link>
+      <Link to={{pathname: `/drugStorage/outStorage/recallAndLockedCheck/details`}}>{text}</Link>
     </span>
    },
   {
@@ -43,19 +43,19 @@ const columns = [
   {
    title: '发起时间',
    width:150,
-   dataIndex: 'useDept',
+   dataIndex: 'useDept123',
    render: (text, record, index) => '2018-7-25 21:47'
   },
   {
     title: '审核人',
     width:100,
-    dataIndex: 'bDept',
+    dataIndex: 'bDept123',
     render: (text, record, index) => 'wang' + index
   },
   {
     title: '审核时间',
     width:150,
-    dataIndex: 'useDept',
+    dataIndex: 'useDep12t',
     render: (text, record, index) => '2018-7-25 21:47'
   },
   {
