@@ -431,6 +431,12 @@ export const getNavData = app => [
       component: dynamicWrapper(app, [], () => import('../routes/DrugStorage/outStorage/pickingUnderShelve')),
     },
     {
+      name: "拣货下架-详情",
+      icon: 'setting',
+      path: '/drugStorage/outStorage/pickingUnderShelve/details',
+      component: dynamicWrapper(app, [], () => import('../routes/DrugStorage/outStorage/pickingUnderShelve/details')),
+    },
+    {
       name: "出库单管理",
       icon: 'setting',
       path: '/drugStorage/outStorage/outReceiptMgt',

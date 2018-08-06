@@ -396,3 +396,6 @@ td:hover .editable-cell-icon {
 .ant-table-fixed{
   table-layout: fixed;
 }
+.bgf{
+  background:#fff
+}

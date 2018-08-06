@@ -4,7 +4,7 @@
 * @Last Modified time: 2018-07-24 13:16:33 
  */
 import React, { PureComponent } from 'react';
-import { Table ,Row, Col, Button, Modal , message , Input , Tooltip} from 'antd';
+import { Table ,Row, Col, Card , Button, Modal , Input , Tooltip} from 'antd';
 import { createData } from '../../../../common/data';
 const Conform = Modal.confirm;
 
@@ -14,71 +14,43 @@ class DetailsPicking extends PureComponent{
   constructor(props){
     super(props)
     this.state={
-      visible:false,
-      selectedRowKey:[]
+      visible:true,
+      selectedRowKey:[],
+      hidden:true,//是否显示操作按钮 true 显示 false 隐藏
     }
   }
-  //打印
-  onPrint = () =>{
+  //生成拣货单
+  onCreate = () =>{
     Conform({
       content:"您确定要执行此操作？",
       onOk:()=>{
-        message.success('操作成功！')
-        const { history } = this.props;
-        history.push({pathname:"/drugStorage/drugStorageManage/picking"})
+        this.setState({
+          hidden:false
+        })
       },
       onCancel:()=>{}
     })
   }
-  //确认
-  onSubmit = () =>{
+  //确认配货/取消
+  onSubmit = (bool) =>{
     Conform({
       content:"您确定要执行此操作？",
       onOk:()=>{
-        message.success('操作成功！')
-        const { history } = this.props;
-        history.push({pathname:"/drugStorage/drugStorageManage/picking"})
+        this.setState({visible:bool})
+        // const { history } = this.props;
+        // history.push({pathname:"/drugStorage/drugStorageManage/picking"})
       },
       onCancel:()=>{}
     })
-  }
-
-  //执行调整操作 - 显示弹窗
-  showModal = () =>{
-    this.setState({visible:true})
-  }
-  //提交调整操作 -
-  modalSubmit = () =>{
-    const { selectedRowKey } = this.state;
-    if(selectedRowKey.length>0){
-      this.setState({visible:false})
-    }else{
-      message.warn('请选择要调整的数据！')
-    }
   }
 
   render(){
-    const columns = [
-      {
-       title: '申领数量',
-       width:150,
-       dataIndex: 'medicinalCode',
-      },
-      {
-        title: '可分配数',
-        width:120,
-        dataIndex: 'assetsRecord',
-      },
+    const leftColumns = [
       {
         title: '通用名称',
         width:100,
         dataIndex: 'productName1',
         render:(text,record)=>record.productName
-      },
-      {
-        title: '商品名称',
-        width:150,
-        dataIndex: 'productName',
       },
       {
         title: '规格',
@@ -95,77 +67,94 @@ class DetailsPicking extends PureComponent{
         dataIndex: 'fmodal',
       },
       {
-        title: '包装单位',
-        width:150,
-        dataIndex: 'unit',
-        render:(text)=>'g'
-      },
-      {
-        title: '最小单位',
-        width:150,
-        dataIndex: 'unit1',
-      },
-      {
-        title: '批准文号',
-        width:150,
-        dataIndex: 'approvalNo',
-      },
-      {
         title: '生产厂家',
         width:150,
         dataIndex: 'productCompany',
       },
       {
-        title: '操作',
-        width:100,
-        dataIndex: 'RN',
-        render: (text, record) => 
-            <a onClick={()=>this.showModal()}>调整</a>
-        }
+        title: '单位',
+        width:150,
+        dataIndex: 'unit',
+        render:(text)=>'g'
+      },
+      {
+        title: '申领数量',
+        width:150,
+        dataIndex: 'unit1',
+        render:()=>`100`
+      },
+      {
+        title: '预分配数',
+        width:150,
+        dataIndex: 'unit2',
+        render:()=>`80`
+      },
+      {
+        title: '欠品数量',
+        width:150,
+        dataIndex: 'unit3',
+        render:()=>`20`
+      },
+      {
+        title: '当前库存',
+        width:150,
+        dataIndex: 'unit4',
+        render:()=>`80`
+      }
     ];
-    const modalColumns = [
+    const rightColumns =  [
       {
        title: '序号',
-       width:60,
+       width:80,
        dataIndex: 'index',
        render:(text,record,index)=>`${index+1}`
       },
       {
         title: '生产批号',
-        width:120,
-        dataIndex: 'assetsRecord',
+        width:150,
+        dataIndex: 'medicinalCode',
       },
       {
         title: '生产日期',
         width:100,
-        dataIndex: 'productName1',
-        render:(text,record)=>record.productName
+        dataIndex: 'planTime'
       },
       {
         title: '有效期至',
         width:150,
-        dataIndex: 'productName',
+        dataIndex: 'planTime1',
+        render:(text,record)=>`${record.planTime}`
       },
       {
         title: '可分配数',
         width:150,
-        dataIndex: 'spec',
+        dataIndex: 'fmodal',
+        render:(text,record)=>`20`
       },
       {
         title: '分配数',
         width:150,
-        dataIndex: 'fmodal',
-        render:()=>(<Input/>)
+        dataIndex: 'spec',
+        render:(text)=>(
+          <Input />
+        )
       }
     ];
-    const { visible } = this.state;
+    const { visible , hidden } = this.state;
     return (
       <div className='fadeIn'>
-        <div>
+        <Card>
           <h3>单据信息 
-            <Button style={{float:'right'}} onClick={()=>this.onPrint()} >打印</Button>
-            <Button type='primary' className='button-gap' style={{float:'right'}} onClick={()=>this.onSubmit()}>确认</Button>
-          </h3>
+          {
+            hidden?
+            <div style={{float:'right'}}>
+              <Button style={{float:'right'}} onClick={()=>this.onCreate()} disabled={visible}>生成拣货单</Button>
+              <Button className='button-gap'  style={{float:'right'}} onClick={()=>this.onSubmit(true)} disabled={visible}>取消</Button>
+              <Button type='primary' className='button-gap' style={{float:'right'}} onClick={()=>this.onSubmit(false)}>配货</Button>
+            </div>
+            :null
+          }
+            </h3>
           <Row>
             <Col span={8}>
               <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
@@ -180,20 +169,20 @@ class DetailsPicking extends PureComponent{
                 <label>状态</label>
               </div>
               <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
-                <div className='ant-form-item-control'>待确认</div>
+                <div className='ant-form-item-control'>待配货</div>
               </div>
             </Col>
             <Col span={8}>
               <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
-                <label>申领药房</label>
+                <label>申领部门</label>
               </div>
               <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
-                <div className='ant-form-item-control'>门诊药房</div>
+                <div className='ant-form-item-control'>静配中心</div>
               </div>
             </Col>
             <Col span={8}>
               <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
-                <label>制单人</label>
+                <label>发起人</label>
               </div>
               <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
                 <div className='ant-form-item-control'>张三三</div>
@@ -201,7 +190,7 @@ class DetailsPicking extends PureComponent{
             </Col>
             <Col span={8}>
               <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
-                <label>制单时间</label>
+                <label>发起时间</label>
               </div>
               <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
                 <div className='ant-form-item-control'>2015-09-03 15:00:02
@@ -226,7 +215,7 @@ class DetailsPicking extends PureComponent{
             </Col>
             <Col span={8}>
               <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
-                <label>受理人</label>
+                <label>配货人</label>
               </div>
               <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
                 <div className='ant-form-item-control'></div>
@@ -234,70 +223,46 @@ class DetailsPicking extends PureComponent{
             </Col>
             <Col span={8}>
               <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
-                <label>受理时间</label>
+                <label>配货时间</label>
               </div>
               <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
                 <div className='ant-form-item-control'></div>
               </div>
             </Col>
           </Row>
-          </div>
-          <div className='detailCard'>
-            <Table
-              dataSource={createData()}
-              bordered
-              title={()=>'产品信息'}
-              scroll={{x: '100%'}}
-              columns={columns}
-              rowKey={'id'}
-              pagination={{
-                size: 'small',
-                showQuickJumper: true,
-                showSizeChanger: true
-              }}
-            />
-          </div>
-          <Modal visible={visible} width={980} onOk={()=>this.modalSubmit()} onCancel={()=>this.setState({visible:false})}>
-            <Row>
-              <Col span={8}>
-                  <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
-                      <label>商品名称</label>
-                  </div>
-                  <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
-                    <div className='ant-form-item-control'>注射用复方甘草酸苷</div>
-                  </div>  
-              </Col>
-              <Col span={8}>
-                  <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
-                      <label>申领药房</label>
-                  </div>
-                  <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
-                    <div className='ant-form-item-control'>静配中心</div>
-                  </div>
-              </Col>
-              <Col span={8}>
-                  <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
-                      <label>待分配申领数量</label>
-                  </div>
-                  <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
-                    <div className='ant-form-item-control'>100</div>
-                  </div>
-              </Col>
-            </Row>
-            <Table
-              dataSource={createData()}
-              bordered
-              scroll={{x: '100%'}}
-              columns={modalColumns}
-              rowKey={'id'}
-              style={{marginTop: 24}}
-              rowSelection={{
-                onChange:(selectedRowKey)=>{
-                  this.setState({selectedRowKey})
-                }
-              }}
-            />
-          </Modal>
+          <hr className='hr'/>
+          <h3>产品信息</h3>
+          <Row>
+            <Col span={12} >
+              <Table
+                dataSource={createData()}
+                bordered
+                scroll={{x: '100%'}}
+                columns={leftColumns}
+                rowKey={'id'}
+                pagination={{
+                  size: 'small',
+                  showQuickJumper: true,
+                  showSizeChanger: true
+                }}
+              />
+            </Col>
+            <Col span={10} offset={2}>
+              <Table
+                dataSource={createData()}
+                bordered
+                scroll={{x: '100%'}}
+                columns={rightColumns}
+                rowKey={'id'}
+                pagination={{
+                  size: 'small',
+                  showQuickJumper: true,
+                  showSizeChanger: true
+                }}
+              />
+            </Col>
+          </Row>
+        </Card>
       </div>
     )
   }
