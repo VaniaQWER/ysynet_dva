@@ -199,6 +199,12 @@ export const getNavData = app => [
       path: '/drugStorage/configMgt/drugDirectory',
       component: dynamicWrapper(app, [], () => import('../routes/DrugStorage/configMgt/drugDirectory'))
     },
+    {
+      name: "配置管理--编辑",//药库-配置管理
+      icon: 'setting',
+      path: '/drugStorage/configMgt/drugDirectory/edit',
+      component: dynamicWrapper(app, [], () => import('../routes/DrugStorage/configMgt/drugDirectory/edit'))
+    },
     /* {
       name: "药库维护",//药库-配置管理
       icon: 'setting',
@@ -521,7 +527,6 @@ export const getNavData = app => [
       path: '/drugStorage/goodsAdjust/adjust/detail',
       component: dynamicWrapper(app, [], () => import('../routes/DrugStorage/goodsAdjust/adjust/detail')),
     },
-
     // 药库 - 盘点损益
     {
       name: "盘点损益",
