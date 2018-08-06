@@ -6,17 +6,25 @@
 import React, { PureComponent } from 'react';
 import { Table , Col, Button, Modal , message, Input , Affix , Row, Icon , Tooltip } from 'antd';
 import { createData } from '../../../../common/data';
-const Conform = Modal.confirm;
+const Confirm= Modal.confirm;
 const columns = [
   {
     title: '实到数量',
     width:100,
     dataIndex: 'shidaoshuliang',
+    render:()=>`100`
   },
   {
     title: '需求数量',
     width:100,
     dataIndex: 'xuqiushuliang',
+    render:()=>`100`
+  },
+  {
+    title: '单位',
+    width:150,
+    dataIndex: 'unit123',
+    render:(text)=>'盒'
   },
   {
     title: '通用名称',
@@ -44,7 +52,7 @@ const columns = [
     dataIndex: 'fmodal',
   },
   {
-    title: '包装单位',
+    title: '包装规格',
     width:150,
     dataIndex: 'unit',
     render:(text)=>'g'
@@ -62,22 +70,23 @@ const columns = [
   {
     title: '生产批号',
     width:150,
-    dataIndex: 'approvalNo2',
+    dataIndex: 'applyNo',
   },
   {
     title: '生产日期',
     width:150,
-    dataIndex: 'approvalNo3',
+    dataIndex: 'planTime',
   },
   {
     title: '有效期',
     width:150,
-    dataIndex: 'approvalNo45',
+    dataIndex: 'planTime123',
+    render:(text,record)=>`${record.planTime}`
   },
   {
     title: '供应商',
     width:150,
-    dataIndex: 'huowei132',
+    dataIndex: 'createUser',
   }
 ];
 class AddNewLibrary extends PureComponent{
@@ -91,12 +100,12 @@ class AddNewLibrary extends PureComponent{
 
   //提交该出库单
   onSubmit = () =>{
-    Conform({
+    Confirm({
       content:"您确定要执行此操作？",
       onOk:()=>{
         message.success('操作成功！')
         const { history } = this.props;
-        history.push({pathname:"/pharmacy/manage/acceptance"})
+        history.push({pathname:"/pharmacy/wareHouse/acceptance"})
       },
       onCancel:()=>{}
     })
@@ -115,12 +124,13 @@ class AddNewLibrary extends PureComponent{
               <Input style={{width:250}}/>
           </Col>
         </div>
-        <div className='fullCol-gap-firstChild'>
+
+        <div className='fullCol-gap-firstChild detailCard'>
           <h3>单据信息</h3>
           <Row>
             <Col span={8}>
                 <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
-                    <label>申领单</label>
+                    <label>出库单</label>
                 </div>
                 <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
                   <div className='ant-form-item-control'>PA002211807000086U</div>
@@ -128,7 +138,7 @@ class AddNewLibrary extends PureComponent{
             </Col>
             <Col span={8}>
                 <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
-                    <label>药库出库单</label>
+                    <label>申领单</label>
                 </div>
                 <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
                   <div className='ant-form-item-control'>PA002211807000086U</div>
@@ -144,7 +154,7 @@ class AddNewLibrary extends PureComponent{
             </Col>
             <Col span={8}>
                 <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
-                    <label>药库</label>
+                    <label>配货部门</label>
                 </div>
                 <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
                   <div className='ant-form-item-control'>药库</div>
@@ -152,7 +162,7 @@ class AddNewLibrary extends PureComponent{
             </Col>
             <Col span={8}>
                 <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
-                    <label>制单人</label>
+                    <label>发起人</label>
                 </div>
                 <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
                   <div className='ant-form-item-control'>张一山</div>
@@ -160,7 +170,7 @@ class AddNewLibrary extends PureComponent{
             </Col>
             <Col span={8}>
                 <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
-                    <label>制单时间</label>
+                    <label>发起时间</label>
                 </div>
                 <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
                   <div className='ant-form-item-control'>2018-07-12 17:09:15</div>
@@ -184,22 +194,29 @@ class AddNewLibrary extends PureComponent{
             </Col>
           </Row>
         </div>
-        <h3>产品信息</h3>
-        <Table
-          dataSource={createData()}
-          bordered
-          scroll={{x: '200%'}}
-          columns={columns}
-          rowKey={'id'}
-          style={{marginTop: 24}}
-        />
+        <div className='detailCard'>
+          <Table
+            dataSource={createData()}
+            bordered
+            title={()=>`产品信息`}
+            scroll={{x: '200%'}}
+            columns={columns}
+            rowKey={'id'}
+            pagination={{
+              size: "small",
+              showQuickJumper: true,
+              showSizeChanger: true
+            }}
+          />
+        </div>
+        
 
         <Affix offsetBottom={0} className='affix'>共10种产品
           <Button  type="danger" style={{float:'right'}} onClick={() => this.onSubmit()}>
             不通过
           </Button>
           <Button  type="primary" className='button-gap' style={{float:'right'}} onClick={() => this.onSubmit()}>
-            验收通过
+            通过
           </Button>
         </Affix>
       </div>

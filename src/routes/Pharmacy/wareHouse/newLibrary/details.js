@@ -34,35 +34,50 @@ const columns = [
     dataIndex: 'fmodal',
   },
   {
-    title: '包装单位',
+    title: '包装规格',
     width:150,
     dataIndex: 'unit',
+    render:(text)=>'g'
+  },
+  {
+    title: '单位',
+    width:150,
+    dataIndex: 'unit123',
     render:(text)=>'g'
   },
   {
     title: '入库数量',
     width:150,
     dataIndex: 'approvalNo1',
+    render:()=>`12`
   },
   {
     title: '生产批号',
     width:150,
-    dataIndex: 'approvalNo2',
+    dataIndex: 'applyNo',
   },
   {
     title: '生产日期',
     width:150,
-    dataIndex: 'approvalNo3',
+    dataIndex: 'planTime',
   },
   {
-    title: '有效期',
+    title: '有效期至',
     width:150,
     dataIndex: 'approvalNo45',
+    render:(text,record)=>`${record.planTime}`
   },
   {
     title: '货位',
     width:150,
     dataIndex: 'huowei',
+    render:()=>`A1231`
+  },
+  {
+    title: '货位类型',
+    width:150,
+    dataIndex: 'approvalN123o',
+    render:(text,record)=>`补货货位`
   },
   {
     title: '批准文号',
@@ -74,7 +89,6 @@ const columns = [
     width:150,
     dataIndex: 'productCompany',
   },
-  
 ];
 
 class DetailsNewLibrary extends PureComponent{
@@ -112,7 +126,7 @@ class DetailsNewLibrary extends PureComponent{
 
   render(){
     return (
-      <div>
+      <div  className='ysynet-main-content' >
           <h3>单据信息 
             <Button  style={{float:'right'}} onClick={()=>this.onBPrint()} >导出</Button>
             <Button  type='primary'  className='button-gap' style={{float:'right'}} onClick={()=>this.onSubmit()}>打印</Button>
@@ -120,7 +134,24 @@ class DetailsNewLibrary extends PureComponent{
           <Row>
             <Col span={8}>
                 <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
-                    <label>库房</label>
+                    <label>入库单</label>
+                </div>
+                <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
+                  <div className='ant-form-item-control'>RK00221180700005QU</div>
+                </div>
+            </Col>
+            <Col span={8}>
+                <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
+                    <label>出库单</label>
+                </div>
+                <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
+                  <div className='ant-form-item-control'>PO0022118070000383
+                  </div>
+                </div>
+            </Col>
+            <Col span={8}>
+                <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
+                    <label>配货部门</label>
                 </div>
                 <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
                   <div className='ant-form-item-control'>药库</div>
@@ -136,31 +167,6 @@ class DetailsNewLibrary extends PureComponent{
             </Col>
             <Col span={8}>
                 <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
-                    <label>供应商</label>
-                </div>
-                <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
-                  <div className='ant-form-item-control'>裕美供应商</div>
-                </div>
-            </Col>
-            <Col span={8}>
-                <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
-                    <label>入库单</label>
-                </div>
-                <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
-                  <div className='ant-form-item-control'>RK00221180700005QU</div>
-                </div>
-            </Col>
-            <Col span={8}>
-                <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
-                    <label>库房出库单</label>
-                </div>
-                <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
-                  <div className='ant-form-item-control'>PO0022118070000383
-                  </div>
-                </div>
-            </Col>
-            <Col span={8}>
-                <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
                     <label>申领单</label>
                 </div>
                 <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
@@ -169,7 +175,15 @@ class DetailsNewLibrary extends PureComponent{
             </Col>
             <Col span={8}>
                 <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
-                    <label>入库人</label>
+                    <label>供应商</label>
+                </div>
+                <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
+                  <div className='ant-form-item-control'>裕美供应商</div>
+                </div>
+            </Col>
+            <Col span={8}>
+                <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
+                    <label>上架人</label>
                 </div>
                 <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
                   <div className='ant-form-item-control'>张三三</div>
@@ -177,7 +191,7 @@ class DetailsNewLibrary extends PureComponent{
             </Col>
             <Col span={8}>
                 <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
-                    <label>入库时间</label>
+                    <label>上架时间</label>
                 </div>
                 <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
                   <div className='ant-form-item-control'>2018-07-12 17:09:15

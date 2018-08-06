@@ -4,9 +4,10 @@
 * @Last Modified time: 2018-07-24 21:35:38 
  */
 import React, { PureComponent } from 'react';
-import { Table , Col, Button, Modal , message, Input ,  Affix , Row , Tooltip} from 'antd';
+import { Table , Col, Card , Select , Button, Modal , message, Input ,  Affix , Row , Tooltip} from 'antd';
 import { createData } from '../../../../common/data';
 const Conform = Modal.confirm;
+const Option = Select.Option;
 const columns = [
   {
     title: '通用名称',
@@ -33,12 +34,7 @@ const columns = [
     width:150,
     dataIndex: 'fmodal',
   },
-  {
-    title: '包装单位',
-    width:150,
-    dataIndex: 'unit',
-    render:(text)=>'g'
-  },
+  
   {
     title: '批准文号',
     width:150,
@@ -50,7 +46,19 @@ const columns = [
     dataIndex: 'productCompany',
   },
   {
-    title: '需求数量',
+    title: '包装规格',
+    width:150,
+    dataIndex: 'unit',
+    render:(text)=>'g'
+  },
+  {
+    title: '单位',
+    width:150,
+    dataIndex: 'unit123',
+    render:(text)=>'g'
+  },
+  {
+    title: '申领数量',
     width:150,
     dataIndex: 'productCompany2',
     render:()=>(<Input/>)
@@ -59,16 +67,19 @@ const columns = [
     title: '药房库存',
     width:150,
     dataIndex: 'productCompany3',
+    render:()=>`100`
   },
   {
     title: '库存上限',
     width:150,
     dataIndex: 'productCompany4',
+    render:()=>`10000000`
   },
   {
     title: '库存下限',
     width:150,
     dataIndex: 'productCompany5',
+    render:()=>`10`
   } 
 ];
 const modalColumns = [  
@@ -98,7 +109,7 @@ const modalColumns = [
     dataIndex: 'fmodal',
   },
   {
-    title: '包装单位',
+    title: '包装规格',
     width:150,
     dataIndex: 'unit',
   },
@@ -134,6 +145,16 @@ class AddDrugsFor extends PureComponent{
     })
   }
 
+  //一键添加低库存产品
+  add = () =>{
+    Conform({
+      content:"您确定要执行此操作？",
+      onOk:()=>{
+        message.success('操作成功！')
+      },
+      onCancel:()=>{}
+    })
+  }
   //提交该出库单
   onSubmit = () =>{
     Conform({
@@ -163,26 +184,40 @@ class AddDrugsFor extends PureComponent{
     return (
       <div className='fullCol'>
         <div className='fullCol-fullChild' style={{height:70}}>
-          <Col  span={4}>
+          <Col span={6}>
+           配货部门：
+           <Select style={{width:150}}>
+            <Option key='01' value='01'>药库</Option>
+           </Select>
+          </Col>
+          <Col span={12}>
             <Button type='primary' className='button-gap' onClick={()=>this.setState({visible:true})}>添加产品</Button>
+            <Button className='button-gap' onClick={this.add}>一键添加低库存产品</Button>
             <Button onClick={()=>this.delete()} >删除</Button>
           </Col>
         </div>
-        <h3>产品信息</h3>
-        <Table
-          rowSelection={{
-            onChange:(selectedRowKey)=>{
-              this.setState({selectedRowKey})
-            }
-          }}
-          dataSource={createData()}
-          bordered
-          scroll={{x: '200%'}}
-          columns={columns}
-          rowKey={'id'}
-          style={{marginTop: 24}}
-        />
 
+        <Card>
+          <h3>产品信息</h3>
+          <Table
+            rowSelection={{
+              onChange:(selectedRowKey)=>{
+                this.setState({selectedRowKey})
+              }
+            }}
+            dataSource={createData()}
+            bordered
+            scroll={{x: '200%'}}
+            columns={columns}
+            rowKey={'id'}
+            style={{marginTop: 24}}
+            pagination={{
+              size: "small",
+              showQuickJumper: true,
+              showSizeChanger: true
+            }}
+          />
+        </Card>
         <Affix offsetBottom={0} className='affix'>共10种产品
          <Button  style={{float:'right'}} onClick={() => this.onSubmit()}>
             保存
@@ -211,7 +246,6 @@ class AddDrugsFor extends PureComponent{
             scroll={{x: '200%'}}
             columns={modalColumns}
             rowKey={'id'}
-            style={{marginTop: 24}}
           />
         </Modal>
 

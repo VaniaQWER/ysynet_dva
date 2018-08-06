@@ -17,18 +17,18 @@ const columns = [
    title: '入库单',
    dataIndex: 'medicinalCode',
    width:150,
-   render:(text)=>(<Link to={{pathname: `/pharmacy/manage/newLibrary/details`}}>{text}</Link>)
+   render:(text)=>(<Link to={{pathname: `/pharmacy/wareHouse/newLibrary/details`}}>{text}</Link>)
   },
   {
-    title: '药库出库单',
+    title: '出库单',
     width:150,
-    dataIndex: 'productName',
+    dataIndex: 'applyNo',
   },
   {
     title: '申领单',
     width:150,
     dataIndex: 'productName1',
-    render: (text, record, index) => '申领入库'
+    render: (text, record, index) => `${record.planNo}`
   },
   {
     title: '入库分类',
@@ -37,19 +37,19 @@ const columns = [
     render:(text)=>'申领入库'
   },
   {
-    title: '库房',
+    title: '配货部门',
     dataIndex: 'spec1',
     width:100,
     render:(text)=>'药库'
   },
   {
-    title: '入库人',
+    title: '上架人',
     width:100,
     dataIndex: 'custodian',
     render: (text, record, index) => '王美丽'
   },
   {
-   title: '入库时间',
+   title: '上架时间',
    width:120,
    dataIndex: 'useDept',
    render: (text, record, index) => '2018-7-25 21:51'
@@ -75,13 +75,8 @@ class NewLibrary extends PureComponent{
   }
   render(){
     return (
-      <div>
+      <div className='ysynet-main-content'>
         <SearchForm query={this.queryHandler} />
-        <Row>
-          <Button type='primary' className='button-gap'>
-            <Link to={{pathname:`/pharmacy/manage/newLibrary/add`}}>新建入库</Link>
-          </Button>
-        </Row>
         <Table
           dataSource={createData()}
           bordered
@@ -90,6 +85,11 @@ class NewLibrary extends PureComponent{
           columns={columns}
           rowKey={'id'}
           style={{marginTop: 20}}
+          pagination={{
+            size: "small",
+            showQuickJumper: true,
+            showSizeChanger: true
+          }}
         /> 
       </div>
     )

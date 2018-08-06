@@ -14,18 +14,18 @@ const FormItem = Form.Item;
 const Option = Select.Option;
 const columns = [
   {
-   title: '申领单',
+   title: '出库单',
    dataIndex: 'medicinalCode',
    width:150,
-   render:(text)=>(<Link to={{pathname: `/pharmacy/manage/acceptance/details`}}>{text}</Link>)
+   render:(text)=>(<Link to={{pathname: `/pharmacy/wareHouse/acceptance/details`}}>{text}</Link>)
   },
   {
-    title: '药库出库单',
+    title: '申领单',
     width:150,
     dataIndex: 'productName',
   },
   {
-    title: '药库',
+    title: '配货部门',
     width:100,
     dataIndex: 'productName1',
     render:()=>`药库`
@@ -37,13 +37,13 @@ const columns = [
     render:()=>`待验收`
   },
   {
-    title: '制单人',
+    title: '发起人',
     width:100,
     dataIndex: 'fmodal2',
     render: () => '墨瞳'
   },
   {
-    title: '制单时间',
+    title: '发起时间',
     dataIndex: 'spec1',
     width:120,
     render: () => '2018-7-25 21:42'
@@ -75,11 +75,11 @@ class Acceptance extends PureComponent{
   }
   render(){
     return (
-      <div>
+      <div  className='ysynet-main-content'>
         <SearchForm query={this.queryHandler} />
         <Row>
           <Button type='primary' className='button-gap'>
-            <Link to={{pathname:`/pharmacy/manage/acceptance/add`}}>新建验收</Link>
+            <Link to={{pathname:`/pharmacy/wareHouse/acceptance/add`}}>新建验收</Link>
           </Button>
         </Row>
         <Table
@@ -149,7 +149,7 @@ class SearchFormWrapper extends PureComponent {
            </FormItem>
          </Col>
          <Col span={8} style={{display: display}}>
-           <FormItem label={`制单时间`} {...formItemLayout}>
+           <FormItem label={`发起时间`} {...formItemLayout}>
              {getFieldDecorator('assetName', {})(
               <RangePicker/>
              )}

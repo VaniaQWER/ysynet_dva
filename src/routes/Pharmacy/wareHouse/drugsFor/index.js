@@ -18,7 +18,7 @@ const columns = [
    title: '申领单',
    width:150,
    dataIndex: 'medicinalCode',
-   render:(text)=>(<Link to={{pathname: `/pharmacy/manage/drugsFor/details`}}>{text}</Link>)
+   render:(text)=>(<Link to={{pathname: `/pharmacy/wareHouse/drugsFor/details`}}>{text}</Link>)
   },
   {
     title: '申领药房',
@@ -79,6 +79,21 @@ class DrugsFor extends PureComponent{
     this.setState({ query:query })
   }
 
+  delete = () => {
+    const { selectedRowKeys } = this.state;
+    if(selectedRowKeys.length>0){
+      Confirm({
+        content:'您确定执行此操作吗？',
+        onOk:()=>{
+          message.success('操作成功')
+          this.setState({selectedRowKeys:[]})
+        }
+      })
+    }else{
+      message.warn('至少选择一条数据进行操作！')
+    }
+  }
+
   //批量编辑 - 打开弹窗
   onSubmit = () =>{
     const { selectedRowKeys } = this.state;
@@ -96,18 +111,21 @@ class DrugsFor extends PureComponent{
   }
 
   render(){
+    const { selectedRowKeys } = this.state;
     return (
-      <div>
+      <div className='ysynet-main-content'>
         <SearchForm query={this.queryHandler} />
         <Row>
-          <Button type='primary'>
-            <Link to={{pathname:`/pharmacy/manage/drugsFor/add`}}>新建申领</Link>
+          <Button type='primary' className='button-gap'>
+            <Link to={{pathname:`/pharmacy/wareHouse/drugsFor/add`}}>新建申领</Link>
           </Button>
+          <Button onClick={this.delete}>删除</Button>
         </Row>
         <Table
           dataSource={createData()}
           rowSelection={
             {
+              selectedRowKeys,
               onChange:(selectedRowKeys)=>{
                 //选中编辑的内容
                 this.setState({selectedRowKeys})
@@ -120,6 +138,11 @@ class DrugsFor extends PureComponent{
           columns={columns}
           rowKey={'id'}
           style={{marginTop: 24}}
+          pagination={{
+            size: "small",
+            showQuickJumper: true,
+            showSizeChanger: true
+          }}
         />
       </div>
     )
@@ -181,7 +204,7 @@ class SearchFormWrapper extends PureComponent {
            </FormItem>
          </Col>
          <Col span={8} style={{display: display}}>
-           <FormItem label={`制单时间`} {...formItemLayout}>
+           <FormItem label={`发起时间`} {...formItemLayout}>
              {getFieldDecorator('time')(
               <RangePicker/>
              )}

@@ -8,9 +8,15 @@ import { Table ,Row, Col , Tooltip  } from 'antd';
 import { createData } from '../../../../common/data';
 const columns = [
   {
-   title: '需求数量',
+   title: '申领数量',
    width:150,
    dataIndex: 'medicinalCode',
+  },
+  {
+    title: '单位',
+    width:150,
+    dataIndex: 'unit123',
+    render:(text)=>'g'
   },
   {
     title: '通用名称',
@@ -38,7 +44,7 @@ const columns = [
     dataIndex: 'fmodal',
   },
   {
-    title: '包装单位',
+    title: '包装规格',
     width:150,
     dataIndex: 'unit',
     render:(text)=>'g'
@@ -76,20 +82,20 @@ class DetailsApplyAccept extends PureComponent{
                     <label>状态</label>
                 </div>
                 <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
-                  <div className='ant-form-item-control'>待确认</div>
+                  <div className='ant-form-item-control'>待配货</div>
                 </div>
             </Col>
             <Col span={8}>
                 <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
-                    <label>申领药房</label>
+                    <label>申领部门</label>
                 </div>
                 <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
-                  <div className='ant-form-item-control'>门诊药房</div>
+                  <div className='ant-form-item-control'>中心药房</div>
                 </div>
             </Col>
             <Col span={8}>
                 <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
-                    <label>制单人</label>
+                    <label>发起人</label>
                 </div>
                 <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
                   <div className='ant-form-item-control'>张三三</div>
@@ -97,7 +103,7 @@ class DetailsApplyAccept extends PureComponent{
             </Col>
             <Col span={8}>
                 <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
-                    <label>制单时间</label>
+                    <label>发起时间</label>
                 </div>
                 <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
                   <div className='ant-form-item-control'>2015-09-03 15:00:02
@@ -138,14 +144,22 @@ class DetailsApplyAccept extends PureComponent{
             </Col>
           </Row>
         </div>
+        <div className='detailCard'>
           <Table
+            title={()=>'产品信息'}
             dataSource={createData()}
             bordered
             scroll={{x: '100%'}}
             columns={columns}
             rowKey={'id'}
             style={{marginTop: 24}}
+            pagination={{
+              size: "small",
+              showQuickJumper: true,
+              showSizeChanger: true
+            }}
           />
+        </div>
       </div>
     )
   }
