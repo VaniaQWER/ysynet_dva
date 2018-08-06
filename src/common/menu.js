@@ -665,6 +665,33 @@ const menu = [
           "key": "/pharmacy/outStorage/refund",
           "parentId": "m305"
         },
+        {
+          "path": "/pharmacy/outStorage/acceptDistribution",
+          "level": 3,
+          "fsort": 30105,
+          "name": "受理配货",
+          "id": "30106",
+          "key": "/pharmacy/outStorage/acceptDistribution",
+          "parentId": "m305"
+        },
+        {
+          "path": "/pharmacy/outStorage/pickingUnderShelve",
+          "level": 4,
+          "fsort": 30105,
+          "name": "拣货下架",
+          "id": "30106",
+          "key": "/pharmacy/outStorage/pickingUnderShelve",
+          "parentId": "m305"
+        },
+        {
+          "path": "/pharmacy/outStorage/pickingUnderShelve",
+          "level": 5,
+          "fsort": 30105,
+          "name": "新建出库",
+          "id": "30106",
+          "key": "/pharmacy/outStorage/pickingUnderShelve",
+          "parentId": "m305"
+        },
       ]
     },
     {
