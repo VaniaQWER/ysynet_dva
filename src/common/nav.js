@@ -896,7 +896,26 @@ export const getNavData = app => [
       icon: 'setting',
       path: '/pharmacy/settlementMgt/statements/details',
       component: dynamicWrapper(app, [], () => import('../routes/Pharmacy/settlementMgt/statements/details')),
-    }
+    },
+      /* ********************      货位调整      ************************** */
+      {
+        name: "货位调整",
+        icon: 'setting',
+        path: '/pharmacy/goodsAdjust/adjust',
+        component: dynamicWrapper(app, [], () => import('../routes/Pharmacy/goodsAdjust/adjust')),
+      },
+      {
+        name: "货位调整-新增",
+        icon: 'setting',
+        path: '/pharmacy/goodsAdjust/adjust/add',
+        component: dynamicWrapper(app, [], () => import('../routes/Pharmacy/goodsAdjust/adjust/add')),
+      },
+      {
+        name: "货位调整-详情",
+        icon: 'setting',
+        path: '/pharmacy/goodsAdjust/adjust/detail',
+        component: dynamicWrapper(app, [], () => import('../routes/Pharmacy/goodsAdjust/adjust/detail')),
+      },
   ]
 }]
 

@@ -565,7 +565,28 @@ const menu = [
             "parentId": "m305"
           }
         ]
-      },
+      },{
+        "path": "/pharmacy/goodsAdjust",
+        "level": 1,
+        "fsort": 30106,
+        "name": "货位调整",
+        "id": "30106",
+        "key": "/pharmacy/goodsAdjust",
+        "parentId": "m305",
+        "icon": "wallet",
+        "subMenus": [
+          {
+            "path": "/pharmacy/goodsAdjust/adjust",
+            "level": 2,
+            "fsort": 30105,
+            "name": "货位调整",
+            "id": "30106",
+            "key": "/pharmacy/goodsAdjust/adjust",
+            "parentId": "m305"
+          }
+          
+        ]
+      }
      
   ],
   "level": 0,
