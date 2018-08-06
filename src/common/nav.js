@@ -997,55 +997,55 @@ export const getNavData = app => [
       name: "受理配货",
       icon: 'setting',
       path: '/pharmacy/outStorage/acceptDistribution',
-      component: dynamicWrapper(app, [], () => import('../routes/pharmacy/outStorage/acceptDistribution')),
+      component: dynamicWrapper(app, [], () => import('../routes/Pharmacy/outStorage/acceptDistribution')),
     },
     // 药房-出库-受理配货-详情
     {
       name: "受理配货-详情",
       icon: 'setting',
       path: '/pharmacy/outStorage/acceptDistribution/details',
-      component: dynamicWrapper(app, [], () => import('../routes/pharmacy/outStorage/acceptDistribution/details')),
+      component: dynamicWrapper(app, [], () => import('../routes/Pharmacy/outStorage/acceptDistribution/details')),
     },
     // 药房-出库-拣货下架
     {
       name: "拣货下架",
       icon: 'setting',
       path: '/pharmacy/outStorage/pickingUnderShelve',
-      component: dynamicWrapper(app, [], () => import('../routes/pharmacy/outStorage/pickingUnderShelve')),
+      component: dynamicWrapper(app, [], () => import('../routes/Pharmacy/outStorage/pickingUnderShelve')),
     },
     // 药房-出库-拣货下架-详情
     {
       name: "拣货下架-详情",
       icon: 'setting',
       path: '/pharmacy/outStorage/pickingUnderShelve/details',
-      component: dynamicWrapper(app, [], () => import('../routes/pharmacy/outStorage/pickingUnderShelve/details')),
+      component: dynamicWrapper(app, [], () => import('../routes/Pharmacy/outStorage/pickingUnderShelve/details')),
     },
     {
       name: "新建出库",
       icon: 'setting',
       path: '/pharmacy/outStorage/newOut',
-      component: dynamicWrapper(app, [], () => import('../routes/pharmacy/outStorage/newOut')),
+      component: dynamicWrapper(app, [], () => import('../routes/Pharmacy/outStorage/newOut')),
     },
     // 药房-出库-新建出库
     {
       name: "新建出库",
       icon: 'setting',
       path: '/pharmacy/outStorage/newOut',
-      component: dynamicWrapper(app, [], () => import('../routes/pharmacy/outStorage/newOut')),
+      component: dynamicWrapper(app, [], () => import('../routes/Pharmacy/outStorage/newOut')),
     },
     // 药房-出库-新建出库-新建
     {
       name: "新建出库-新建",
       icon: 'setting',
       path: '/pharmacy/outStorage/newOut/add',
-      component: dynamicWrapper(app, [], () => import('../routes/pharmacy/outStorage/newOut/add')),
+      component: dynamicWrapper(app, [], () => import('../routes/Pharmacy/outStorage/newOut/add')),
     },
     // 药房-出库-新建出库-详情
     {
       name: "新建出库-详情",
       icon: 'setting',
       path: '/pharmacy/outStorage/newOut/details',
-      component: dynamicWrapper(app, [], () => import('../routes/pharmacy/outStorage/newOut/details')),
+      component: dynamicWrapper(app, [], () => import('../routes/Pharmacy/outStorage/newOut/details')),
     },
     /* ********************      货位调整      ************************** */
     {
