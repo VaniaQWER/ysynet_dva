@@ -1068,42 +1068,49 @@ export const getNavData = app => [
       component: dynamicWrapper(app, [], () => import('../routes/SystemMgt/drugDirectory/edit')),
     },
     /*********  采购结算  ***********/
-    //药房 - 结算管理 - 日对账单
+    //采购结算 - 结算管理 - 日对账单
     {
       name: "结算管理",
       icon: 'setting',
       path: '/purchase/settlementMgt/dayStatements',
       component: dynamicWrapper(app, [], () => import('../routes/Purchase/settlementMgt/dayStatements')),
     },
-    //药房 - 结算管理 - 日对账单 - 详情
+    //采购结算 - 结算管理 - 日对账单
+    {
+      name: "日对账单 - 新建对账",
+      icon: 'setting',
+      path: '/purchase/settlementMgt/dayStatements/newRecon',
+      component: dynamicWrapper(app, [], () => import('../routes/Purchase/settlementMgt/dayStatements/newRecon')),
+    },
+    //采购结算 - 结算管理 - 日对账单 - 详情
     {
       name: "日对账单-详情",
       icon: 'setting',
       path: '/purchase/settlementMgt/dayStatements/details',
       component: dynamicWrapper(app, [], () => import('../routes/Purchase/settlementMgt/dayStatements/details')),
     },
-    //药房 - 结算管理 - 结算单
+    //采购结算 - 结算管理 - 结算单
     {
       name: "结算管理",
       icon: 'setting',
       path: '/purchase/settlementMgt/statements',
       component: dynamicWrapper(app, [], () => import('../routes/Purchase/settlementMgt/statements')),
     },
-    //药房 - 结算管理 - 结算单 - 详情
+    //采购结算 - 结算管理 - 结算单 - 详情
     {
       name: "结算管理-详情",
       icon: 'setting',
       path: '/purchase/settlementMgt/statements/details',
       component: dynamicWrapper(app, [], () => import('../routes/Purchase/settlementMgt/statements/details')),
     },
-    //药房 - 结算管理 - 结算单 - 新建结算
+    //采购结算 - 结算管理 - 结算单 - 新建结算
     {
       name: "新建结算",
       icon: 'setting',
       path: '/purchase/settlementMgt/statements/newSettlement',
       component: dynamicWrapper(app, [], () => import('../routes/Purchase/settlementMgt/statements/newSettlement')),
     },
-    //药房 - 结算管理 - 结余查询
+    //采购结算 - 结算管理 - 结余查询
     {
       name: "结余查询",
       icon: "setting",
