@@ -2,7 +2,7 @@
  * @Author: wwb 
  * @Date: 2018-07-24 16:08:53 
  * @Last Modified by: wwb
- * @Last Modified time: 2018-07-31 15:08:50
+ * @Last Modified time: 2018-08-06 22:16:08
  */
 
 /**
@@ -51,7 +51,7 @@ class ReplenishmentPlan extends PureComponent{
       width: 180,
       render: (text,record) =>{
         return <span>
-          <Link to={{pathname: `/drugStorage/replenishment/replenishmentPlan/detail`}}>{text}</Link>
+          <Link to={{pathname: `/purchase/replenishment/replenishmentPlan/detail`}}>{text}</Link>
         </span>  
       }
     },{
@@ -96,7 +96,7 @@ class ReplenishmentPlan extends PureComponent{
       <div className='ysynet-main-content'>
          <WrapperForm />
          <div className='ant-row-bottom'>
-            <Button type='primary' onClick={()=>this.props.history.push({ pathname: `/drugStorage/replenishment/replenishmentPlan/add` })}>新建补货计划</Button>
+            <Button type='primary' onClick={this.add}>新建补货计划</Button>
             <Button type='default' onClick={this.delete} style={{ marginLeft: 8 }}>删除</Button>
          </div>
          <Table 

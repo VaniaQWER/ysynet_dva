@@ -2,15 +2,22 @@
  * @Author: wwb 
  * @Date: 2018-07-24 20:15:54 
  * @Last Modified by: wwb
- * @Last Modified time: 2018-07-31 13:59:35
+ * @Last Modified time: 2018-08-06 21:52:40
  */
 /* 
   @file 补货计划 详情
 */
 import React, { PureComponent } from 'react';
-import { Table ,Row, Col,Tooltip,Select } from 'antd';
+import { Table ,Row, Col,Tooltip } from 'antd';
 import { createData } from '../../../../common/data';
-const { Option } = Select;
+const sendDataSource = [{
+  id: '1',
+  fOrgName: '国药药业集团',
+  createUser: '下单人',
+  createUTime: '2018-07-12 17:09:15',
+  checkUser: '采购员',
+  checkTime: '2018-07-12 17:09:15'
+}]
 const columns = [
   {
     title: '通用名称',
@@ -25,7 +32,7 @@ const columns = [
   },
   {
     title: '规格',
-    width: 150,
+    width: 270,
     dataIndex: 'spec',
     className:'ellipsis',
     render:(text)=>(
@@ -38,61 +45,105 @@ const columns = [
     dataIndex: 'fmodal',
   },
   {
-    title: '包装单位',
+    title: '批准文号',
+    width: 180,
+    dataIndex: 'approvalNo',
+  },
+  {
+    title: '生产厂家',
+    width: 200,
+    dataIndex: 'productCompany',
+  },
+  {
+    title: '包装规格',
+    width: 270,
+    dataIndex: 'spec',
+  },
+  {
+    title: '单位',
     width: 100,
     dataIndex: 'unit',
     render:(text)=>'g'
   },
   {
     title: '需求数量',
-    width:150,
     dataIndex: 'amount',
-    render: (text,record)=> '120'
+    render: (text,record,index) => '10' 
   },
   {
-    title: '批准文号',
-    width:150,
-    dataIndex: 'approvalNo',
+    title: '配送数量',
+    dataIndex: 'psAmount',
+    render: (text,record,index) => '10 ' 
   },
   {
-    title: '生产厂家',
-    width:150,
-    dataIndex: 'productCompany',
+    title: '价格',
+    width: 120,
+    dataIndex: 'price',
+  },
+  {
+    title: '金额',
+    width: 120,
+    dataIndex: 'total',
+    render: () => '1000.00'
   },
   {
     title: '供应商',
-    dataIndex: 'fOrgName',
-    width: 180,
-    render: (text,record,index) =>{
-      return <Select defaultValue={'1'}>
-        <Option key={index} value={'1'}>{'国药集团'}</Option>
-        <Option key={index} value={'2'}>{'武汉药业集团'}</Option>
-      </Select>
-    }
-  }
-];
+    width: 200,
+    dataIndex: 'producerName',
+  }];
+  const sendColumns = [{
+    title: '配送单状态',
+    width: 90,
+    dataIndex: 'fstate',
+    render: () => '交易完成'
+  },{
+    title: '配送单号',
+    dataIndex: 'planNo',
+    render: () => 'PS002211807000086U'
+  },{
+    title: '订单号',
+    dataIndex: 'orderNo',
+    render: () => 'DD002211807000086U'
+  },{
+    title: '收货地址',
+    dataIndex: 'tfAddress',
+    render: () => '这个地址地址的字段挺长的'
+  },{
+    title: '供应商',
+    width: 150,
+    dataIndex: 'fOrgName'
+  },{
+    title: '制单人',
+    width: 120,
+    dataIndex: 'createUser',
+  },{
+    title: '制单时间',
+    width: 200,
+    dataIndex: 'createUTime',
+  },{
+    title: '验收人',
+    dataIndex: 'checkUser',
+  },{
+    title: '验收时间',
+    width: 200,
+    dataIndex: 'checkTime',
+  }]
 
-class ConfirmPlanDetail extends PureComponent{
+class ReplenishmentDetail extends PureComponent{
   render(){
     return (
       <div className='fullCol fadeIn'>
         <div className='fullCol-fullChild'>
-          <h3>单据信息</h3>
+          <div style={{ display: 'flex',justifyContent: 'space-between' }}>
+            <h3>单据信息</h3>
+          </div>
           <Row>
             <Col span={8}>
-                <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
-                    <label>计划单</label>
-                </div>
-                <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
-                  <div className='ant-form-item-control'>PA002211807000086U</div>
-                </div>
-            </Col>
-            <Col span={8}>
               <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
-                <label>类型</label>
+                <label>订单号</label>
               </div>
               <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
-                <div className='ant-form-item-control'>补货</div>
+                <div className='ant-form-item-control'>PA002211807000086U</div>
               </div>
             </Col>
             <Col span={8}>
@@ -105,27 +156,35 @@ class ConfirmPlanDetail extends PureComponent{
             </Col>
             <Col span={8}>
               <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
-                  <label>制单人</label>
+                <label>类型</label>
               </div>
               <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
-                <div className='ant-form-item-control'>李思思</div>
+                <div className='ant-form-item-control'>补货</div>
               </div>
             </Col>
             <Col span={8}>
               <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
-                  <label>制单时间</label>
+                  <label>供应商</label>
+              </div>
+              <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
+                <div className='ant-form-item-control'>华润药业集团</div>
+              </div>
+            </Col>
+            <Col span={8}>
+              <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
+                  <label>下单人</label>
+              </div>
+              <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
+                <div className='ant-form-item-control'>李德全</div>
+              </div>
+            </Col>
+            <Col span={8}>
+              <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
+                  <label>下单时间</label>
               </div>
               <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
                 <div className='ant-form-item-control'>2015-09-03 15:00:02
                 </div>
-              </div>
-            </Col>
-            <Col span={8}>
-              <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
-                  <label>联系电话</label>
-              </div>
-              <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
-                <div className='ant-form-item-control'>13020082008</div>
               </div>
             </Col>
             <Col span={8}>
@@ -138,7 +197,7 @@ class ConfirmPlanDetail extends PureComponent{
             </Col>
             <Col span={8}>
               <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
-                  <label>确认人</label>
+                  <label>关闭人</label>
               </div>
               <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
                 <div className='ant-form-item-control'></div>
@@ -146,15 +205,7 @@ class ConfirmPlanDetail extends PureComponent{
             </Col>
             <Col span={8}>
               <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
-                  <label>确认时间</label>
-              </div>
-              <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
-                <div className='ant-form-item-control'></div>
-              </div>
-            </Col>
-            <Col span={8}>
-              <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
-                  <label>驳回说明</label>
+                  <label>关闭时间</label>
               </div>
               <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
                 <div className='ant-form-item-control'></div>
@@ -167,8 +218,23 @@ class ConfirmPlanDetail extends PureComponent{
             dataSource={createData()}
             bordered
             title={()=>'产品信息'}
-            scroll={{x: '120%'}}
+            scroll={{x: '180%'}}
             columns={columns}
+            rowKey={'id'}
+            pagination={{
+              size: 'small',
+              showQuickJumper: true,
+              showSizeChanger: true
+            }}
+          />
+        </div>
+        <div className='detailCard'>
+          <Table
+            dataSource={sendDataSource}
+            bordered
+            title={()=>'配送单信息'}
+            scroll={{x: '180%'}}
+            columns={sendColumns}
             rowKey={'id'}
             pagination={{
               size: 'small',
@@ -181,4 +247,4 @@ class ConfirmPlanDetail extends PureComponent{
     )
   }
 }
-export default ConfirmPlanDetail;
+export default ReplenishmentDetail;

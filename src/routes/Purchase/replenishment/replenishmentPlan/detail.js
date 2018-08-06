@@ -2,13 +2,13 @@
  * @Author: wwb 
  * @Date: 2018-07-24 20:15:54 
  * @Last Modified by: wwb
- * @Last Modified time: 2018-07-31 14:13:17
+ * @Last Modified time: 2018-08-06 21:51:31
  */
 /* 
   @file 补货计划 详情
 */
 import React, { PureComponent } from 'react';
-import { Table ,Row, Col,Tooltip } from 'antd';
+import { Table ,Row, Col,Tooltip, Button } from 'antd';
 import { createData } from '../../../../common/data';
 const columns = [
   {
@@ -37,7 +37,12 @@ const columns = [
     dataIndex: 'fmodal',
   },
   {
-    title: '包装单位',
+    title: '包装规格',
+    width: 150,
+    dataIndex: 'spec',
+  },
+  {
+    title: '单位',
     width: 150,
     dataIndex: 'unit',
     render:(text)=>'g'
@@ -48,15 +53,20 @@ const columns = [
     render: (text,record,index) => '120' 
   },
   {
+    title: '生产厂家',
+    width: 200,
+    dataIndex: 'productCompany',
+  },
+  {
+    title: '供应商',
+    width: 200,
+    dataIndex: 'producerName',
+  },
+  {
     title: '批准文号',
     width: 180,
     dataIndex: 'approvalNo',
   },
-  {
-    title: '生产厂家',
-    width: 200,
-    dataIndex: 'productCompany',
-  }
 ];
 
 class ReplenishmentDetail extends PureComponent{
@@ -64,11 +74,17 @@ class ReplenishmentDetail extends PureComponent{
     return (
       <div className='fullCol fadeIn'>
         <div className='fullCol-fullChild'>
-          <h3>单据信息</h3>
+          <div style={{ display: 'flex',justifyContent: 'space-between' }}>
+            <h3>单据信息</h3>
+            <div>
+              <Button type='default'>编辑</Button>
+              <Button type='primary' style={{ marginLeft: '8' }}>发起申请</Button>
+            </div>
+          </div>
           <Row>
             <Col span={8}>
               <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
-                <label>计划单</label>
+                <label>计划单号</label>
               </div>
               <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
                 <div className='ant-form-item-control'>PA002211807000086U</div>
@@ -92,7 +108,7 @@ class ReplenishmentDetail extends PureComponent{
             </Col>
             <Col span={8}>
               <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
-                  <label>制单人</label>
+                  <label>发起人</label>
               </div>
               <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
                 <div className='ant-form-item-control'>李思思</div>
@@ -100,7 +116,7 @@ class ReplenishmentDetail extends PureComponent{
             </Col>
             <Col span={8}>
               <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
-                  <label>制单时间</label>
+                  <label>发起时间</label>
               </div>
               <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
                 <div className='ant-form-item-control'>2015-09-03 15:00:02
@@ -125,7 +141,7 @@ class ReplenishmentDetail extends PureComponent{
             </Col>
             <Col span={8}>
               <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
-                  <label>确认人</label>
+                  <label>审核人</label>
               </div>
               <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
                 <div className='ant-form-item-control'></div>
@@ -133,7 +149,7 @@ class ReplenishmentDetail extends PureComponent{
             </Col>
             <Col span={8}>
               <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
-                  <label>确认时间</label>
+                  <label>审核时间</label>
               </div>
               <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
                 <div className='ant-form-item-control'></div>

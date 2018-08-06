@@ -1067,7 +1067,49 @@ export const getNavData = app => [
       path: '/system/drugDirectory/directory/edit',
       component: dynamicWrapper(app, [], () => import('../routes/SystemMgt/drugDirectory/edit')),
     },
-    /*********  采购结算  ***********/
+     /* ********************   采购结算 子系统    ******************************* */
+     {
+      name: "采购结算-补货管理--补货计划",
+      icon: 'setting',
+      path: '/purchase/replenishment/replenishmentPlan',
+      component: dynamicWrapper(app, [], () => import('../routes/Purchase/replenishment/replenishmentPlan')),
+    },
+    {
+      name: "采购结算-补货管理--补货计划--详情",
+      icon: 'setting',
+      path: '/purchase/replenishment/replenishmentPlan/detail',
+      component: dynamicWrapper(app, [], () => import('../routes/Purchase/replenishment/replenishmentPlan/detail')),
+    },
+    {
+      name: "采购结算-补货管理--目录外采购",
+      icon: 'setting',
+      path: '/purchase/replenishment/outCatalogPurchase',
+      component: dynamicWrapper(app, [], () => import('../routes/Purchase/replenishment/outCatalogPurchase')),
+    },
+    {
+      name: "采购结算-补货管理--计划审核",
+      icon: 'setting',
+      path: '/purchase/replenishment/planCheck',
+      component: dynamicWrapper(app, [], () => import('../routes/Purchase/replenishment/planCheck')),
+    },
+    {
+      name: "采购结算-补货管理--计划审核--详情",
+      icon: 'setting',
+      path: '/purchase/replenishment/planCheck/detail',
+      component: dynamicWrapper(app, [], () => import('../routes/Purchase/replenishment/planCheck/detail')),
+    },
+    {
+      name: "采购结算-补货管理--计划订单",
+      icon: 'setting',
+      path: '/purchase/replenishment/planOrder',
+      component: dynamicWrapper(app, [], () => import('../routes/Purchase/replenishment/planOrder')),
+    },
+    {
+      name: "采购结算-补货管理--计划订单--详情",
+      icon: 'setting',
+      path: '/purchase/replenishment/planOrder/detail',
+      component: dynamicWrapper(app, [], () => import('../routes/Purchase/replenishment/planOrder/detail')),
+    },
     //采购结算 - 结算管理 - 日对账单
     {
       name: "结算管理",
