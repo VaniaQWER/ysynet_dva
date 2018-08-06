@@ -20,7 +20,7 @@ class DetailsConfirm extends PureComponent {
       {
         title: '规格',
         dataIndex: 'spec',
-        className: 'ellipsis',
+        className:'ellipsis',
         render:(text)=>(
           <Tooltip placement="topLeft" title={text}>{text}</Tooltip>
         )

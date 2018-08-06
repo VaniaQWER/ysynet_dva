@@ -2,13 +2,15 @@
  * @file 药库 - 盘点损益 - 新建盘点
  */
 import React, { PureComponent } from 'react';
-import { Form, Row, Col, DatePicker, Input, Select, Button, Icon, Table, Modal, Radio } from 'antd';
+import { Form, Row, Col, DatePicker, Input, Select, Button, Icon, Table, Modal, Radio, message, Checkbox } from 'antd';
 import { Link } from 'react-router-dom';
-
+import { formItemLayout } from '../../../../utils/commonStyles';
+import moment from 'moment';
 const FormItem = Form.Item;
 const { RangePicker } = DatePicker;
 const { Option } = Select;
 const RadioGroup = Radio.Group;
+const CheckboxGroup = Checkbox.Group;
 
 class SearchForm extends PureComponent {
   state = {
@@ -41,10 +43,9 @@ class SearchForm extends PureComponent {
   }
   render() {
     const { getFieldDecorator } = this.props.form;
-    const formItemLayout = { labelCol: {span: 4}, wrapperCol: {span: 18} };
     return(
       <Form onSubmit={this.handleSearch}>
-        <Row>
+        <Row gutter={30}>
           <Col span={8}>
             <FormItem label={'制单时间'} {...formItemLayout}>
               {getFieldDecorator('makingTime')(
@@ -91,8 +92,8 @@ class SearchForm extends PureComponent {
           </Col>
           <Col span={8} style={{ textAlign: 'right', marginTop: 4 }}>
             <Button type="primary" htmlType="submit">查询</Button>
-            <Button style={{ marginLeft: 30 }} onClick={this.handleReset}>重置</Button>
-            <a style={{ marginLeft: 30, fontSize: 14 }} onClick={this.toggle}>
+            <Button style={{ marginLeft: 8 }} onClick={this.handleReset}>重置</Button>
+            <a style={{ marginLeft: 8, fontSize: 14 }} onClick={this.toggle}>
               {this.state.expand ? '收起' : '展开'} <Icon type={this.state.expand ? 'up' : 'down'} />
             </a>
           </Col>
@@ -107,7 +108,10 @@ class NewInventory extends PureComponent {
   state = {
     query: {},
     loading: false,
-    visible: false
+    visible: false,
+    selected: [],
+    types2: '1',
+    display: 'none'
   }
   queryHandler = query => {
     this.setState({ query });
@@ -118,7 +122,27 @@ class NewInventory extends PureComponent {
       this.setState({ loading: false, visible: false });
     }, 3000);
   }
+  delete = () =>{
+    const selected = this.state.selected;
+    if (selected.length === 0) {
+      message.warn('请至少选择一条数据')
+    } else {
+      this.setState({ loading: true });
+      message.warn('删除成功！');
+      setTimeout(()=>{this.setState({loading: false, selected: []});}, 500);
+    }
+  }
   render() {
+    const plainOptions = [
+      { label: '全部', value: '1' },
+      { label: '补货货位', value: '2' },
+      { label: '发药机货位', value: '3' }
+    ];
+    const plainOption = [
+      { label: '拆零发药货位', value: '4' },
+      { label: '预拆零货位', value: '5' },
+      { label: '基数药货位', value: '6' }
+    ];
     const { getFieldDecorator } = this.props.form;
     const formItemLayoutAdd = { labelCol: { span: 6 }, wrapperCol: { span: 18 } };
     const columns = [
@@ -160,7 +184,7 @@ class NewInventory extends PureComponent {
         key: 'makingTime'
       },
       {
-        title: '起始时间',
+        title: '盘点时间',
         dataIndex: 'startTime',
         key: 'startTime'
       },
@@ -470,17 +494,25 @@ class NewInventory extends PureComponent {
       }
     ];
     return (
-      <div>
+      <div className='ysynet-main-content'>
         <SearchFormWarp query={this.queryHandler} />
-        <div><Button type='primary' onClick={()=>this.setState({ visible: true })}><Icon type="plus" />新建</Button></div>
+        <div>
+          <Button type='primary' onClick={()=>this.setState({ visible: true })}><Icon type="plus" />新建</Button>
+          <Button style={{ marginLeft: 10 }} onClick={this.delete}>删除</Button>
+        </div>
         <Table
           loading={ this.state.loading}
-          scroll={{x: '140%'}}
           columns={columns}
           // rowKey={'oddGuid'}
           style={{marginTop: 20}}
           dataSource={dataSource}
           bordered
+          rowSelection={{
+            selectedRowKeys: this.state.selected,
+            onChange: (selectedRowKeys, selectedRows) => {
+              this.setState({selected: selectedRowKeys, selectedRows: selectedRows})
+            }
+          }}
         />
         <Modal
           visible={this.state.visible}
@@ -496,12 +528,10 @@ class NewInventory extends PureComponent {
             <Row>
               <Col span={24}>
                 <FormItem label={'类型'} {...formItemLayoutAdd}>
-                  {getFieldDecorator('types1', {
-                    initialValue: 1
-                  })(
+                  {getFieldDecorator('types1')(
                     <RadioGroup>
-                      <Radio value={1}>明盘</Radio>
-                      <Radio value={2}>暗盘</Radio>
+                      <Radio value={'1'}>明盘</Radio>
+                      <Radio value={'2'}>暗盘</Radio>
                     </RadioGroup>
                   )}
                   
@@ -509,24 +539,86 @@ class NewInventory extends PureComponent {
               </Col>
               <Col span={24}>
                 <FormItem label={''}>
-                  {getFieldDecorator('types2', {
-                    initialValue: 1
-                  })(
-                    <RadioGroup style={{ marginLeft: 118 }} {...formItemLayoutAdd}>
-                      <Radio value={1}>全盘</Radio>
-                      <Radio value={2}>动盘</Radio>
-                      <Radio value={3}>动销盘</Radio>
+                  {getFieldDecorator('types2')(
+                    <RadioGroup style={{ marginLeft: 118 }} {...formItemLayoutAdd} onChange={(e) => this.setState({ types2: e.target.value })}>
+                      <Radio value={'1'}>全盘</Radio>
+                      <Radio value={'2'}>动盘</Radio>
+                      <Radio value={'3'}>动销盘</Radio>
                     </RadioGroup>
                   )}
                 </FormItem>
               </Col>
               <Col span={24}>
-                <FormItem label={'起始时间'} {...formItemLayoutAdd}>
-                  {getFieldDecorator('startTime')(
-                    <DatePicker showTime={{ format: 'HH:mm' }} format={'YYYY-MM-DD HH:mm'} style={{ width: 280 }} />
+                <FormItem label={'药品特征'} {...formItemLayoutAdd}>
+                  {getFieldDecorator('types3')(
+                    <RadioGroup>
+                      <Radio value={'1'}>全部</Radio>
+                      <Radio value={'2'}>中成药</Radio>
+                      <Radio value={'3'}>西药</Radio>
+                    </RadioGroup>
+                  )}
+                  
+                </FormItem>
+              </Col>
+              <Col span={24}>
+                <FormItem label={''}>
+                  {getFieldDecorator('types4')(
+                    <RadioGroup style={{ marginLeft: 118 }} {...formItemLayoutAdd}>
+                      <Radio value={'1'}>大输液</Radio>
+                      <Radio value={'2'}>报告药</Radio>
+                      <Radio value={'3'}>贵重品</Radio>
+                    </RadioGroup>
                   )}
                 </FormItem>
               </Col>
+              <Col span={24}>
+                <FormItem label={''}>
+                  {getFieldDecorator('types5')(
+                    <RadioGroup style={{ marginLeft: 118 }} {...formItemLayoutAdd}>
+                      <Radio value={'1'}>冷藏</Radio>
+                      <Radio value={'2'}>毒麻药品</Radio>
+                      <Radio value={'3'}>中草药</Radio>
+                    </RadioGroup>
+                  )}
+                </FormItem>
+              </Col>
+              <Col span={24}>
+                <FormItem label={'货位类别'} {...formItemLayoutAdd}>
+                  {getFieldDecorator('types6')(
+                    <CheckboxGroup options={plainOptions} />
+                  )}
+                </FormItem>
+              </Col>
+              <Col span={24}>
+                <FormItem label={''}>
+                  {getFieldDecorator('types7')(
+                    <CheckboxGroup options={plainOption} style={{ marginLeft: 118 }} />
+                  )}
+                </FormItem>
+              </Col>
+              {
+                this.state.types2 === '3' ?
+                  <Col span={24}>
+                    <FormItem label={'起始时间'} {...formItemLayoutAdd}>
+                      {getFieldDecorator('startTime', {
+                        rules: [{ required: true, message: '请选择起始时间' }],
+                        initialValue: moment(new Date(), moment().format('YYYY-MM-DD HH:mm'))
+                      })(
+                        <DatePicker showTime={{ format: 'HH:mm' }} style={{ width: 280 }} />
+                      )}
+                    </FormItem>
+                  </Col> 
+                  : 
+                  <Col span={24} style={{ display: 'none' }}>
+                    <FormItem label={'起始时间'} {...formItemLayoutAdd}>
+                      {getFieldDecorator('startTime', {
+                        rules: [{ required: true, message: '请选择起始时间' }],
+                      })(
+                        <DatePicker showTime={{ format: 'HH:mm' }} format={'YYYY-MM-DD HH:mm'} style={{ width: 280 }} />
+                      )}
+                    </FormItem>
+                  </Col>
+              }
               <Col span={24}>
                 <FormItem label={'备注'} {...formItemLayoutAdd}>
                   {getFieldDecorator('remark')(

@@ -73,8 +73,8 @@ class SearchForm extends PureComponent {
           </Col>
           <Col span={8} style={{ textAlign: 'right', marginTop: 4 }}>
             <Button type="primary" htmlType="submit">查询</Button>
-            <Button style={{ marginLeft: 30 }} onClick={this.handleReset}>重置</Button>
-            <a style={{ marginLeft: 30, fontSize: 14 }} onClick={this.toggle}>
+            <Button style={{ marginLeft: 8 }} onClick={this.handleReset}>重置</Button>
+            <a style={{ marginLeft: 8, fontSize: 14 }} onClick={this.toggle}>
               {this.state.expand ? '收起' : '展开'} <Icon type={this.state.expand ? 'up' : 'down'} />
             </a>
           </Col>
@@ -124,7 +124,7 @@ class ProfiLossRecord extends PureComponent {
         key: 'generatedUser'
       },
       {
-        title: '生成人',
+        title: '生成时间',
         dataIndex: 'generatedTime',
         key: 'generatedTime'
       }
@@ -348,15 +348,19 @@ class ProfiLossRecord extends PureComponent {
       }
     ]
     return (
-      <div>
+      <div className='ysynet-main-content'>
         <SearchFormWarp />
         <Table
           loading={ this.state.loading}
           scroll={{x: '100%'}}
           columns={columns}
-          // rowKey={'syNoGuid'}
-          style={{marginTop: 20}}
+          bordered
           dataSource={dataSource}
+          pagination={{
+            size: 'small',
+            showQuickJumper: true,
+            showSizeChanger: true
+          }}
         />
       </div>
     )

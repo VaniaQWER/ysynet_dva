@@ -41,7 +41,7 @@ class SearchForm extends PureComponent {
       <Form onSubmit={this.handleSearch}>
         <Row>
           <Col span={8}>
-            <FormItem label={'制单时间'} {...formItemLayout}>
+            <FormItem label={'开始时间'} {...formItemLayout}>
               {getFieldDecorator('makingTime')(
                 <RangePicker showTime={{ format: 'HH:mm' }} format={'YYYY-MM-DD HH:mm'} style={{ width: 313 }} />
               )}
@@ -135,7 +135,13 @@ class InventoryAudit extends PureComponent {
         key: 'dept'
       },
       {
-        title: '制单人',
+        title: '盈亏总金额',
+        dataIndex: 'ykje',
+        key: 'ykje',
+        render: (text, record, index) => '0.00'
+      },
+      {
+        title: '盘点责任人',
         dataIndex: 'oddUser',
         key: 'oddUser'
       },
@@ -145,7 +151,7 @@ class InventoryAudit extends PureComponent {
         key: 'makingTime'
       },
       {
-        title: '起始时间',
+        title: '盘点时间',
         dataIndex: 'startTime',
         key: 'startTime'
       },{
@@ -157,7 +163,7 @@ class InventoryAudit extends PureComponent {
         title: '审核时间',
         dataIndex: 'auditorTime',
         key: 'auditorTime',
-        render: () => '2018-7-25 21:40'
+        render: () => '2018-7-25 21:45'
       },
       {
         title: '备注',
@@ -465,13 +471,18 @@ class InventoryAudit extends PureComponent {
       }
     ];
     return (
-      <div>
+      <div className='ysynet-main-content'>
         <SearchFormWarp />
         <Table
           loading={ this.state.loading}
-          scroll={{x: '140%'}}
+          scroll={{x: '150%'}}
+          bordered
           columns={columns}
-          style={{marginTop: 20}}
+          pagination={{
+            size: "small",
+            showQuickJumper: true,
+            showSizeChanger: true
+          }}
           dataSource={dataSource}
         />
       </div>

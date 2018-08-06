@@ -36,13 +36,19 @@ class Details extends PureComponent {
   render() {
     const columns = [
       {
+        title: '货位',
+        dataIndex: 'huowei',
+        render:(text,record, index)=>'A1231'+index
+      },
+      {
+        title: '货位类型',
+        dataIndex: 'huoweitype',
+        render:(text,record, index)=>'发药机货位'
+      },
+      {
         title: '通用名称',
         dataIndex: 'productName1',
         render:(text,record)=>record.productName
-      },
-      {
-        title: '商品名',
-        dataIndex: 'productName'
       },
       {
         title: '规格',
@@ -53,57 +59,76 @@ class Details extends PureComponent {
         )
       },
       {
-        title: '剂型',
-        dataIndex: 'fmodal'
-      },
-      {
-        title: '包装单位',
-        dataIndex: 'unit',
-        render:(text)=>'g'
-      },
-      {
-        title: '批准文号',
-        dataIndex: 'approvalNo'
-      },
-      {
         title: '生产厂家',
-        dataIndex: 'productCompany'
+        dataIndex: 'productName1d2',
+        render:(text,record)=>'浙江安宝药业有限公司'
       },
       {
-        title: '库存数量',
-        dataIndex: 'assetsRecord'
+        title: '包装规格',
+        dataIndex: 'bzgg',
+        render:(text,record)=>'0.25gX12片'
       },
       {
-       title: '盘点数量',
-       dataIndex: 'pdNumber'
+        title: '单位',
+        dataIndex: 'dw',
+        render:(text,record)=>'瓶'
+      },
+      {
+        title: '账面库存',
+        dataIndex: 'zmkc',
+        render:(text,record)=>'120'
+      },
+      {
+        title: '实际数量',
+        dataIndex: 'sjsl',
+        render:(text,record)=>{
+          return <Input defaultValue={110} />
+        }
       },
       {
         title: '盈亏数量',
-        dataIndex: 'ykNumber'
+        dataIndex: 'yksl', 
+        render: (text, record, index) => '01'
       },
       {
-        title: '货位',
-        dataIndex: 'huow'
+        title: '账面批号',
+        dataIndex: 'zmph',
+        render:(text)=> 'PH123'
       },
       {
-        title: '生产批号',
-        dataIndex: 'shengcNumber'
+        title: '实际批号',
+        dataIndex: 'sjph',
+        render: (text, record, index) => <Input defaultValue={'PH123'} />
       },
       {
         title: '生产日期',
         dataIndex: 'shengcDate'
       },
       {
+        title: '实际生产日期',
+        dataIndex: 'sjshengcDate'
+      },
+      {
         title: '有效期至',
         dataIndex: 'yxqz'
       },
       {
-        title: '供应商',
-        dataIndex: 'supplier'
+        title: '实际有效期至',
+        dataIndex: 'sjyxqz',
+        render: (text, record, index) => '2022-07-09'
+      },
+      {
+        title: '单价',
+        dataIndex: 'unit',
+        render:(text)=>'10.00'
+      },
+      {
+        title: '盈亏金额',
+        dataIndex: 'mount'
       }
     ];
     return (
-      <div className='fullCol'>
+      <div className='fullCol fadeIn'>
         <div className='fullCol-fullChild'>
           <Row>
             <Col span={12}>
@@ -157,7 +182,23 @@ class Details extends PureComponent {
             </Col>
             <Col span={8}>
               <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-4">
-                <label>起始时间</label>
+                <label>盘点周期</label>
+              </div>
+              <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
+                <div className='ant-form-item-control'>2018-07-11 ~ 2018-07-12</div>
+              </div>
+            </Col>
+            <Col span={8}>
+              <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-4">
+                <label>盘点时间</label>
+              </div>
+              <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
+                <div className='ant-form-item-control'>2018-7-24 16:45:15</div>
+              </div>
+            </Col>
+            <Col span={8}>
+              <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-4">
+                <label>提交时间</label>
               </div>
               <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
                 <div className='ant-form-item-control'>2018-7-24 16:45:15</div>
@@ -175,39 +216,38 @@ class Details extends PureComponent {
           <div style={{borderBottom: '1px dashed #d9d9d9', marginBottom: 10}}></div>
           <Row>
             <Col span={8}>
-              <div className="ant-row">
-                <div className="ant-col-4 ant-form-item-label-left-left" style={{ textAlign: 'right' }}>
-                  <label>名称</label>
-                </div>
-                <div className="ant-col-18">
-                  <div className="ant-form-item-control">
-                    <Input />
-                  </div>
-                </div>
+              <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-4">
+                <label>名称</label>
+              </div>
+              <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18" style={{ marginLeft: -30 }}>
+                <div className='ant-form-item-control'><Input placeholder={'通用名称/商品名称'} /></div>
               </div>
             </Col>
             <Col span={8}>
-              <div className="ant-row">
-                <div className="ant-col-4 ant-form-item-label-left-left" style={{ textAlign: 'right' }}>
-                  <label>供应商</label>
-                </div>
-                <div className="ant-col-18">
-                  <div className="ant-form-item-control">
-                    <Input />
-                  </div>
-                </div>
+              <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-4" style={{ textAlign: 'right' }}>
+                <label>供应商</label>
+              </div>
+              <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
+                <div className='ant-form-item-control'><Input placeholder={'请输入'} /></div>
               </div>
             </Col>
           </Row>
         </div>
-        <Table
-          dataSource={createData()}
-          bordered
-          scroll={{x: '220%'}}
-          columns={columns}
-          rowKey={'id'}
-          style={{marginTop: 24}}
-        />
+        <div className='detailCard'>
+          <Table
+            dataSource={createData()}
+            bordered
+            title={()=>'产品信息'}
+            scroll={{x: '220%'}}
+            columns={columns}
+            rowKey={'id'}
+            pagination={{
+              size: 'small',
+              showQuickJumper: true,
+              showSizeChanger: true
+            }}
+          />
+        </div>
       </div>
     )
   }

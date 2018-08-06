@@ -124,7 +124,7 @@ class ProfiLossRecord extends PureComponent {
         key: 'generatedUser'
       },
       {
-        title: '生成人',
+        title: '生成时间',
         dataIndex: 'generatedTime',
         key: 'generatedTime'
       }

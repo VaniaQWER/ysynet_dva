@@ -127,7 +127,12 @@ class AfterAdjustment extends PureComponent{
         dataIndex: 'dept',
       },
       {
-        title: '制单人',
+        title: '盈亏总金额',
+        dataIndex: 'ykzje',
+        render: (text, record, index) => '0.00'
+      },
+      {
+        title: '盘点责任人',
         dataIndex: 'oddUser',
       },
       {
@@ -135,14 +140,14 @@ class AfterAdjustment extends PureComponent{
         dataIndex: 'makingTime',
       },
       {
-        title: '起始时间',
+        title: '盘点时间',
         dataIndex: 'startTime',
       },{
-        title: '审核人',
+        title: '调整人',
         dataIndex: 'auditor',
         render: () => '王力宏'
       },{
-        title: '审核时间',
+        title: '调整时间',
         dataIndex: 'auditorTime',
         render: () => '2018-7-25 21:45'
       },
@@ -456,7 +461,7 @@ class AfterAdjustment extends PureComponent{
         <Table
           bordered
           loading={ this.state.loading}
-          scroll={{x: '140%'}}
+          scroll={{x: '150%'}}
           columns={columns}
           // rowKey={'oddGuid'}
           style={{marginTop: 20}}
