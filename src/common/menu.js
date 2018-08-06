@@ -2,35 +2,27 @@ const menu = [
   {
   "path": "/drugStorage",
   "subMenus": [
-    /* {
-    "path": "/drugStorage/configMgt",
-    "level": 1,
-    "fsort": 30101,
-    "name": "配置管理",
-    "id": "30101",
-    "key": "/drugStorage/configMgt",
-    "parentId": "m301",
-    "subMenus": [
-      {
-        "path": "/drugStorage/configMgt/drugStorageConfig",
-        "level": 2,
-        "fsort": 3010101,
-        "name": "药库配置",
-        "id": "3010101",
-        "key": "/drugStorage/configMgt/drugStorageConfig",
-        "parentId": "m303"
-      },
-      {
-        "path": "/drugStorage/configMgt/drugStorageMaintain",
-        "level": 2,
-        "fsort": 3010101,
-        "name": "药库维护",
-        "id": "3010102",
-        "key": "/drugStorage/configMgt/drugStorageMaintain",
-        "parentId": "m303"
-      }
-    ]
-  }, */
+    {
+      "path": "/drugStorage/configMgt",
+      "level": 1,
+      "fsort": 30101,
+      "name": "配置管理",
+      "id": "30101",
+      "key": "/drugStorage/configMgt",
+      "parentId": "m301",
+      "icon": "setting",
+      "subMenus": [
+        {
+          "path": "/drugStorage/configMgt/drugDirectory",
+          "level": 2,
+          "fsort": 3010101,
+          "name": "药品目录",
+          "id": "3010101",
+          "key": "/drugStorage/configMgt/drugDirectory",
+          "parentId": "m303"
+        },
+      ]
+    },
   {
     "path": "/drugStorage/replenishment",
     "level": 1,
@@ -68,15 +60,6 @@ const menu = [
         "key": "/drugStorage/replenishment/confirmPlan",
         "parentId": "m301"
       },
-     /*  {
-        "path": "/drugStorage/replenishment/planOrder",
-        "level": 2,
-        "fsort": 30102,
-        "name": "计划订单",
-        "id": "30102",
-        "key": "/drugStorage/replenishment/planOrder",
-        "parentId": "m301"
-      }, */
       {
         "path": "/drugStorage/replenishment/psListCheck",
         "level": 2,
@@ -398,6 +381,27 @@ const menu = [
 {
   "path": "/pharmacy",
   "subMenus": [
+    {
+      "path": "/pharmacy/configMgt",
+      "level": 1,
+      "fsort": 30101,
+      "name": "配置管理",
+      "id": "30101",
+      "key": "/pharmacy/configMgt",
+      "parentId": "m301",
+      "icon": "setting",
+      "subMenus": [
+        {
+          "path": "/pharmacy/configMgt/drugDirectory",
+          "level": 2,
+          "fsort": 3010101,
+          "name": "药品目录",
+          "id": "3010101",
+          "key": "/pharmacy/configMgt/drugDirectory",
+          "parentId": "m303"
+        },
+      ]
+    },
     {
       "path": "/pharmacy/manage",
       "level": 2,

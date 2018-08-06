@@ -192,20 +192,14 @@ export const getNavData = app => [
   path: '/',
   name: '工作台',
   children: [
-    /*药库 */
-    /* {
-      name: '药库',
-      icon: 'table',
-      path: '/drugStorage',
-      component: dynamicWrapper(app, [], () => import('../routes/DrugStorage/configMgt'))
-    }, */
-    /* {
+    /* *****************    配置管理   ************************* */
+    {
       name: "配置管理",//药库-配置管理
       icon: 'setting',
-      path: '/drugStorage/configMgt',
-      component: dynamicWrapper(app, [], () => import('../routes/DrugStorage/configMgt/drugConfigMgt'))
+      path: '/drugStorage/configMgt/drugDirectory',
+      component: dynamicWrapper(app, [], () => import('../routes/DrugStorage/configMgt/drugDirectory'))
     },
-    {
+    /* {
       name: "药库维护",//药库-配置管理
       icon: 'setting',
       path: '/drugStorage/drugStroageMaintain',
@@ -659,7 +653,13 @@ export const getNavData = app => [
       path: '/pharmacy/checkDecrease/profiLossRecord/details',
       component: dynamicWrapper(app, [], () => import('../routes/Pharmacy/checkDecrease/profiLossRecord/details')),
     },
-    /*药房 --药房管理 -- 开始*/
+    /*****************药房 --药房管理 -- 开始***************************/
+    {
+      name: '药品目录',//药房-药房管理
+      icon: 'setting',
+      path: '/pharmacy/configMgt/drugDirectory',
+      component: dynamicWrapper(app, [], () => import('../routes/Pharmacy/configMgt/drugDirectory'))
+    },
     {
       name: '药房管理',//药房-药房管理
       icon: 'setting',
