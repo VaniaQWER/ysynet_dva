@@ -4,7 +4,7 @@
 * @Last Modified time: 2018-07-24 13:13:55 
  */
 import React, { PureComponent } from 'react';
-import { Table ,Row, Col, Button, Modal , message , Input , Tooltip} from 'antd';
+import { Table ,Row, Col, Button, Modal , message , Input , Tooltip , Card} from 'antd';
 import { createData } from '../../../../common/data';
 const Conform = Modal.confirm;
 class DetailsPickSoldOut extends PureComponent{
@@ -16,7 +16,17 @@ class DetailsPickSoldOut extends PureComponent{
       onOk:()=>{
         message.success('操作成功！')
         const { history } = this.props;
-        history.push({pathname:"/drugStorage/drugStorageManage/pickSoldOut"})
+        history.push({pathname:"/drugStorage/outStorage/pickingUnderShelve"})
+      },
+      onCancel:()=>{}
+    })
+  }
+
+  onPrint = () => {
+    Conform({
+      content:"您确定要打印？",
+      onOk:()=>{
+        message.success('打印成功！')
       },
       onCancel:()=>{}
     })
@@ -113,68 +123,68 @@ class DetailsPickSoldOut extends PureComponent{
       }
     ];
     return (
-      <div className='fullCol fadeIn'>
-        <div className='fullCol-fullChild'>
-        <h3>单据信息 
-          <Button type='primary' className='button-gap' style={{float:'right'}} onClick={()=>this.onSubmit()}>确定下架</Button>
-        </h3>
-        <Row>
-          <Col span={8}>
-            <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
-              <label>配货单</label>
-            </div>
-            <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
-              <div className='ant-form-item-control'>JN00221180700005JS</div>
-            </div>
-          </Col>
-          <Col span={8}>
-            <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
-              <label>申领单</label>
-            </div>
-            <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
-              <div className='ant-form-item-control'>PA002211807000086U</div>
-            </div>
-          </Col>
-          <Col span={8}>
-            <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
-              <label>状态</label>
-            </div>
-            <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
-              <div className='ant-form-item-control'>待确认</div>
-            </div>
-          </Col>
-          <Col span={8}>
-            <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
-              <label>申请药房</label>
-            </div>
-            <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
-              <div className='ant-form-item-control'>静配中心</div>
-            </div>
-          </Col>
-          <Col span={8}>
-            <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
-              <label>拣货人</label>
-            </div>
-            <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
-              <div className='ant-form-item-control'>
+      <div className='bgf fadeIn'>
+        <Card>
+          <h3>单据信息 
+            <Button style={{float:'right'}} onClick={()=>this.onPrint()}>打印</Button>
+            <Button type='primary' className='button-gap' style={{float:'right'}} onClick={()=>this.onSubmit()}>拣货完成</Button>
+          </h3>
+          <Row>
+            <Col span={8}>
+              <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
+                <label>拣货单</label>
               </div>
-            </div>
-          </Col>
-          <Col span={8}>
-            <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
-              <label>拣货时间</label>
-            </div>
-            <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
-              <div className='ant-form-item-control'></div>
-            </div>
-          </Col>
-        </Row>
-        </div>
-        <div className='detailCard'>
+              <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
+                <div className='ant-form-item-control'>JN00221180700005JS</div>
+              </div>
+            </Col>
+            <Col span={8}>
+              <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
+                <label>申领单</label>
+              </div>
+              <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
+                <div className='ant-form-item-control'>PA002211807000086U</div>
+              </div>
+            </Col>
+            <Col span={8}>
+              <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
+                <label>申领部门</label>
+              </div>
+              <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
+                <div className='ant-form-item-control'>静配中心</div>
+              </div>
+            </Col>
+            <Col span={8}>
+              <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
+                <label>状态</label>
+              </div>
+              <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
+                <div className='ant-form-item-control'>待拣货</div>
+              </div>
+            </Col>
+            <Col span={8}>
+              <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
+                <label>拣货人</label>
+              </div>
+              <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
+                <div className='ant-form-item-control'>
+                </div>
+              </div>
+            </Col>
+            <Col span={8}>
+              <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
+                <label>拣货时间</label>
+              </div>
+              <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
+                <div className='ant-form-item-control'></div>
+              </div>
+            </Col>
+          </Row>
+          <hr className='hr'/>
+          <h3>产品信息</h3>
           <Table
             dataSource={createData()}
             bordered
-            title={()=>'产品信息'}
             scroll={{x: '200%'}}
             columns={columns}
             rowKey={'id'}
@@ -184,7 +194,7 @@ class DetailsPickSoldOut extends PureComponent{
               showSizeChanger: true
             }}
           />
-        </div>
+        </Card>
       </div>
     )
   }

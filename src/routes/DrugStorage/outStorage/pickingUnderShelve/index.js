@@ -5,72 +5,14 @@
  */
 
 import React, { PureComponent } from 'react';
-import { Table , Form, Row, Col, Button, Icon, Select , Input , DatePicker ,} from 'antd';
+import { Table , Form, Row, Col, Button, Icon , message , Popconfirm, Select , Input , DatePicker ,} from 'antd';
 import { Link } from 'react-router-dom'
 import { formItemLayout } from '../../../../utils/commonStyles';
 import { createData } from '../../../../common/data';
 const RangePicker = DatePicker.RangePicker;
 const FormItem = Form.Item;
 const Option = Select.Option;
-const columns = [
-  {
-    title: '配货单',
-    dataIndex: 'medicinalCode',
-    fixed: 'left',
-    width: 180,
-    render:(text)=>(
-      <span>
-        <Link to={{pathname: `/drugStorage/drugStorageManage/pickSoldOut/details`}}>{text}</Link>
-      </span> 
-    )
-  },
-  {
-   title: '申领部门',
-   dataIndex: 'index',
-   render: (text, record, index) => '药库'
-  },
-  {
-    title: '申领单',
-    dataIndex: 'medicinalCode123',
-    width:150,
-    render: (text, record, index) => '单据'+index
-  },
-  {
-    title: '状态',
-    dataIndex: 'fstate',
-    width:120,
-    render: (text, record, index) => text === '00' ? '已申领' : '未申领'
-  },
-  {
-    title: '类型',
-    dataIndex: 'equipmfmodalentStandardName',
-    render: (text, record, index) => '类型' + index
-  },
-  {
-    title: '制单人',
-    dataIndex: 'spec123',
-    width:120,
-    render: (text, record, index) => '王文斌' + index
-  },
-  {
-    title: '制单时间',
-    dataIndex: 'custodian',
-    width:150,
-    render: (text, record, index) => '2018-7-25 21:17'
-  },
-  {
-    title: '拣货人',
-    dataIndex: 'bDept',
-    width:150,
-    render: (text, record, index) => 'cheng'
-  },
-  {
-    title: '拣货时间',
-    dataIndex: 'time',
-    width: 180,
-    render: (text, record, index) => '2018-7-25 21:17'
-  }
-];
+
 
 class PickSoldOut extends PureComponent{
 
@@ -88,7 +30,85 @@ class PickSoldOut extends PureComponent{
     this.setState({ query:query })
   }
 
+  //单行确认 
+  confirmOk = () => {
+    message.success('操作成功')
+  }
+
   render(){
+    const columns = [
+      {
+        title: '拣货单',
+        dataIndex: 'medicinalCode',
+        fixed: 'left',
+        width: 180,
+        render:(text)=>(
+          <span>
+            <Link to={{pathname: `/drugStorage/outStorage/pickingUnderShelve/details`}}>{text}</Link>
+          </span> 
+        )
+      },
+      {
+       title: '申领部门',
+       dataIndex: 'index',
+       width: 120,
+       render: (text, record, index) => '静配中心'
+      },
+      {
+        title: '状态',
+        dataIndex: 'fstate',
+        width:120,
+        render: (text, record, index) => '待拣货'
+      },
+      {
+        title: '类型',
+        width: 120,
+        dataIndex: 'equipmfmodalentStandardName',
+        render: (text, record, index) => '零库存补货'
+      },
+      {
+        title: '发起人',
+        dataIndex: 'spec123',
+        width:120,
+        render: (text, record, index) => '王文斌' + index
+      },
+      {
+        title: '发起时间',
+        dataIndex: 'custodian',
+        width:150,
+        render: (text, record, index) => '2018-7-25 21:17'
+      },
+      {
+        title: '拣货人',
+        dataIndex: 'bDept',
+        width:150,
+        render: (text, record, index) => 'cheng'
+      },
+      {
+        title: '拣货时间',
+        dataIndex: 'time',
+        width: 180,
+        render: (text, record, index) => '2018-7-25 21:17'
+      },
+      {
+        title: '拣货时间',
+        dataIndex: 'time',
+        width: 180,
+        render: (text, record, index) => '2018-7-25 21:17'
+      },
+      {
+        title: '操作',
+        width: 90,
+        fixed: 'right',
+        dataIndex: 'RN',
+        render: (text, record) => 
+          <span>
+            <Popconfirm title="确定打印吗？" okText="是" cancelText="否"  onConfirm={()=>this.confirmOk(record)}>
+              <a>打印</a>
+            </Popconfirm>
+          </span>  
+      }
+    ];
     return (
       <div className='ysynet-main-content'>
         <SearchForm query={this.queryHandler} />
@@ -166,8 +186,7 @@ class SearchFormWrapper extends PureComponent {
                 filterOption={(input, option) => option.props.children.indexOf(input) >= 0}
                 >
                     <Option key="" value="">全部</Option>
-                    <Option key="01" value="01">待确认</Option>
-                    <Option key="02" value="02">已确认</Option> 
+                    <Option key="01" value="01">待拣货</Option>
               </Select>
              )}
            </FormItem>
@@ -182,7 +201,8 @@ class SearchFormWrapper extends PureComponent {
                 filterOption={(input, option) => option.props.children.indexOf(input) >= 0}
                 >
                 <Option key="" value="">全部</Option>
-                <Option key="01" value="02">申领</Option>
+                <Option key="01" value="01">零库存补货</Option>
+                <Option key="02" value="02">召回</Option>
               </Select>
              )}
            </FormItem>
@@ -190,12 +210,12 @@ class SearchFormWrapper extends PureComponent {
          <Col span={8} style={{display: display}}>
            <FormItem label={`单据号`} {...formItemLayout}>
              {getFieldDecorator('danjuhao')(
-              <Input/>
+              <Input placeholder='拣货单/申领单'/>
              )}
            </FormItem>
          </Col>
          <Col span={8} style={{display: display}}>
-           <FormItem label={`制单时间`} {...formItemLayout}>
+           <FormItem label={`发起时间`} {...formItemLayout}>
              {getFieldDecorator('time')(
               <RangePicker/>
              )}

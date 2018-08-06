@@ -443,6 +443,18 @@ export const getNavData = app => [
       component: dynamicWrapper(app, [], () => import('../routes/DrugStorage/outStorage/outReceiptMgt')),
     },
     {
+      name: "出库单管理-新增",
+      icon: 'setting',
+      path: '/drugStorage/outStorage/outReceiptMgt/add',
+      component: dynamicWrapper(app, [], () => import('../routes/DrugStorage/outStorage/outReceiptMgt/add')),
+    },
+    {
+      name: "出库单管理-详情",
+      icon: 'setting',
+      path: '/drugStorage/outStorage/outReceiptMgt/details',
+      component: dynamicWrapper(app, [], () => import('../routes/DrugStorage/outStorage/outReceiptMgt/details')),
+    },
+    {
       name: "退货",
       icon: 'setting',
       path: '/drugStorage/outStorage/backStorage',
