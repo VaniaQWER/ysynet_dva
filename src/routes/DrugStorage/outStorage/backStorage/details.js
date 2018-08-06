@@ -4,7 +4,7 @@
 * @Last Modified time: 2018-07-24 13:13:55 
  */
 import React, { PureComponent } from 'react';
-import { Table ,Row, Col, Button, Modal , message , Tooltip} from 'antd';
+import { Table ,Row, Col, Button, Modal , message , Tooltip , Card } from 'antd';
 import { createData } from '../../../../common/data';
 const Conform = Modal.confirm;
 const columns = [
@@ -13,11 +13,6 @@ const columns = [
     width: 180,
     dataIndex: 'productName1',
     render:(text,record)=>record.productName
-  },
-  {
-    title: '商品名称',
-    width: 150,
-    dataIndex: 'productName',
   },
   {
     title: '规格',
@@ -29,12 +24,17 @@ const columns = [
     )
   },
   {
-    title: '剂型',
+    title: '入库单号',
+    width: 150,
+    dataIndex: 'medicinalCode',
+  },
+  {
+    title: '包装规格',
     width: 150,
     dataIndex: 'fmodal',
   },
   {
-    title: '包装单位',
+    title: '单位',
     width: 150,
     dataIndex: 'unit',
     render:(text)=>'g'
@@ -43,31 +43,33 @@ const columns = [
     title: '出库数量',
     width: 150,
     dataIndex: 'approvalNo1',
+    render:()=>`6`
   },
   {
     title: '生产批号',
     width: 150,
-    dataIndex: 'approvalNo2',
+    dataIndex: 'planNo',
   },
   {
     title: '生产日期',
     width: 150,
-    dataIndex: 'approvalNo3',
+    dataIndex: 'planTime',
   },
   {
     title: '有效期至',
     width: 150,
-    dataIndex: 'approvalNo45',
-  },
-  {
-    title: '批准文号',
-    width: 180,
-    dataIndex: 'approvalNo',
+    dataIndex: 'planTime23',
+    render:(text,record)=>record.planTime
   },
   {
     title: '生产厂家',
     width: 180,
     dataIndex: 'productCompany',
+  },
+  {
+    title: '批准文号',
+    width: 180,
+    dataIndex: 'approvalNo',
   }
 ];
 
@@ -79,14 +81,13 @@ class DetailsRefund extends PureComponent{
       visible:false,
     }
   }
-  //打印
   onBan = () =>{
     Conform({
       content:"您确定要执行此操作？",
       onOk:()=>{
         message.success('操作成功！')
         const { history } = this.props;
-        history.push({pathname:"/drugStorage/drugStorageManage/refund"})
+        history.push({pathname:"/drugStorage/outStorage/backStorage"})
       },
       onCancel:()=>{}
     })
@@ -98,7 +99,7 @@ class DetailsRefund extends PureComponent{
       onOk:()=>{
         message.success('操作成功！')
         const { history } = this.props;
-        history.push({pathname:"/drugStorage/drugStorageManage/refund"})
+        history.push({pathname:"/drugStorage/outStorage/backStorage"})
       },
       onCancel:()=>{}
     })
@@ -106,24 +107,16 @@ class DetailsRefund extends PureComponent{
 
   render(){
     return (
-      <div className='fullCol fadeIn'>
-        <div className='fullCol-fullChild'>
+      <div className='fadeIn'>
+        <Card>
           <h3>单据信息 
             <Button style={{float:'right'}} onClick={()=>this.onBan()} >不通过</Button>
-            <Button type='primary' className='button-gap' style={{float:'right'}} onClick={()=>this.onSubmit()}>通过</Button>
+            <Button type='primary' className='button-gap' style={{float:'right'}} onClick={()=>this.onSubmit()}>复核通过</Button>
           </h3>
           <Row>
             <Col span={8}>
                 <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
                     <label>退货单</label>
-                </div>
-                <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
-                  <div className='ant-form-item-control'>PA002211807000086U</div>
-                </div>
-            </Col>
-            <Col span={8}>
-                <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
-                    <label>出库单</label>
                 </div>
                 <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
                   <div className='ant-form-item-control'>PA002211807000086U</div>
@@ -139,7 +132,7 @@ class DetailsRefund extends PureComponent{
             </Col>
             <Col span={8}>
                 <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
-                    <label>库房</label>
+                    <label>来源部门</label>
                 </div>
                 <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
                   <div className='ant-form-item-control'>药库</div>
@@ -147,7 +140,7 @@ class DetailsRefund extends PureComponent{
             </Col>
             <Col span={8}>
                 <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
-                    <label>制单人</label>
+                    <label>退货人</label>
                 </div>
                 <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
                   <div className='ant-form-item-control'>张三三</div>
@@ -155,7 +148,7 @@ class DetailsRefund extends PureComponent{
             </Col>
             <Col span={8}>
                 <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
-                    <label>制单时间</label>
+                    <label>退货时间</label>
                 </div>
                 <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
                   <div className='ant-form-item-control'>2015-09-03 15:00:02
@@ -187,22 +180,22 @@ class DetailsRefund extends PureComponent{
                 </div>
             </Col>
           </Row>
-         </div>
-         <div className='detailCard'>
-          <Table
-            dataSource={createData()}
-            bordered
-            title={()=>'产品信息'}
-            scroll={{x: '200%'}}
-            columns={columns}
-            rowKey={'id'}
-            pagination={{
-              size: 'small',
-              showQuickJumper: true,
-              showSizeChanger: true
-            }}
-          />
-         </div>
+         
+         <hr className='hr'/>
+         <h3>产品信息</h3>
+        <Table  
+          dataSource={createData()}
+          bordered
+          scroll={{x: '200%'}}
+          columns={columns}
+          rowKey={'id'}
+          pagination={{
+            size: 'small',
+            showQuickJumper: true,
+            showSizeChanger: true
+          }}
+        />
+      </Card>
       </div>
     )
   }

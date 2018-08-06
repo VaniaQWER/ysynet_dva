@@ -4,10 +4,9 @@
 * @Last Modified time: 2018-07-24 13:13:55 
  */
 import React, { PureComponent } from 'react';
-import { Table , Col, Button, Modal , message, Input , Select , Affix , Row , Tooltip} from 'antd';
+import { Table , Col, Button, Modal , message, Input , Affix , Row , Tooltip} from 'antd';
 import { createData } from '../../../../common/data';
 const Conform = Modal.confirm;
-const Option = Select.Option;
 const columns = [
   {
    title: '退货数量',
@@ -16,15 +15,25 @@ const columns = [
    render:()=>(<Input/>)
   },
   {
-    title: '库存量',
+    title: '当前库存',
     width:120,
     dataIndex: 'assetsRecord',
+   render:()=>`100`
   },
   {
-    title: '包装单位',
+    title: '单位',
     width:150,
     dataIndex: 'unit',
-    render:(text)=>'g'
+    render:(text)=>'瓶'
+  },
+  {
+    title: '包装规格',
+    width:150,
+    dataIndex: 'spec',
+    className:'ellipsis',
+    render:(text)=>(
+      <Tooltip placement="topLeft" title={text}>{text}</Tooltip>
+    )
   },
   {
     title: '通用名称',
@@ -40,11 +49,8 @@ const columns = [
   {
     title: '规格',
     width:150,
-    dataIndex: 'spec',
-    className:'ellipsis',
-    render:(text)=>(
-      <Tooltip placement="topLeft" title={text}>{text}</Tooltip>
-    )
+    dataIndex: 'spec2',
+    render:()=>`甘草酸苷80mg` 
   },
   {
     title: '剂型',
@@ -83,31 +89,12 @@ const columns = [
   }
 ];
 const modalColumns = [
-  {
-    title: '生产批号',
-    width:150,
-    dataIndex: 'productCompany2',
-  },
-  {
-    title: '生产日期',
-    width:150,
-    dataIndex: 'productCompany3',
-  },
-  {
-    title: '有效期至',
-    width:150,
-    dataIndex: 'productCompany4',
-  },
+  
   {
     title: '通用名称',
     width:100,
     dataIndex: 'productName1',
     render:(text,record)=>record.productName
-  },
-  {
-    title: '商品名称',
-    width:150,
-    dataIndex: 'productName',
   },
   {
     title: '规格',
@@ -117,6 +104,27 @@ const modalColumns = [
     render:(text)=>(
       <Tooltip placement="topLeft" title={text}>{text}</Tooltip>
     )
+  },
+  {
+    title: '入库单号',
+    width:150,
+    dataIndex: 'medicinalCode',
+  },
+  {
+    title: '生产批号',
+    width:150,
+    dataIndex: 'productCompany2',
+  },
+  {
+    title: '生产日期',
+    width:150,
+    dataIndex: 'planTime21',
+    render:(text,record)=>`${record.planTime}`
+  },
+  {
+    title: '有效期至',
+    width:150,
+    dataIndex: 'planTime',
   },
   {
     title: '剂型',
@@ -138,6 +146,11 @@ const modalColumns = [
     width:150,
     dataIndex: 'productCompany',
   },
+  {
+    title: '供应商',
+    width:150,
+    dataIndex: 'createUser',
+  }
 ]
 class AddRefund extends PureComponent{
 
@@ -188,39 +201,31 @@ class AddRefund extends PureComponent{
     const { visible , selectedRowKey } = this.state; 
     return (
       <div className='fullCol'>
-        <div className='fullCol-fullChild' style={{height:70}}>
+        <div className='fullCol-fullChild' style={{height:122}}>
           <Col  span={4}>
             <Button type='primary' className='button-gap' onClick={()=>this.setState({visible:true})}>添加产品</Button>
             <Button onClick={()=>this.delete()} >移除</Button>
           </Col>
-          <Col span={6}>
-              调入药房：
-              <Select 
-                style={{width:'70%'}}
-                showSearch
-                placeholder={'请选择'}
-                optionFilterProp="children"
-                filterOption={(input, option) => option.props.children.indexOf(input) >= 0}
-                >
-                <Option key="" value="">全部</Option>
-              </Select>
+          <Col span={24}>
+              <Input placeholder='请输入退货原因' style={{width:200,marginTop:12}}/>
           </Col>
         </div>
-        <h3>产品信息</h3>
-        <Table
-          rowSelection={{
-            onChange:(selectedRowKey)=>{
-              this.setState({selectedRowKey})
-            }
-          }}
-          dataSource={createData()}
-          bordered
-          scroll={{x: '200%'}}
-          columns={columns}
-          rowKey={'id'}
-          style={{marginTop: 24}}
-        />
-
+        <div className='detailCard'>
+          <Table
+            rowSelection={{
+              onChange:(selectedRowKey)=>{
+                this.setState({selectedRowKey})
+              }
+            }}
+            dataSource={createData()}
+            title={()=>'产品信息'}
+            bordered
+            scroll={{x: '200%'}}
+            columns={columns}
+            rowKey={'id'}
+            style={{marginTop: 24}}
+          />
+        </div>
         <Affix offsetBottom={0} className='affix'>共10种产品
          <Button  style={{float:'right'}}  onClick={() => this.onSubmit()}>
             取消
@@ -249,7 +254,6 @@ class AddRefund extends PureComponent{
             scroll={{x: '200%'}}
             columns={modalColumns}
             rowKey={'id'}
-            style={{marginTop: 24}}
           />
         </Modal>
 

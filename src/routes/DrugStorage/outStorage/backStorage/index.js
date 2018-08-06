@@ -14,36 +14,25 @@ const FormItem = Form.Item;
 const Option = Select.Option;
 const columns = [
   {
-    title: '出库单',
+    title: '退货单',
     dataIndex: 'medicinalCode',
     width:150,
-    fixed: 'left',
     render: (text, record) => 
     <span>
-      <Link to={{pathname: `/drugStorage/drugStorageManage/refund/details`}}>{text}</Link>
+      <Link to={{pathname: `/drugStorage/outStorage/backStorage/details`}}>{text}</Link>
     </span>
    },
   {
-    title: '退货单',
-    width:150,
-    dataIndex: 'productName',
-  },
-  {
-    title: '配货单',
+    title: '来源部门',
     dataIndex: 'medicinalCode2  ',
     width:150,
-    render: (text, record, index) => '1000000000000' + index
+    render: () => '药库'
    },
   {
-    title: '库房',
+    title: '退货原因  ',
     dataIndex: 'spec1',
-    render:(text)=>'药库'
-    
-  },
-  {
-    title: '出库分类',
-    dataIndex: 'fmodal2',
-    render:(text)=>'退货出库'
+    width:150,
+    render:(text)=>'破损'
   },
   {
     title: '状态',
@@ -58,29 +47,17 @@ const columns = [
     render: (text, record, index) => 'PHXL'
   },
   {
-    title: '制单人',
+    title: '退货人',
     width:100,
     dataIndex: 'bDept',
     render: (text, record, index) => 'wang' + index
   },
   {
-   title: '制单时间',
+   title: '退货时间',
    width:150,
    dataIndex: 'useDept',
    render: (text, record, index) => '2018-7-25 21:47'
-  },
- {
-  title: '复核人',
-  width:100,
-  dataIndex: 'useDept1',
-  render: (text, record, index) => 'wang' + index
- },
- {
-  title: '复核时间',
-  width:150,
-  dataIndex: 'useDept123',
-  render: (text, record, index) => '2018-7-25 21:47'
- }
+  }
 ];
 
 class Refund extends PureComponent{
@@ -100,14 +77,14 @@ class Refund extends PureComponent{
         <SearchForm query={this.queryHandler} />
         <Row>
           <Button type='primary'>
-            <Link to={{pathname:`/drugStorage/drugStorageManage/refund/add`}}>新建退货</Link>
+            <Link to={{pathname:`/drugStorage/outStorage/backStorage/add`}}>新建退货</Link>
           </Button>
         </Row>
         <Table
           dataSource={createData()}
           bordered
           loading={ this.state.loading}
-          scroll={{x: '120%'}}
+          scroll={{x: '100%'}}
           pagination={{
             size: "small",
             showQuickJumper: true,
@@ -153,24 +130,16 @@ class SearchFormWrapper extends PureComponent {
      <Form onSubmit={this.handleSearch}>
        <Row gutter={30}>
          <Col span={8}>
-           <FormItem label={`单据号`} {...formItemLayout}>
+           <FormItem label={`退货单号`} {...formItemLayout}>
              {getFieldDecorator('assetCode', {})(
               <Input/>
              )}
            </FormItem>
          </Col>
          <Col span={8}>
-           <FormItem label={`出库分类`} {...formItemLayout}>
-             {getFieldDecorator('spec')(
-              <Select 
-                showSearch
-                placeholder={'请选择'}
-                optionFilterProp="children"
-                filterOption={(input, option) => option.props.children.indexOf(input) >= 0}
-                >
-                <Option key="" value="">全部</Option>
-                <Option key="01" value="01">退货出库</Option>
-              </Select>
+           <FormItem label={`退货原因`} {...formItemLayout}>
+             {getFieldDecorator('reson')(
+              <Input/>
              )}
            </FormItem>
          </Col>
@@ -184,13 +153,14 @@ class SearchFormWrapper extends PureComponent {
                   filterOption={(input, option) => option.props.children.indexOf(input) >= 0}
                   >
                   <Option key="" value="">全部</Option>
-                  <Option key="01" value="01">待复核</Option>
+                  <Option key="01" value="01">待下架</Option>
+                  <Option key="02" value="02">待复核</Option>
                 </Select>
               )}
             </FormItem>
           </Col>
          <Col span={8}  style={{display: display}}>
-           <FormItem label={`制单时间`} {...formItemLayout}>
+           <FormItem label={`退货时间`} {...formItemLayout}>
              {getFieldDecorator('assetName', {})(
               <RangePicker/>
              )}
