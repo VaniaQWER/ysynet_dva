@@ -793,7 +793,7 @@ const menu = [
             "fsort": 3010101,
             "name": "补货计划",
             "id": "3010101",
-            "key": "/system/replenishment/replenishmentPlan",
+            "key": "/purchase/replenishment/replenishmentPlan",
             "parentId": "m303"
           },
           {
@@ -802,7 +802,7 @@ const menu = [
             "fsort": 3010101,
             "name": "目录外采购",
             "id": "3010101",
-            "key": "/system/replenishment/outCatalogPurchase",
+            "key": "/purchase/replenishment/outCatalogPurchase",
             "parentId": "m303"
           },
           {
@@ -811,7 +811,7 @@ const menu = [
             "fsort": 3010101,
             "name": "计划审核",
             "id": "3010101",
-            "key": "/system/replenishment/planCheck",
+            "key": "/purchase/replenishment/planCheck",
             "parentId": "m303"
           },
           {
@@ -820,7 +820,7 @@ const menu = [
             "fsort": 3010101,
             "name": "计划订单",
             "id": "3010101",
-            "key": "/system/replenishment/planOrder",
+            "key": "/purchase/replenishment/planOrder",
             "parentId": "m303"
           },
         ]
