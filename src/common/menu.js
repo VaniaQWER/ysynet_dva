@@ -684,12 +684,12 @@ const menu = [
           "parentId": "m305"
         },
         {
-          "path": "/pharmacy/outStorage/pickingUnderShelve",
+          "path": "/pharmacy/outStorage/newOut",
           "level": 5,
           "fsort": 30105,
           "name": "新建出库",
           "id": "30106",
-          "key": "/pharmacy/outStorage/pickingUnderShelve",
+          "key": "/pharmacy/outStorage/newOut",
           "parentId": "m305"
         },
       ]
