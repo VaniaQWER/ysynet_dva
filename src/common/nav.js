@@ -509,6 +509,18 @@ export const getNavData = app => [
       path: '/drugStorage/goodsAdjust/adjust',
       component: dynamicWrapper(app, [], () => import('../routes/DrugStorage/goodsAdjust/adjust')),
     },
+    {
+      name: "货位调整-新增",
+      icon: 'setting',
+      path: '/drugStorage/goodsAdjust/adjust/add',
+      component: dynamicWrapper(app, [], () => import('../routes/DrugStorage/goodsAdjust/adjust/add')),
+    },
+    {
+      name: "货位调整-详情",
+      icon: 'setting',
+      path: '/drugStorage/goodsAdjust/adjust/detail',
+      component: dynamicWrapper(app, [], () => import('../routes/DrugStorage/goodsAdjust/adjust/detail')),
+    },
 
     // 药库 - 盘点损益
     {

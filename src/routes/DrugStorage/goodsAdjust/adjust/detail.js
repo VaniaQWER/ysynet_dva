@@ -5,12 +5,48 @@
  * @Last Modified time: 2018-08-06
  */
 /* 
-  @file 补货计划 详情
+  @file 货位调整 详情
 */
 import React, { PureComponent } from 'react';
 import { Table ,Row, Col,Tooltip } from 'antd';
 import { createData } from '../../../../common/data';
 const columns = [
+  {
+    title: '数量',
+    width: 100,
+    dataIndex: 'num',
+    render:(text,record)=>"24"
+  },
+  {
+    title: '单位',
+    width: 100,
+    dataIndex: 'unit',
+    render:(text)=>'箱'
+  },
+  {
+    title: '原货位',
+    width: 100,
+    dataIndex: 'spec',
+    render:(text)=>'B121'
+  },
+  {
+    title: '目的货位',
+    width: 100,
+    dataIndex: 'spec',
+    render:(text)=>'A121'
+  },
+  {
+    title: '原货位类型',
+    width: 120,
+    dataIndex: 'spec',
+    render:(text)=>'补货货位'
+  },
+  {
+    title: '目的货位类型',
+    width: 120,
+    dataIndex: 'unit',
+    render:(text)=>'补货货位'
+  },
   {
     title: '通用名',
     width: 180,
@@ -18,22 +54,8 @@ const columns = [
     render:(text,record)=>record.productName
   },
   {
-    title: '商品名',
-    width: 150,
-    dataIndex: 'productName',
-  },
-  {
     title: '规格',
     width: 270,
-    dataIndex: 'fmodal',
-    className:'ellipsis',
-    render:(text)=>(
-      <Tooltip placement="topLeft" title={text}>{text}</Tooltip>
-    )
-  },
-  {
-    title: '包装规格',
-    width: 270,
     dataIndex: 'spec',
     className:'ellipsis',
     render:(text)=>(
@@ -41,27 +63,9 @@ const columns = [
     )
   },
   {
-    title: '剂型',
-    width: 150,
-    dataIndex: 'fmodal',
-  },
-  {
-    title: '包装规格',
-    width: 150,
-    dataIndex: 'spec',
-    render:(text)=>'g'
-  },
-  {
-    title: '单位',
-    width: 150,
-    dataIndex: 'unit',
-    render:(text)=>'箱'
-  },
-  {
-    title: '入库数量',
-    dataIndex: 'amount',
-    width: 80,
-    render: (text,record,index) => '120' 
+    title: '生产厂家',
+    width: 200,
+    dataIndex: 'productCompany',
   },
   {
     title: '生产批号',
@@ -79,22 +83,6 @@ const columns = [
     width: 200,
     dataIndex: 'UserfulDate',
     render: (text,record,index) => '2022-07-09' 
-  },
-  {
-    title: '货位',
-    width: 200,
-    dataIndex: 'huowei',
-    render: (text,record,index) => 'A1231' 
-  },
-  {
-    title: '批准文号',
-    width: 200,
-    dataIndex: 'approvalNo',
-  },
-  {
-    title: '生产厂家',
-    width: 200,
-    dataIndex: 'productCompany',
   }
 ];
 
