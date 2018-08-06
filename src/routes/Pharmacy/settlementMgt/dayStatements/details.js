@@ -105,7 +105,7 @@ class Details extends PureComponent {
           </Row>
           <Row>
             <Col span={8}>
-              <div className="ant-form-item-label ant-col-xs-24 ant-col-sm-4">
+              <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-4">
                 <label>结算药房</label>
               </div>
               <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
@@ -113,7 +113,7 @@ class Details extends PureComponent {
               </div>
             </Col>
             <Col span={8}>
-              <div className="ant-form-item-label ant-col-xs-24 ant-col-sm-4">
+              <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-4">
                 <label>状态</label>
               </div>
               <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
@@ -121,7 +121,7 @@ class Details extends PureComponent {
               </div>
             </Col>
             <Col span={8}>
-              <div className="ant-form-item-label ant-col-xs-24 ant-col-sm-4">
+              <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-4">
                 <label>结算日期</label>
               </div>
               <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
@@ -129,7 +129,7 @@ class Details extends PureComponent {
               </div>
             </Col>
             <Col span={8}>
-              <div className="ant-form-item-label ant-col-xs-24 ant-col-sm-4">
+              <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-4">
                 <label>确认人</label>
               </div>
               <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
@@ -137,7 +137,7 @@ class Details extends PureComponent {
               </div>
             </Col>
             <Col span={8}>
-              <div className="ant-form-item-label ant-col-xs-24 ant-col-sm-4">
+              <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-4">
                 <label>确认时间</label>
               </div>
               <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
@@ -149,7 +149,7 @@ class Details extends PureComponent {
           <Row>
             <Col span={8}>
               <div className="ant-row">
-                <div className="ant-col-4 ant-form-item-label-left" style={{ textAlign: 'right' }}>
+                <div className="ant-col-4 ant-form-item-label-left-left" style={{ textAlign: 'right' }}>
                   <label>单号</label>
                 </div>
                 <div className="ant-col-18">
@@ -161,7 +161,7 @@ class Details extends PureComponent {
             </Col>
             <Col span={8}>
               <div className="ant-row">
-                <div className="ant-col-4 ant-form-item-label-left" style={{ textAlign: 'right' }}>
+                <div className="ant-col-4 ant-form-item-label-left-left" style={{ textAlign: 'right' }}>
                   <label>名称</label>
                 </div>
                 <div className="ant-col-18">

@@ -24,12 +24,16 @@ const columns = [
   },
   {
     title: '商品名称',
-    width:150,
+    width: 200,
     dataIndex: 'productName',
+    className:'ellipsis',
+    render:(text)=>(
+      <Tooltip placement="topLeft" title={text}>{text}</Tooltip>
+    )
   },
   {
     title: '规格',
-    width:150,
+    width:200,
     dataIndex: 'spec',
     className:'ellipsis',
     render:(text)=>(
@@ -43,13 +47,13 @@ const columns = [
   },
   {
     title: '包装单位',
-    width:100,
+    width:90,
     dataIndex: 'spec21',
     render:(text)=>'g'
   },
   {
     title: '最小单位',
-    width:100,
+    width:90,
     dataIndex: 'custodian',
     render: (text, record, index) => '个'
   },
@@ -61,13 +65,13 @@ const columns = [
   },
   {
    title: '库存上限',
-   width:100,
+   width:90,
    dataIndex: 'useDept',
    render: (text, record, index) => index + 0.5
   },
  {
   title: '库存下限',
-  width:100,
+  width:90,
   dataIndex: 'useDept1',
   render: (text, record, index) => index + 0.1
  }
@@ -103,7 +107,7 @@ class DrugDirectory extends PureComponent{
     const { getFieldDecorator } = this.props.form;
     const { visible } = this.state;
     return (
-      <div>
+      <div className='ysynet-main-content'>
         <SearchForm query={this.queryHandler} />
         <Row>
           <Button type='primary' onClick={()=>this.showModal()}>批量编辑</Button>
@@ -120,8 +124,13 @@ class DrugDirectory extends PureComponent{
           }
           bordered
           loading={ this.state.loading}
-          scroll={{x: '100%'}}
+          scroll={{x: '110%'}}
           columns={columns}
+          pagination={{
+            size: "small",
+            showQuickJumper: true,
+            showSizeChanger: true
+          }}
           rowKey={'id'}
           style={{marginTop: 20}}
         /> 
@@ -202,7 +211,7 @@ class SearchFormWrapper extends PureComponent {
    const { getFieldDecorator } = this.props.form;
    return (
      <Form onSubmit={this.handleSearch}>
-       <Row>
+       <Row gutter={30}>
          <Col span={8}>
            <FormItem label={`名称`} {...formItemLayout}>
              {getFieldDecorator('assetCode', {})(
@@ -275,8 +284,8 @@ class SearchFormWrapper extends PureComponent {
          </Col>
          <Col span={8} style={{ textAlign: 'right', marginTop: 4}} >
            <Button type="primary" htmlType="submit">查询</Button>
-           <Button style={{marginLeft: 30}} onClick={this.handleReset}>重置</Button>
-           <a style={{marginLeft: 30, fontSize: 14}} onClick={this.toggle}>
+           <Button style={{marginLeft: 8}} onClick={this.handleReset}>重置</Button>
+           <a style={{marginLeft: 8, fontSize: 14}} onClick={this.toggle}>
              {this.state.expand ? '收起' : '展开'} <Icon type={this.state.expand ? 'up' : 'down'} />
            </a>
          </Col>

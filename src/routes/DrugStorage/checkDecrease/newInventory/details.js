@@ -116,7 +116,7 @@ class Details extends PureComponent {
       }
     ];
     return (
-      <div className='fullCol'>
+      <div className='fullCol fadeIn'>
         <div className='fullCol-fullChild'>
           <Row>
             <Col span={12}>
@@ -130,7 +130,7 @@ class Details extends PureComponent {
           </Row>
           <Row>
             <Col span={8}>
-              <div className="ant-form-item-label ant-col-xs-24 ant-col-sm-4">
+              <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-4">
                 <label>状态</label>
               </div>
               <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
@@ -138,7 +138,7 @@ class Details extends PureComponent {
               </div>
             </Col>
             <Col span={8}>
-              <div className="ant-form-item-label ant-col-xs-24 ant-col-sm-4">
+              <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-4">
                 <label>类型</label>
               </div>
               <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
@@ -146,7 +146,7 @@ class Details extends PureComponent {
               </div>
             </Col>
             <Col span={8}>
-              <div className="ant-form-item-label ant-col-xs-24 ant-col-sm-4">
+              <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-4">
                 <label>部门</label>
               </div>
               <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
@@ -154,7 +154,7 @@ class Details extends PureComponent {
               </div>
             </Col>
             <Col span={8}>
-              <div className="ant-form-item-label ant-col-xs-24 ant-col-sm-4">
+              <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-4">
                 <label>制单人</label>
               </div>
               <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
@@ -162,7 +162,7 @@ class Details extends PureComponent {
               </div>
             </Col>
             <Col span={8}>
-              <div className="ant-form-item-label ant-col-xs-24 ant-col-sm-4">
+              <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-4">
                 <label>制单时间</label>
               </div>
               <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
@@ -170,7 +170,7 @@ class Details extends PureComponent {
               </div>
             </Col>
             <Col span={8}>
-              <div className="ant-form-item-label ant-col-xs-24 ant-col-sm-4">
+              <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-4">
                 <label>起始时间</label>
               </div>
               <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
@@ -178,7 +178,7 @@ class Details extends PureComponent {
               </div>
             </Col>
             <Col span={8}>
-              <div className="ant-form-item-label ant-col-xs-24 ant-col-sm-4">
+              <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-4">
                 <label>备注</label>
               </div>
               <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
@@ -190,7 +190,7 @@ class Details extends PureComponent {
           <Row>
             <Col span={8}>
               <div className="ant-row">
-                <div className="ant-col-4 ant-form-item-label-left" style={{ textAlign: 'right' }}>
+                <div className="ant-col-4 ant-form-item-label-left-left" style={{ textAlign: 'right' }}>
                   <label>名称</label>
                 </div>
                 <div className="ant-col-18">
@@ -202,7 +202,7 @@ class Details extends PureComponent {
             </Col>
             <Col span={8}>
               <div className="ant-row">
-                <div className="ant-col-4 ant-form-item-label-left" style={{ textAlign: 'right' }}>
+                <div className="ant-col-4 ant-form-item-label-left-left" style={{ textAlign: 'right' }}>
                   <label>供应商</label>
                 </div>
                 <div className="ant-col-18">
@@ -214,14 +214,21 @@ class Details extends PureComponent {
             </Col>
           </Row>
         </div>
-        <Table
-          dataSource={createData()}
-          bordered
-          scroll={{x: '220%'}}
-          columns={columns}
-          rowKey={'id'}
-          style={{marginTop: 24}}
-        />
+        <div className='detailCard'>
+          <Table
+            dataSource={createData()}
+            bordered
+            title={()=>'产品信息'}
+            scroll={{x: '220%'}}
+            columns={columns}
+            rowKey={'id'}
+            pagination={{
+              size: 'small',
+              showQuickJumper: true,
+              showSizeChanger: true
+            }}
+          />
+        </div>
       </div>
     )
   }

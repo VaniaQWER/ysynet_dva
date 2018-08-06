@@ -2,21 +2,30 @@
  * @Author: wwb 
  * @Date: 2018-07-24 16:08:53 
  * @Last Modified by: wwb
- * @Last Modified time: 2018-07-24 21:05:03
+ * @Last Modified time: 2018-07-31 13:40:29
  */
 
 /**
  * @file 药库 - 补货管理--确认计划
  */
 import React, { PureComponent } from 'react';
-import { Form, Row, Col, Button, Input, DatePicker, Select, Icon, Table  } from 'antd';
+import { Form, Row, Col, Button, Input, DatePicker, Select, Icon, Table,Tooltip  } from 'antd';
 import { Link } from 'react-router-dom';
-import { formItemLayout } from '../../../../utils/commonStyles'
 import moment from 'moment'; 
 import { createData } from '../../../../common/data';
 const FormItem = Form.Item;
 const { RangePicker } = DatePicker;
 const { Option } = Select;
+const formItemLayout = {
+  labelCol: {
+    xs: { span: 24 },
+    sm: { span: 5 },//5
+  },
+  wrapperCol: {
+    xs: { span: 24 },
+    sm: { span: 19 }
+  },
+};
 
 class SearchForm extends PureComponent{
   state = {
@@ -34,14 +43,14 @@ class SearchForm extends PureComponent{
     const { display, expand } = this.state;
     return (
       <Form className="ant-advanced-search-form" onSubmit={this.handleSearch}>
-        <Row>
+        <Row gutter={30}>
           <Col span={8}>
             <FormItem {...formItemLayout} label={`计划单号`}>
               {
                 getFieldDecorator(`planNo`,{
                   initialValue: ''
                 })(
-                  <Input placeholder='请输入' className={'ysynet-formItem-width'}/>
+                  <Input placeholder='请输入' />
                 )
               }
             </FormItem>
@@ -52,7 +61,7 @@ class SearchForm extends PureComponent{
                 getFieldDecorator(`fstate`,{
                   initialValue: ''
                 })(
-                  <Select className={'ysynet-formItem-width'}>
+                  <Select >
                     <Option key={-1} value=''>请选择</Option>
                   </Select>
                 )
@@ -65,7 +74,7 @@ class SearchForm extends PureComponent{
                 getFieldDecorator(`fstate`,{
                   initialValue: [moment().subtract(30, 'days'), moment(new Date())]
                 })(
-                  <RangePicker className={'ysynet-formItem-width'}/>
+                  <RangePicker />
                 )
               }
             </FormItem>
@@ -76,17 +85,17 @@ class SearchForm extends PureComponent{
                 getFieldDecorator('type',{
                   initialValue: ''
                 })(
-                  <Select className={'ysynet-formItem-width'}>
+                  <Select >
                     <Option key={-1} value=''>全部</Option>
                   </Select>
                 )
               }
             </FormItem>
           </Col>
-          <Col span={expand ? 15: 8} style={{ textAlign: 'right', marginTop: 4}} >
+          <Col span={expand ? 16: 8} style={{ textAlign: 'right', marginTop: 4}} >
            <Button type="primary" htmlType="submit">查询</Button>
-           <Button type='default' style={{marginLeft: 30}} onClick={this.handleReset}>重置</Button>
-           <a style={{marginLeft: 30, fontSize: 14}} onClick={this.toggle}>
+           <Button type='default' style={{marginLeft: 8}} onClick={this.handleReset}>重置</Button>
+           <a style={{marginLeft: 8, fontSize: 14}} onClick={this.toggle}>
              {expand ? '收起' : '展开'} <Icon type={expand ? 'up' : 'down'} />
            </a>
          </Col>
@@ -144,13 +153,18 @@ class ConfirmPlan extends PureComponent{
       dataIndex: 'applyNo'
     },{
       title: '收货地址',
-      dataIndex: 'tfAddress'
+      dataIndex: 'tfAddress',
+      width: 270,
+      className: 'ellipsis',
+        render:(text)=>(
+          <Tooltip placement="topLeft" title={text}>{text}</Tooltip>
+        )
     },{
       title: '驳回原因',
       dataIndex: 'planReject'
     }];
     return (
-      <div>
+      <div className='ysynet-main-content'>
          <WrapperForm />
          <div className='ant-row-bottom'>
             <Button type='primary' onClick={()=> this.sendOrder}>发送订单</Button>

@@ -135,7 +135,7 @@ class Accredit extends PureComponent{
                 <Row style={{ padding: '0 20px' }}>
                   <Col className="ant-col-8">
                     <div className="ant-row">
-                      <div className="ant-col-6 ant-form-item-label-left">
+                      <div className="ant-col-6 ant-form-item-label-left-left">
                         <label>部署名称</label>
                       </div>
                       <div className="ant-col-15">
@@ -147,7 +147,7 @@ class Accredit extends PureComponent{
                   </Col>
                   <Col className="ant-col-8">
                     <div className="ant-row">
-                      <div className="ant-col-6 ant-form-item-label-left">
+                      <div className="ant-col-6 ant-form-item-label-left-left">
                         <label>授权码</label>
                       </div>
                       <div className="ant-col-15">
@@ -159,7 +159,7 @@ class Accredit extends PureComponent{
                   </Col>
                   <Col className="ant-col-8">
                     <div className="ant-row">
-                      <div className="ant-col-8 ant-form-item-label-left">
+                      <div className="ant-col-8 ant-form-item-label-left-left">
                         <label>授权有效期</label>
                       </div>
                       <div className="ant-col-15">
@@ -171,7 +171,7 @@ class Accredit extends PureComponent{
                   </Col>
                   <Col className="ant-col-8">
                     <div className="ant-row">
-                      <div className="ant-col-8 ant-form-item-label-left">
+                      <div className="ant-col-8 ant-form-item-label-left-left">
                         <label>最后编辑时间</label>
                       </div>
                       <div className="ant-col-15">

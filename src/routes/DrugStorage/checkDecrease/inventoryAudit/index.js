@@ -465,13 +465,18 @@ class InventoryAudit extends PureComponent {
       }
     ];
     return (
-      <div>
+      <div className='ysynet-main-content'>
         <SearchFormWarp />
         <Table
           loading={ this.state.loading}
           scroll={{x: '140%'}}
+          bordered
           columns={columns}
-          style={{marginTop: 20}}
+          pagination={{
+            size: "small",
+            showQuickJumper: true,
+            showSizeChanger: true
+          }}
           dataSource={dataSource}
         />
       </div>

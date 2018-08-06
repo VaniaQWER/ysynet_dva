@@ -95,7 +95,7 @@ class Putaway extends PureComponent{
       },
       {
         title: '批准文号',
-        width:150,
+        width:180,
         dataIndex: 'approvalNo',
       },
       {
@@ -106,7 +106,7 @@ class Putaway extends PureComponent{
       },
       {
         title: '生产批号',
-        width:150,
+        width: 150,
         dataIndex: 'productCompany2',
         render: (text, record, index) => index
       },
@@ -143,12 +143,14 @@ class Putaway extends PureComponent{
       {
         title: '实际货位',
         width:150,
+        fixed: 'right',
         dataIndex: 'productCompany5s',
         render:(text)=>(<Input defaultValue={1}/>)
       },
       {
         title: '操作',
-        width:150,
+        width: 90,
+        fixed: 'right',
         dataIndex: 'RN',
         render: (text, record) => 
           <span>
@@ -159,7 +161,7 @@ class Putaway extends PureComponent{
       }
     ];
     return (
-      <div>
+      <div className='ysynet-main-content'>
         <SearchForm query={this.queryHandler} />
         <Row>
           <Button type='primary' onClick={()=>this.onSubmit()}>批量上架</Button>
@@ -177,6 +179,11 @@ class Putaway extends PureComponent{
           bordered
           loading={ this.state.loading}
           scroll={{x: '200%'}}
+          pagination={{
+            size: "small",
+            showQuickJumper: true,
+            showSizeChanger: true
+          }}
           columns={columns}
           rowKey={'id'}
           style={{marginTop: 24}}
@@ -216,7 +223,7 @@ class SearchFormWrapper extends PureComponent {
    const { getFieldDecorator } = this.props.form;
    return (
      <Form onSubmit={this.handleSearch}>
-       <Row>
+       <Row gutter={30}>
          <Col span={8}>
            <FormItem label={`配送单`} {...formItemLayout}>
              {getFieldDecorator('assetCode', {})(
@@ -256,8 +263,8 @@ class SearchFormWrapper extends PureComponent {
          </Col>
          <Col span={8} style={{ float:'right',textAlign: 'right', marginTop: 4}} >
            <Button type="primary" htmlType="submit">查询</Button>
-           <Button style={{marginLeft: 30}} onClick={this.handleReset}>重置</Button>
-           <a style={{marginLeft: 30, fontSize: 14}} onClick={this.toggle}>
+           <Button style={{marginLeft: 8}} onClick={this.handleReset}>重置</Button>
+           <a style={{marginLeft: 8, fontSize: 14}} onClick={this.toggle}>
              {this.state.expand ? '收起' : '展开'} <Icon type={this.state.expand ? 'up' : 'down'} />
            </a>
          </Col>

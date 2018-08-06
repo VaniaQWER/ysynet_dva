@@ -130,7 +130,7 @@ class PllistCheckAdd extends PureComponent{
               </div>
             </Col>
             <Col span={8}>
-              <div className="ant-form-item-label ant-col-xs-24 ant-col-sm-5">
+              <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
                 <label>备注</label>
                 </div>
                 <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
@@ -143,7 +143,7 @@ class PllistCheckAdd extends PureComponent{
           <h3>单据信息</h3>
           <Row>
             <Col span={8}>
-              <div className="ant-form-item-label ant-col-xs-24 ant-col-sm-5">
+              <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
                   <label>配送单</label>
               </div>
               <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
@@ -151,7 +151,7 @@ class PllistCheckAdd extends PureComponent{
               </div>
             </Col>
             <Col span={8}>
-              <div className="ant-form-item-label ant-col-xs-24 ant-col-sm-5">
+              <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
                   <label>订单号</label>
               </div>
               <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
@@ -159,7 +159,7 @@ class PllistCheckAdd extends PureComponent{
               </div>
             </Col>
             <Col span={8}>
-              <div className="ant-form-item-label ant-col-xs-24 ant-col-sm-5">
+              <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
                   <label>状态</label>
               </div>
               <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
@@ -167,7 +167,7 @@ class PllistCheckAdd extends PureComponent{
               </div>
             </Col>
             <Col span={8}>
-              <div className="ant-form-item-label ant-col-xs-24 ant-col-sm-5">
+              <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
                   <label>类型</label>
               </div>
               <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
@@ -175,7 +175,7 @@ class PllistCheckAdd extends PureComponent{
               </div>
             </Col>
             <Col span={8}>
-              <div className="ant-form-item-label ant-col-xs-24 ant-col-sm-5">
+              <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
                   <label>供应商</label>
               </div>
               <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
@@ -183,7 +183,7 @@ class PllistCheckAdd extends PureComponent{
               </div>
             </Col>
             <Col span={8}>
-              <div className="ant-form-item-label ant-col-xs-24 ant-col-sm-5">
+              <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
                   <label>制单人</label>
               </div>
               <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
@@ -191,7 +191,7 @@ class PllistCheckAdd extends PureComponent{
               </div>
             </Col>
             <Col span={8}>
-              <div className="ant-form-item-label ant-col-xs-24 ant-col-sm-5">
+              <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
                   <label>制单时间</label>
               </div>
               <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
@@ -200,7 +200,7 @@ class PllistCheckAdd extends PureComponent{
               </div>
             </Col>
             <Col span={8}>
-              <div className="ant-form-item-label ant-col-xs-24 ant-col-sm-5">
+              <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
                   <label>验收人</label>
               </div>
               <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
@@ -209,7 +209,7 @@ class PllistCheckAdd extends PureComponent{
               </div>
             </Col>
             <Col span={8}>
-              <div className="ant-form-item-label ant-col-xs-24 ant-col-sm-5">
+              <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
                   <label>验收时间</label>
               </div>
               <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
@@ -217,7 +217,7 @@ class PllistCheckAdd extends PureComponent{
               </div>
             </Col>
             <Col span={8}>
-              <div className="ant-form-item-label ant-col-xs-24 ant-col-sm-5">
+              <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
                   <label>药房地址</label>
               </div>
               <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">

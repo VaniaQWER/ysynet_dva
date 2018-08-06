@@ -14,12 +14,6 @@ const FormItem = Form.Item;
 const Option = Select.Option;
 const columns = [
   {
-   title: '申请药房',
-   dataIndex: 'index',
-   width:120,
-   render: (text, record, index) => '药库'
-  },
-  {
     title: '申领单',
     dataIndex: 'medicinalCode',
     width:120,
@@ -27,6 +21,12 @@ const columns = [
     <span>
       <Link to={{pathname: `/drugStorage/drugStorageManage/picking/details`}}>{text}</Link>
     </span>  
+  },
+  {
+   title: '申请药房',
+   dataIndex: 'index',
+   width:120,
+   render: (text, record, index) => '药库'
   },
   {
     title: '状态',
@@ -79,13 +79,18 @@ class Picking extends PureComponent{
 
   render(){
     return (
-      <div>
+      <div className='ysynet-main-content'>
         <SearchForm query={this.queryHandler} />
         <Table
           dataSource={createData()}
           bordered
           loading={ this.state.loading}
           scroll={{x: '100%'}}
+          pagination={{
+            size: "small",
+            showQuickJumper: true,
+            showSizeChanger: true
+          }}
           columns={columns}
           rowKey={'id'}
           style={{marginTop: 20}}
@@ -125,7 +130,7 @@ class SearchFormWrapper extends PureComponent {
    const { getFieldDecorator } = this.props.form;
    return (
      <Form onSubmit={this.handleSearch}>
-       <Row>
+       <Row gutter={30}>
          <Col span={8}>
            <FormItem label={`申请药房`} {...formItemLayout}>
              {getFieldDecorator('assetCode', {})(
@@ -187,8 +192,8 @@ class SearchFormWrapper extends PureComponent {
          </Col>
          <Col span={8} style={{ textAlign: 'right', marginTop: 4}} >
            <Button type="primary" htmlType="submit">查询</Button>
-           <Button style={{marginLeft: 30}} onClick={this.handleReset}>重置</Button>
-           <a style={{marginLeft: 30, fontSize: 14}} onClick={this.toggle}>
+           <Button style={{marginLeft: 8}} onClick={this.handleReset}>重置</Button>
+           <a style={{marginLeft: 8, fontSize: 14}} onClick={this.toggle}>
              {this.state.expand ? '收起' : '展开'} <Icon type={this.state.expand ? 'up' : 'down'} />
            </a>
          </Col>

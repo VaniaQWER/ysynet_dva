@@ -73,12 +73,14 @@ class Details extends PureComponent{
                             <Col style={{height: height}}  span={8}>生产厂家：北京宝树堂科技药业有限公司</Col>
                             <Col style={{height: height}}  span={8}>批准文号：86900234000039</Col>
                         </Row>
-                        <Row style={{marginTop: 20, marginBottom: 20 }} >产品信息</Row>
-                        <Table
-                            bordered={true}
-                            columns={columns}
-                            dataSource={dataSource}
-                        />
+                        <div className='detailCard'>
+                            <Table
+                                bordered={true}
+                                title={()=>'产品信息'}
+                                columns={columns}
+                                dataSource={dataSource}
+                            />
+                        </div>
                     </TabPane>
                     <TabPane tab="供应商详情" key="2" >
                         <Row style={{borderBottom: '1px solid rgba(0, 0, 0, 0.1)'}}>
@@ -91,12 +93,14 @@ class Details extends PureComponent{
                             <Col style={{height: height}}  span={8}>生产厂家：北京宝树堂科技药业有限公司</Col>
                             <Col style={{height: height}}  span={8}>批准文号：86900234000039</Col>
                         </Row>
-                        <Row style={{marginTop: 20, marginBottom: 20 }} >产品信息</Row>
-                        <Table
-                            bordered={true}
-                            columns={columns}
-                            dataSource={dataSource}
-                        />
+                        <div className='detailCard'>
+                            <Table
+                                title={()=>'产品信息'}
+                                bordered={true}
+                                columns={columns}
+                                dataSource={dataSource}
+                            />
+                        </div>
                         </TabPane>
                 </Tabs>
               </div>

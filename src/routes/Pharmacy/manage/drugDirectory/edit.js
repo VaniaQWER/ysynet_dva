@@ -32,7 +32,7 @@ class EditDrugDirectory extends PureComponent{
           <Row>
             <Col span={10}>
               <div className="ant-row ant-form-item">
-                <div className="ant-form-item-label ant-col-xs-24 ant-col-sm-5">
+                <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
                     <label>商品名</label>
                 </div>
                 <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
@@ -59,7 +59,7 @@ class EditDrugDirectory extends PureComponent{
             </Col>
             <Col span={10}>
               <div className="ant-row ant-form-item">
-                <div className="ant-form-item-label ant-col-xs-24 ant-col-sm-5">
+                <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
                     <label>通用名</label>
                 </div>
                 <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
@@ -78,7 +78,7 @@ class EditDrugDirectory extends PureComponent{
             </Col>
             <Col span={10}>
               <div className="ant-row ant-form-item">
-                <div className="ant-form-item-label ant-col-xs-24 ant-col-sm-5">
+                <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
                     <label>药品打印名</label>
                 </div>
                 <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
@@ -97,7 +97,7 @@ class EditDrugDirectory extends PureComponent{
           </Col>
             <Col span={10}>
               <div className="ant-row ant-form-item">
-                <div className="ant-form-item-label ant-col-xs-24 ant-col-sm-5">
+                <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
                     <label>批准文号</label>
                 </div>
                 <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
@@ -125,7 +125,7 @@ class EditDrugDirectory extends PureComponent{
           </Col>
             <Col span={10}>
               <div className="ant-row ant-form-item">
-                <div className="ant-form-item-label ant-col-xs-24 ant-col-sm-5">
+                <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
                     <label>规格</label>
                 </div>
                 <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
@@ -153,7 +153,7 @@ class EditDrugDirectory extends PureComponent{
             </Col>
             <Col span={10}>
               <div className="ant-row ant-form-item">
-                <div className="ant-form-item-label ant-col-xs-24 ant-col-sm-5">
+                <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
                     <label>剂型</label>
                 </div>
                 <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
@@ -174,7 +174,7 @@ class EditDrugDirectory extends PureComponent{
           <Row>
             <Col span={10}>
               <div className="ant-row ant-form-item">
-                <div className="ant-form-item-label ant-col-xs-24 ant-col-sm-5">
+                <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
                     <label>包装单位</label>
                 </div>
                 <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
@@ -195,7 +195,7 @@ class EditDrugDirectory extends PureComponent{
           <Row>
             <Col span={10}>
               <div className="ant-row ant-form-item">
-                <div className="ant-form-item-label ant-col-xs-24 ant-col-sm-5">
+                <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
                     <label>最小单位</label>
                 </div>
                 <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
@@ -209,7 +209,7 @@ class EditDrugDirectory extends PureComponent{
           <Row>
             <Col span={10}>
               <div className="ant-row ant-form-item">
-                <div className="ant-form-item-label ant-col-xs-24 ant-col-sm-5">
+                <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
                     <label>最小剂量单位</label>
                 </div>
                 <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
@@ -223,7 +223,7 @@ class EditDrugDirectory extends PureComponent{
           <Row>
             <Col span={10}>
               <div className="ant-row ant-form-item">
-                <div className="ant-form-item-label ant-col-xs-24 ant-col-sm-5">
+                <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
                     <label>生产厂家</label>
                 </div>
                 <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
@@ -237,7 +237,7 @@ class EditDrugDirectory extends PureComponent{
           <Row>
             <Col span={10}>
               <div className="ant-row ant-form-item">
-                <div className="ant-form-item-label ant-col-xs-24 ant-col-sm-5">
+                <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
                     <label>药品分类</label>
                 </div>
                 <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
@@ -251,7 +251,7 @@ class EditDrugDirectory extends PureComponent{
           <Row>
             <Col span={10}>
               <div className="ant-row ant-form-item">
-                <div className="ant-form-item-label ant-col-xs-24 ant-col-sm-5">
+                <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
                     <label>毒麻药品</label>
                 </div>
                 <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
@@ -265,7 +265,7 @@ class EditDrugDirectory extends PureComponent{
           <Row>
             <Col span={10}>
               <div className="ant-row ant-form-item">
-                <div className="ant-form-item-label ant-col-xs-24 ant-col-sm-5">
+                <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
                     <label>一类精神药品</label>
                 </div>
                 <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
@@ -279,7 +279,7 @@ class EditDrugDirectory extends PureComponent{
           <Row>
             <Col span={10}>
               <div className="ant-row ant-form-item">
-                <div className="ant-form-item-label ant-col-xs-24 ant-col-sm-5">
+                <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
                     <label>二类精神药品</label>
                 </div>
                 <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
@@ -293,7 +293,7 @@ class EditDrugDirectory extends PureComponent{
           <Row>
             <Col span={10}>
               <div className="ant-row ant-form-item">
-                <div className="ant-form-item-label ant-col-xs-24 ant-col-sm-5">
+                <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
                     <label>基药标识</label>
                 </div>
                 <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
@@ -307,7 +307,7 @@ class EditDrugDirectory extends PureComponent{
           <Row>
             <Col span={10}>
               <div className="ant-row ant-form-item">
-                <div className="ant-form-item-label ant-col-xs-24 ant-col-sm-5">
+                <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
                     <label>高危标识</label>
                 </div>
                 <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
@@ -321,7 +321,7 @@ class EditDrugDirectory extends PureComponent{
           <Row>
             <Col span={10}>
               <div className="ant-row ant-form-item">
-                <div className="ant-form-item-label ant-col-xs-24 ant-col-sm-5">
+                <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
                     <label>是否胰岛素</label>
                 </div>
                 <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
@@ -335,7 +335,7 @@ class EditDrugDirectory extends PureComponent{
           <Row>
             <Col span={10}>
               <div className="ant-row ant-form-item">
-                <div className="ant-form-item-label ant-col-xs-24 ant-col-sm-5">
+                <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
                     <label>报告药</label>
                 </div>
                 <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
@@ -349,7 +349,7 @@ class EditDrugDirectory extends PureComponent{
           <Row>
             <Col span={10}>
               <div className="ant-row ant-form-item">
-                <div className="ant-form-item-label ant-col-xs-24 ant-col-sm-5">
+                <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
                     <label>活动中标识</label>
                 </div>
                 <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
@@ -363,7 +363,7 @@ class EditDrugDirectory extends PureComponent{
           <Row>
             <Col span={10}>
               <div className="ant-row ant-form-item">
-                <div className="ant-form-item-label ant-col-xs-24 ant-col-sm-5">
+                <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
                     <label>皮试用药</label>
                 </div>
                 <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
@@ -377,7 +377,7 @@ class EditDrugDirectory extends PureComponent{
           <Row>
             <Col span={10}>
               <div className="ant-row ant-form-item">
-                <div className="ant-form-item-label ant-col-xs-24 ant-col-sm-5">
+                <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
                     <label>抗生素级别</label>
                 </div>
                 <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">

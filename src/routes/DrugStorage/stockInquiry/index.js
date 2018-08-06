@@ -2,7 +2,7 @@ import React , {PureComponent} from 'react';
 
 import { Link } from 'react-router-dom'
 
-import { Form, Row, Col, Input, Button, Icon, Table } from 'antd';
+import { Form, Row, Col, Input, Button, Icon, Table,Tooltip } from 'antd';
 
 import {createData} from '../../../common/data.js';
 
@@ -41,6 +41,7 @@ const columns = [
   title: '通用名',
   dataIndex: 'name',
   key: 'name',
+  width: 200,
   render: (text, record) => {
     return (
       <span>
@@ -56,6 +57,10 @@ const columns = [
   title: '规格',
   dataIndex: 'spec',
   key: 'spec',
+  className: 'ellipsis',
+  render:(text)=>(
+    <Tooltip placement="topLeft" title={text}>{text}</Tooltip>
+  )
 }, {
   title: '剂型',
   dataIndex: 'fmodal',
@@ -125,7 +130,7 @@ class StockInquiry extends PureComponent {
     const { display } = this.state;
     const { getFieldDecorator } = this.props.form;
     return (
-      <div>
+      <div className='ysynet-main-content'>
         <Form onSubmit={this.handleSearch}>
           <Row>
             <Col span={8}>
@@ -165,8 +170,8 @@ class StockInquiry extends PureComponent {
             </Col>
             <Col span={8} style={{ textAlign: 'right', marginTop: 4}} >
               <Button type="primary" htmlType="submit">查询</Button>
-              <Button style={{marginLeft: 30}} onClick={this.handleReset}>重置</Button>
-              <a style={{marginLeft: 30, fontSize: 14}} onClick={this.toggle}>
+              <Button style={{marginLeft: 8}} onClick={this.handleReset}>重置</Button>
+              <a style={{marginLeft: 8, fontSize: 14}} onClick={this.toggle}>
                 {this.state.expand ? '收起' : '展开'} <Icon type={this.state.expand ? 'up' : 'down'} />
               </a>
             </Col>

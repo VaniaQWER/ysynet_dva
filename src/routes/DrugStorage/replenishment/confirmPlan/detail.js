@@ -2,7 +2,7 @@
  * @Author: wwb 
  * @Date: 2018-07-24 20:15:54 
  * @Last Modified by: wwb
- * @Last Modified time: 2018-07-25 00:43:29
+ * @Last Modified time: 2018-07-31 13:59:35
  */
 /* 
   @file 补货计划 详情
@@ -14,18 +14,18 @@ const { Option } = Select;
 const columns = [
   {
     title: '通用名称',
-    width:100,
+    width: 180,
     dataIndex: 'productName1',
     render:(text,record)=>record.productName
   },
   {
     title: '商品名称',
-    width:150,
+    width: 150,
     dataIndex: 'productName',
   },
   {
     title: '规格',
-    width:150,
+    width: 150,
     dataIndex: 'spec',
     className:'ellipsis',
     render:(text)=>(
@@ -34,12 +34,12 @@ const columns = [
   },
   {
     title: '剂型',
-    width:150,
+    width: 150,
     dataIndex: 'fmodal',
   },
   {
     title: '包装单位',
-    width:150,
+    width: 100,
     dataIndex: 'unit',
     render:(text)=>'g'
   },
@@ -65,8 +65,8 @@ const columns = [
     width: 180,
     render: (text,record,index) =>{
       return <Select defaultValue={'1'}>
-        <Option key={index} value={1}>{'国药集团'}</Option>
-        <Option key={index} value={2}>{'武汉药业集团'}</Option>
+        <Option key={index} value={'1'}>{'国药集团'}</Option>
+        <Option key={index} value={'2'}>{'武汉药业集团'}</Option>
       </Select>
     }
   }
@@ -80,7 +80,7 @@ class ConfirmPlanDetail extends PureComponent{
           <h3>单据信息</h3>
           <Row>
             <Col span={8}>
-                <div className="ant-form-item-label ant-col-xs-24 ant-col-sm-5">
+                <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
                     <label>计划单</label>
                 </div>
                 <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
@@ -88,7 +88,7 @@ class ConfirmPlanDetail extends PureComponent{
                 </div>
             </Col>
             <Col span={8}>
-              <div className="ant-form-item-label ant-col-xs-24 ant-col-sm-5">
+              <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
                 <label>类型</label>
               </div>
               <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
@@ -96,7 +96,7 @@ class ConfirmPlanDetail extends PureComponent{
               </div>
             </Col>
             <Col span={8}>
-              <div className="ant-form-item-label ant-col-xs-24 ant-col-sm-5">
+              <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
                 <label>状态</label>
               </div>
               <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
@@ -104,7 +104,7 @@ class ConfirmPlanDetail extends PureComponent{
               </div>
             </Col>
             <Col span={8}>
-              <div className="ant-form-item-label ant-col-xs-24 ant-col-sm-5">
+              <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
                   <label>制单人</label>
               </div>
               <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
@@ -112,7 +112,7 @@ class ConfirmPlanDetail extends PureComponent{
               </div>
             </Col>
             <Col span={8}>
-              <div className="ant-form-item-label ant-col-xs-24 ant-col-sm-5">
+              <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
                   <label>制单时间</label>
               </div>
               <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
@@ -121,7 +121,7 @@ class ConfirmPlanDetail extends PureComponent{
               </div>
             </Col>
             <Col span={8}>
-              <div className="ant-form-item-label ant-col-xs-24 ant-col-sm-5">
+              <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
                   <label>联系电话</label>
               </div>
               <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
@@ -129,7 +129,7 @@ class ConfirmPlanDetail extends PureComponent{
               </div>
             </Col>
             <Col span={8}>
-              <div className="ant-form-item-label ant-col-xs-24 ant-col-sm-5">
+              <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
                   <label>收货地址</label>
               </div>
               <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
@@ -137,7 +137,7 @@ class ConfirmPlanDetail extends PureComponent{
               </div>
             </Col>
             <Col span={8}>
-              <div className="ant-form-item-label ant-col-xs-24 ant-col-sm-5">
+              <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
                   <label>确认人</label>
               </div>
               <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
@@ -145,7 +145,7 @@ class ConfirmPlanDetail extends PureComponent{
               </div>
             </Col>
             <Col span={8}>
-              <div className="ant-form-item-label ant-col-xs-24 ant-col-sm-5">
+              <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
                   <label>确认时间</label>
               </div>
               <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
@@ -153,7 +153,7 @@ class ConfirmPlanDetail extends PureComponent{
               </div>
             </Col>
             <Col span={8}>
-              <div className="ant-form-item-label ant-col-xs-24 ant-col-sm-5">
+              <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
                   <label>驳回说明</label>
               </div>
               <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
@@ -162,10 +162,12 @@ class ConfirmPlanDetail extends PureComponent{
             </Col>
           </Row>
         </div>
+        <div className='detailCard'>
           <Table
             dataSource={createData()}
             bordered
-            scroll={{x: '100%'}}
+            title={()=>'产品信息'}
+            scroll={{x: '120%'}}
             columns={columns}
             rowKey={'id'}
             pagination={{
@@ -173,8 +175,8 @@ class ConfirmPlanDetail extends PureComponent{
               showQuickJumper: true,
               showSizeChanger: true
             }}
-            style={{marginTop: 24}}
           />
+        </div>
       </div>
     )
   }

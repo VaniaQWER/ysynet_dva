@@ -1,11 +1,22 @@
 
 import React, { PureComponent } from 'react';
 import { Form, Row, Col, Button, Input, DatePicker, Select, Icon,  } from 'antd';
-import { formItemLayout } from '../../../../utils/commonStyles'
 import moment from 'moment'; 
 const FormItem = Form.Item;
 const { RangePicker } = DatePicker;
 const { Option } = Select;
+
+const formItemLayout = {
+  labelCol: {
+    xs: { span: 24 },
+    sm: { span: 5 },//5
+  },
+  wrapperCol: {
+    xs: { span: 24 },
+    sm: { span: 19 }
+  },
+};
+
 class SearchForm extends PureComponent{
   state = {
     display: 'none'
@@ -22,7 +33,7 @@ class SearchForm extends PureComponent{
     const { display, expand } = this.state;
     return (
       <Form className="ant-advanced-search-form" onSubmit={this.handleSearch}>
-        <Row>
+        <Row gutter={30}>
           <Col span={8}>
             <FormItem {...formItemLayout} label={`计划单号`}>
               {
@@ -71,10 +82,10 @@ class SearchForm extends PureComponent{
               }
             </FormItem>
           </Col>
-          <Col span={expand ? 15: 8} style={{ textAlign: 'right', marginTop: 4}} >
+          <Col span={expand ? 16: 8} style={{ textAlign: 'right', marginTop: 4}} >
            <Button type="primary" htmlType="submit">查询</Button>
-           <Button type='default' style={{marginLeft: 30}} onClick={this.handleReset}>重置</Button>
-           <a style={{marginLeft: 30, fontSize: 14}} onClick={this.toggle}>
+           <Button type='default' style={{marginLeft: 8}} onClick={this.handleReset}>重置</Button>
+           <a style={{marginLeft: 8, fontSize: 14}} onClick={this.toggle}>
              {expand ? '收起' : '展开'} <Icon type={expand ? 'up' : 'down'} />
            </a>
          </Col>

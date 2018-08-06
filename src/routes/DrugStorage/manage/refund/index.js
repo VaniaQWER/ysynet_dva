@@ -14,18 +14,19 @@ const FormItem = Form.Item;
 const Option = Select.Option;
 const columns = [
   {
+    title: '出库单',
+    dataIndex: 'medicinalCode',
+    width:150,
+    fixed: 'left',
+    render: (text, record) => 
+    <span>
+      <Link to={{pathname: `/drugStorage/drugStorageManage/refund/details`}}>{text}</Link>
+    </span>
+   },
+  {
     title: '退货单',
     width:150,
     dataIndex: 'productName',
-  },
-  {
-   title: '出库单',
-   dataIndex: 'medicinalCode',
-   width:150,
-   render: (text, record) => 
-   <span>
-     <Link to={{pathname: `/drugStorage/drugStorageManage/refund/details`}}>{text}</Link>
-   </span>
   },
   {
     title: '配货单',
@@ -35,14 +36,12 @@ const columns = [
    },
   {
     title: '库房',
-    width:100,
     dataIndex: 'spec1',
     render:(text)=>'药库'
     
   },
   {
     title: '出库分类',
-    width:100,
     dataIndex: 'fmodal2',
     render:(text)=>'退货出库'
   },
@@ -66,7 +65,7 @@ const columns = [
   },
   {
    title: '制单时间',
-   width:110,
+   width:150,
    dataIndex: 'useDept',
    render: (text, record, index) => '2018-7-25 21:47'
   },
@@ -78,7 +77,7 @@ const columns = [
  },
  {
   title: '复核时间',
-  width:110,
+  width:150,
   dataIndex: 'useDept123',
   render: (text, record, index) => '2018-7-25 21:47'
  }
@@ -97,7 +96,7 @@ class Refund extends PureComponent{
   }
   render(){
     return (
-      <div>
+      <div className='ysynet-main-content'>
         <SearchForm query={this.queryHandler} />
         <Row>
           <Button type='primary'>
@@ -109,6 +108,11 @@ class Refund extends PureComponent{
           bordered
           loading={ this.state.loading}
           scroll={{x: '120%'}}
+          pagination={{
+            size: "small",
+            showQuickJumper: true,
+            showSizeChanger: true
+          }}
           columns={columns}
           rowKey={'id'}
           style={{marginTop: 20}}
@@ -147,7 +151,7 @@ class SearchFormWrapper extends PureComponent {
    const { getFieldDecorator } = this.props.form;
    return (
      <Form onSubmit={this.handleSearch}>
-       <Row>
+       <Row gutter={30}>
          <Col span={8}>
            <FormItem label={`单据号`} {...formItemLayout}>
              {getFieldDecorator('assetCode', {})(
@@ -201,8 +205,8 @@ class SearchFormWrapper extends PureComponent {
          </Col>
          <Col span={8} style={{ textAlign: 'right', marginTop: 4}} >
            <Button type="primary" htmlType="submit">查询</Button>
-           <Button style={{marginLeft: 30}} onClick={this.handleReset}>重置</Button>
-           <a style={{marginLeft: 30, fontSize: 14}} onClick={this.toggle}>
+           <Button style={{marginLeft: 8}} onClick={this.handleReset}>重置</Button>
+           <a style={{marginLeft: 8, fontSize: 14}} onClick={this.toggle}>
              {this.state.expand ? '收起' : '展开'} <Icon type={this.state.expand ? 'up' : 'down'} />
            </a>
          </Col>

@@ -8,7 +8,7 @@ const dynamicWrapper = (app, models, component) => dynamic({
 });
 
 // nav data
-export const getNavData2 = app => [
+/* export const getNavData2 = app => [
   {
     component: dynamicWrapper(app, [], () => import('../layouts/BasicLayout')),
     layout: 'BasicLayout',
@@ -161,7 +161,14 @@ export const getNavData2 = app => [
            
           ]
         },
-      ]},{
+        {
+          name: "入库",
+          icon: 'setting',
+          path: '/warehouse',
+          component: dynamicWrapper(app, [], () => import('../routes/DrugStorage/psListCheck/index')),
+        },
+      ]},
+      {
         name: '药房',
         icon: 'table',
         path: '/pharmacy',
@@ -174,7 +181,7 @@ export const getNavData2 = app => [
       }
     ]
   },
-];
+]; */
 
 
 
@@ -388,6 +395,73 @@ export const getNavData = app => [
       path: '/drugStorage/drugStorageManage/newLibrary/details',
       component: dynamicWrapper(app, [], () => import('../routes/DrugStorage/manage/newLibrary/details')),
     },
+
+    /* 
+      入库 
+    */
+    {
+      name: "配送单验收",
+      icon: 'setting',
+      path: '/drugStorage/wareHouse/psListCheck',
+      component: dynamicWrapper(app, [], () => import('../routes/DrugStorage/wareHouse/psListCheck')),
+    },
+    {
+      name: "上架",
+      icon: 'setting',
+      path: '/drugStorage/wareHouse/grounding',
+      component: dynamicWrapper(app, [], () => import('../routes/DrugStorage/wareHouse/grounding')),
+    },
+    {
+      name: "入库单管理",
+      icon: 'setting',
+      path: '/drugStorage/wareHouse/wareHouseReceiptMgt',
+      component: dynamicWrapper(app, [], () => import('../routes/DrugStorage/wareHouse/wareHouseReceiptMgt')),
+    },
+    /* ***************  出库  ******************** */
+    {
+      name: "受理配货",
+      icon: 'setting',
+      path: '/drugStorage/outStorage/acceptDistribution',
+      component: dynamicWrapper(app, [], () => import('../routes/DrugStorage/outStorage/acceptDistribution')),
+    },
+    {
+      name: "拣货下架",
+      icon: 'setting',
+      path: '/drugStorage/outStorage/pickingUnderShelve',
+      component: dynamicWrapper(app, [], () => import('../routes/DrugStorage/outStorage/pickingUnderShelve')),
+    },
+    {
+      name: "出库单管理",
+      icon: 'setting',
+      path: '/drugStorage/outStorage/outReceiptMgt',
+      component: dynamicWrapper(app, [], () => import('../routes/DrugStorage/outStorage/outReceiptMgt')),
+    },
+    {
+      name: "退货",
+      icon: 'setting',
+      path: '/drugStorage/outStorage/backStorage',
+      component: dynamicWrapper(app, [], () => import('../routes/DrugStorage/outStorage/backStorage')),
+    },
+    {
+      name: "召回及锁定",
+      icon: 'setting',
+      path: '/drugStorage/outStorage/recallAndLocked',
+      component: dynamicWrapper(app, [], () => import('../routes/DrugStorage/outStorage/recallAndLocked')),
+    },
+    {
+      name: "召回及锁定审核",
+      icon: 'setting',
+      path: '/drugStorage/outStorage/recallAndLockedCheck',
+      component: dynamicWrapper(app, [], () => import('../routes/DrugStorage/outStorage/recallAndLockedCheck')),
+    },
+    /* ********************      货位调整      ************************** */
+    {
+      name: "货位调整",
+      icon: 'setting',
+      path: '/drugStorage/goodsAdjust/adjust',
+      component: dynamicWrapper(app, [], () => import('../routes/DrugStorage/goodsAdjust/adjust')),
+    },
+
     // 药库 - 盘点损益
     {
       name: "盘点损益",

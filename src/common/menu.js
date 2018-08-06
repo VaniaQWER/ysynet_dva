@@ -89,6 +89,132 @@ const menu = [
     ]
   },
   {
+    "path": "/drugStorage/wareHouse",
+    "level": 1,
+    "fsort": 30102,
+    "name": "入库",
+    "id": "30102",
+    "key": "/drugStorage/wareHouse",
+    "parentId": "m302",
+    "icon": "medicine-box",
+    "subMenus": [
+      {
+        "path": "/drugStorage/wareHouse/psListCheck",
+        "level": 2,
+        "fsort": 30102,
+        "name": "配送单验收",
+        "id": "30102",
+        "key": "/drugStorage/wareHouse/psListCheck",
+        "parentId": "m303"
+      },
+      {
+        "path": "/drugStorage/wareHouse/grounding",
+        "level": 2,
+        "fsort": 30102,
+        "name": "上架",
+        "id": "30102",
+        "key": "/drugStorage/wareHouse/grounding",
+        "parentId": "m303"
+      },
+      {
+        "path": "/drugStorage/wareHouse/wareHouseReceiptMgt",
+        "level": 2,
+        "fsort": 30102,
+        "name": "入库单管理",
+        "id": "30102",
+        "key": "/drugStorage/wareHouse/wareHouseReceiptMgt",
+        "parentId": "m303"
+      },
+    ]
+  },
+  {
+    "path": "/drugStorage/outStorage",
+    "level": 1,
+    "fsort": 30102,
+    "name": "出库",
+    "id": "30102",
+    "key": "/drugStorage/outStorage",
+    "parentId": "m302",
+    "icon": "medicine-box",
+    "subMenus": [
+      {
+        "path": "/drugStorage/outStorage/acceptDistribution",
+        "level": 2,
+        "fsort": 30102,
+        "name": "受理配货",
+        "id": "30102",
+        "key": "/drugStorage/outStorage/acceptDistribution",
+        "parentId": "m303"
+      },
+      {
+        "path": "/drugStorage/outStorage/pickingUnderShelve",
+        "level": 2,
+        "fsort": 30102,
+        "name": "拣货下架",
+        "id": "30102",
+        "key": "/drugStorage/outStorage/pickingUnderShelve",
+        "parentId": "m303"
+      },
+      {
+        "path": "/drugStorage/outStorage/outReceiptMgt",
+        "level": 2,
+        "fsort": 30102,
+        "name": "出库单管理",
+        "id": "30102",
+        "key": "/drugStorage/outStorage/outReceiptMgt",
+        "parentId": "m303"
+      },
+      {
+        "path": "/drugStorage/outStorage/backStorage",
+        "level": 2,
+        "fsort": 30102,
+        "name": "退货",
+        "id": "30102",
+        "key": "/drugStorage/outStorage/backStorage",
+        "parentId": "m303"
+      },
+      {
+        "path": "/drugStorage/outStorage/recallAndLocked",
+        "level": 2,
+        "fsort": 30102,
+        "name": "召回及锁定",
+        "id": "30102",
+        "key": "/drugStorage/outStorage/recallAndLocked",
+        "parentId": "m303"
+      },
+      {
+        "path": "/drugStorage/outStorage/recallAndLockedCheck",
+        "level": 2,
+        "fsort": 30102,
+        "name": "召回及锁定审核",
+        "id": "30102",
+        "key": "/drugStorage/outStorage/recallAndLockedCheck",
+        "parentId": "m303"
+      },
+    ]
+  },
+  {
+    "path": "/drugStorage/goodsAdjust",
+    "level": 1,
+    "fsort": 30102,
+    "name": "货位调整",
+    "id": "30102",
+    "key": "/drugStorage/goodsAdjust",
+    "parentId": "m302",
+    "icon": "medicine-box",
+    "subMenus":[
+      {
+        "path": "/drugStorage/goodsAdjust/adjust",
+        "level": 2,
+        "fsort": 30102,
+        "name": "货位调整",
+        "id": "30102",
+        "key": "/drugStorage/goodsAdjust/adjust",
+        "parentId": "m303"
+      },
+    ]
+  },
+  {
     "path": "/drugStorage/drugStorageManage",
     "level": 1,
     "fsort": 30102,

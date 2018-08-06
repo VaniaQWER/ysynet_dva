@@ -17,6 +17,7 @@ const columns = [
    title: '出库单',
    dataIndex: 'medicinalCode',
    width:150,
+   fixed: 'left',
    render:(text)=>
    <span>
       <Link to={{pathname: `/drugStorage/drugStorageManage/output/details`}}>{text}</Link>
@@ -24,13 +25,12 @@ const columns = [
   },
   {
     title: '配货单',
-    width:150,
+    width:180,
     dataIndex: 'productName',
   },
   {
     title: '库房',
     dataIndex: 'spec1',
-    width:50,
     render:(text)=>'药库'
   },
   {
@@ -59,7 +59,6 @@ const columns = [
   },
   {
    title: '制单时间',
-   width:110,
    dataIndex: 'useDept',
    render: (text, record, index) => '2018-7-25 21:17'
   },
@@ -71,7 +70,7 @@ const columns = [
  },
  {
   title: '复核时间',
-  width:110,
+  width:160,
   dataIndex: 'useDept21',
   render: (text, record, index) => '2018-7-25 21:17'
  }
@@ -90,7 +89,7 @@ class Output extends PureComponent{
   }
   render(){
     return (
-      <div>
+      <div className='ysynet-main-content'>
         <SearchForm query={this.queryHandler} />
         <Row>
           <Button type='primary'>
@@ -101,7 +100,12 @@ class Output extends PureComponent{
           dataSource={createData()}
           bordered
           loading={ this.state.loading}
-          scroll={{x: '100%'}}
+          scroll={{x: '110%'}}
+          pagination={{
+            size: "small",
+            showQuickJumper: true,
+            showSizeChanger: true
+          }}
           columns={columns}
           rowKey={'id'}
           style={{marginTop: 20}}
@@ -140,7 +144,7 @@ class SearchFormWrapper extends PureComponent {
    const { getFieldDecorator } = this.props.form;
    return (
      <Form onSubmit={this.handleSearch}>
-       <Row>
+       <Row gutter={30}>
          <Col span={8}>
            <FormItem label={`申领药房`} {...formItemLayout}>
              {getFieldDecorator('assetCode', {})(
@@ -201,8 +205,8 @@ class SearchFormWrapper extends PureComponent {
          </Col>
          <Col span={8} style={{ textAlign: 'right', marginTop: 4}} >
            <Button type="primary" htmlType="submit">查询</Button>
-           <Button style={{marginLeft: 30}} onClick={this.handleReset}>重置</Button>
-           <a style={{marginLeft: 30, fontSize: 14}} onClick={this.toggle}>
+           <Button style={{marginLeft: 8}} onClick={this.handleReset}>重置</Button>
+           <a style={{marginLeft: 8, fontSize: 14}} onClick={this.toggle}>
              {this.state.expand ? '收起' : '展开'} <Icon type={this.state.expand ? 'up' : 'down'} />
            </a>
          </Col>

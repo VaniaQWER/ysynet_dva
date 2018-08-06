@@ -1,12 +1,12 @@
 import React, {PureComponent} from 'react';
 
-import {Row, Col, Form, Input, Table} from 'antd';
-
+import {Row, Col, Form, Input, Table, Tooltip } from 'antd';
+import { formItemLayout } from '../../../utils/commonStyles';
 import {createData} from '../../../common/data.js';
 
 const FormItem = Form.Item;
 
-const formItemLayout = {
+/* const formItemLayout = {
     labelCol: {
         xs: { span: 24 },
         sm: { span: 8 },
@@ -16,7 +16,7 @@ const formItemLayout = {
         sm: { span: 16 },
       },
 }
-
+ */
 const columns = [
     {
         title: '通用名',
@@ -27,6 +27,10 @@ const columns = [
     }, {
         title: '规格',
         dataIndex: 'spec',
+        className: 'ellipsis',
+        render:(text)=>(
+          <Tooltip placement="topLeft" title={text}>{text}</Tooltip>
+        )
     }, {
         title: '剂型',
         dataIndex: 'fmodal',
@@ -94,7 +98,7 @@ class SettlementDetails extends PureComponent {
     render() {
         let {getFieldDecorator} = this.props.form;
         return (
-            <div className="fullCol">
+            <div className="fullCol fadeIn">
                 <div className="fullCol-fullChild">
                     <h3 style={{fontWeight: 'bold'}}>
                         汇总单：KFHZ00221180700001RP
@@ -111,7 +115,7 @@ class SettlementDetails extends PureComponent {
                         </Col>
                     </Row>
                     <Row>
-                        <Col span={6} pull={2} style={{marginLeft: 40}}>
+                        <Col span={8}>
                             <Form>
                                 <FormItem
                                     style={{textAlign: 'left'}}
@@ -126,22 +130,23 @@ class SettlementDetails extends PureComponent {
                         </Col>
                     </Row>
                 </div>
-                <h4 style={{borderBottom: '1px solid rgba(0, 0, 0, .1)', paddingBottom: 10}}>
-                    产品信息
-                </h4>
-                <Table
-                    columns={columns}
-                    scroll={{x: '250%'}}
-                    bordered
-                    dataSource={dataSource}
-                    pagination={{
-                        showQuickJumper: true,
-                        showSizeChanger : true,
-                        showTotal: (total) => {
-                          return `总共${total}个项目`;
-                        }
-                      }}
-                />
+                <div className='detailCard'>
+                    <Table
+                        columns={columns}
+                        scroll={{x: '250%'}}
+                        bordered
+                        title={()=>'产品信息'}
+                        dataSource={dataSource}
+                        pagination={{
+                            size: 'small',
+                            showQuickJumper: true,
+                            showSizeChanger : true,
+                            showTotal: (total) => {
+                            return `总共${total}个项目`;
+                            }
+                        }}
+                    />
+                </div>
             </div>
         )
     }

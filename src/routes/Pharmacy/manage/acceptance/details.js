@@ -116,7 +116,7 @@ class DetailsNewLibrary extends PureComponent{
           <h3>单据信息</h3>
           <Row>
             <Col span={8}>
-                <div className="ant-form-item-label ant-col-xs-24 ant-col-sm-5">
+                <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
                     <label>申领单</label>
                 </div>
                 <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
@@ -124,7 +124,7 @@ class DetailsNewLibrary extends PureComponent{
                 </div>
             </Col>
             <Col span={8}>
-                <div className="ant-form-item-label ant-col-xs-24 ant-col-sm-5">
+                <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
                     <label>药库出库单</label>
                 </div>
                 <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
@@ -132,7 +132,7 @@ class DetailsNewLibrary extends PureComponent{
                 </div>
             </Col>
             <Col span={8}>
-                <div className="ant-form-item-label ant-col-xs-24 ant-col-sm-5">
+                <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
                     <label>状态</label>
                 </div>
                 <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
@@ -140,7 +140,7 @@ class DetailsNewLibrary extends PureComponent{
                 </div>
             </Col>
             <Col span={8}>
-                <div className="ant-form-item-label ant-col-xs-24 ant-col-sm-5">
+                <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
                     <label>药库</label>
                 </div>
                 <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
@@ -148,7 +148,7 @@ class DetailsNewLibrary extends PureComponent{
                 </div>
             </Col>
             <Col span={8}>
-                <div className="ant-form-item-label ant-col-xs-24 ant-col-sm-5">
+                <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
                     <label>制单人</label>
                 </div>
                 <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
@@ -156,7 +156,7 @@ class DetailsNewLibrary extends PureComponent{
                 </div>
             </Col>
             <Col span={8}>
-                <div className="ant-form-item-label ant-col-xs-24 ant-col-sm-5">
+                <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
                     <label>制单时间</label>
                 </div>
                 <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
@@ -164,7 +164,7 @@ class DetailsNewLibrary extends PureComponent{
                 </div>
             </Col>
             <Col span={8}>
-                <div className="ant-form-item-label ant-col-xs-24 ant-col-sm-5">
+                <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
                     <label>验收人</label>
                 </div>
                 <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
@@ -172,7 +172,7 @@ class DetailsNewLibrary extends PureComponent{
                 </div>
             </Col>
             <Col span={8}>
-                <div className="ant-form-item-label ant-col-xs-24 ant-col-sm-5">
+                <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
                     <label>验收时间</label>
                 </div>
                 <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">

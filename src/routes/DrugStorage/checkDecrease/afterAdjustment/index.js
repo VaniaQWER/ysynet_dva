@@ -451,7 +451,7 @@ class AfterAdjustment extends PureComponent{
       }
     ];
     return (
-      <div>
+      <div className='ysynet-main-content'>
         <SearchFormWarp />
         <Table
           bordered

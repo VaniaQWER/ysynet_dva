@@ -160,100 +160,107 @@ class DetailsPicking extends PureComponent{
     ];
     const { visible } = this.state;
     return (
-      <div>
+      <div className='fullCol fadeIn'>
+        <div className='fullCol-fullChild'>
           <h3>单据信息 
             <Button style={{float:'right'}} onClick={()=>this.onPrint()} >打印</Button>
             <Button type='primary' className='button-gap' style={{float:'right'}} onClick={()=>this.onSubmit()}>确认</Button>
           </h3>
           <Row>
             <Col span={8}>
-                <div className="ant-form-item-label ant-col-xs-24 ant-col-sm-5">
-                    <label>申领单</label>
-                </div>
-                <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
-                  <div className='ant-form-item-control'>PA002211807000086U</div>
-                </div>
+              <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
+                <label>申领单</label>
+              </div>
+              <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
+                <div className='ant-form-item-control'>PA002211807000086U</div>
+              </div>
             </Col>
             <Col span={8}>
-                <div className="ant-form-item-label ant-col-xs-24 ant-col-sm-5">
-                    <label>状态</label>
-                </div>
-                <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
-                  <div className='ant-form-item-control'>待确认</div>
-                </div>
+              <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
+                <label>状态</label>
+              </div>
+              <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
+                <div className='ant-form-item-control'>待确认</div>
+              </div>
             </Col>
             <Col span={8}>
-                <div className="ant-form-item-label ant-col-xs-24 ant-col-sm-5">
-                    <label>申领药房</label>
-                </div>
-                <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
-                  <div className='ant-form-item-control'>门诊药房</div>
-                </div>
+              <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
+                <label>申领药房</label>
+              </div>
+              <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
+                <div className='ant-form-item-control'>门诊药房</div>
+              </div>
             </Col>
             <Col span={8}>
-                <div className="ant-form-item-label ant-col-xs-24 ant-col-sm-5">
-                    <label>制单人</label>
-                </div>
-                <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
-                  <div className='ant-form-item-control'>张三三</div>
-                </div>
+              <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
+                <label>制单人</label>
+              </div>
+              <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
+                <div className='ant-form-item-control'>张三三</div>
+              </div>
             </Col>
             <Col span={8}>
-                <div className="ant-form-item-label ant-col-xs-24 ant-col-sm-5">
-                    <label>制单时间</label>
+              <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
+                <label>制单时间</label>
+              </div>
+              <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
+                <div className='ant-form-item-control'>2015-09-03 15:00:02
                 </div>
-                <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
-                  <div className='ant-form-item-control'>2015-09-03 15:00:02
-                  </div>
-                </div>
+              </div>
             </Col>
             <Col span={8}>
-                <div className="ant-form-item-label ant-col-xs-24 ant-col-sm-5">
-                    <label>联系电话</label>
-                </div>
-                <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
-                  <div className='ant-form-item-control'>13020082008</div>
-                </div>
+              <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
+                <label>联系电话</label>
+              </div>
+              <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
+                <div className='ant-form-item-control'>13020082008</div>
+              </div>
             </Col>
             <Col span={8}>
-                <div className="ant-form-item-label ant-col-xs-24 ant-col-sm-5">
-                    <label>药房地址</label>
-                </div>
-                <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
-                  <div className='ant-form-item-control'>这是一个药房的地址</div>
-                </div>
+              <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
+                <label>药房地址</label>
+              </div>
+              <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
+                <div className='ant-form-item-control'>这是一个药房的地址</div>
+              </div>
             </Col>
             <Col span={8}>
-                <div className="ant-form-item-label ant-col-xs-24 ant-col-sm-5">
-                    <label>受理人</label>
-                </div>
-                <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
-                  <div className='ant-form-item-control'></div>
-                </div>
+              <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
+                <label>受理人</label>
+              </div>
+              <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
+                <div className='ant-form-item-control'></div>
+              </div>
             </Col>
             <Col span={8}>
-                <div className="ant-form-item-label ant-col-xs-24 ant-col-sm-5">
-                    <label>受理时间</label>
-                </div>
-                <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
-                  <div className='ant-form-item-control'></div>
-                </div>
+              <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
+                <label>受理时间</label>
+              </div>
+              <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
+                <div className='ant-form-item-control'></div>
+              </div>
             </Col>
           </Row>
-          <hr className='hr'/>
-          <h3>产品信息</h3>
-          <Table
-            dataSource={createData()}
-            bordered
-            scroll={{x: '100%'}}
-            columns={columns}
-            rowKey={'id'}
-            style={{marginTop: 24}}
-          />
+          </div>
+          <div className='detailCard'>
+            <Table
+              dataSource={createData()}
+              bordered
+              title={()=>'产品信息'}
+              scroll={{x: '100%'}}
+              columns={columns}
+              rowKey={'id'}
+              pagination={{
+                size: 'small',
+                showQuickJumper: true,
+                showSizeChanger: true
+              }}
+            />
+          </div>
           <Modal visible={visible} width={980} onOk={()=>this.modalSubmit()} onCancel={()=>this.setState({visible:false})}>
             <Row>
               <Col span={8}>
-                  <div className="ant-form-item-label ant-col-xs-24 ant-col-sm-5">
+                  <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
                       <label>商品名称</label>
                   </div>
                   <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
@@ -261,7 +268,7 @@ class DetailsPicking extends PureComponent{
                   </div>  
               </Col>
               <Col span={8}>
-                  <div className="ant-form-item-label ant-col-xs-24 ant-col-sm-5">
+                  <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
                       <label>申领药房</label>
                   </div>
                   <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
@@ -269,7 +276,7 @@ class DetailsPicking extends PureComponent{
                   </div>
               </Col>
               <Col span={8}>
-                  <div className="ant-form-item-label ant-col-xs-24 ant-col-sm-5">
+                  <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
                       <label>待分配申领数量</label>
                   </div>
                   <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">

@@ -2,14 +2,14 @@
  * @Author: wwb 
  * @Date: 2018-07-24 16:08:53 
  * @Last Modified by: wwb
- * @Last Modified time: 2018-07-24 21:24:42
+ * @Last Modified time: 2018-07-31 15:08:50
  */
 
 /**
  * @file 药库 - 补货管理--补货计划
  */
 import React, { PureComponent } from 'react';
-import { Form, Button, Table, message  } from 'antd';
+import { Form, Button, Table, message,Tooltip  } from 'antd';
 import { Link } from 'react-router-dom';
 import SearchForm from '../commomSearchForm'
 import { createData } from '../../../../common/data';
@@ -82,13 +82,18 @@ class ReplenishmentPlan extends PureComponent{
       dataIndex: 'applyNo'
     },{
       title: '收货地址',
-      dataIndex: 'tfAddress'
+      dataIndex: 'tfAddress',
+      width: 270,
+      className: 'ellipsis',
+        render:(text)=>(
+          <Tooltip placement="topLeft" title={text}>{text}</Tooltip>
+        )
     },{
       title: '驳回原因',
       dataIndex: 'planReject'
     }];
     return (
-      <div>
+      <div className='ysynet-main-content'>
          <WrapperForm />
          <div className='ant-row-bottom'>
             <Button type='primary' onClick={()=>this.props.history.push({ pathname: `/drugStorage/replenishment/replenishmentPlan/add` })}>新建补货计划</Button>

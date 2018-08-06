@@ -2,22 +2,14 @@ import React, {PureComponent} from 'react';
 
 import {Link} from 'react-router-dom';
 
+import { formItemLayout } from '../../../utils/commonStyles';
 import { Form, Row, Col, Input, Button, Table, DatePicker, Modal } from 'antd';
 
 const FormItem = Form.Item;
 
 const { RangePicker } = DatePicker;
 
-const formItemLayout = {
-    labelCol: {
-      xs: { span: 24 },
-      sm: { span: 8 },
-    },
-    wrapperCol: {
-      xs: { span: 24 },
-      sm: { span: 16 },
-    },
-};
+
 
 const dataSource = [
     {
@@ -343,30 +335,30 @@ class SettlementMgt extends PureComponent {
     render() {
         let {getFieldDecorator} = this.props.form;
         return (
-            <div>
+            <div className='ysynet-main-content'>
                 <Form onSubmit={this.handleSearch}>
-                    <Row>
-                        <Col span={8} pull={1}>
+                    <Row gutter={30}>
+                        <Col span={8}>
                             <FormItem label={`汇总单`} {...formItemLayout}>
                                 {getFieldDecorator('summarSheet', {})(
                                     <Input/>
                                 )}
                             </FormItem>
                         </Col>
-                        <Col span={8}  pull={1}>
+                        <Col span={8} >
                             <FormItem label={`汇总日期`} {...formItemLayout}>
                                 {getFieldDecorator('summarData', {})(
                                     <RangePicker onChange={this.onChange} />
                                 )}
                             </FormItem>
                         </Col>
-                        <Col span={6} style={{ textAlign: 'right', marginTop: 4}}>
+                        <Col span={8} style={{ textAlign: 'right', marginTop: 4}}>
                             <Button type="primary" htmlType="submit">查询</Button>
-                            <Button style={{marginLeft: 30}} onClick={this.handleReset}>重置</Button>
+                            <Button style={{marginLeft: 8}} onClick={this.handleReset}>重置</Button>
                         </Col>
                     </Row>
                 </Form>
-                <Row style={{paddingLeft: 32, marginBottom: 30}}>
+                <Row className='ant-row-bottom'>
                     <Button type="primary" onClick={this.showNewSummary}>新建汇总</Button>
                     <Modal
                         title="单据信息"
