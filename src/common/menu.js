@@ -339,26 +339,6 @@ const menu = [
         "parentId": "m304"
       }
     ]
-  }, {
-    "path": "/drugStorage/settlementMgt",
-    "level": 1,
-    "fsort": 30105,
-    "name": "结算管理",
-    "id": "30105",
-    "key": "/drugStorage/settlementMgt",
-    "parentId": "m305",
-    "icon": "wallet",
-    "subMenus": [
-      {
-        "path": "/drugStorage/settlementMgt",
-        "level": 2,
-        "fsort": 30105,
-        "name": "结算汇总",
-        "id": "30106",
-        "key": "/drugStorage/settlementMgt",
-        "parentId": "m305"
-      }
-    ]
   }
 ],
   "level": 0,
@@ -534,36 +514,6 @@ const menu = [
           "id": "30104",
           "key": "/pharmacy/stockInquiry",
           "parentId": "m304"
-        }
-      ]
-    }, 
-    {
-      "path": "/pharmacy/settlementMgt",
-      "level": 1,
-      "fsort": 30105,
-      "name": "结算管理",
-      "id": "30105",
-      "key": "/pharmacy/settlementMgt",
-      "parentId": "m305",
-      "icon": "wallet",
-      "subMenus": [
-        {
-          "path": "/pharmacy/settlementMgt/dayStatements",
-          "level": 2,
-          "fsort": 30105,
-          "name": "日对账单",
-          "id": "30106",
-          "key": "/pharmacy/settlementMgt/dayStatements",
-          "parentId": "m305"
-        },
-        {
-          "path": "/pharmacy/settlementMgt/statements",
-          "level": 2,
-          "fsort": 30105,
-          "name": "结算单",
-          "id": "30106",
-          "key": "/pharmacy/settlementMgt/statements",
-          "parentId": "m305"
         }
       ]
     },
@@ -767,6 +717,7 @@ const menu = [
       },
     ],
   },
+  /* 采购结算 */
   {
     "path": "/purchase",
     "level": 0,
@@ -836,21 +787,30 @@ const menu = [
         "icon": "book",
         "subMenus": [
           {
-            "path": "/purchase/settlement/dailyBill",
+            "path": "/purchase/settlementMgt/dayStatements",
             "level": 2,
             "fsort": 3010101,
             "name": "日对账单",
             "id": "3010101",
-            "key": "/purchase/settlement/dailyBill",
+            "key": "/purchase/settlementMgt/dayStatements",
             "parentId": "m303"
           },
           {
-            "path": "/purchase/settlement/settlementOrder",
+            "path": "/purchase/settlementMgt/statements",
             "level": 2,
             "fsort": 3010101,
             "name": "结算单",
             "id": "3010101",
-            "key": "/purchase/settlement/settlementOrder",
+            "key": "/purchase/settlementMgt/statements",
+            "parentId": "m303"
+          },
+          {
+            "path": "/purchase/settlement/balanceQuery",
+            "level": 2,
+            "fsort": 3010101,
+            "name": "结余查询",
+            "id": "3010101",
+            "key": "/purchase/settlementMgt/balanceQuery",
             "parentId": "m303"
           },
         ]

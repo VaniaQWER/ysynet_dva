@@ -1,6 +1,6 @@
 import React, {PureComponent} from 'react';
 
-import {Tabs, Row, Col, Table} from 'antd';
+import {Row, Col, Table} from 'antd';
 
 import {createData} from '../../../common/data.js';
 
@@ -39,67 +39,98 @@ const columns = [
         dataIndex: "zhy",
         key: "zhy"
     }, {
-        title: '可备货数量',
-        dataIndex: "QuantityAva",
-        key: "QuantityAva"
+        title: '货位类型',
+        dataIndex: "zhyType",
     }, {
-        title: '部门',
-        dataIndex: "depart",
-        key: "depart"
+        title: '单位',
+        dataIndex: "unit",
+    }, {
+        title: '数量',
+        dataIndex: "num"
     }, {
         title: '供应商',
-        dataIndex: 'supplier',
-        key: 'supplier',
+        dataIndex: 'supplier'
     }
 ]
 
-const {TabPane} = Tabs;
 
 class Details extends PureComponent{
     render() {
         let height = 40;
         return (
-            <div className="fullCol" style={{ padding: '0 16px',backgroundColor:'#fff' }}>
+            <div className="fullCol">
               <div className="fullCol-fullChild">
-                <Tabs defaultActiveKey={'1'}>
-                    <TabPane tab="药房详情" key="1">
-                        <Row style={{borderBottom: '1px solid rgba(0, 0, 0, 0.1)'}}>
-                            <Col style={{height: height, fontSize: 16}} span={24}>基本信息</Col>
-                            <Col style={{height: height}}  span={8}>通用名：注射用复方甘草酸苷</Col>
-                            <Col style={{height: height}}  span={8}>商品名：注射用复方甘草酸苷</Col>
-                            <Col style={{height: height}}  span={8}>规格：甘草酸苷80mg</Col>
-                            <Col style={{height: height}}  span={8}>剂型：注射剂（冻干粉针剂）</Col>
-                            <Col style={{height: height}}  span={8}>包装单位：瓶</Col>
-                            <Col style={{height: height}}  span={8}>生产厂家：北京宝树堂科技药业有限公司</Col>
-                            <Col style={{height: height}}  span={8}>批准文号：86900234000039</Col>
-                        </Row>
-                        <Row style={{marginTop: 20, marginBottom: 20 }} >产品信息</Row>
-                        <Table
-                            bordered={true}
-                            columns={columns}
-                            dataSource={dataSource}
-                        />
-                    </TabPane>
-                    <TabPane tab="药库详情" key="2" >
-                        <Row style={{borderBottom: '1px solid rgba(0, 0, 0, 0.1)'}}>
-                            <Col style={{height: height, fontSize: 16}} span={24}>基本信息</Col>
-                            <Col style={{height: height}}  span={8}>通用名：注射用复方甘草酸苷</Col>
-                            <Col style={{height: height}}  span={8}>商品名：注射用复方甘草酸苷</Col>
-                            <Col style={{height: height}}  span={8}>规格：甘草酸苷80mg</Col>
-                            <Col style={{height: height}}  span={8}>剂型：注射剂（冻干粉针剂）</Col>
-                            <Col style={{height: height}}  span={8}>包装单位：瓶</Col>
-                            <Col style={{height: height}}  span={8}>生产厂家：北京宝树堂科技药业有限公司</Col>
-                            <Col style={{height: height}}  span={8}>批准文号：86900234000039</Col>
-                        </Row>
-                        <Row style={{marginTop: 20, marginBottom: 20 }} >产品信息</Row>
-                        <Table
-                            bordered={true}
-                            columns={columns}
-                            dataSource={dataSource}
-                        />
-                        </TabPane>
-                </Tabs>
+                <h3>基本信息</h3>
+                <Row>
+                    <Col style={{height: height}}  span={8}>
+                        <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
+                            <label>通用名</label>
+                        </div>
+                        <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
+                            <div className='ant-form-item-control'>注射用复方甘草酸苷</div>
+                        </div>
+                    </Col>
+                    <Col style={{height: height}}  span={8}>
+                        <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
+                            <label>商品名</label>
+                        </div>
+                        <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
+                            <div className='ant-form-item-control'>注射用复方甘草酸苷</div>
+                        </div>
+                    </Col>
+                    <Col style={{height: height}}  span={8}>
+                        <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
+                            <label>规格</label>
+                        </div>
+                        <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
+                            <div className='ant-form-item-control'>甘草酸苷80mg</div>
+                        </div>
+                    </Col>
+                    <Col style={{height: height}}  span={8}>
+                        <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
+                            <label>剂型</label>
+                        </div>
+                        <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
+                            <div className='ant-form-item-control'>注射剂（冻干粉针剂）</div>
+                        </div>
+                    </Col>
+                    <Col style={{height: height}}  span={8}>
+                        <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
+                            <label>包装单位</label>
+                        </div>
+                        <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
+                            <div className='ant-form-item-control'>瓶</div>
+                        </div>
+                    </Col>
+                    <Col style={{height: height}}  span={8}>
+                        <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
+                            <label>生产厂家</label>
+                        </div>
+                        <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
+                            <div className='ant-form-item-control'>北京宝树堂科技药业有限公司</div>
+                        </div>
+                    </Col>
+                    <Col style={{height: height}}  span={8}>
+                        <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
+                            <label>批准文号</label>
+                        </div>
+                        <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
+                            <div className='ant-form-item-control'>86900234000039</div>
+                        </div>
+                    </Col>
+                </Row>
               </div>
+                <div className='detailCard'>
+                    <Table
+                        bordered={true}
+                        title={()=>'库存信息'}
+                        columns={columns}
+                        dataSource={dataSource}
+                        pagination={{
+                            showTotal: total => `总共${total}个项目`
+                        }}
+                    />
+                </div>
             </div>
         )
     }

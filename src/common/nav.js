@@ -620,19 +620,19 @@ export const getNavData = app => [
       component: dynamicWrapper(app, [], () => import('../routes/DrugStorage/stockInquiry/details'))
     },
     //药库 - 结算管理
-    {
-      name: '结算管理',
-      icon: 'setting',
-      path: '/drugStorage/settlementMgt/',
-      component: dynamicWrapper(app, [], () => import('../routes/DrugStorage/settlementMgt'))
-    },
-    //药库 - 结算管理 - 详情
-    {
-      name: '详情',
-      icon: 'setting',
-      path: '/drugStorage/settlementMgt/details',
-      component: dynamicWrapper(app, [], () => import('../routes/DrugStorage/settlementMgt/details'))
-    },
+    // {
+    //   name: '结算管理',
+    //   icon: 'setting',
+    //   path: '/drugStorage/settlementMgt/',
+    //   component: dynamicWrapper(app, [], () => import('../routes/DrugStorage/settlementMgt'))
+    // },
+    // //药库 - 结算管理 - 详情
+    // {
+    //   name: '详情',
+    //   icon: 'setting',
+    //   path: '/drugStorage/settlementMgt/details',
+    //   component: dynamicWrapper(app, [], () => import('../routes/DrugStorage/settlementMgt/details'))
+    // },
 
     /*药房 */
     {
@@ -855,49 +855,6 @@ export const getNavData = app => [
       path: '/pharmacy/stockInquiry/details',
       component: dynamicWrapper(app, [], () => import('../routes/Pharmacy/stockInquiry/details')),
     }, 
-    //药房 - 结算管理 - 日对账单
-    {
-      name: "结算管理",
-      icon: 'setting',
-      path: '/pharmacy/settlementMgt/dayStatements',
-      component: dynamicWrapper(app, [], () => import('../routes/Pharmacy/settlementMgt/dayStatements')),
-    },
-    //药房 - 结算管理 - 日对账单 - 详情
-    {
-      name: "日对账单-详情",
-      icon: 'setting',
-      path: '/pharmacy/settlementMgt/dayStatements/details',
-      component: dynamicWrapper(app, [], () => import('../routes/Pharmacy/settlementMgt/dayStatements/details')),
-    },
-    //药房 - 结算管理 - 结算单
-    {
-      name: "结算管理",
-      icon: 'setting',
-      path: '/pharmacy/settlementMgt/statements',
-      component: dynamicWrapper(app, [], () => import('../routes/Pharmacy/settlementMgt/statements')),
-    },
-    //药房 - 结算管理 - 结算单 - 详情
-    {
-      name: "结算管理-详情",
-      icon: 'setting',
-      path: '/pharmacy/settlementMgt/statements/newSettlement/details',
-      component: dynamicWrapper(app, [], () => import('../routes/Pharmacy/settlementMgt/statements/details')),
-    },
-    //药房 - 结算管理 - 结算单 - 新建结算
-    {
-      name: "新建结算",
-      icon: 'setting',
-      path: '/pharmacy/settlementMgt/statements/newSettlement',
-      component: dynamicWrapper(app, [], () => import('../routes/Pharmacy/settlementMgt/statements/newSettlement')),
-    },
-    //药房 - 结算管理 - 结算单 - 新建结算 - 详情
-    {
-      name: "新建结算-详情",
-      icon: 'setting',
-      path: '/pharmacy/settlementMgt/statements/details',
-      component: dynamicWrapper(app, [], () => import('../routes/Pharmacy/settlementMgt/statements/details')),
-    },
-    
       
     /*------药房------*/
     /*-----药房-申领入库--*/
@@ -1109,7 +1066,50 @@ export const getNavData = app => [
       icon: 'setting',
       path: '/system/drugDirectory/directory/edit',
       component: dynamicWrapper(app, [], () => import('../routes/SystemMgt/drugDirectory/edit')),
-    }
+    },
+    /*********  采购结算  ***********/
+    //药房 - 结算管理 - 日对账单
+    {
+      name: "结算管理",
+      icon: 'setting',
+      path: '/purchase/settlementMgt/dayStatements',
+      component: dynamicWrapper(app, [], () => import('../routes/Purchase/settlementMgt/dayStatements')),
+    },
+    //药房 - 结算管理 - 日对账单 - 详情
+    {
+      name: "日对账单-详情",
+      icon: 'setting',
+      path: '/purchase/settlementMgt/dayStatements/details',
+      component: dynamicWrapper(app, [], () => import('../routes/Purchase/settlementMgt/dayStatements/details')),
+    },
+    //药房 - 结算管理 - 结算单
+    {
+      name: "结算管理",
+      icon: 'setting',
+      path: '/purchase/settlementMgt/statements',
+      component: dynamicWrapper(app, [], () => import('../routes/Purchase/settlementMgt/statements')),
+    },
+    //药房 - 结算管理 - 结算单 - 详情
+    {
+      name: "结算管理-详情",
+      icon: 'setting',
+      path: '/purchase/settlementMgt/statements/details',
+      component: dynamicWrapper(app, [], () => import('../routes/Purchase/settlementMgt/statements/details')),
+    },
+    //药房 - 结算管理 - 结算单 - 新建结算
+    {
+      name: "新建结算",
+      icon: 'setting',
+      path: '/purchase/settlementMgt/statements/newSettlement',
+      component: dynamicWrapper(app, [], () => import('../routes/Purchase/settlementMgt/statements/newSettlement')),
+    },
+    //药房 - 结算管理 - 结余查询
+    {
+      name: "结余查询",
+      icon: "setting",
+      path: '/purchase/settlementMgt/balanceQuery',
+      component: dynamicWrapper(app, [], () => import('../routes/Purchase/settlementMgt/balanceQuery')),
+    },
   ]
 }]
 

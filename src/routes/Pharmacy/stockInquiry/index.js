@@ -2,12 +2,12 @@ import React , {PureComponent} from 'react';
 
 import { Link } from 'react-router-dom'
 
-import { Form, Row, Col, Input, Button, Icon, Table } from 'antd';
+import { Form, Row, Col, Input, Button, Select, Table,Tooltip } from 'antd';
 
 import {createData} from '../../../common/data.js';
 
 const FormItem = Form.Item;
-
+const {Option} = Select;
 
 const formItemLayout = {
   labelCol: {
@@ -40,76 +40,54 @@ const columns = [
 {
   title: '通用名',
   dataIndex: 'name',
-  key: 'name',
+  width: 200,
   render: (text, record) => {
     return (
       <span>
-        <Link to={{pathname: `/pharmacy/stockInquiry/details`}}>{text}</Link>
+        <Link to={{pathname: `/drugStorage/stockInquiry/details`}}>{text}</Link>
       </span>  
     )
   }
 }, {
   title: '商品名',
   dataIndex: 'productName',
-  key: 'productName',
+  width: 200,
 }, {
   title: '规格',
   dataIndex: 'spec',
-  key: 'spec',
-}, {
-  title: '剂型',
-  dataIndex: 'fmodal',
-  key: 'fmodal',
-}, {
-  title: '包装单位',
-  dataIndex: 'packingUnit',
-  key: 'packingUnit',
+  width: 120,
+  className: 'ellipsis',
+  render:(text)=>(
+    <Tooltip placement="topLeft" title={text}>{text}</Tooltip>
+  )
 }, {
   title: '生产厂家',
   dataIndex: 'productCompany',
-  key: 'productCompany',
+  width: 200,
+}, {
+  title: '包装规格',
+  dataIndex: 'packingSpec',
+  width: 120,
+}, {
+  title: '单位',
+  dataIndex: 'unit',
+  width: 120,
+}, {
+  title: '数量',
+  dataIndex: 'num',
+  width: 120,
+}, {
+  title: '剂型',
+  dataIndex: 'fmodal',
+  width: 120,
 }, {
   title: '批准文号',
   dataIndex: 'approvalNo',
-  key: 'approvalNo',
-}, {
-  title: '药库库存',
-  dataIndex: 'pharmacyInventory',
-  key: 'pharmacyInventory',
-}, {
-  title: '全院库存',
-  dataIndex: 'floorInventory',
-  key: 'floorInventory',
-}, {
-  title: '生产批号',
-  dataIndex: 'medicinalCode',
-  key: 'medicinalCode',
-}, {
-  title: '生产日期',
-  dataIndex: 'dateOfManu',
-  key: 'dateOfManu',
-}, {
-  title: '有效期至',
-  dataIndex: 'validUntil',
-  key: 'validUntil',
-}, {
-  title: '供应商',
-  dataIndex: 'supplier',
-  key: 'supplier',
-}];
+  width: 120,
+},];
 
 
 class StockInquiry extends PureComponent {
-  state = {
-    display: 'none',
-  }
-  toggle = () => {
-    const { display, expand } = this.state;
-    this.setState({
-      display: display === 'none' ? 'block' : 'none',
-      expand: !expand
-    })
-  }
   handleSearch = (e) => {
     e.preventDefault();
     this.props.form.validateFields((err, values) => {
@@ -122,53 +100,34 @@ class StockInquiry extends PureComponent {
   }
 
   render() {
-    const { display } = this.state;
     const { getFieldDecorator } = this.props.form;
     return (
-      <div>
+      <div className='ysynet-main-content'>
         <Form onSubmit={this.handleSearch}>
           <Row>
             <Col span={8}>
-              <FormItem label={`名称`} {...formItemLayout}>
-                {getFieldDecorator('assetCode', {})(
-                  <Input/>
+              <FormItem label={`关键字`} {...formItemLayout}>
+                {getFieldDecorator('keyword')(
+                  <Input placeholder="通用名/商品名/规格/厂家"/>
                 )}
               </FormItem>
             </Col>
             <Col span={8}>
-              <FormItem label={`规格`} {...formItemLayout}>
-                {getFieldDecorator('specification', {})(
-                  <Input/>
-                )}
-              </FormItem>
-            </Col>
-            <Col span={8} style={{display: display}}>
-              <FormItem label={`剂型`} {...formItemLayout}>
-                {getFieldDecorator('dosageForm')(
-                  <Input/>
-                )}
-              </FormItem>
-            </Col>
-            <Col span={8} style={{display: display}}>
-              <FormItem label={`生产厂家`} {...formItemLayout}>
-                {getFieldDecorator('manufacturer')(
-                  <Input/>
-                )}
-              </FormItem>
-            </Col>
-            <Col span={8} style={{display: display}}>
-              <FormItem label={`供应商`} {...formItemLayout}>
-                {getFieldDecorator('supplier')(
-                  <Input/> 
+              <FormItem label={`药品类型`} {...formItemLayout}>
+                {getFieldDecorator('drugType', {
+                  initialValue: "全部"
+                })(
+                  <Select>
+                    <Option value="全部">全部</Option>
+                    <Option value="抗生素">抗生素</Option>
+                    <Option value="营养类">营养类</Option>
+                  </Select>
                 )}
               </FormItem>
             </Col>
             <Col span={8} style={{ textAlign: 'right', marginTop: 4}} >
               <Button type="primary" htmlType="submit">查询</Button>
-              <Button style={{marginLeft: 30}} onClick={this.handleReset}>重置</Button>
-              <a style={{marginLeft: 30, fontSize: 14}} onClick={this.toggle}>
-                {this.state.expand ? '收起' : '展开'} <Icon type={this.state.expand ? 'up' : 'down'} />
-              </a>
+              <Button style={{marginLeft: 8}} onClick={this.handleReset}>重置</Button>
             </Col>
           </Row>
         </Form>
