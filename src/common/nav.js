@@ -503,10 +503,28 @@ export const getNavData = app => [
       component: dynamicWrapper(app, [], () => import('../routes/DrugStorage/outStorage/recallAndLocked')),
     },
     {
+      name: "新增召回及锁定",
+      icon: 'setting',
+      path: '/drugStorage/outStorage/recallAndLocked/add',
+      component: dynamicWrapper(app, [], () => import('../routes/DrugStorage/outStorage/recallAndLocked/add')),
+    },
+    {
+      name: "召回及锁定详情",
+      icon: 'setting',
+      path: '/drugStorage/outStorage/recallAndLocked/details',
+      component: dynamicWrapper(app, [], () => import('../routes/DrugStorage/outStorage/recallAndLocked/details')),
+    },
+    {
       name: "召回及锁定审核",
       icon: 'setting',
       path: '/drugStorage/outStorage/recallAndLockedCheck',
       component: dynamicWrapper(app, [], () => import('../routes/DrugStorage/outStorage/recallAndLockedCheck')),
+    },
+    {
+      name: "召回及锁定审核详情",
+      icon: 'setting',
+      path: '/drugStorage/outStorage/recallAndLockedCheck/details',
+      component: dynamicWrapper(app, [], () => import('../routes/DrugStorage/outStorage/recallAndLockedCheck/details')),
     },
     /* ********************      货位调整      ************************** */
     {
