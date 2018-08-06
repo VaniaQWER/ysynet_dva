@@ -479,6 +479,18 @@ export const getNavData = app => [
       component: dynamicWrapper(app, [], () => import('../routes/DrugStorage/outStorage/backStorage')),
     },
     {
+      name: "新增退货",
+      icon: 'setting',
+      path: '/drugStorage/outStorage/backStorage/add',
+      component: dynamicWrapper(app, [], () => import('../routes/DrugStorage/outStorage/backStorage/add')),
+    },
+    {
+      name: "退货复核",
+      icon: 'setting',
+      path: '/drugStorage/outStorage/backStorage/details',
+      component: dynamicWrapper(app, [], () => import('../routes/DrugStorage/outStorage/backStorage/details')),
+    },
+    {
       name: "召回及锁定",
       icon: 'setting',
       path: '/drugStorage/outStorage/recallAndLocked',

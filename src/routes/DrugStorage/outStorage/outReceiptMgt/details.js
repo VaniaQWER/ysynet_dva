@@ -4,7 +4,7 @@
 * @Last Modified time: 2018-07-24 13:13:55 
  */
 import React, { PureComponent } from 'react';
-import { Table ,Row, Col, Button, Modal , message , Tooltip} from 'antd';
+import { Table ,Row, Col, Button, Modal , Card , message , Tooltip} from 'antd';
 import { createData } from '../../../../common/data';
 const Conform = Modal.confirm;
 const columns = [
@@ -34,30 +34,39 @@ const columns = [
     dataIndex: 'fmodal',
   },
   {
-    title: '包装单位',
+    title: '包装规格',
     width:150,
     dataIndex: 'unit',
+    render:(text)=>'g'
+  },
+  {
+    title: '单位',
+    width:150,
+    dataIndex: 'unit1',
     render:(text)=>'g'
   },
   {
     title: '出库数量',
     width:150,
     dataIndex: 'approvalNo1',
+    render:(text)=>'6'
   },
   {
     title: '生产批号',
     width:150,
-    dataIndex: 'approvalNo2',
+    dataIndex: 'planNo',
   },
   {
     title: '生产日期',
     width:150,
-    dataIndex: 'approvalNo3',
+    dataIndex: 'planTime',
   },
   {
-    title: '有效期',
+    title: '有效期至',
     width:150,
     dataIndex: 'approvalNo45',
+    render:(text,record)=>`${record.planTime}`
+    
   },
   {
     title: '批准文号',
@@ -72,7 +81,7 @@ const columns = [
   {
     title: '供应商',
     width:150,
-    dataIndex: 'gongyings',
+    dataIndex: 'createUser',
   }
 ];
 
@@ -111,13 +120,13 @@ class DetailsOutput extends PureComponent{
 
   render(){
     return (
-      <div className='fullCol fadeIn'>
-        <div className='fullCol-fullChild'>
+      <div className='fadeIn'>
+        <Card>
           <h3>单据信息 
             <Button style={{float:'right'}} onClick={()=>this.onBan()} >不通过</Button>
-            <Button type='primary' className='button-gap' style={{float:'right'}} onClick={()=>this.onSubmit()}>通过</Button>
+            <Button type='primary' className='button-gap' style={{float:'right'}} onClick={()=>this.onSubmit()}>复核通过</Button>
           </h3>
-          <Row className='detailContent'>
+          <Row>
             <Col span={8}>
               <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
                   <label>出库单</label>
@@ -144,7 +153,7 @@ class DetailsOutput extends PureComponent{
             </Col>
             <Col span={8}>
               <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
-                  <label>制单人</label>
+                  <label>发起人</label>
               </div>
               <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
                 <div className='ant-form-item-control'>张三三</div>
@@ -152,7 +161,7 @@ class DetailsOutput extends PureComponent{
             </Col>
             <Col span={8}>
               <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
-                  <label>制单时间</label>
+                  <label>发起时间</label>
               </div>
               <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
                 <div className='ant-form-item-control'>2015-09-03 15:00:02
@@ -192,12 +201,11 @@ class DetailsOutput extends PureComponent{
               </div>
             </Col>
           </Row>
-          </div>
-          <div className='detailCard'>
+          <hr className='hr'/>
+          <h3>产品信息</h3>
             <Table
               dataSource={createData()}
               bordered
-              title={()=>'产品信息'}
               scroll={{x: '200%'}}
               columns={columns}
               rowKey={'id'}
@@ -207,7 +215,8 @@ class DetailsOutput extends PureComponent{
                 showSizeChanger: true
               }}
             />
-          </div>
+
+        </Card>
       </div>
     )
   }

@@ -1,30 +1,29 @@
 /*
- * @Author: yuwei  出库管理新建 /output/add
+ * @Author: yuwei  退货新建 /refund/add
  * @Date: 2018-07-24 13:13:55 
 * @Last Modified time: 2018-07-24 13:13:55 
  */
 import React, { PureComponent } from 'react';
-import { Table , Col, Button, Modal , Card , message, Input , Select , Affix , Row , Tooltip} from 'antd';
+import { Table , Col, Button, Modal , message, Input , Select , Affix , Row , Tooltip} from 'antd';
 import { createData } from '../../../../common/data';
 const Conform = Modal.confirm;
 const Option = Select.Option;
 const columns = [
   {
-   title: '数量',
+   title: '退货数量',
    width:150,
    dataIndex: 'medicinalCode',
    render:()=>(<Input/>)
   },
   {
-    title: '当前库存',
+    title: '库存量',
     width:120,
     dataIndex: 'assetsRecord',
-    render:()=>`1000`
   },
   {
-    title: '单位',
+    title: '包装单位',
     width:150,
-    dataIndex: 'unit1',
+    dataIndex: 'unit',
     render:(text)=>'g'
   },
   {
@@ -53,26 +52,24 @@ const columns = [
     dataIndex: 'fmodal',
   },
   {
-    title: '包装规格',
-    width:150,
-    dataIndex: 'unit',
-  },
-  {
     title: '生产批号',
     width:150,
-    dataIndex: 'applyNo',
+    dataIndex: 'productCompany2',
   },
   {
     title: '生产日期',
     width:150,
     dataIndex: 'productCompany3',
-    render:(text,record)=>`${record.planTime}`
   },
   {
     title: '有效期至',
     width:150,
     dataIndex: 'productCompany4',
-    render:(text,record)=>`${record.planTime}`
+  },
+  {
+    title: '批准文号',
+    width:150,
+    dataIndex: 'approvalNo',
   },
   {
     title: '生产厂家',
@@ -83,15 +80,24 @@ const columns = [
     title: '供应商',
     width:150,
     dataIndex: 'gongyingshang',
-    render:(text,record)=>`${record.createUser}`
-  },
-  {
-    title: '批准文号',
-    width:150,
-    dataIndex: 'approvalNo',
   }
 ];
 const modalColumns = [
+  {
+    title: '生产批号',
+    width:150,
+    dataIndex: 'productCompany2',
+  },
+  {
+    title: '生产日期',
+    width:150,
+    dataIndex: 'productCompany3',
+  },
+  {
+    title: '有效期至',
+    width:150,
+    dataIndex: 'productCompany4',
+  },
   {
     title: '通用名称',
     width:100,
@@ -118,22 +124,22 @@ const modalColumns = [
     dataIndex: 'fmodal',
   },
   {
-    title: '包装规格',
+    title: '包装单位',
     width:150,
     dataIndex: 'unit',
+  },
+  {
+    title: '批准文号',
+    width:150,
+    dataIndex: 'approvalNo',
   },
   {
     title: '生产厂家',
     width:150,
     dataIndex: 'productCompany',
   },
-  {
-    title: '批准文号',
-    width:150,
-    dataIndex: 'approvalNo',
-  }
 ]
-class AddOutput extends PureComponent{
+class AddRefund extends PureComponent{
 
   constructor(props){
     super(props)
@@ -161,7 +167,7 @@ class AddOutput extends PureComponent{
       onOk:()=>{
         message.success('操作成功！')
         const { history } = this.props;
-        history.push({pathname:"/drugStorage/drugStorageManage/output"})
+        history.push({pathname:"/drugStorage/drugStorageManage/refund"})
       },
       onCancel:()=>{}
     })
@@ -188,7 +194,7 @@ class AddOutput extends PureComponent{
             <Button onClick={()=>this.delete()} >移除</Button>
           </Col>
           <Col span={6}>
-              目的部门：
+              调入药房：
               <Select 
                 style={{width:'70%'}}
                 showSearch
@@ -199,36 +205,22 @@ class AddOutput extends PureComponent{
                 <Option key="" value="">全部</Option>
               </Select>
           </Col>
-          <Col span={6}>
-            出库类型：
-              <Select 
-                style={{width:'70%'}}
-                showSearch
-                placeholder={'请选择'}
-                optionFilterProp="children"
-                filterOption={(input, option) => option.props.children.indexOf(input) >= 0}
-                >
-                <Option key="00" value="00">调拨出库</Option>
-                <Option key="01" value="01">损益补录</Option>
-              </Select>
-          </Col>
         </div>
-        <Card>
-          <Table
-            rowSelection={{
-              onChange:(selectedRowKey)=>{
-                this.setState({selectedRowKey})
-              }
-            }}
-            title={()=>`产品信息`}
-            dataSource={createData()}
-            bordered
-            scroll={{x: '200%'}}
-            columns={columns}
-            rowKey={'id'}
-            style={{marginTop: 24}}
-          />
-        </Card>
+        <h3>产品信息</h3>
+        <Table
+          rowSelection={{
+            onChange:(selectedRowKey)=>{
+              this.setState({selectedRowKey})
+            }
+          }}
+          dataSource={createData()}
+          bordered
+          scroll={{x: '200%'}}
+          columns={columns}
+          rowKey={'id'}
+          style={{marginTop: 24}}
+        />
+
         <Affix offsetBottom={0} className='affix'>共10种产品
          <Button  style={{float:'right'}}  onClick={() => this.onSubmit()}>
             取消
@@ -243,7 +235,7 @@ class AddOutput extends PureComponent{
           onOk={()=>this.addToMain()}
           onCancel={()=>this.setState({visible:false,selectedRowKey:[]})}>
           <Row>
-            <Input placeholder='通用名/商品名' style={{width:200}}/>
+            <Input placeholder='通用名/商品名/供应商/生产厂家/批号' style={{width:300}}/>
           </Row>
           <Table
             rowSelection={{
@@ -257,6 +249,7 @@ class AddOutput extends PureComponent{
             scroll={{x: '200%'}}
             columns={modalColumns}
             rowKey={'id'}
+            style={{marginTop: 24}}
           />
         </Modal>
 
@@ -264,4 +257,4 @@ class AddOutput extends PureComponent{
     )
   }
 }
-export default AddOutput;
+export default AddRefund;

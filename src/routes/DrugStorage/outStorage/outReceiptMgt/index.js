@@ -5,33 +5,28 @@
  */
 
 import React, { PureComponent } from 'react';
-import { Table , Form, Row, Col, Button, Icon, Select , Input , DatePicker } from 'antd';
+import { Table , Form, Row, Col, Button, Icon, Select , Input , DatePicker , Modal , message} from 'antd';
 import { Link } from 'react-router-dom';
 import { formItemLayout } from '../../../../utils/commonStyles';
 import { createData } from '../../../../common/data';
 const RangePicker = DatePicker.RangePicker;
 const FormItem = Form.Item;
 const Option = Select.Option;
+const Confirm = Modal.confirm;
 const columns = [
   {
    title: '出库单',
    dataIndex: 'medicinalCode',
    width:150,
-   fixed: 'left',
    render:(text)=>
    <span>
-      <Link to={{pathname: `/drugStorage/drugStorageManage/output/details`}}>{text}</Link>
+      <Link to={{pathname: `/drugStorage/outStorage/outReceiptMgt/details`}}>{text}</Link>
     </span>
   },
   {
-    title: '配货单',
+    title: '拣货单',
     width:180,
-    dataIndex: 'productName',
-  },
-  {
-    title: '库房',
-    dataIndex: 'spec1',
-    render:(text)=>'药库'
+    dataIndex: 'planNo',
   },
   {
     title: '出库分类',
@@ -52,14 +47,15 @@ const columns = [
     render: (text, record, index) => '静配中心'
   },
   {
-    title: '制单人',
+    title: '发起人',
     width:100,
     dataIndex: 'bDept',
     render: (text, record, index) => '王文斌'
   },
   {
-   title: '制单时间',
+   title: '发起时间',
    dataIndex: 'useDept',
+   width:120,
    render: (text, record, index) => '2018-7-25 21:17'
   },
  {
@@ -87,20 +83,36 @@ class Output extends PureComponent{
   queryHandler = (query) => {
     this.setState({ query:query })
   }
+
+  //删除
+  delete = () => {
+    Confirm({
+      content:'您确定要删除吗？',
+      onOk:()=>{
+        message.success('删除成功！')
+      }
+    })
+  }
   render(){
     return (
       <div className='ysynet-main-content'>
         <SearchForm query={this.queryHandler} />
         <Row>
-          <Button type='primary'>
-            <Link to={{pathname:`/drugStorage/drugStorageManage/output/add`}}>新建调拨出库</Link>
+          <Button type='primary' className='button-gap'>
+            <Link to={{pathname:`/drugStorage/outStorage/outReceiptMgt/add`}}>新建出库</Link>
           </Button>
+          <Button onClick={this.delete}>删除</Button>
         </Row>
         <Table
+          rowSelection={{
+            onChange:(selectedRowKeys,selectedRows)=>{
+              console.log(selectedRowKeys,selectedRows)
+            }
+          }}
           dataSource={createData()}
           bordered
           loading={ this.state.loading}
-          scroll={{x: '110%'}}
+          scroll={{x: '100%'}}
           pagination={{
             size: "small",
             showQuickJumper: true,
