@@ -1042,6 +1042,19 @@ export const getNavData = app => [
       path: '/pharmacy/supplementDoc/supplementDocCheck/detail',
       component: dynamicWrapper(app, [], () => import('../routes/Pharmacy/supplementDoc/supplementDocCheck/detail')),
     },
+    /* ***************  系统管理  ******************* */
+    {
+      name: "系统管理-药品目录",
+      icon: 'setting',
+      path: '/system/drugDirectory/directory',
+      component: dynamicWrapper(app, [], () => import('../routes/SystemMgt/drugDirectory')),
+    },
+    {
+      name: "系统管理-药品目录--编辑",
+      icon: 'setting',
+      path: '/system/drugDirectory/directory/edit',
+      component: dynamicWrapper(app, [], () => import('../routes/SystemMgt/drugDirectory/edit')),
+    }
   ]
 }]
 

@@ -32,6 +32,7 @@
   display: flex;
   width: 820px;
   justify-content: space-evenly;
+  flex-wrap: wrap;
 }
 .cardItem{
   width: 260px;
@@ -50,6 +51,24 @@
   margin: 0 20px;
   box-shadow: 0 2px 8px rgba(0,0,0,.09);
   background: #fff url('../../assets/img/subSystem2.png') no-repeat;
+}
+.purchaseCard{
+  width: 260px;
+  height: 270px;
+  border-radius: 10px;
+  cursor: pointer;
+  margin: 20px;
+  box-shadow: 0 2px 8px rgba(0,0,0,.09);
+  background: #fff url('../../assets/img/Purchase_and_settlement.png') no-repeat;
+}
+.systemMgtCard{
+  width: 260px;
+  height: 270px;
+  border-radius: 10px;
+  cursor: pointer;
+  margin: 20px;
+  box-shadow: 0 2px 8px rgba(0,0,0,.09);
+  background: #fff url('../../assets/img/system_management.png') no-repeat;
 }
 .upperCon{
   width: 100%;

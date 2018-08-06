@@ -515,198 +515,243 @@ const menu = [
           "parentId": "m307"
         }
       ]
-      },
+    },
+    {
+      "path": "/pharmacy/stockInquiry",
+      "level": 1,
+      "fsort": 30104,
+      "name": "库存查询",
+      "id": "30104",
+      "key": "/pharmacy/stockInquiry",
+      "parentId": "m304",
+      "icon": "search",
+      "subMenus": [
+        {
+          "path": "/pharmacy/stockInquiry",
+          "level": 2,
+          "fsort": 30104,
+          "name": "库存查询",
+          "id": "30104",
+          "key": "/pharmacy/stockInquiry",
+          "parentId": "m304"
+        }
+      ]
+    }, 
+    {
+      "path": "/pharmacy/settlementMgt",
+      "level": 1,
+      "fsort": 30105,
+      "name": "结算管理",
+      "id": "30105",
+      "key": "/pharmacy/settlementMgt",
+      "parentId": "m305",
+      "icon": "wallet",
+      "subMenus": [
+        {
+          "path": "/pharmacy/settlementMgt/dayStatements",
+          "level": 2,
+          "fsort": 30105,
+          "name": "日对账单",
+          "id": "30106",
+          "key": "/pharmacy/settlementMgt/dayStatements",
+          "parentId": "m305"
+        },
+        {
+          "path": "/pharmacy/settlementMgt/statements",
+          "level": 2,
+          "fsort": 30105,
+          "name": "结算单",
+          "id": "30106",
+          "key": "/pharmacy/settlementMgt/statements",
+          "parentId": "m305"
+        }
+      ]
+    },
+    {
+      "path": "/pharmacy/goodsAdjust",
+      "level": 1,
+      "fsort": 30106,
+      "name": "货位调整",
+      "id": "30106",
+      "key": "/pharmacy/goodsAdjust",
+      "parentId": "m305",
+      "icon": "wallet",
+      "subMenus": [
+        {
+          "path": "/pharmacy/goodsAdjust/adjust",
+          "level": 2,
+          "fsort": 30105,
+          "name": "货位调整",
+          "id": "30106",
+          "key": "/pharmacy/goodsAdjust/adjust",
+          "parentId": "m305"
+        }
+        
+      ]
+    },
+    {//库房-申领入库
+      "path": "/pharmacy/wareHouse",
+      "level": 2,
+      "fsort": 30105,
+      "name": "申领入库",
+      "id": "30106",
+      "key": "/pharmacy/wareHouse",
+      "parentId": "m305",
+      "icon": "medicine-box",
+      "subMenus":[
+        {
+          "path": "/pharmacy/wareHouse/drugsFor",
+          "level": 2,
+          "fsort": 30105,
+          "name": "药品申领",
+          "id": "30106",
+          "key": "/pharmacy/wareHouse/drugsFor",
+          "parentId": "m305"
+        },
+        {
+          "path": "/pharmacy/wareHouse/acceptance",
+          "level": 2,
+          "fsort": 30105,
+          "name": "验收",
+          "id": "30106",
+          "key": "/pharmacy/wareHouse/acceptance",
+          "parentId": "m305"
+        },
+        {
+          "path": "/pharmacy/wareHouse/putaway",
+          "level": 2,
+          "fsort": 30105,
+          "name": "上架",
+          "id": "30106",
+          "key": "/pharmacy/wareHouse/putaway",
+          "parentId": "m305"
+        },
+        {
+          "path": "/pharmacy/wareHouse/newLibrary",
+          "level": 2,
+          "fsort": 30105,
+          "name": "入库单管理",
+          "id": "30106",
+          "key": "/pharmacy/wareHouse/newLibrary",
+          "parentId": "m305"
+        }
+      ]
+    },
+    {//库房-出库
+      "path": "/pharmacy/outStorage",
+      "level": 2,
+      "fsort": 30105,
+      "name": "出库",
+      "id": "30106",
+      "key": "/pharmacy/outStorage",
+      "parentId": "m305",
+      "icon": "medicine-box",
+      "subMenus":[
+        {
+          "path": "/pharmacy/outStorage/output",
+          "level": 2,
+          "fsort": 30105,
+          "name": "发药出库",
+          "id": "30106",
+          "key": "/pharmacy/outStorage/output",
+          "parentId": "m305"
+        },
+        {
+          "path": "/pharmacy/outStorage/refund",
+          "level": 2,
+          "fsort": 30105,
+          "name": "退库",
+          "id": "30106",
+          "key": "/pharmacy/outStorage/refund",
+          "parentId": "m305"
+        },
+      ]
+    },
+    {
+      "path": "/pharmacy/supplementDoc",
+      "level": 1,
+      "fsort": 30106,
+      "name": "补登单据",
+      "id": "30106",
+      "key": "/pharmacy/supplementDoc",
+      "parentId": "m305",
+      "icon": "wallet",
+      "subMenus": [
+        {
+          "path": "/pharmacy/supplementDoc/supplementDocuments",
+          "level": 2,
+          "fsort": 30105,
+          "name": "补登单据",
+          "id": "30106",
+          "key": "/pharmacy/supplementDoc/supplementDocuments",
+          "parentId": "m305"
+        },
+        {
+          "path": "/pharmacy/supplementDoc/supplementDocCheck",
+          "level": 2,
+          "fsort": 30105,
+          "name": "补登单审核",
+          "id": "30106",
+          "key": "/pharmacy/supplementDoc/supplementDocCheck",
+          "parentId": "m305"
+        }
+        
+      ]
+    }
+    ],
+    "level": 0,
+    "fsort": 301,
+    "name": "药房",
+    "icon": "table",
+    "id": "m301",
+    "key": "/pharmacy",
+    "parentId": "m3"
+  },
+  {
+    "path": "/system",
+    "level": 0,
+    "fsort": 301,
+    "name": "系统管理",
+    "icon": "table",
+    "id": "m301",
+    "key": "/system",
+    "parentId": "m3",
+    "subMenus": [
       {
-        "path": "/pharmacy/stockInquiry",
+        "path": "/system/drugDirectory",
         "level": 1,
-        "fsort": 30104,
-        "name": "库存查询",
-        "id": "30104",
-        "key": "/pharmacy/stockInquiry",
-        "parentId": "m304",
-        "icon": "search",
+        "fsort": 30101,
+        "name": "药品目录",
+        "id": "30101",
+        "key": "/system/drugDirectory",
+        "parentId": "m301",
+        "icon": "book",
         "subMenus": [
           {
-            "path": "/pharmacy/stockInquiry",
+            "path": "/system/drugDirectory/directory",
             "level": 2,
-            "fsort": 30104,
-            "name": "库存查询",
-            "id": "30104",
-            "key": "/pharmacy/stockInquiry",
-            "parentId": "m304"
-          }
-        ]
-      }, {
-        "path": "/pharmacy/settlementMgt",
-        "level": 1,
-        "fsort": 30105,
-        "name": "结算管理",
-        "id": "30105",
-        "key": "/pharmacy/settlementMgt",
-        "parentId": "m305",
-        "icon": "wallet",
-        "subMenus": [
-          {
-            "path": "/pharmacy/settlementMgt/dayStatements",
-            "level": 2,
-            "fsort": 30105,
-            "name": "日对账单",
-            "id": "30106",
-            "key": "/pharmacy/settlementMgt/dayStatements",
-            "parentId": "m305"
-          },
-          {
-            "path": "/pharmacy/settlementMgt/statements",
-            "level": 2,
-            "fsort": 30105,
-            "name": "结算单",
-            "id": "30106",
-            "key": "/pharmacy/settlementMgt/statements",
-            "parentId": "m305"
-          }
-        ]
-      },{
-        "path": "/pharmacy/goodsAdjust",
-        "level": 1,
-        "fsort": 30106,
-        "name": "货位调整",
-        "id": "30106",
-        "key": "/pharmacy/goodsAdjust",
-        "parentId": "m305",
-        "icon": "wallet",
-        "subMenus": [
-          {
-            "path": "/pharmacy/goodsAdjust/adjust",
-            "level": 2,
-            "fsort": 30105,
-            "name": "货位调整",
-            "id": "30106",
-            "key": "/pharmacy/goodsAdjust/adjust",
-            "parentId": "m305"
-          }
-          
-        ]
-      },
-      {//库房-申领入库
-        "path": "/pharmacy/wareHouse",
-        "level": 2,
-        "fsort": 30105,
-        "name": "申领入库",
-        "id": "30106",
-        "key": "/pharmacy/wareHouse",
-        "parentId": "m305",
-        "icon": "medicine-box",
-        "subMenus":[
-          {
-            "path": "/pharmacy/wareHouse/drugsFor",
-            "level": 2,
-            "fsort": 30105,
-            "name": "药品申领",
-            "id": "30106",
-            "key": "/pharmacy/wareHouse/drugsFor",
-            "parentId": "m305"
-          },
-          {
-            "path": "/pharmacy/wareHouse/acceptance",
-            "level": 2,
-            "fsort": 30105,
-            "name": "验收",
-            "id": "30106",
-            "key": "/pharmacy/wareHouse/acceptance",
-            "parentId": "m305"
-          },
-          {
-            "path": "/pharmacy/wareHouse/putaway",
-            "level": 2,
-            "fsort": 30105,
-            "name": "上架",
-            "id": "30106",
-            "key": "/pharmacy/wareHouse/putaway",
-            "parentId": "m305"
-          },
-          {
-            "path": "/pharmacy/wareHouse/newLibrary",
-            "level": 2,
-            "fsort": 30105,
-            "name": "入库单管理",
-            "id": "30106",
-            "key": "/pharmacy/wareHouse/newLibrary",
-            "parentId": "m305"
-          }
-        ]
-      },
-      {//库房-出库
-        "path": "/pharmacy/outStorage",
-        "level": 2,
-        "fsort": 30105,
-        "name": "出库",
-        "id": "30106",
-        "key": "/pharmacy/outStorage",
-        "parentId": "m305",
-        "icon": "medicine-box",
-        "subMenus":[
-          {
-            "path": "/pharmacy/outStorage/output",
-            "level": 2,
-            "fsort": 30105,
-            "name": "发药出库",
-            "id": "30106",
-            "key": "/pharmacy/outStorage/output",
-            "parentId": "m305"
-          },
-          {
-            "path": "/pharmacy/outStorage/refund",
-            "level": 2,
-            "fsort": 30105,
-            "name": "退库",
-            "id": "30106",
-            "key": "/pharmacy/outStorage/refund",
-            "parentId": "m305"
+            "fsort": 3010101,
+            "name": "药品目录",
+            "id": "3010101",
+            "key": "/system/drugDirectory/directory",
+            "parentId": "m303"
           },
         ]
       },
-
-      {
-        "path": "/pharmacy/supplementDoc",
-        "level": 1,
-        "fsort": 30106,
-        "name": "补登单据",
-        "id": "30106",
-        "key": "/pharmacy/supplementDoc",
-        "parentId": "m305",
-        "icon": "wallet",
-        "subMenus": [
-          {
-            "path": "/pharmacy/supplementDoc/supplementDocuments",
-            "level": 2,
-            "fsort": 30105,
-            "name": "补登单据",
-            "id": "30106",
-            "key": "/pharmacy/supplementDoc/supplementDocuments",
-            "parentId": "m305"
-          },
-          {
-            "path": "/pharmacy/supplementDoc/supplementDocCheck",
-            "level": 2,
-            "fsort": 30105,
-            "name": "补登单审核",
-            "id": "30106",
-            "key": "/pharmacy/supplementDoc/supplementDocCheck",
-            "parentId": "m305"
-          }
-          
-        ]
-      }
-     
-  ],
-  "level": 0,
-  "fsort": 301,
-  "name": "药房",
-  "icon": "table",
-  "id": "m301",
-  "key": "/pharmacy",
-  "parentId": "m3"
-}
+    ],
+    
+  },
+  {
+    "path": "/purchase",
+    "level": 0,
+    "fsort": 301,
+    "name": "采购结算",
+    "icon": "table",
+    "id": "m301",
+    "key": "/purchase",
+    "parentId": "m3",
+    "subMenus": [],
+  }
 ]
 
 

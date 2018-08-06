@@ -1,10 +1,9 @@
 import React , {PureComponent} from 'react';
 import { Form, Row, Col, Button, Input, Select, Icon, Table, Tooltip, message, Modal  } from 'antd';
-import { createData } from '../../../../common/data';
+import { createData } from '../../../common/data';
 import { Link } from 'react-router-dom';
 const FormItem = Form.Item;
 const { Option } = Select;
-const { Search } = Input;
 
 const formItemLayout = {
   labelCol: {
@@ -143,22 +142,8 @@ const columns = [{
 
 class DrugDirectory extends PureComponent{
   state = {
-    selected: [],
-    selectedRows: [],
-    modalSelected: [],
-    modalSelectedRows: [],
-    visible: false,
     addVisible: false,
-    loading: false,
     addLoading: false
-  }
-  // 批量设置上下限
-  bitchEdit = () =>{
-    const { selected } = this.state;
-    if(selected.length === 0){
-      return message.warning('请至少选中一条数据')
-    }
-    this.setState({ visible: true })
   }
   bitchEditConfirm = () =>{
     this.props.form.validateFields( (err,values) =>{
@@ -172,36 +157,18 @@ class DrugDirectory extends PureComponent{
       }
     })
   }
-  remove = () =>{
-    const { selected } = this.state;
-    if(selected.length === 0){
-      return message.warning('请至少选中一条数据')
-    }
-    Modal.confirm({
-      title: '确认',
-      content: '是否确认删除该产品',
-      onOk(){
-        console.log('OK 删除')
-      },
-      onCancel(){}
-    })
-  }
   add = () =>{
     this.setState({ addVisible: true })
   }
-  addDrug = () =>{
-    let { modalSelected } = this.state;
-    if(modalSelected.length === 0){
-      return message.warning('请至少勾选一项')
-    }
+  save = () =>{
+   
     this.setState({ addLoading: true });
     setTimeout(()=>{
       message.success('添加成功');
-      this.setState({ addLoading: false, addVisible: false, modalSelected:[],modalSelectedRows: [] })
     })
   }
   render(){
-    const { visible, loading, addVisible, addLoading } = this.state;
+    const { addVisible, addLoading } = this.state;
     const { getFieldDecorator } = this.props.form;
     const IndexColumns = [
       ...columns,
@@ -226,7 +193,7 @@ class DrugDirectory extends PureComponent{
         width: 100,
         render: (text,record)=>{
           return  <span>
-            <Link to={{pathname: `/drugStorage/configMgt/drugDirectory/edit`}}>{'编辑'}</Link>
+            <Link to={{pathname: `/system/drugDirectory/directory/edit`}}>{'编辑'}</Link>
           </span>
         }
       },
@@ -236,76 +203,153 @@ class DrugDirectory extends PureComponent{
       <WrappSearchForm />
       <Row className='ant-row-bottom'>
         <Col>
-          <Button type='primary' onClick={this.bitchEdit}>批量设置上下限</Button>
-          <Button type='default' onClick={this.add} style={{ margin: '0 8px' }}>新增</Button>
-          <Button type='default' onClick={this.remove}>移除</Button>
+          <Button type='primary' onClick={this.add} style={{ margin: '0 8px' }}>新增</Button>
         </Col>
       </Row>
       <Modal
-        title={'批量编辑'}
-        width={488}
-        visible={visible}
-        onCancel={()=>this.setState({ visible: false })}
-        footer={[
-          <Button key="submit" type='primary' loading={loading} onClick={this.bitchEditConfirm}>
-              确认
-          </Button>,
-          <Button key="back"  type='default' onClick={()=>this.setState({ visible: false })}>取消</Button>
-        ]}
-      >
-        <Form>
-          <FormItem {...formItemLayout} label={`库存上限`}>
-            {
-              getFieldDecorator(`upper`,{
-                initialValue: '',
-                rules: [{  }]
-              })(
-                <Input placeholder='请输入'/>
-              )
-            }
-          </FormItem>
-          <FormItem {...formItemLayout} label={`库存下限`}>
-            {
-              getFieldDecorator(`lower`,{
-                initialValue: '',
-              })(
-                <Input placeholder='请输入'/>
-              )
-            }
-          </FormItem>
-        </Form>
-      </Modal>
-      <Modal
-        title='添加药品'
-        width={1100}
+        title='新建'
+        width={1000}
         visible={addVisible}
         onCancel={()=>this.setState({ addVisible: false })}
         footer={[
-          <Button key="submit" type='primary' loading={addLoading} onClick={this.addDrug}>
+          <Button key="submit" type='primary' loading={addLoading} onClick={this.save}>
               确认
           </Button>,
           <Button key="back"  type='default' onClick={()=>this.setState({ addVisible: false })}>取消</Button>
         ]}
       >
-        <Search placeholder='通用名/商品名/生产厂家' style={{ width: 256 }}/>
-        <Table 
-          dataSource={createData()}
-          bordered
-          scroll={{x: '100%'}}
-          columns={columns}
-          rowKey={'id'}
-          pagination={{
-            size: 'small',
-            showQuickJumper: true,
-            showSizeChanger: true
-          }}
-          rowSelection={{
-            selectedRowKeys: this.state.modalSelected,
-            onChange: (selectedRowKeys, selectedRows) => {
-              this.setState({modalSelected: selectedRowKeys, modalSelectedRows: selectedRows})
-            }
-          }}
-        />
+        <Form>
+          <Row>
+            <Col span={12}>
+              <FormItem {...formItemLayout} label={`通用名称`}>
+                {
+                  getFieldDecorator(`geName`,{
+                    initialValue: '',
+                    rules: [{ required: true,message: '请输入通用名称' }]
+                  })(
+                    <Input placeholder='请输入' />
+                  )
+                }
+              </FormItem>
+              <FormItem {...formItemLayout} label={`商品名`}>
+                {
+                  getFieldDecorator(`productName`,{
+                    initialValue: '',
+                    rules: [{ required: true,message: '请输入商品名' }]
+                  })(
+                    <Input placeholder='请输入' />
+                  )
+                }
+              </FormItem>
+              <FormItem {...formItemLayout} label={`规格`}>
+                {
+                  getFieldDecorator(`spec`,{
+                    initialValue: '',
+                    rules: [{ required: true,message: '请输入规格' }]
+                  })(
+                    <Input placeholder='请输入' />
+                  )
+                }
+              </FormItem>
+              <FormItem {...formItemLayout} label={`剂型`}>
+                {
+                  getFieldDecorator(`jx`,{
+                    initialValue: '',
+                    rules: [{ required: true,message: '请输入剂型' }]
+                  })(
+                    <Input placeholder='请输入' />
+                  )
+                }
+              </FormItem>
+              <FormItem {...formItemLayout} label={`生产厂家`}>
+                {
+                  getFieldDecorator(`producerName`,{
+                    initialValue: '',
+                    rules: [{ required: true,message: '请输入生产厂家' }]
+                  })(
+                    <Input placeholder='请输入' />
+                  )
+                }
+              </FormItem>
+              <FormItem {...formItemLayout} label={`批准文号`}>
+                {
+                  getFieldDecorator(`approvalNo`,{
+                    initialValue: '',
+                    rules: [{ required: true,message: '请输入批准文号' }]
+                  })(
+                    <Input placeholder='请输入' />
+                  )
+                }
+              </FormItem>
+            </Col>
+            <Col span={12}>
+              <FormItem {...formItemLayout} label={`默认供应商`}>
+                {
+                  getFieldDecorator(`geName`,{
+                    initialValue: '',
+                    rules: [{ required: true,message: '请输入默认供应商' }]
+                  })(
+                    <Input placeholder='请输入' />
+                  )
+                }
+              </FormItem>
+              <FormItem {...formItemLayout} label={`包装规格`}>
+                {
+                  getFieldDecorator(`productName`,{
+                    initialValue: '',
+                    rules: [{ required: true,message: '请输入包装规格' }]
+                  })(
+                    <Input placeholder='请输入' />
+                  )
+                }
+              </FormItem>
+              <FormItem {...formItemLayout} label={`最小发药单位`}>
+                {
+                  getFieldDecorator(`spec`,{
+                    initialValue: '',
+                    rules: [{ required: true,message: '请输入最小发药单位' }]
+                  })(
+                    <Input placeholder='请输入' />
+                  )
+                }
+              </FormItem>
+              <FormItem {...formItemLayout} label={`采购单位`}>
+                {
+                  getFieldDecorator(`jx`,{
+                    initialValue: '',
+                    rules: [{ required: true,message: '请选择采购单位' }]
+                  })(
+                    <Select>
+                      <Option key={-1} value=''>请选择</Option>
+                      <Option key={1} value='个'>个</Option>
+                      <Option key={2} value='颗'>颗</Option>
+                    </Select>
+                  )
+                }
+              </FormItem>
+              <FormItem {...formItemLayout} label={`采购价格`}>
+                {
+                  getFieldDecorator(`producerName`,{
+                    initialValue: '',
+                    rules: [{ required: true,message: '请输入采购价格' }]
+                  })(
+                    <Input placeholder='请输入' />
+                  )
+                }
+              </FormItem>
+              <FormItem {...formItemLayout} label={`1包装规格 = `}>
+                {
+                  getFieldDecorator(`approvalNo`,{
+                    initialValue: '',
+                    rules: [{ required: true,message: '请输入转换系数' }]
+                  })(
+                    <Input placeholder='请输入' addonAfter='最小发药单位'/>
+                  )
+                }
+              </FormItem>
+            </Col>
+          </Row>
+        </Form>
       </Modal>
       <Table 
         dataSource={createData()}
@@ -318,13 +362,6 @@ class DrugDirectory extends PureComponent{
           showQuickJumper: true,
           showSizeChanger: true
         }}
-        rowSelection={{
-          selectedRowKeys: this.state.selected,
-          onChange: (selectedRowKeys, selectedRows) => {
-            this.setState({selected: selectedRowKeys, selectedRows: selectedRows})
-          }
-        }}
-      
       />
     </div>
     )
