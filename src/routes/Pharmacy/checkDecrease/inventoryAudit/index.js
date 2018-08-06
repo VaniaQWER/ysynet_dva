@@ -113,9 +113,9 @@ class InventoryAudit extends PureComponent {
         key: 'odd',
         render: (text, record) => {
           if (record.status === '已审核') {
-            return <span><Link to={{ pathname: `/drugStorage/checkDecrease/inventoryAudit/detailsConfirm` }}>{text}</Link></span>
+            return <span><Link to={{ pathname: `/pharmacy/checkDecrease/inventoryAudit/detailsConfirm` }}>{text}</Link></span>
           } else {
-            return <span><Link to={{ pathname: `/drugStorage/checkDecrease/inventoryAudit/details` }}>{text}</Link></span>
+            return <span><Link to={{ pathname: `/pharmacy/checkDecrease/inventoryAudit/details` }}>{text}</Link></span>
           }
         }
       },

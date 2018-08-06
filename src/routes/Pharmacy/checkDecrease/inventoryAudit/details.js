@@ -14,7 +14,7 @@ class Details extends PureComponent {
       onOk: () => {
         message.success('审核成功！');
         const { history } = this.props;
-        history.push({pathname:"/drugStorage/checkDecrease/inventoryAudit"});
+        history.push({pathname:"/pharmacy/checkDecrease/inventoryAudit"});
       },
       onCancel: () => {}
     })
@@ -27,7 +27,7 @@ class Details extends PureComponent {
       onOk: () => {
         message.success('审核不通过！');
         const { history } = this.props;
-        history.push({pathname:"/drugStorage/checkDecrease/inventoryAudit"});
+        history.push({pathname:"/pharmacy/checkDecrease/inventoryAudit"});
       },
       onCancel: () => {}
     })

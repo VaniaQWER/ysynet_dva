@@ -14,7 +14,7 @@ class Details extends PureComponent {
       onOk: () => {
         message.success('提交成功！');
         const { history } = this.props;
-        history.push({pathname:"/drugStorage/checkDecrease/newInventory"});
+        history.push({pathname:"/pharmacy/checkDecrease/newInventory"});
       },
       onCancel: () => {}
     })
@@ -27,7 +27,7 @@ class Details extends PureComponent {
       onOk: () => {
         message.success('保存成功！');
         const { history } = this.props;
-        history.push({pathname:"/drugStorage/checkDecrease/newInventory"});
+        history.push({pathname:"/pharmacy/checkDecrease/newInventory"});
       },
       onCancel: () => {}
     })
@@ -40,7 +40,7 @@ class Details extends PureComponent {
       onOk: () => {
         message.success('盘点成功！');
         const { history } = this.props;
-        history.push({pathname:"/drugStorage/checkDecrease/newInventory"});
+        history.push({pathname:"/pharmacy/checkDecrease/newInventory"});
       },
       onCancel: () => {}
     })

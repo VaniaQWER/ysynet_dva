@@ -19,7 +19,7 @@ const columns = [
     width:120,
     render:(text)=>
     <span>
-      <Link to={{pathname: `/drugStorage/outStorage/acceptDistribution/details`}}>{text}</Link>
+      <Link to={{pathname: `/pharmacy/outStorage/acceptDistribution/details`}}>{text}</Link>
     </span>  
   },
   {

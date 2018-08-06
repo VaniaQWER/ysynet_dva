@@ -100,7 +100,7 @@ class ProfiLossRecord extends PureComponent {
         key: 'syNo',
         render: (text, record) =>
           <span>
-            <Link to={{ pathname: `/drugStorage/checkDecrease/profiLossRecord/details` }}>{text}</Link>
+            <Link to={{ pathname: `/pharmacy/checkDecrease/profiLossRecord/details` }}>{text}</Link>
           </span>
       },
       {

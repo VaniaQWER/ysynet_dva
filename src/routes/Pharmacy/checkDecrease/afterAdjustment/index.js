@@ -112,7 +112,7 @@ class AfterAdjustment extends PureComponent{
         title: '盘点单',
         dataIndex: 'odd',
         render: (text, record) =>
-          <span><Link to={{ pathname: `/drugStorage/checkDecrease/afterAdjustment/details` }}>{text}</Link></span>
+          <span><Link to={{ pathname: `/pharmacy/checkDecrease/afterAdjustment/details` }}>{text}</Link></span>
       },
       {
         title: '状态',

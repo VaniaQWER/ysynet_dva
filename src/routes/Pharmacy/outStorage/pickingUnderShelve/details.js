@@ -16,7 +16,7 @@ class DetailsPickSoldOut extends PureComponent{
       onOk:()=>{
         message.success('操作成功！')
         const { history } = this.props;
-        history.push({pathname:"/drugStorage/outStorage/pickingUnderShelve"})
+        history.push({pathname:"/pharmacy/outStorage/pickingUnderShelve"})
       },
       onCancel:()=>{}
     })

@@ -152,9 +152,9 @@ class NewInventory extends PureComponent {
         key: 'odd',
         render: (text, record) => {
           if (record.status === '已确认') {
-            return <span><Link to={{ pathname: `/drugStorage/checkDecrease/newInventory/detailsConfirm`}}>{text}</Link></span>
+            return <span><Link to={{ pathname: `/pharmacy/checkDecrease/newInventory/detailsConfirm`}}>{text}</Link></span>
           } else {
-            return <span><Link to={{ pathname: `/drugStorage/checkDecrease/newInventory/details`}}>{text}</Link></span>
+            return <span><Link to={{ pathname: `/pharmacy/checkDecrease/newInventory/details`}}>{text}</Link></span>
           }
         }
       },
