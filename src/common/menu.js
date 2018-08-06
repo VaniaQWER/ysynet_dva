@@ -766,7 +766,6 @@ const menu = [
         ]
       },
     ],
-    
   },
   {
     "path": "/purchase",
@@ -777,7 +776,86 @@ const menu = [
     "id": "m301",
     "key": "/purchase",
     "parentId": "m3",
-    "subMenus": [],
+    "subMenus": [
+      {
+        "path": "/purchase/replenishment",
+        "level": 1,
+        "fsort": 30101,
+        "name": "补货管理",
+        "id": "30101",
+        "key": "/purchase/replenishment",
+        "parentId": "m301",
+        "icon": "book",
+        "subMenus": [
+          {
+            "path": "/purchase/replenishment/replenishmentPlan",
+            "level": 2,
+            "fsort": 3010101,
+            "name": "补货计划",
+            "id": "3010101",
+            "key": "/system/replenishment/replenishmentPlan",
+            "parentId": "m303"
+          },
+          {
+            "path": "/purchase/replenishment/outCatalogPurchase",
+            "level": 2,
+            "fsort": 3010101,
+            "name": "目录外采购",
+            "id": "3010101",
+            "key": "/system/replenishment/outCatalogPurchase",
+            "parentId": "m303"
+          },
+          {
+            "path": "/purchase/replenishment/planCheck",
+            "level": 2,
+            "fsort": 3010101,
+            "name": "计划审核",
+            "id": "3010101",
+            "key": "/system/replenishment/planCheck",
+            "parentId": "m303"
+          },
+          {
+            "path": "/purchase/replenishment/planOrder",
+            "level": 2,
+            "fsort": 3010101,
+            "name": "计划订单",
+            "id": "3010101",
+            "key": "/system/replenishment/planOrder",
+            "parentId": "m303"
+          },
+        ]
+      },
+      {
+        "path": "/purchase/settlement",
+        "level": 1,
+        "fsort": 30101,
+        "name": "结算管理",
+        "id": "30101",
+        "key": "/purchase/settlement",
+        "parentId": "m301",
+        "icon": "book",
+        "subMenus": [
+          {
+            "path": "/purchase/settlement/dailyBill",
+            "level": 2,
+            "fsort": 3010101,
+            "name": "日对账单",
+            "id": "3010101",
+            "key": "/purchase/settlement/dailyBill",
+            "parentId": "m303"
+          },
+          {
+            "path": "/purchase/settlement/settlementOrder",
+            "level": 2,
+            "fsort": 3010101,
+            "name": "结算单",
+            "id": "3010101",
+            "key": "/purchase/settlement/settlementOrder",
+            "parentId": "m303"
+          },
+        ]
+      }
+    ],
   }
 ]
 

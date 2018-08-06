@@ -15,6 +15,16 @@ const formItemLayout = {
     sm: { span: 19 }
   },
 };
+const singleFormItemLayout = {
+  labelCol: {
+    xs: { span: 24 },
+    sm: { span: 6 },//5
+  },
+  wrapperCol: {
+    xs: { span: 24 },
+    sm: { span: 15 }
+  },
+}
 
 class SearchForm extends PureComponent{
   state = {
@@ -220,8 +230,8 @@ class DrugDirectory extends PureComponent{
       >
         <Form>
           <Row>
-            <Col span={12}>
-              <FormItem {...formItemLayout} label={`通用名称`}>
+            <Col span={10}>
+              <FormItem {...singleFormItemLayout} label={`通用名称`}>
                 {
                   getFieldDecorator(`geName`,{
                     initialValue: '',
@@ -231,7 +241,7 @@ class DrugDirectory extends PureComponent{
                   )
                 }
               </FormItem>
-              <FormItem {...formItemLayout} label={`商品名`}>
+              <FormItem {...singleFormItemLayout} label={`商品名`}>
                 {
                   getFieldDecorator(`productName`,{
                     initialValue: '',
@@ -241,7 +251,7 @@ class DrugDirectory extends PureComponent{
                   )
                 }
               </FormItem>
-              <FormItem {...formItemLayout} label={`规格`}>
+              <FormItem {...singleFormItemLayout} label={`规格`}>
                 {
                   getFieldDecorator(`spec`,{
                     initialValue: '',
@@ -251,7 +261,7 @@ class DrugDirectory extends PureComponent{
                   )
                 }
               </FormItem>
-              <FormItem {...formItemLayout} label={`剂型`}>
+              <FormItem {...singleFormItemLayout} label={`剂型`}>
                 {
                   getFieldDecorator(`jx`,{
                     initialValue: '',
@@ -261,7 +271,7 @@ class DrugDirectory extends PureComponent{
                   )
                 }
               </FormItem>
-              <FormItem {...formItemLayout} label={`生产厂家`}>
+              <FormItem {...singleFormItemLayout} label={`生产厂家`}>
                 {
                   getFieldDecorator(`producerName`,{
                     initialValue: '',
@@ -271,7 +281,7 @@ class DrugDirectory extends PureComponent{
                   )
                 }
               </FormItem>
-              <FormItem {...formItemLayout} label={`批准文号`}>
+              <FormItem {...singleFormItemLayout} label={`批准文号`}>
                 {
                   getFieldDecorator(`approvalNo`,{
                     initialValue: '',
@@ -282,8 +292,8 @@ class DrugDirectory extends PureComponent{
                 }
               </FormItem>
             </Col>
-            <Col span={12}>
-              <FormItem {...formItemLayout} label={`默认供应商`}>
+            <Col span={10} push={1}>
+              <FormItem {...singleFormItemLayout} label={`默认供应商`}>
                 {
                   getFieldDecorator(`geName`,{
                     initialValue: '',
@@ -293,7 +303,7 @@ class DrugDirectory extends PureComponent{
                   )
                 }
               </FormItem>
-              <FormItem {...formItemLayout} label={`包装规格`}>
+              <FormItem {...singleFormItemLayout} label={`包装规格`}>
                 {
                   getFieldDecorator(`productName`,{
                     initialValue: '',
@@ -303,7 +313,7 @@ class DrugDirectory extends PureComponent{
                   )
                 }
               </FormItem>
-              <FormItem {...formItemLayout} label={`最小发药单位`}>
+              <FormItem {...singleFormItemLayout} label={`最小发药单位`}>
                 {
                   getFieldDecorator(`spec`,{
                     initialValue: '',
@@ -313,7 +323,7 @@ class DrugDirectory extends PureComponent{
                   )
                 }
               </FormItem>
-              <FormItem {...formItemLayout} label={`采购单位`}>
+              <FormItem {...singleFormItemLayout} label={`采购单位`}>
                 {
                   getFieldDecorator(`jx`,{
                     initialValue: '',
@@ -327,7 +337,7 @@ class DrugDirectory extends PureComponent{
                   )
                 }
               </FormItem>
-              <FormItem {...formItemLayout} label={`采购价格`}>
+              <FormItem {...singleFormItemLayout} label={`采购价格`}>
                 {
                   getFieldDecorator(`producerName`,{
                     initialValue: '',
@@ -337,7 +347,7 @@ class DrugDirectory extends PureComponent{
                   )
                 }
               </FormItem>
-              <FormItem {...formItemLayout} label={`1包装规格 = `}>
+              <FormItem {...singleFormItemLayout} label={`1包装规格 = `}>
                 {
                   getFieldDecorator(`approvalNo`,{
                     initialValue: '',

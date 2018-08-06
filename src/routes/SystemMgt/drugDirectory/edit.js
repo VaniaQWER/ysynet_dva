@@ -4,7 +4,7 @@
 * @Last Modified time: 2018-07-24 10:58:49 
  */
 import React, { PureComponent } from 'react';
-import { Form , Row , Button , Col , Select , Input , Modal} from 'antd';
+import { Form , Row  , Col , Select , Modal} from 'antd';
 const Option = Select.Option;
 const Comfirm = Modal.confirm;
 class EditDrugDirectory extends PureComponent{
@@ -25,7 +25,6 @@ class EditDrugDirectory extends PureComponent{
         <div className='fullCol-fullChild'>
           <div style={{ display:'flex',justifyContent: 'space-between' }}>
             <h3 style={{ fontWeight: 'bold' }}>基本信息</h3>
-            <Button type='primary' onClick={this.onSubmit}>保存</Button>
           </div>
           <Row>
             <Col span={8}>
@@ -147,7 +146,7 @@ class EditDrugDirectory extends PureComponent{
               </Col>
               <Col span={10}>
                 <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
-                    <label>自定义包装1</label>
+                    <label>开票单位</label>
                 </div>
                 <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
                   <div className='ant-form-item-control'>
@@ -156,70 +155,55 @@ class EditDrugDirectory extends PureComponent{
                       style={{ width: 90 }}>
                       <Option key={'-1'} value={'00'}>{'板'}</Option>
                     </Select>
-                    =
-                    <Input defaultValue={6} style={{ width: 90,margin: '0 10px' }}/>
-                    <Select
-                      defaultValue={'00'} 
-                      style={{ width: 90, }}>
-                      <Option key={-1} value='00'>{'片'}</Option>
-                    </Select>
                   </div>
                 </div>
               </Col>
             </Row>
           </div>
           <div className='detailCard'>
-            <h3>库存上下限</h3>
+            <h3>供应商</h3>
             <hr className='hr'/>
             <Row>
               <Col span={10}>
                 <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
-                  <label>本部门上限</label>
+                  <label>默认供应商</label>
                 </div>
                 <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-14">
                   <div className='ant-form-item-control'>
-                    <Input addonAfter='箱'/>
-                  </div>
-                </div>
-              </Col>
-              <Col span={10}>
-                <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
-                  <label>采购量</label>
-                </div>
-                <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-14">
-                  <div className='ant-form-item-control'>
-                    <Input addonAfter='箱'/>
-                  </div>
-                </div>
-              </Col>
-              <Col span={10}>
-                <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
-                  <label>本部门下限</label>
-                </div>
-                <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-14">
-                  <div className='ant-form-item-control'>
-                    <Input addonAfter='箱'/>
-                  </div>
-                </div>
-              </Col>
-            </Row>
-          </div>
-          <div className='detailCard'>
-            <h3>指示货位</h3>
-            <hr className='hr'/>
-            <Row>
-              <Col span={10}>
-                <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
-                  <label>补货指示货位</label>
-                </div>
-                <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-14">
-                  <div className='ant-form-item-control'>
-                    <Select
-                      style={{ width: 200 }}
-                    >
-                      <Option key={'-1'} value=''>请选择</Option>
+                    <Select defaultValue='00'>
+                      <Option key={-1} value='00'>华润医药集团</Option>
+                      <Option key={-1} value='01'>九州通</Option>
                     </Select>
-                    <span style={{ marginLeft: 8 }}>箱</span>
+                    <span>单价: <label>10.00</label></span>
+                  </div>
+                </div>
+              </Col>
+              <Col span={10}>
+                <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
+                  <label>备选供应商一</label>
+                </div>
+                <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-14">
+                  <div className='ant-form-item-control'>
+                    <Select defaultValue='00'>
+                      <Option key={-1} value='00'>九州通</Option>
+                      <Option key={-1} value='01'>华润医药集团</Option>
+                    </Select>
+                    <span>单价: <label>10.00</label></span>
+                  </div>
+                </div>
+              </Col>
+              <Col span={10}>
+                <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
+                  <label>备选供应商二</label>
+                </div>
+                <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-14">
+                  <div className='ant-form-item-control'>
+                    <Select defaultValue='02'>
+                      <Option key={-1} value='00'>九州通</Option>
+                      <Option key={-1} value='01'>华润医药集团</Option>
+                      <Option key={-1} value='02'>上海医药</Option>
+                    </Select>
+                    <span>单价: <label>10.00</label></span>
                   </div>
                 </div>
               </Col>
@@ -316,6 +300,16 @@ class EditDrugDirectory extends PureComponent{
                 <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
                   <div className='ant-form-item-control'>
                     非毒麻药品
+                  </div>
+                </div>
+              </Col>
+              <Col span={8}>
+                <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-6">
+                  <label>贵重标识</label>
+                </div>
+                <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
+                  <div className='ant-form-item-control'>
+                    否
                   </div>
                 </div>
               </Col>
