@@ -7,6 +7,8 @@ import { Form, Row, Col, Input, Button, Table, DatePicker, Select } from 'antd';
 
 import {Link} from 'react-router-dom';
 
+import {createData} from '../../../../common/data';
+
 const FormItem = Form.Item;
 
 const {Option} = Select; 
@@ -24,73 +26,47 @@ const formItemLayout = {
     },
 };
 
-const dataSource = [
-    {
-        key: 1,
-        statement: 'DZ0022118070000383',
-        clearPharmacy: '中心药房',
-        clearDate: '2018-07-15',
-        detailsNum: '2984',
-        state: '待确认',
-        confirmMan: '张医生',
-        confirmDate: '2018-07-16 09:05:06'
-    }, {
-        key: 2,
-        statement: 'DZ0022118070000383',
-        clearPharmacy: '中心药房',
-        clearDate: '2018-07-15',
-        detailsNum: '2984',
-        state: '待确认',
-        confirmMan: '张医生',
-        confirmDate: '2018-07-16 09:05:06'
-    }, {
-        key: 3,
-        statement: 'DZ0022118070000383',
-        clearPharmacy: '中心药房',
-        clearDate: '2018-07-15',
-        detailsNum: '2984',
-        state: '待确认',
-        confirmMan: '张医生',
-        confirmDate: '2018-07-16 09:05:06'
-    }, {
-        key: 4,
-        statement: 'DZ0022118070000383',
-        clearPharmacy: '中心药房',
-        clearDate: '2018-07-15',
-        detailsNum: '2984',
-        state: '待确认',
-        confirmMan: '张医生',
-        confirmDate: '2018-07-16 09:05:06'
-    }, 
-]
-
+const dataSource = createData().map( (item) => {
+    return {
+            ...item,
+            key: item.id,
+            SettlementMan: '路飞',
+            fstate: item.fstate === "00"? '对账中' : '对账失败'
+          }
+} )
 const columns = [
     {
     title: '对账单',
-    dataIndex: 'statement',
+    dataIndex: 'planNo',
     render: (text) => (
         <span>
             <Link to={{ pathname: `/purchase/settlementMgt/dayStatements/details`}}>{text}</Link>
         </span>
     )
 }, {
-    title: '结算药房',
-    dataIndex: 'clearPharmacy',
+    title: '供应商',
+    dataIndex: 'productCompany',
 }, {
-    title: '结算日期',
-    dataIndex: 'clearDate',
+    title: '状态',
+    dataIndex: 'fstate',
 }, {
     title: '明细数量',
     dataIndex: 'detailsNum',
 }, {
-    title: '状态',
-    dataIndex: 'state',
+    title: '账期',
+    dataIndex: 'paymentDay',
 }, {
-    title: '确认人',
+    title: '对账人',
     dataIndex: 'confirmMan',
 }, {
-    title: '确认时间',
-    dataIndex: 'confirmDate',
+    title: '对账完成时间',
+    dataIndex: 'planTime',
+}, {
+    title: '结算人',
+    dataIndex: 'SettlementMan',
+}, {
+    title: '结算时间',
+    dataIndex: 'SettlementData',
 }]
 
 
@@ -134,7 +110,7 @@ class Statements extends PureComponent{
                             </FormItem>
                         </Col>
                         <Col span={8}  pull={1}>
-                            <FormItem label={`结算日期`} {...formItemLayout}>
+                            <FormItem label={`对账日期`} {...formItemLayout}>
                                 {getFieldDecorator('summarData', {})(
                                     <RangePicker onChange={this.onChange} />
                                 )}

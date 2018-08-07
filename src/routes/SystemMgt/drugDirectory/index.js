@@ -187,16 +187,6 @@ class DrugDirectory extends PureComponent{
         dataIndex: 'productCompany'
       },
       {
-        title: '库存上限',
-        dataIndex: 'upperkcsl',
-        width: 100
-      },
-      {
-       title: '库存下限',
-       dataIndex: 'lowerkcsl',
-       width: 100
-      },
-      {
         title: '操作',
         dataIndex: 'action',
         fixed: 'right',

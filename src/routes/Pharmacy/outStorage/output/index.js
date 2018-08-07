@@ -14,7 +14,7 @@ const FormItem = Form.Item;
 const { Option } = Select;
 const columns = [
   {
-   title: '发药单',
+   title: '出库单',
    dataIndex: 'medicinalCode',
    width:150,
    render:(text)=>(

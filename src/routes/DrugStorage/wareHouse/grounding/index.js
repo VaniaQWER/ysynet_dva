@@ -6,6 +6,7 @@
 
 import React, { PureComponent } from 'react';
 import { Table , DatePicker , Form, Input , Row, Col, Button, Icon, Select , Modal , message  , Popconfirm } from 'antd';
+import {Link} from 'react-router-dom';
 import { formItemLayout } from '../../../../utils/commonStyles';
 import { createData } from '../../../../common/data';
 const FormItem = Form.Item;
@@ -55,6 +56,7 @@ class Putaway extends PureComponent{
        title: '配送单',
        width:150,
        dataIndex: 'medicinalCode',
+       render: (text) => <span><Link to={{ pathname: `/drugStorage/wareHouse/grounding/detail` }}>{text}</Link></span>
       },
       {
         title: '状态',

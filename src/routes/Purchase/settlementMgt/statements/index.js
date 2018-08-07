@@ -30,7 +30,7 @@ dataSource = dataSource.map( (item) => ( {...item, key: item.id, fstate: item.fs
 
 const columns = [
     {
-    title: '汇总单',
+    title: '结算单',
     dataIndex: 'planNo',
     render: (text) => (
         <span>

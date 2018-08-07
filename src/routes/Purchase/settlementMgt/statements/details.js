@@ -7,6 +7,20 @@ import { createData } from '../../../../common/data';
 
 const {Search} = Input;
 
+let dataSource = createData().map((item) => {
+  return {
+    ...item,
+    key: item.id,
+    closeUnit: '盒',
+    closeNum: 238,
+    closePrice: '10.0000',
+    closeMoney: '2390.0000',
+    surplusUnit: '粒',
+    prevSurplus: 2,
+    nowSurplus: 5
+  }
+})
+
 class Details extends PureComponent {
 
   // 确认
@@ -188,7 +202,7 @@ class Details extends PureComponent {
               <Col span={4} style={{ paddingBottom: 10, borderBottom: '1px solid #f5f5f5' }} >产品信息</Col>
           </Row>
           <Table
-            dataSource={createData()}
+            dataSource={dataSource}
             bordered
             scroll={{x: '220%'}}
             columns={columns}

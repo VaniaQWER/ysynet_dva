@@ -348,6 +348,12 @@ export const getNavData = app => [
       component: dynamicWrapper(app, [], () => import('../routes/DrugStorage/wareHouse/grounding')),
     },
     {
+      name: "上架",
+      icon: 'setting',
+      path: '/drugStorage/wareHouse/grounding/detail',
+      component: dynamicWrapper(app, [], () => import('../routes/DrugStorage/wareHouse/grounding/detail')),
+    },
+    {
       name: "入库单管理",
       icon: 'setting',
       path: '/drugStorage/wareHouse/wareHouseReceiptMgt',
@@ -668,10 +674,16 @@ export const getNavData = app => [
     },
     /*****************药房 --药房管理 -- 开始***************************/
     {
-      name: '药品目录',//药房-药房管理
+      name: '药品目录',//药房-药品目录
       icon: 'setting',
       path: '/pharmacy/configMgt/drugDirectory',
       component: dynamicWrapper(app, [], () => import('../routes/Pharmacy/configMgt/drugDirectory'))
+    },
+    {
+      name: '药品目录',//药房-药品目录
+      icon: 'setting',
+      path: '/pharmacy/configMgt/drugDirectory/edit',
+      component: dynamicWrapper(app, [], () => import('../routes/Pharmacy/configMgt/drugDirectory/edit'))
     },
     {
       name: '药房管理',//药房-药房管理

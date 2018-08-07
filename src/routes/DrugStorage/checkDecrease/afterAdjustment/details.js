@@ -135,8 +135,7 @@ class Details extends PureComponent {
               <h2>盘点单: <span>KP00221180700001RP</span></h2>
             </Col>
             <Col span={12} style={{ textAlign: 'right' }}>
-              <Button type='primary' style={{marginRight: 10}} onClick={this.confirm} >生成退货单</Button>
-              <Button className='button-gap' style={{marginRight: 10}} onClick={this.reject}>生成损益单</Button>
+              <Button type='primary' style={{marginRight: 10}} onClick={this.confirm} >一键处理损益</Button>
             </Col>
           </Row>
           <Row>

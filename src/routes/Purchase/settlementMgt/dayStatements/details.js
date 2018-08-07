@@ -7,6 +7,23 @@ import { createData } from '../../../../common/data';
 
 const {Search} = Input;
 
+let dataSource = createData().map((item) => {
+  return {
+    ...item,
+    key: item.id,
+    packingSpec: '0.25gX12片',
+    dispenUnit: '瓶',
+    dispenNum: '21',
+    stockNum: '100',
+    stockType: '发药机货位',
+    batchNum: 'SF5120201505881',
+    referPrice: '500',
+    referAmount: '450',
+    maunDate: '2018-07-10',
+    validUntil: '2022-07-09'
+  }
+})
+
 class Details extends PureComponent {
 
   // 确认
@@ -229,7 +246,7 @@ class Details extends PureComponent {
               <Col span={24} style={{ paddingBottom: 10, borderBottom: '1px solid #f5f5f5' }} >产品信息</Col>
           </Row>
           <Table
-            dataSource={createData()}
+            dataSource={dataSource}
             bordered
             scroll={{x: '220%'}}
             columns={columns}

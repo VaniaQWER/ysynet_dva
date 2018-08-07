@@ -25,15 +25,6 @@ const columns = [
   {
     title: '规格',
     width: 270,
-    dataIndex: 'fmodal',
-    className:'ellipsis',
-    render:(text)=>(
-      <Tooltip placement="topLeft" title={text}>{text}</Tooltip>
-    )
-  },
-  {
-    title: '包装规格',
-    width: 270,
     dataIndex: 'spec',
     className:'ellipsis',
     render:(text)=>(
@@ -48,7 +39,7 @@ const columns = [
   {
     title: '包装规格',
     width: 150,
-    dataIndex: 'spec',
+    dataIndex: 'packSpec',
     render:(text)=>'g'
   },
   {
