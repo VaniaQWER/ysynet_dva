@@ -108,7 +108,7 @@
 .logo {
   height: 100%;
   vertical-align: middle;
-  background: url('./assets/img/logo2.png') 10px center no-repeat;
+  background: url('./assets/img/logo3.png') -10px center no-repeat;
   background-size: contain;
 }
 /* .logo{

@@ -45,10 +45,16 @@ const columns = [
     dataIndex: 'fstate'
 }, {
     title: '结算总金额',
-    dataIndex: 'totalMoney'
+    dataIndex: 'totalMoney',
+    render: (text,record,index) =>{
+        return (index*1500*1.5 + 2000)
+    }
 }, {
     title: '对账单数量',
-    dataIndex: 'billNum'
+    dataIndex: 'billNum',
+    render: (text,record,index) =>{
+        return index %3 === 0 ? index + 2: index + 3
+    }
 }, {
     title: '结算人',
     dataIndex: 'createUser'

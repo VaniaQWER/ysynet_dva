@@ -41,6 +41,8 @@ const columns = [
     {
     title: '对账单',
     dataIndex: 'planNo',
+    fixed: 'left',
+    width: 200,
     render: (text) => (
         <span>
             <Link to={{ pathname: `/purchase/settlementMgt/dayStatements/details`}}>{text}</Link>
@@ -52,24 +54,31 @@ const columns = [
 }, {
     title: '状态',
     dataIndex: 'fstate',
+    width: 100
 }, {
     title: '明细数量',
     dataIndex: 'detailsNum',
+    width: 90
 }, {
     title: '账期',
     dataIndex: 'paymentDay',
 }, {
     title: '对账人',
     dataIndex: 'confirmMan',
+    width: 100
 }, {
     title: '对账完成时间',
     dataIndex: 'planTime',
 }, {
     title: '结算人',
     dataIndex: 'SettlementMan',
+    width: 100
 }, {
     title: '结算时间',
     dataIndex: 'SettlementData',
+    render: (text,record) =>{
+        return '2018-10-28'
+    }
 }]
 
 
@@ -147,6 +156,7 @@ class Statements extends PureComponent{
                 <Table
                     bordered={true}
                     columns={columns}
+                    scroll={{ x: '120%' }}
                     dataSource={dataSource}
                     pagination={{
                       size: 'small',
