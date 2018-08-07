@@ -22,11 +22,11 @@ let dataSource =  data.map(item=> {
 const formItemLayout = {
   labelCol: {
     xs: { span: 24 },
-    sm: { span: 5 },//5
+    sm: { span: 6 },//5
   },
   wrapperCol: {
     xs: { span: 24 },
-    sm: { span: 19 }
+    sm: { span: 18 }
   },
 };
 const columns = [

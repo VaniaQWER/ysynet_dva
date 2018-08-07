@@ -148,13 +148,13 @@ class NewAdd extends PureComponent{
           ]}
         >
         <Row>
-          <Col span={7} style={{marginLeft: 4}}>
+          <Col span={8} style={{marginLeft: 4}}>
             <Search 
               style={{ width: 248 }}
               placeholder='通用名/商品名'
             />
           </Col>
-          <Col span={7} style={{textAlign: 'left', marginTop: 4}}>
+          <Col span={8} style={{textAlign: 'left', marginTop: 4}}>
             <a style={{userSelect: 'none'}} onClick={()=>this.setState({isShow: !this.state.isShow})}> 
               <Icon type={this.state.isShow ? 'up-circle-o' : 'down-circle-o'} /> {this.state.isShow ? '收起' : '更多筛选'}
             </a>
@@ -162,21 +162,21 @@ class NewAdd extends PureComponent{
         </Row>
         <Form style={{marginTop: 20, display: this.state.isShow ? 'block' : 'none'}} onSubmit={this.onSubmit}>
           <Row>
-            <Col span={7}>
+            <Col span={8}>
               <FormItem label={`产品名称`} {...formItemLayout}>
                 {getFieldDecorator('materialNameOrFqun')(
                   <Input placeholder={`请输入产品名称/产品名称首字母`} />
                 )}
               </FormItem>
             </Col>
-            <Col span={7}>
+            <Col span={8}>
               <FormItem label={`通用名称`} {...formItemLayout}>
                 {getFieldDecorator('geNameOrFqun')(
                   <Input placeholder={`请输入通用名称/简码`} />
                 )}
               </FormItem>
             </Col>
-            <Col span={7}>
+            <Col span={8}>
               <FormItem label={`规格`} {...formItemLayout}>
                 {getFieldDecorator('spec')(
                   <Input placeholder={`请输入规格`} />
@@ -185,28 +185,28 @@ class NewAdd extends PureComponent{
             </Col>
           </Row>
           <Row>
-            <Col span={7}>
+            <Col span={8}>
               <FormItem label={`型号`} {...formItemLayout}>
                 {getFieldDecorator('fmodel')(
                   <Input placeholder={`请输入型号`} />
                 )}
               </FormItem>
             </Col>
-            <Col span={7}>
+            <Col span={8}>
               <FormItem label={`品牌`} {...formItemLayout}>
                 {getFieldDecorator('brandName')(
                   <Input placeholder={`请输入品牌`} />
                 )}
               </FormItem>
             </Col>
-            <Col span={6}>
+            <Col span={8}>
               <FormItem label={`生产商`} {...formItemLayout}>
                 {getFieldDecorator('produceName')(
                   <Input placeholder={`请输入生产商`} />
                 )}
               </FormItem>
             </Col>
-            <Col span={4} style={{textAlign: 'right'}}>
+            <Col span={24} style={{textAlign: 'right'}}>
               <Button type="primary" style={{ marginRight: 8 }} htmlType="submit">查询</Button>
               <Button onClick={()=>this.props.form.resetFields()}>重置</Button>
             </Col>

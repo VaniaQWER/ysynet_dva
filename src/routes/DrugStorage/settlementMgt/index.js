@@ -390,6 +390,7 @@ class SettlementMgt extends PureComponent {
                     columns={columns}
                     dataSource={dataSource}
                     pagination={{
+                      size: 'small',
                       showQuickJumper: true,
                       showSizeChanger : true,
                       showTotal: (total) => {

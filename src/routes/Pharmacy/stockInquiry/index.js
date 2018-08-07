@@ -12,11 +12,11 @@ const {Option} = Select;
 const formItemLayout = {
   labelCol: {
     xs: { span: 24 },
-    sm: { span: 8 },
+    sm: { span: 5 },
   },
   wrapperCol: {
     xs: { span: 24 },
-    sm: { span: 16 },
+    sm: { span: 19 },
   },
  };
 
@@ -104,7 +104,7 @@ class StockInquiry extends PureComponent {
     return (
       <div className='ysynet-main-content'>
         <Form onSubmit={this.handleSearch}>
-          <Row>
+          <Row gutter={30}>
             <Col span={8}>
               <FormItem label={`关键字`} {...formItemLayout}>
                 {getFieldDecorator('keyword')(
@@ -137,6 +137,7 @@ class StockInquiry extends PureComponent {
           columns={columns}
           dataSource={dataSource}
           pagination={{
+            size: 'small',
             showQuickJumper: true,
             showSizeChanger : true,
             showTotal: (total) => {

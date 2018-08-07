@@ -40,7 +40,7 @@ class SearchForm extends PureComponent {
     const formItemLayout = { labelCol: {span: 4}, wrapperCol: {span: 18} };
     return(
       <Form onSubmit={this.handleSearch}>
-        <Row>
+        <Row gutter={30}>
           <Col span={8}>
             <FormItem label={'生成时间'} {...formItemLayout}>
               {getFieldDecorator('generatedTime')(

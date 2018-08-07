@@ -253,6 +253,7 @@ class Details extends PureComponent {
             rowKey={'id'}
             style={{marginTop: 24}}
             pagination={{
+              size: 'small',
               showQuickJumper: true,
               showSizeChanger : true,
               showTotal: (total) => {

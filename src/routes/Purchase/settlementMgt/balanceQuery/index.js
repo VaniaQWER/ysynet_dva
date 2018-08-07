@@ -61,10 +61,11 @@ class Statements extends PureComponent{
                         columns={columns}
                         dataSource={dataSource}
                         pagination={{
-                        showQuickJumper: true,
-                        showSizeChanger : true,
-                        showTotal: (total) => {
-                            return `总共${total}个项目`;
+                            size: 'small',
+                            showQuickJumper: true,
+                            showSizeChanger : true,
+                            showTotal: (total) => {
+                                return `总共${total}个项目`;
                         }
                         }}
                     />

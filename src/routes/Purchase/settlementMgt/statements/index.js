@@ -16,11 +16,11 @@ const { RangePicker } = DatePicker;
 const formItemLayout = {
     labelCol: {
       xs: { span: 24 },
-      sm: { span: 8 },
+      sm: { span: 5 },
     },
     wrapperCol: {
       xs: { span: 24 },
-      sm: { span: 16 },
+      sm: { span: 19 },
     },
 };
 
@@ -89,28 +89,28 @@ class SettlementMgt extends PureComponent {
         return (
             <div className="ysynet-main-content">
                 <Form onSubmit={this.handleSearch}>
-                    <Row>
-                        <Col span={8} pull={1}>
+                    <Row gutter={30}>
+                        <Col span={8}>
                             <FormItem label={`汇总单`} {...formItemLayout}>
                                 {getFieldDecorator('summarSheet', {})(
                                     <Input/>
                                 )}
                             </FormItem>
                         </Col>
-                        <Col span={8}  pull={1}>
+                        <Col span={8}>
                             <FormItem label={`汇总日期`} {...formItemLayout}>
                                 {getFieldDecorator('summarData', {})(
                                     <RangePicker onChange={this.onChange} />
                                 )}
                             </FormItem>
                         </Col>
-                        <Col span={6} style={{ textAlign: 'right', marginTop: 4}}>
+                        <Col span={8} style={{ textAlign: 'right', marginTop: 4}}>
                             <Button type="primary" htmlType="submit">查询</Button>
-                            <Button style={{marginLeft: 30}} onClick={this.handleReset}>重置</Button>
+                            <Button style={{marginLeft: 8}} onClick={this.handleReset}>重置</Button>
                         </Col>
                     </Row>
                 </Form>
-                <Row style={{paddingLeft: 32, marginBottom: 30}}>
+                <Row style={{marginBottom: 30}}>
                     <Button type="primary" onClick={() => {
                         const { history } = this.props;
                         history.push({pathname:"/purchase/settlementMgt/statements/newSettlement"});
@@ -121,6 +121,7 @@ class SettlementMgt extends PureComponent {
                     columns={columns}
                     dataSource={dataSource}
                     pagination={{
+                      size: 'small',
                       showQuickJumper: true,
                       showSizeChanger : true,
                       showTotal: (total) => {

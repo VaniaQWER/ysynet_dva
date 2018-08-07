@@ -97,7 +97,7 @@ class SearchFormWrapper extends PureComponent {
    const { getFieldDecorator } = this.props.form;
    return (
      <Form onSubmit={this.handleSearch}>
-       <Row>
+       <Row gutter={30}>
          <Col span={8}>
            <FormItem label={`发药单`} {...formItemLayout}>
              {getFieldDecorator('assetCode', {})(

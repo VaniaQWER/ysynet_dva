@@ -184,6 +184,7 @@ class DrugStorageConfigMgt extends PureComponent{
           dataSource={dataSource}
           scroll={{ x:'100%' }}
           pagination={{
+            size: 'small',
             showQuickJumper: true,
             showSizeChanger: true
           }}

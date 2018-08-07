@@ -125,7 +125,7 @@ class SearchFormWrapper extends PureComponent {
    const { getFieldDecorator } = this.props.form;
    return (
      <Form onSubmit={this.handleSearch}>
-       <Row>
+       <Row gutter={30}>
          <Col span={8}>
            <FormItem label={`单号`} {...formItemLayout}>
              {getFieldDecorator('assetCode', {})(
@@ -157,8 +157,8 @@ class SearchFormWrapper extends PureComponent {
          </Col>
          <Col span={8} style={{ textAlign: 'right', marginTop: 4,float:'right'}} >
            <Button type="primary" htmlType="submit">查询</Button>
-           <Button style={{marginLeft: 30}} onClick={this.handleReset}>重置</Button>
-           <a style={{marginLeft: 30, fontSize: 14}} onClick={this.toggle}>
+           <Button style={{marginLeft: 8}} onClick={this.handleReset}>重置</Button>
+           <a style={{marginLeft: 8, fontSize: 14}} onClick={this.toggle}>
              {this.state.expand ? '收起' : '展开'} <Icon type={this.state.expand ? 'up' : 'down'} />
            </a>
          </Col>

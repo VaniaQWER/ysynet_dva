@@ -127,6 +127,7 @@ class Details extends PureComponent{
                         columns={columns}
                         dataSource={dataSource}
                         pagination={{
+                            size: 'small',
                             showTotal: total => `总共${total}个项目`
                         }}
                     />

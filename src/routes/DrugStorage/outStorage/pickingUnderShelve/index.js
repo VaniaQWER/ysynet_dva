@@ -91,12 +91,6 @@ class PickSoldOut extends PureComponent{
         render: (text, record, index) => '2018-7-25 21:17'
       },
       {
-        title: '拣货时间',
-        dataIndex: 'time',
-        width: 180,
-        render: (text, record, index) => '2018-7-25 21:17'
-      },
-      {
         title: '操作',
         width: 90,
         fixed: 'right',

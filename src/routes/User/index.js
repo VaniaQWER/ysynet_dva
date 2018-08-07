@@ -268,6 +268,7 @@ class User extends PureComponent{
               // loading={isLoading}
               size={'small'}
               pagination={{
+                size: 'small',
                 pageSize: 15
               }}
               rowKey={'userId'}

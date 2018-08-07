@@ -26,12 +26,12 @@ class EditDrugDirectory extends PureComponent{
           <div style={{ display:'flex',justifyContent: 'space-between' }}>
             <h3 style={{ fontWeight: 'bold' }}>基本信息</h3>
           </div>
-          <Row>
+          <Row gutter={30}>
             <Col span={8}>
               <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
                 <label>通用名</label>
               </div>
-              <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
+              <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-19">
                 <div className='ant-form-item-control'>注射用复方甘草酸苷</div>
               </div>
             </Col>
@@ -39,7 +39,7 @@ class EditDrugDirectory extends PureComponent{
               <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
                 <label>商品名</label>
               </div>
-              <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
+              <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-19">
                 <div className='ant-form-item-control'>注射用复方甘草酸苷</div>
               </div>
             </Col>
@@ -47,15 +47,17 @@ class EditDrugDirectory extends PureComponent{
               <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
                 <label>别名</label>
               </div>
-              <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
+              <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-19">
                 <div className='ant-form-item-control'></div>
               </div>
             </Col>
+          </Row>
+          <Row gutter={30}>
             <Col span={8}>
               <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
                 <label>规格</label>
               </div>
-              <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
+              <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-19">
                 <div className='ant-form-item-control'>0.25g</div>
               </div>
             </Col>
@@ -63,24 +65,25 @@ class EditDrugDirectory extends PureComponent{
               <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
                   <label>包装规格</label>
               </div>
-              <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
-                <div className='ant-form-item-control'>0.25gX12片
-                </div>
+              <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-19">
+                <div className='ant-form-item-control'>0.25gX12片</div>
               </div>
             </Col>
             <Col span={8}>
               <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
                   <label>剂型</label>
               </div>
-              <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
+              <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-19">
                 <div className='ant-form-item-control'>注射剂</div>
               </div>
             </Col>
+          </Row>
+          <Row gutter={30}>
             <Col span={8}>
               <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
                   <label>生产厂家</label>
               </div>
-              <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
+              <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-19">
                 <div className='ant-form-item-control'>这是一个生产厂家地址</div>
               </div>
             </Col>
@@ -88,7 +91,7 @@ class EditDrugDirectory extends PureComponent{
               <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
                   <label>批准文号</label>
               </div>
-              <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
+              <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-19">
                 <div className='ant-form-item-control'>国药准字H20066358</div>
               </div>
             </Col>
@@ -96,7 +99,7 @@ class EditDrugDirectory extends PureComponent{
               <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
                   <label>状态</label>
               </div>
-              <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
+              <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-19">
                 <div className='ant-form-item-control'>启用</div>
               </div>
             </Col>

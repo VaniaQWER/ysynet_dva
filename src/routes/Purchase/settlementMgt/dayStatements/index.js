@@ -18,11 +18,11 @@ const { RangePicker } = DatePicker;
 const formItemLayout = {
     labelCol: {
       xs: { span: 24 },
-      sm: { span: 8 },
+      sm: { span: 5 },
     },
     wrapperCol: {
       xs: { span: 24 },
-      sm: { span: 16 },
+      sm: { span: 19 },
     },
 };
 
@@ -31,6 +31,9 @@ const dataSource = createData().map( (item) => {
             ...item,
             key: item.id,
             SettlementMan: '路飞',
+            detailsNum: 50,
+            paymentDay: '2018-08-08',
+            confirmMan: '索隆',
             fstate: item.fstate === "00"? '对账中' : '对账失败'
           }
 } )
@@ -101,22 +104,22 @@ class Statements extends PureComponent{
         return (
             <div className="ysynet-main-content">
                 <Form onSubmit={this.handleSearch}>
-                    <Row style={{marginBottom: 20}}>
-                        <Col span={8} pull={1}>
+                    <Row gutter={30} style={{marginBottom: 20}}>
+                        <Col span={8}>
                             <FormItem label={`对账单`} {...formItemLayout}>
                                 {getFieldDecorator('summarSheet', {})(
                                     <Input/>
                                 )}
                             </FormItem>
                         </Col>
-                        <Col span={8}  pull={1}>
+                        <Col span={8}>
                             <FormItem label={`对账日期`} {...formItemLayout}>
                                 {getFieldDecorator('summarData', {})(
                                     <RangePicker onChange={this.onChange} />
                                 )}
                             </FormItem>
                         </Col>
-                        <Col span={8}  pull={1}>
+                        <Col span={8}>
                             <FormItem label={`状态`} {...formItemLayout}>
                                 {getFieldDecorator('assetName', {})(
                                 <Select 
@@ -133,11 +136,11 @@ class Statements extends PureComponent{
                             </FormItem>
                         </Col>
                         <Col span={12}>
-                            <Link to={{ pathname: `/purchase/settlementMgt/dayStatements/newRecon` }}><Button style={{marginLeft: 30}} type="primary">新建对账</Button></Link>
+                            <Link to={{ pathname: `/purchase/settlementMgt/dayStatements/newRecon` }}><Button type="primary">新建对账</Button></Link>
                         </Col>
                         <Col span={12} style={{marginTop: 4, textAlign: 'right'}}>
                             <Button type="primary" htmlType="submit">查询</Button>
-                            <Button style={{marginLeft: 30, marginRight: 50}} onClick={this.handleReset}>重置</Button>
+                            <Button style={{marginLeft: 8}} onClick={this.handleReset}>重置</Button>
                         </Col>
                     </Row>
                 </Form>
@@ -146,6 +149,7 @@ class Statements extends PureComponent{
                     columns={columns}
                     dataSource={dataSource}
                     pagination={{
+                      size: 'small',
                       showQuickJumper: true,
                       showSizeChanger : true,
                       showTotal: (total) => {
