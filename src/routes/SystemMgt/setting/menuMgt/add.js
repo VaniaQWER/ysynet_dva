@@ -232,14 +232,14 @@ class AddMenuMgt extends PureComponent{
 
         <Affix offsetBottom={0} className='affix'  style={{textAlign: 'right',marginLeft:'-16px',marginRight:'-16px'}}>
             <Button
-              style={{padding:20,margin:5}}
+              style={{float:'right',padding:20,margin:5}}
               type="primary"
               onClick={() => {this.onSubmit()}}
             >
               确认
             </Button>
             <Button
-              style={{padding:20,margin:5}}
+              style={{float:'right',padding:20,margin:5}}
               onClick={() => {this.goBack()}}
             >
               取消
