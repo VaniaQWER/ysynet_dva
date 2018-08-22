@@ -70,7 +70,7 @@ class SearchForm extends PureComponent{
               }
             </FormItem>
           </Col>
-          <Col span={8} style={{ /* textAlign: 'right',  */marginTop: 4}} >
+          <Col span={8} style={{ textAlign: 'right', marginTop: 4}}>
            <Button type="primary" htmlType="submit">查询</Button>
            <Button type='default' style={{marginLeft: 8}} onClick={this.handleReset}>重置</Button>
            {/* <a style={{marginLeft: 8, fontSize: 14}} onClick={this.toggle}>
@@ -97,6 +97,8 @@ for( let i = 0; i<20; i++ ){
     
   })
 }
+
+
 class UserMgt extends PureComponent{
   state = {
     loading: false,
