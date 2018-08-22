@@ -75,13 +75,14 @@
 .ant-layout-content .ant-table.ant-table-bordered .ant-table-title{
   border: none;
   border-bottom: 1px solid #e8e8e8;
+  margin-bottom: 24px;
 }
-.ant-layout-content .ant-table-wrapper{
+/* .ant-layout-content .ant-table-wrapper{
   margin-top: -16px !important;
 }
 .ant-table .ant-table-content{
   margin-top: 24px;
-}
+} */
 .ysynet-main-content{
   background: #fff;
   margin: 6px -16px;
@@ -406,4 +407,14 @@ td:hover .editable-cell-icon {
 .ysynet-table-Content{
   background: #fff;
   padding: 0 24px;
+}
+
+.ant-affix{
+  background: #fff !important;
+}
+.ysynet-affix{
+  height: 70px;
+  /* display: flex;
+  justify-content: flex-end;
+  align-items: center; */
 }

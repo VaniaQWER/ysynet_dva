@@ -49,7 +49,8 @@ class Details extends PureComponent {
     message.success('增加成功！');
   }
   render() {
-    const columns = [
+    const { types } = this.props.match.params;
+    let columns = [
       {
         title: '货位',
         dataIndex: 'huowei',
@@ -76,6 +77,7 @@ class Details extends PureComponent {
       {
         title: '生产厂家',
         dataIndex: 'productName1d2',
+        width: 180,
         render:(text,record)=>'浙江安宝药业有限公司'
       },
       {
@@ -86,6 +88,7 @@ class Details extends PureComponent {
       {
         title: '单位',
         dataIndex: 'dw',
+        width: 90,
         render:(text,record)=>'瓶'
       },
       {
@@ -103,6 +106,7 @@ class Details extends PureComponent {
       {
         title: '盈亏数量',
         dataIndex: 'yksl', 
+        width: 90,
         render: (text, record, index) => '01'
       },
       {
@@ -149,6 +153,9 @@ class Details extends PureComponent {
         }
       }
     ];
+    if(types !== '00'){
+      columns.splice(7,1);
+    }
     return (
       <div className='fullCol fadeIn'>
         <div className='fullCol-fullChild'>

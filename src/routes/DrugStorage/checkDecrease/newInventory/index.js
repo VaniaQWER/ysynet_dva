@@ -80,9 +80,9 @@ class SearchForm extends PureComponent {
               })(
                 <Select>
                   <Option value={''}>全部</Option>
-                  <Option value={'00'}>明盘全盘</Option>
-                  <Option value={'01'}>暗盘动销盘</Option>
-                  <Option value={'02'}>明盘动盘</Option>
+                  <Option value={'00'}>00</Option>
+                  <Option value={'01'}>01</Option>
+                  <Option value={'02'}>02</Option>
                 </Select>
               )}
             </FormItem>
@@ -141,9 +141,9 @@ class NewInventory extends PureComponent {
         key: 'odd',
         render: (text, record) => {
           if (record.status === '已确认') {
-            return <span><Link to={{ pathname: `/drugStorage/checkDecrease/newInventory/detailsConfirm`}}>{text}</Link></span>
+            return <span><Link to={{ pathname: `/drugStorage/checkDecrease/newInventory/detailsConfirm/${record.types}`}}>{text}</Link></span>
           } else {
-            return <span><Link to={{ pathname: `/drugStorage/checkDecrease/newInventory/details`}}>{text}</Link></span>
+            return <span><Link to={{ pathname: `/drugStorage/checkDecrease/newInventory/details/${record.types}`}}>{text}</Link></span>
           }
         }
       },
@@ -155,7 +155,10 @@ class NewInventory extends PureComponent {
       {
         title: '类型',
         dataIndex: 'types',
-        key: 'types'
+        key: 'types',
+        render: (text,record,index)=>{
+          return text === '00' ? '明盘全盘': text ==='01'?'暗盘动销盘': '明盘动盘'
+        }
       },
       {
         title: '部门',
@@ -188,7 +191,7 @@ class NewInventory extends PureComponent {
         key: '1',
         odd: 'KP0022118070000383',
         status: '草稿',
-        types: '明盘全盘',
+        types: '00',
         dept: '药库',
         oddUser: '张三三',
         makingTime: '2018-7-24 16:45',
@@ -199,7 +202,7 @@ class NewInventory extends PureComponent {
         key: '2',
         odd: 'KP00221180700002DN',
         status: '待确认',
-        types: '暗盘动销盘',
+        types: '01',
         dept: '药库',
         oddUser: '张三三',
         makingTime: '2018-7-24 16:45',
@@ -210,7 +213,7 @@ class NewInventory extends PureComponent {
         key: '3',
         odd: 'KP00221180700001CW',
         status: '已确认',
-        types: '明盘动盘',
+        types: '02',
         dept: '药库',
         oddUser: '张三三',
         makingTime: '2018-7-24 16:45',
@@ -221,7 +224,7 @@ class NewInventory extends PureComponent {
         key: '4',
         odd: 'KP0022118070000383',
         status: '草稿',
-        types: '明盘全盘',
+        types: '00',
         dept: '药库',
         oddUser: '张三三',
         makingTime: '2018-7-24 16:45',
@@ -232,7 +235,7 @@ class NewInventory extends PureComponent {
         key: '5',
         odd: 'KP00221180700002DN',
         status: '待确认',
-        types: '暗盘动销盘',
+        types: '01',
         dept: '药库',
         oddUser: '张三三',
         makingTime: '2018-7-24 16:45',
@@ -243,7 +246,7 @@ class NewInventory extends PureComponent {
         key: '6',
         odd: 'KP00221180700001CW',
         status: '已确认',
-        types: '明盘动盘',
+        types: '02',
         dept: '药库',
         oddUser: '张三三',
         makingTime: '2018-7-24 16:45',
@@ -254,7 +257,7 @@ class NewInventory extends PureComponent {
         key: '7',
         odd: 'KP0022118070000383',
         status: '草稿',
-        types: '明盘全盘',
+        types: '00',
         dept: '药库',
         oddUser: '张三三',
         makingTime: '2018-7-24 16:45',
@@ -265,7 +268,7 @@ class NewInventory extends PureComponent {
         key: '8',
         odd: 'KP00221180700002DN',
         status: '待确认',
-        types: '暗盘动销盘',
+        types: '01',
         dept: '药库',
         oddUser: '张三三',
         makingTime: '2018-7-24 16:45',
@@ -276,7 +279,7 @@ class NewInventory extends PureComponent {
         key: '9',
         odd: 'KP00221180700001CW',
         status: '已确认',
-        types: '明盘动盘',
+        types: '02',
         dept: '药库',
         oddUser: '张三三',
         makingTime: '2018-7-24 16:45',
@@ -287,7 +290,7 @@ class NewInventory extends PureComponent {
         key: '10',
         odd: 'KP0022118070000383',
         status: '草稿',
-        types: '明盘全盘',
+        types: '00',
         dept: '药库',
         oddUser: '张三三',
         makingTime: '2018-7-24 16:45',
@@ -298,7 +301,7 @@ class NewInventory extends PureComponent {
         key: '11',
         odd: 'KP00221180700002DN',
         status: '待确认',
-        types: '暗盘动销盘',
+        types: '01',
         dept: '药库',
         oddUser: '张三三',
         makingTime: '2018-7-24 16:45',
@@ -309,7 +312,7 @@ class NewInventory extends PureComponent {
         key: '12',
         odd: 'KP00221180700001CW',
         status: '已确认',
-        types: '明盘动盘',
+        types: '02',
         dept: '药库',
         oddUser: '张三三',
         makingTime: '2018-7-24 16:45',
@@ -320,7 +323,7 @@ class NewInventory extends PureComponent {
         key: '13',
         odd: 'KP0022118070000383',
         status: '草稿',
-        types: '明盘全盘',
+        types: '00',
         dept: '药库',
         oddUser: '张三三',
         makingTime: '2018-7-24 16:45',
@@ -331,7 +334,7 @@ class NewInventory extends PureComponent {
         key: '14',
         odd: 'KP00221180700002DN',
         status: '待确认',
-        types: '暗盘动销盘',
+        types: '01',
         dept: '药库',
         oddUser: '张三三',
         makingTime: '2018-7-24 16:45',
@@ -342,7 +345,7 @@ class NewInventory extends PureComponent {
         key: '15',
         odd: 'KP00221180700001CW',
         status: '已确认',
-        types: '明盘动盘',
+        types: '02',
         dept: '药库',
         oddUser: '张三三',
         makingTime: '2018-7-24 16:45',
@@ -353,7 +356,7 @@ class NewInventory extends PureComponent {
         key: '16',
         odd: 'KP0022118070000383',
         status: '草稿',
-        types: '明盘全盘',
+        types: '00',
         dept: '药库',
         oddUser: '张三三',
         makingTime: '2018-7-24 16:45',
@@ -364,7 +367,7 @@ class NewInventory extends PureComponent {
         key: '17',
         odd: 'KP00221180700002DN',
         status: '待确认',
-        types: '暗盘动销盘',
+        types: '01',
         dept: '药库',
         oddUser: '张三三',
         makingTime: '2018-7-24 16:45',
@@ -375,7 +378,7 @@ class NewInventory extends PureComponent {
         key: '18',
         odd: 'KP00221180700001CW',
         status: '已确认',
-        types: '明盘动盘',
+        types: '02',
         dept: '药库',
         oddUser: '张三三',
         makingTime: '2018-7-24 16:45',
@@ -386,7 +389,7 @@ class NewInventory extends PureComponent {
         key: '19',
         odd: 'KP0022118070000383',
         status: '草稿',
-        types: '明盘全盘',
+        types: '00',
         dept: '药库',
         oddUser: '张三三',
         makingTime: '2018-7-24 16:45',
@@ -397,7 +400,7 @@ class NewInventory extends PureComponent {
         key: '20',
         odd: 'KP00221180700002DN',
         status: '待确认',
-        types: '暗盘动销盘',
+        types: '01',
         dept: '药库',
         oddUser: '张三三',
         makingTime: '2018-7-24 16:45',
@@ -408,7 +411,7 @@ class NewInventory extends PureComponent {
         key: '21',
         odd: 'KP00221180700001CW',
         status: '已确认',
-        types: '明盘动盘',
+        types: '02',
         dept: '药库',
         oddUser: '张三三',
         makingTime: '2018-7-24 16:45',
@@ -419,7 +422,7 @@ class NewInventory extends PureComponent {
         key: '22',
         odd: 'KP0022118070000383',
         status: '草稿',
-        types: '明盘全盘',
+        types: '00',
         dept: '药库',
         oddUser: '张三三',
         makingTime: '2018-7-24 16:45',
@@ -430,7 +433,7 @@ class NewInventory extends PureComponent {
         key: '23',
         odd: 'KP00221180700002DN',
         status: '待确认',
-        types: '暗盘动销盘',
+        types: '01',
         dept: '药库',
         oddUser: '张三三',
         makingTime: '2018-7-24 16:45',
@@ -441,7 +444,7 @@ class NewInventory extends PureComponent {
         key: '24',
         odd: 'KP00221180700001CW',
         status: '已确认',
-        types: '明盘动盘',
+        types: '02',
         dept: '药库',
         oddUser: '张三三',
         makingTime: '2018-7-24 16:45',
@@ -452,7 +455,7 @@ class NewInventory extends PureComponent {
         key: '25',
         odd: 'KP0022118070000383',
         status: '草稿',
-        types: '明盘全盘',
+        types: '00',
         dept: '药库',
         oddUser: '张三三',
         makingTime: '2018-7-24 16:45',
@@ -463,7 +466,7 @@ class NewInventory extends PureComponent {
         key: '26',
         odd: 'KP00221180700002DN',
         status: '待确认',
-        types: '暗盘动销盘',
+        types: '01',
         dept: '药库',
         oddUser: '张三三',
         makingTime: '2018-7-24 16:45',
@@ -474,7 +477,7 @@ class NewInventory extends PureComponent {
         key: '27',
         odd: 'KP00221180700001CW',
         status: '已确认',
-        types: '明盘动盘',
+        types: '02',
         dept: '药库',
         oddUser: '张三三',
         makingTime: '2018-7-24 16:45',

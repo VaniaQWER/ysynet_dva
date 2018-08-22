@@ -493,14 +493,14 @@ export const getNavData = app => [
     {
       name: "新建盘点-详情(待确认)",
       icon: 'setting',
-      path: '/drugStorage/checkDecrease/newInventory/details',
+      path: '/drugStorage/checkDecrease/newInventory/details/:types',
       component: dynamicWrapper(app, [], () => import('../routes/DrugStorage/checkDecrease/newInventory/details')),
     },
     // 药库 - 盘点损益 - 新建盘点 - 详情(已确认)
     {
       name: "新建盘点-详情(已确认)",
       icon: 'setting',
-      path: '/drugStorage/checkDecrease/newInventory/detailsConfirm',
+      path: '/drugStorage/checkDecrease/newInventory/detailsConfirm/:types',
       component: dynamicWrapper(app, [], () => import('../routes/DrugStorage/checkDecrease/newInventory/detailsConfirm')),
     },
     // 药库 - 盘点损益 - 盘点审核
@@ -1021,6 +1021,53 @@ export const getNavData = app => [
       path: '/system/drugDirectory/directory/edit',
       component: dynamicWrapper(app, [], () => import('../routes/SystemMgt/drugDirectory/edit')),
     },
+    /* ******************   组织机构     *********************** */
+    {
+      name: "供应商管理",
+      icon: 'setting',
+      path: '/system/organization/supplierMgt',
+      component: dynamicWrapper(app, [], () => import('../routes/SystemMgt/organization/supplierMgt')),
+    },
+    // 组织机构 -- 部门管理
+    {
+      name: "部门管理",
+      icon: 'setting',
+      path: '/system/organization/departmentMgt',
+      component: dynamicWrapper(app, [], () => import('../routes/SystemMgt/organization/departmentMgt')),
+    },
+    // 组织机构 -- 用户管理
+    {
+      name: "用门管理",
+      icon: 'setting',
+      path: '/system/organization/userMgt',
+      component: dynamicWrapper(app, [], () => import('../routes/SystemMgt/organization/userMgt')),
+    },
+    {
+      name: "用门管理--添加",
+      icon: 'setting',
+      path: '/system/organization/userMgt/add',
+      component: dynamicWrapper(app, [], () => import('../routes/SystemMgt/organization/userMgt/add')),
+    },
+    /* *********************** 系统管理  角色管理     ******************** */
+    {
+      name: "角色管理",
+      icon: 'setting',
+      path: '/system/role/roleMgt',
+      component: dynamicWrapper(app, [], () => import('../routes/SystemMgt/role/roleMgt')),
+    },
+     /* *********************** 系统管理 系统设置     ******************** */
+    {
+      name: "菜单管理",
+      icon: 'setting',
+      path: '/system/setting/menuMgt',
+      component: dynamicWrapper(app, [], () => import('../routes/SystemMgt/setting/menuMgt')),
+    },
+    {
+      name: "字典管理",
+      icon: 'setting',
+      path: '/system/setting/itemsData',
+      component: dynamicWrapper(app, [], () => import('../routes/SystemMgt/setting/itemsData')),
+    },
      /* ********************   采购结算 子系统    ******************************* */
      {
       name: "采购结算-补货管理--补货计划",
@@ -1039,6 +1086,12 @@ export const getNavData = app => [
       icon: 'setting',
       path: '/purchase/replenishment/outCatalogPurchase',
       component: dynamicWrapper(app, [], () => import('../routes/Purchase/replenishment/outCatalogPurchase')),
+    },
+    {
+      name: "采购结算-补货管理--目录外采购--详情",
+      icon: 'setting',
+      path: '/purchase/replenishment/outCatalogPurchase/detail',
+      component: dynamicWrapper(app, [], () => import('../routes/Purchase/replenishment/outCatalogPurchase/detail')),
     },
     {
       name: "采购结算-补货管理--计划审核",

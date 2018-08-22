@@ -2,7 +2,7 @@
  * @Author: wwb 
  * @Date: 2018-07-24 20:15:54 
  * @Last Modified by: wwb
- * @Last Modified time: 2018-08-06 22:05:20
+ * @Last Modified time: 2018-08-21 20:35:39
  */
 /* 
   @file 补货计划 详情
@@ -36,11 +36,11 @@ const columns = [
     width: 150,
     dataIndex: 'fmodal',
   },
-  {
+ /*  {
     title: '包装规格',
     width: 270,
     dataIndex: 'spec',
-  },
+  }, */
   {
     title: '单位',
     width: 150,
@@ -87,8 +87,8 @@ class ReplenishmentDetail extends PureComponent{
           <div style={{ display: 'flex',justifyContent: 'space-between' }}>
             <h3>单据信息</h3>
             <div>
-              <Button type='default'>编辑</Button>
-              <Button type='danger' style={{ marginLeft: 8 }}>驳回</Button>
+              <Button type='primary'>通过</Button>
+              <Button type='danger' style={{ marginLeft: 8 }} ghost>驳回</Button>
             </div>
           </div>
           <Row>

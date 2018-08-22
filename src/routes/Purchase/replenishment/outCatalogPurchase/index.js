@@ -2,7 +2,7 @@
  * @Author: wwb 
  * @Date: 2018-07-24 16:08:53 
  * @Last Modified by: wwb
- * @Last Modified time: 2018-08-06 23:22:10
+ * @Last Modified time: 2018-08-21 20:44:10
  */
 
 /**
@@ -154,7 +154,7 @@ class OutCatalogPurchase extends PureComponent{
       width: 180,
       render: (text,record) =>{
         return <span>
-          <Link to={{pathname: `/drugStorage/replenishment/replenishmentPlan/detail`}}>{text}</Link>
+          <Link to={{pathname: `/purchase/replenishment/outCatalogPurchase/detail`}}>{text}</Link>
         </span>  
       }
     },{

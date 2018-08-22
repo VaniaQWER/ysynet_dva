@@ -1,14 +1,14 @@
 /*
  * @Author: gaofengjiao 
  * @Date: 2018-08-06
- * @Last Modified by: gaofengjiao
- * @Last Modified time: 2018-08-06
+ * @Last Modified by: wwb
+ * @Last Modified time: 2018-08-21 11:33:45
  */
 /* 
   @file  药库 - 入库--配送单验收-新建验收
 */
 import React, { PureComponent } from 'react';
-import { Table ,Row, Col, Input, DatePicker,Tooltip } from 'antd';
+import { Table ,Row, Col, Button, Input, DatePicker,Tooltip } from 'antd';
 import { Link } from 'react-router-dom';
 import moment from 'moment';
 import { createData } from '../../../../common/data';
@@ -55,11 +55,11 @@ const columns = [
     width:180,
     dataIndex: 'productCompany'
   },
-  {
+  /* {
     title: '包装规格',
     dataIndex: 'spec',
     width:180,
-  },
+  }, */
   {
     title: '生产批号',
     dataIndex: 'flot',
@@ -157,6 +157,10 @@ class PllistCheckAdd extends PureComponent{
                     <Input placeholder='请输入'/>
                   </div>
                 </div>
+            </Col>
+            <Col style={{ textAlign:'right' }}>
+              <Button type='primary'>保存</Button>
+              <Button type='danger' style={{ marginLeft: 8 }} ghost>取消</Button>
             </Col>
           </Row>
           <h3>单据信息</h3>

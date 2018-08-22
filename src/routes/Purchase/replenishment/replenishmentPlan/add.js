@@ -2,13 +2,13 @@
  * @Author: wwb 
  * @Date: 2018-07-24 18:49:01 
  * @Last Modified by: wwb
- * @Last Modified time: 2018-08-06 23:14:30
+ * @Last Modified time: 2018-08-21 20:33:53
  */
 /**
  * @file 药库 - 补货管理--补货计划--新建计划
  */
 import React, { PureComponent } from 'react';
-import { Form, Row, Col, Button, Input, Table, Modal, Icon, Tooltip, message  } from 'antd';
+import { Form, Row, Col, Button, Input, Table, Modal, Icon, Tooltip, message, Affix  } from 'antd';
 import { formItemLayout } from '../../../../utils/commonStyles'
 import { createData } from '../../../../common/data';
 const FormItem = Form.Item;
@@ -31,6 +31,9 @@ class NewAdd extends PureComponent{
       message.success('添加成功')
       this.setState({ loading: false, visible: false })
     },500)
+  }
+  onChange = (record,index) =>{
+    console.log(record,index,'onchange')
   }
   render(){
     const { getFieldDecorator } = this.props.form;
@@ -109,15 +112,17 @@ class NewAdd extends PureComponent{
     ]
     return (
       <div style={{ padding: 24 }}>
-        <div>
-          <h2>新建计划</h2>
-          <hr className='hr'/>
-        </div>
-        <div className='ant-row-bottom'> 
-          <Button type='primary' icon='plus' onClick={()=>this.setState({ visible: true })}>添加产品</Button>
-          <Button type='default' style={{ margin: '0 8px' }}>一键添加低库存产品</Button>
-          <Button type='default'>删除</Button>
-        </div>
+        <Affix>
+          <div>
+            <h2>新建计划</h2>
+            <hr className='hr'/>
+          </div>
+          <div className='ant-row-bottom'> 
+            <Button type='primary' icon='plus' onClick={()=>this.setState({ visible: true })}>添加产品</Button>
+            <Button type='default' style={{ margin: '0 8px' }}>一键添加低库存产品</Button>
+            <Button type='default'>删除</Button>
+          </div>
+        </Affix>
         <Modal
           title={'添加产品'}
           visible={visible}
@@ -222,6 +227,7 @@ class NewAdd extends PureComponent{
               title={()=>'产品信息'}
               columns={columns}
               bordered
+              dataSource={createData()}
               rowKey='id'
               scroll={{ x: '150%' }}
               pagination={false}
@@ -234,6 +240,14 @@ class NewAdd extends PureComponent{
             />
           </div>
         </div>
+        <Affix offsetBottom={20}>
+          <Row>
+            <Col style={{ textAlign:'right', padding: '10px' }}>
+              <Button type='primary'>提交</Button>
+              <Button type='danger' style={{ marginLeft: 8 }} ghost>保存</Button>
+            </Col>
+          </Row>
+        </Affix>
       </div>
     )
   }
