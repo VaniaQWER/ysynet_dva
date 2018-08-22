@@ -1035,6 +1035,18 @@ export const getNavData = app => [
       path: '/system/organization/departmentMgt',
       component: dynamicWrapper(app, [], () => import('../routes/SystemMgt/organization/departmentMgt')),
     },
+    {
+      name: "部门管理-编辑",
+      icon: 'setting',
+      path: '/system/organization/departmentMgt/edit',
+      component: dynamicWrapper(app, [], () => import('../routes/SystemMgt/organization/departmentMgt/edit')),
+    },
+    {
+      name: "部门管理-货位",
+      icon: 'setting',
+      path: '/system/organization/departmentMgt/goodsAllocation',
+      component: dynamicWrapper(app, [], () => import('../routes/SystemMgt/organization/departmentMgt/goodsAllocation')),
+    },
     // 组织机构 -- 用户管理
     {
       name: "用门管理",

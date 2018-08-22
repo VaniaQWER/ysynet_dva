@@ -7,20 +7,9 @@
  * @file 系统管理--角色管理--角色-新增
  */
 import React, { PureComponent } from 'react';
-import { Form, Row, Col, Input, Button, Table, Modal , DatePicker , message , Card } from 'antd';
+import { Form, Row, Col, Input, Button, Table } from 'antd';
 import { formItemLayout } from '../../../../utils/commonStyles';
 const FormItem = Form.Item;
-const { RangePicker } = DatePicker;
-const singleFormItemLayout = {
-  labelCol: {
-    xs: { span: 24 },
-    sm: { span: 5 },
-  },
-  wrapperCol: {
-    xs: { span: 24 },
-    sm: { span: 17 },
-  },
-}
 
 let dataSource = [];
 for( let i = 0; i<20; i++ ){
