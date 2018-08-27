@@ -46,7 +46,7 @@ class SearchForm extends PureComponent{
           <Col span={8}>
             <FormItem {...formItemLayout} label={`名称`}>
               {
-                getFieldDecorator(`planNo`,{
+                getFieldDecorator(`ctmmDesc`,{
                   initialValue: ''
                 })(
                   <Input placeholder='请输入' />
@@ -57,7 +57,7 @@ class SearchForm extends PureComponent{
           <Col span={8}>
             <FormItem {...formItemLayout} label={`剂型`}>
               {
-                getFieldDecorator(`jx`,{
+                getFieldDecorator(`ctmmDosageFormDesc`,{
                   initialValue: ''
                 })(
                   <Input placeholder='请输入' />
@@ -68,7 +68,7 @@ class SearchForm extends PureComponent{
           <Col span={8}>
             <FormItem {...formItemLayout} label={`规格`}>
               {
-                getFieldDecorator(`fmodel`,{
+                getFieldDecorator(`ctmmSpecification`,{
                   initialValue: ''
                 })(
                   <Input placeholder='请输入' />
@@ -79,7 +79,7 @@ class SearchForm extends PureComponent{
           <Col span={8} style={{ display: display }}>
             <FormItem {...formItemLayout} label={`状态`}>
               {
-                getFieldDecorator(`fstate`,{
+                getFieldDecorator(`ctmmStatusCode`,{
                   initialValue: ''
                 })(
                   <Input placeholder='请输入' />
@@ -90,12 +90,12 @@ class SearchForm extends PureComponent{
           <Col span={8} style={{ display: display }}>
             <FormItem {...formItemLayout} label={`是否报告药`}>
               {
-                getFieldDecorator('type',{
+                getFieldDecorator('medDrugType',{
                   initialValue: ''
                 })(
                   <Select>
-                    <Option key={-1} value='01'>是</Option>
-                    <Option key={-1} value='00'>否</Option>
+                    <Option key={-1} value='1'>是</Option>
+                    <Option key={-1} value='2'>否</Option>
                   </Select>
                 )
               }
@@ -117,16 +117,15 @@ const WrappSearchForm = Form.create()(SearchForm);
 
 const columns = [{
   title: '通用名称',
-  dataIndex: 'productName1',
-  render:(text,record)=>record.productName
+  dataIndex: 'ctmmGenericName'
 },
 {
   title: '商品名',
-  dataIndex: 'productName'
+  dataIndex: 'ctmmTradeName'
 },
 {
   title: '规格',
-  dataIndex: 'spec',
+  dataIndex: 'ctmmSpecification',
   className: 'ellipsis',
   render:(text)=>(
     <Tooltip placement="topLeft" title={text}>{text}</Tooltip>
@@ -134,15 +133,15 @@ const columns = [{
 },
 {
   title: '剂型',
-  dataIndex: 'fmodal'
+  dataIndex: 'ctmmDosageFormDesc'
 },
 {
   title: '包装规格',
-  dataIndex: 'fmodel'
+  dataIndex: 'ctmmPackingUnit'
 },
 {
   title: '单位',
-  dataIndex: 'unit',
+  dataIndex: 'ctmmDosUom',
   render:(text)=>'g'
 },
 {
@@ -184,7 +183,7 @@ class DrugDirectory extends PureComponent{
       ...columns,
       {
         title: '生产厂家',
-        dataIndex: 'productCompany'
+        dataIndex: 'ctmmManufacturerName'
       },
       {
         title: '操作',
@@ -223,7 +222,7 @@ class DrugDirectory extends PureComponent{
             <Col span={10}>
               <FormItem {...singleFormItemLayout} label={`通用名称`}>
                 {
-                  getFieldDecorator(`geName`,{
+                  getFieldDecorator(`ctmmGenericName`,{
                     initialValue: '',
                     rules: [{ required: true,message: '请输入通用名称' }]
                   })(
@@ -233,7 +232,7 @@ class DrugDirectory extends PureComponent{
               </FormItem>
               <FormItem {...singleFormItemLayout} label={`商品名`}>
                 {
-                  getFieldDecorator(`productName`,{
+                  getFieldDecorator(`ctmmTradeName`,{
                     initialValue: '',
                     rules: [{ required: true,message: '请输入商品名' }]
                   })(
@@ -243,7 +242,7 @@ class DrugDirectory extends PureComponent{
               </FormItem>
               <FormItem {...singleFormItemLayout} label={`规格`}>
                 {
-                  getFieldDecorator(`spec`,{
+                  getFieldDecorator(`ctmmSpecification`,{
                     initialValue: '',
                     rules: [{ required: true,message: '请输入规格' }]
                   })(
@@ -253,7 +252,7 @@ class DrugDirectory extends PureComponent{
               </FormItem>
               <FormItem {...singleFormItemLayout} label={`剂型`}>
                 {
-                  getFieldDecorator(`jx`,{
+                  getFieldDecorator(`ctmmDosageFormDesc`,{
                     initialValue: '',
                     rules: [{ required: true,message: '请输入剂型' }]
                   })(
@@ -263,7 +262,7 @@ class DrugDirectory extends PureComponent{
               </FormItem>
               <FormItem {...singleFormItemLayout} label={`生产厂家`}>
                 {
-                  getFieldDecorator(`producerName`,{
+                  getFieldDecorator(`ctmmManufacturerName`,{
                     initialValue: '',
                     rules: [{ required: true,message: '请输入生产厂家' }]
                   })(
@@ -285,7 +284,7 @@ class DrugDirectory extends PureComponent{
             <Col span={10} push={1}>
               <FormItem {...singleFormItemLayout} label={`默认供应商`}>
                 {
-                  getFieldDecorator(`geName`,{
+                  getFieldDecorator(`ctmmManufacturerName`,{
                     initialValue: '',
                     rules: [{ required: true,message: '请输入默认供应商' }]
                   })(
@@ -295,7 +294,7 @@ class DrugDirectory extends PureComponent{
               </FormItem>
               <FormItem {...singleFormItemLayout} label={`包装规格`}>
                 {
-                  getFieldDecorator(`productName`,{
+                  getFieldDecorator(`ctmmPackingUnit`,{
                     initialValue: '',
                     rules: [{ required: true,message: '请输入包装规格' }]
                   })(
@@ -315,7 +314,7 @@ class DrugDirectory extends PureComponent{
               </FormItem>
               <FormItem {...singleFormItemLayout} label={`采购单位`}>
                 {
-                  getFieldDecorator(`jx`,{
+                  getFieldDecorator(`ctmmDosUom`,{
                     initialValue: '',
                     rules: [{ required: true,message: '请选择采购单位' }]
                   })(
@@ -329,7 +328,7 @@ class DrugDirectory extends PureComponent{
               </FormItem>
               <FormItem {...singleFormItemLayout} label={`采购价格`}>
                 {
-                  getFieldDecorator(`producerName`,{
+                  getFieldDecorator(`ctmmRetailPrice`,{
                     initialValue: '',
                     rules: [{ required: true,message: '请输入采购价格' }]
                   })(
@@ -339,7 +338,7 @@ class DrugDirectory extends PureComponent{
               </FormItem>
               <FormItem {...singleFormItemLayout} label={`1包装规格 = `}>
                 {
-                  getFieldDecorator(`approvalNo`,{
+                  getFieldDecorator(`conversionRate`,{
                     initialValue: '',
                     rules: [{ required: true,message: '请输入转换系数' }]
                   })(

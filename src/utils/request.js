@@ -32,7 +32,7 @@ export default function request(url, options) {
   if (newOptions.method === 'POST' || newOptions.method === 'PUT') {
     if(newOptions.type === 'formData'){
       newOptions.headers = {
-        Accept: 'application/json',
+        Accept: 'text/plain, text/html,application/json',
         'Content-Type': 'application/x-www-form-urlencoded; charset=utf-8',
         ...newOptions.headers,
       }

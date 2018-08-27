@@ -14,32 +14,24 @@ class Login extends PureComponent{
     this.props.form.validateFields((err, values) => {
       if(!err){
         this.setState({ loading: true });
-         const { userName, password } = values;
-        /*this.props.dispatch({
-          type: 'users/EncryptPassword',
-          payload: { password },
-          callback: (data) =>{
-            let newPassword = data.password;
-            this.userLogin(userName,newPassword);
-          }
+         let { userName, password } = values;
+         password = '02a3f0772fcca9f415adc990734b45c6f059c7d33ee28362c4852032';
+         this.userLogin(userName, password)
+          /* this.props.dispatch({
+            type: 'users/EncryptPassword',
+            payload: { password },
+            callback: (data) =>{
+              let newPassword = data.password;
+              this.userLogin(userName,newPassword);
+            }
         }) */
-        if ( userName === 'admin' &&  password === 'admin' ) {
-          setTimeout(()=>{
-            this.setState({ loading: false  })
-            this.props.history.push({ pathname: '/subSystem' })
-          },500)
-        } else {
-          this.setState({ loading: false  })
-          message.error('账号或密码错误！');
-        }
-       
       }
     })
   }
   userLogin = (username,password) =>{
     this.props.dispatch({
       type: 'users/userLogin',
-      payload: { username, password },
+      payload: { username, password, mobileLogin: 'on' },
       callback: (data) => {
         console.log(data,'userLogin')
       }
