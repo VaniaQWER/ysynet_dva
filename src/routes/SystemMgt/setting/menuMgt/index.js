@@ -7,8 +7,11 @@
  * @file 系统管理--系统设置--菜单管理
  */
 import React, { PureComponent } from 'react';
-import { Row, Input, Button, Table } from 'antd';
+import { Row, Input, Button } from 'antd';
 import { Link } from 'dva/router';
+import { systemMgt } from '../../../../api/systemMgt';
+import RemoteTable from '../../../../components/TableGrid';
+
 let dataSource = [];
 for( let i = 0; i<20; i++ ){
   dataSource.push({
@@ -65,11 +68,11 @@ class MenuMgt extends PureComponent{
     const columns = [
       {
         title: '菜单名称',
-        dataIndex: 'userNo',
+        dataIndex: 'name',
       },
       {
         title: '链接',
-        dataIndex: 'name',
+        dataIndex: 'href',
       },
       {
         title: '排序',
@@ -82,11 +85,11 @@ class MenuMgt extends PureComponent{
       },
       {
         title: '可见',
-        dataIndex: 'status',
+        dataIndex: 'isShow',
       },
       {
         title: '部门类型',
-        dataIndex: 'deptType',
+        dataIndex: 'depType',
       },
       {
         title: '备注',
@@ -101,28 +104,44 @@ class MenuMgt extends PureComponent{
             <Link className='button-gap' to={{pathname:'/system/setting/menuMgt/add',state:record}}>添加下级菜单</Link>
           </span>
         }
-      },
+      }
     ]
     return (
       <div className='ysynet-main-content'>
         <Row>
           <Button type='primary' icon='plus' onClick={this.add}>添加菜单</Button>
         </Row>
-        <Table 
-          columns={columns}
-          bordered
-          loading={this.state.loading}
-          scroll={{x: '100%'}}
-          rowKey={'id'}
-          pagination={{
-            size: "small",
-            showQuickJumper: true,
-            showSizeChanger: true
-          }}
-          style={{marginTop: 20}}
-          dataSource={dataSource}
-        />
+        {/*   <Table 
+            columns={columns}
+            bordered
+            loading={this.state.loading}
+            scroll={{x: '100%'}}
+            rowKey={'id'}
+            pagination={{
+              size: "small",
+              showQuickJumper: true,
+              showSizeChanger: true
+            }}
+            style={{marginTop: 20}}
+            dataSource={dataSource}
+          /> */}
       
+        <RemoteTable 
+          ref='table'
+          bordered
+          style={{marginTop: 20}}
+          columns={columns}
+          showHeader={true}
+          scroll={{ x: '100%' }}
+          url={systemMgt.MenuList}
+          rowSelection={{
+            onChange:(selectRowKeys, selectedRows)=>{
+              this.setState({selectRowKeys})
+            }
+          }}
+          rowKey='staticDataGuid'
+        />
+
       </div>
 
     )

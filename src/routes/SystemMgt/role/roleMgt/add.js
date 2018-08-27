@@ -8,6 +8,7 @@
  */
 import React, { PureComponent } from 'react';
 import { Form, Row, Col, Input, Affix ,Button, Card } from 'antd';
+import { connect } from 'dva';
 import { formItemLayout } from '../../../../utils/commonStyles';
 import { systemMgt } from '../../../../api/systemMgt';
 import RemoteTable from '../../../../components/TableGrid';
@@ -49,13 +50,20 @@ class AddRoleMgt extends PureComponent{
 
    //提交表单
    onSubmit = () => {
-
     this.props.form.validateFieldsAndScroll((err,values)=>{
       console.log(values)
       if(!err){
         console.log(values)
         if(this.state.selectRowKeys&& this.state.selectRowKeys.length){
           console.log(this.state.selectRowKeys[0]);//获取上级菜单的key值
+
+          this.props.dispatch({
+            type: 'systemRole/RoleSave',
+            payload: { id:[123,2,3],name:'123213'},
+            callback: (data) => {
+              console.log(data,'RoleSave')
+            }
+          })
         }
       }
     })  
@@ -170,4 +178,4 @@ class AddRoleMgt extends PureComponent{
     )
   }
 }
-export default Form.create()(AddRoleMgt);
+export default connect(state=>state)( Form.create()(AddRoleMgt) );

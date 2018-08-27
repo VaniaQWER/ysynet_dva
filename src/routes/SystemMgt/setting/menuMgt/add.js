@@ -6,6 +6,8 @@
 
 import React, { PureComponent } from 'react';
 import { Form, Row, Col, Input, Button, Select , Radio , Affix , Modal , Tree} from 'antd';
+import { connect } from 'dva';
+import { DeptSelect } from '../../../../common/dic';
 const FormItem = Form.Item;
 const { Option } = Select;
 const TreeNode = Tree.TreeNode;
@@ -19,7 +21,6 @@ const singleFormItemLayout = {
     sm: { span: 16 },
   },
 }
-
 class AddMenuMgt extends PureComponent{
 
   state = {
@@ -43,7 +44,13 @@ class AddMenuMgt extends PureComponent{
 
   //提交表单
   onSubmit = () => {
-
+    this.props.dispatch({
+      type: 'sysSetting/MenuSave',
+      payload: { id:[123,2,3],name:'123213'},
+      callback: (data) => {
+        console.log(data)
+      }
+    })
     this.props.form.validateFieldsAndScroll((err,values)=>{
       console.log(values)
       if(!err){
@@ -105,8 +112,8 @@ class AddMenuMgt extends PureComponent{
             <Col span={8}>
               <FormItem {...singleFormItemLayout} label={`上级菜单`}>
                 {
-                  getFieldDecorator(`topMenuTitle`,{
-                    initialValue:baseInfo?baseInfo.topMenuTitle:'',
+                  getFieldDecorator(`parentId`,{
+                    initialValue:baseInfo?baseInfo.parentId:'',
                     rules: [{ required: true,message: '请输入' }]
                   })(
                     <Input onClick={()=>this.setState({visible:true})  } />
@@ -119,8 +126,8 @@ class AddMenuMgt extends PureComponent{
             <Col span={8}>
               <FormItem {...singleFormItemLayout} label={`菜单名称`}>
                 {
-                  getFieldDecorator(`userNo`,{
-                    initialValue:baseInfo?baseInfo.userNo:'',
+                  getFieldDecorator(`name`,{
+                    initialValue:baseInfo?baseInfo.name:'',
                     rules: [{ required: true,message: '请输入' }]
                   })(
                     <Input />
@@ -133,8 +140,8 @@ class AddMenuMgt extends PureComponent{
             <Col span={8}>
               <FormItem {...singleFormItemLayout} label={`链接`}>
                 {
-                  getFieldDecorator(`name`,{
-                    initialValue:baseInfo?baseInfo.name:'',
+                  getFieldDecorator(`href`,{
+                    initialValue:baseInfo?baseInfo.href:'',
                     rules: [{ required: true,message: '请输入' }]
                   })(
                     <Input />
@@ -164,16 +171,20 @@ class AddMenuMgt extends PureComponent{
             <Col span={8}>
               <FormItem {...singleFormItemLayout} label={`部门类型`}>
                 {
-                  getFieldDecorator(`deptType`,{
-                    initialValue:baseInfo?baseInfo.sort:'0',
-                    rules: [{ required: true,message: '请填写链接' }]
+                  getFieldDecorator(`depType`,{
+                    initialValue:baseInfo?baseInfo.depType:'0',
+                    rules: [{ required: true,message: '请选择部门类型' }]
                   })(
                     <Select
-                    showSearch
-                    optionFilterProp="children"
-                    filterOption={(input, option) => option.props.children.indexOf(input) >= 0}
-                    >
-                      <Option value='0' key='0'>系统管理</Option>
+                      showSearch
+                      optionFilterProp="children"
+                      filterOption={(input, option) => option.props.children.indexOf(input) >= 0}
+                      >
+                      {
+                       DeptSelect.map((item,index)=>(
+                          <Option value={`${item.value}`} key={index}>{item.text}</Option>
+                        ))
+                      }
                     </Select>
                   )
                 }
@@ -184,8 +195,8 @@ class AddMenuMgt extends PureComponent{
             <Col span={8}>
               <FormItem {...singleFormItemLayout} label={`是否可见`}>
                 {
-                  getFieldDecorator(`status`,{
-                    initialValue:baseInfo?baseInfo.status:'0',
+                  getFieldDecorator(`isShow`,{
+                    initialValue:baseInfo?baseInfo.isShow:'0',
                   })(
                     <Radio.Group>
                       <Radio value='0' key='0'>是</Radio>
@@ -203,8 +214,8 @@ class AddMenuMgt extends PureComponent{
             <Col span={8}>
               <FormItem {...singleFormItemLayout} label={`权限标识`}>
                 {
-                  getFieldDecorator(`flag`,{
-                    initialValue:baseInfo?baseInfo.flag?baseInfo.flag:'0':'',
+                  getFieldDecorator(`depTypeflag`,{
+                    initialValue:baseInfo?baseInfo.depType?baseInfo.depType:'0':'',
                   })(
                     <Input placeholder='请输入' />
                   )
@@ -219,8 +230,8 @@ class AddMenuMgt extends PureComponent{
             <Col span={8}>
               <FormItem {...singleFormItemLayout} label={`备注`}>
                 {
-                  getFieldDecorator(`remark`,{
-                    initialValue:baseInfo?baseInfo.remark:'',
+                  getFieldDecorator(`remarks`,{
+                    initialValue:baseInfo?baseInfo.remarks:'',
                   })(
                     <Input.TextArea placeholder='请输入' />
                   )
@@ -273,9 +284,8 @@ class AddMenuMgt extends PureComponent{
               </TreeNode>
             </Tree>
           </Modal>
-
       </div>
     )
   }
 }
-export default Form.create()(AddMenuMgt);
+export default connect(state=>state)(Form.create()(AddMenuMgt));

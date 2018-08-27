@@ -83,19 +83,27 @@ class RoleMgt extends PureComponent{
   }
   //删除角色
   delete = () => {
-    console.log(this.props)
+
+
     this.props.dispatch({
-      type: 'systemRole/RoleDelete',
+      type: 'systemRole/RoleQuery',
       payload: { id:[123,2,3]},
       callback: (data) => {
-        console.log(data,'RoleDelete')
+        console.log(data,'RoleQuery')
       }
     })
+    
     const { selectRowKeys } = this.state;
     if(selectRowKeys && selectRowKeys.length!==0){
       //发出删除请求
       console.log(this.state.selectRowKeys)
-      
+      this.props.dispatch({
+        type: 'systemRole/RoleDelete',
+        payload: { id:[123,2,3]},
+        callback: (data) => {
+          console.log(data,'RoleDelete')
+        }
+      })
     }else{
       message.warn('请最少选择一个角色进行操作！')
     }
