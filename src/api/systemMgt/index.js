@@ -4,7 +4,7 @@
 
 import {_local} from '../local';
 
- //角色管理列表
- export const  systemMgt  ={
-  RoleList:`${_local}/a/spd/sys/role/list`,
+ export const  systemMgt  = {
+  RoleList:`${_local}/a/spd/sys/role/list`, //角色管理列表
+  MenuList:`${_local}/a/spd/sys/menu/list`,//菜单管理列表
  }

@@ -7,8 +7,11 @@
  * @file 系统管理--角色管理--角色-新增
  */
 import React, { PureComponent } from 'react';
-import { Form, Row, Col, Input, Button, Table } from 'antd';
+import { Form, Row, Col, Input, Button } from 'antd';
 import { formItemLayout } from '../../../../utils/commonStyles';
+import { systemMgt } from '../../../../api/systemMgt';
+import RemoteTable from '../../../../components/TableGrid';
+import connect from 'dva';
 const FormItem = Form.Item;
 
 let dataSource = [];
@@ -121,29 +124,48 @@ class AddRoleMgt extends PureComponent{
         <div className='detailCard'>
           <h3>角色权限</h3>
           <hr className='hr'/>
-          <Table 
-           selectRowKeys={selectRowKeys}
-            columns={columns}
-            bordered
-            loading={this.state.loading}
-            scroll={{x: '100%'}}
-            rowKey={'id'}
-            pagination={{
-              size: "small",
-              showQuickJumper: true,
-              showSizeChanger: true
-            }}
-            rowSelection={{
-              onChange:(selectRowKeys, selectedRows)=>{
-                this.setState({selectRowKeys})
-              }
-            }}
-            style={{marginTop: 20,width: '70%'}}
-            dataSource={dataSource}
-          />   
+            {/* <Table 
+              selectRowKeys={selectRowKeys}
+              columns={columns}
+              bordered
+              loading={this.state.loading}
+              scroll={{x: '100%'}}
+              rowKey={'id'}
+              pagination={{
+                size: "small",
+                showQuickJumper: true,
+                showSizeChanger: true
+              }}
+              rowSelection={{
+                onChange:(selectRowKeys, selectedRows)=>{
+                  this.setState({selectRowKeys})
+                }
+              }}
+              style={{marginTop: 20,width: '70%'}}
+              dataSource={dataSource}
+            />  */}  
+
+          <RemoteTable 
+          ref='table'
+          bordered
+          style={{marginTop: 20}}
+          columns={columns}
+          showHeader={true}
+          scroll={{ x: '100%' }}
+          url={systemMgt.RoleList}
+          rowSelection={{
+            selectRowKeys:selectRowKeys,
+            onChange:(selectRowKeys, selectedRows)=>{
+              this.setState({selectRowKeys})
+            }
+          }}
+          rowKey='staticDataGuid'
+        />
+
+
         </div>
       </div>
     )
   }
 }
-export default Form.create()(AddRoleMgt);
+export default  connect( state => state)(Form.create()(AddRoleMgt));

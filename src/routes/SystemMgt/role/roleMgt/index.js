@@ -7,7 +7,7 @@
  * @file 系统管理--角色管理--角色
  */
 import React, { PureComponent } from 'react';
-import { Form, Row, Col, Input, Button, Table, message} from 'antd';
+import { Form, Row, Col, Input, Button, message} from 'antd';
 import { formItemLayout } from '../../../../utils/commonStyles';
 import { systemMgt } from '../../../../api/systemMgt';
 import RemoteTable from '../../../../components/TableGrid';
@@ -83,6 +83,14 @@ class RoleMgt extends PureComponent{
   }
   //删除角色
   delete = () => {
+    console.log(this.props)
+    this.props.dispatch({
+      type: 'systemRole/RoleDelete',
+      payload: { id:[123,2,3]},
+      callback: (data) => {
+        console.log(data,'RoleDelete')
+      }
+    })
     const { selectRowKeys } = this.state;
     if(selectRowKeys && selectRowKeys.length!==0){
       //发出删除请求
@@ -151,10 +159,17 @@ class RoleMgt extends PureComponent{
 
         <RemoteTable 
           ref='table'
+          bordered
+          style={{marginTop: 20}}
           columns={columns}
           showHeader={true}
-          scroll={this.props.scroll || { x: '100%' }}
+          scroll={{ x: '100%' }}
           url={systemMgt.RoleList}
+          rowSelection={{
+            onChange:(selectRowKeys, selectedRows)=>{
+              this.setState({selectRowKeys})
+            }
+          }}
           rowKey='staticDataGuid'
         />
 
@@ -162,4 +177,4 @@ class RoleMgt extends PureComponent{
     )
   }
 }
-export default connect( state => state)(Form.create()(RoleMgt));
+export default connect( state => state)(RoleMgt);

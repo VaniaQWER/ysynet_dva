@@ -7,8 +7,10 @@
  * @file 系统管理--角色管理--角色-新增
  */
 import React, { PureComponent } from 'react';
-import { Form, Row, Col, Input, Affix ,Button, Table, Card } from 'antd';
+import { Form, Row, Col, Input, Affix ,Button, Card } from 'antd';
 import { formItemLayout } from '../../../../utils/commonStyles';
+import { systemMgt } from '../../../../api/systemMgt';
+import RemoteTable from '../../../../components/TableGrid';
 const FormItem = Form.Item;
 
 let dataSource = [];
@@ -71,11 +73,11 @@ class AddRoleMgt extends PureComponent{
     const columns = [
       {
         title: '菜单名称',
-        dataIndex: 'userNo',
+        dataIndex: 'name',
       },
       {
         title: '路径',
-        dataIndex: 'remark',
+        dataIndex: 'remarks',
       }
     ]
     return (
@@ -86,7 +88,7 @@ class AddRoleMgt extends PureComponent{
                 <Col span={8}>
                   <FormItem {...formItemLayout} label={`角色名称`}>
                     {
-                      getFieldDecorator(`userName`,{
+                      getFieldDecorator(`name`,{
                         initialValue: '',
                         rules:[{required:true,message:'请输入角色名称！'}]
                       })(
@@ -98,7 +100,7 @@ class AddRoleMgt extends PureComponent{
                 <Col span={8}>
                   <FormItem {...formItemLayout} label={`备注`}>
                     {
-                      getFieldDecorator(`userName`,{
+                      getFieldDecorator(`remarks`,{
                         initialValue: ''
                       })(
                         <Input placeholder='请输入' />
@@ -111,7 +113,7 @@ class AddRoleMgt extends PureComponent{
         </Card>
 
         <Card title='角色权限' className='detailCard'>
-          <Table 
+          {/* <Table 
             columns={columns}
             bordered
             loading={this.state.loading}
@@ -129,6 +131,23 @@ class AddRoleMgt extends PureComponent{
             }}
             style={{marginTop: 20,width: '70%'}}
             dataSource={dataSource}
+          /> */}
+          
+
+          <RemoteTable 
+            ref='table'
+            bordered
+            style={{marginTop: 20}}
+            columns={columns}
+            showHeader={true}
+            scroll={{ x: '100%' }}
+            url={systemMgt.MenuList}
+            rowSelection={{
+              onChange:(selectRowKeys, selectedRows)=>{
+                this.setState({selectRowKeys})
+              }
+            }}
+            rowKey='staticDataGuid'
           />
         </Card>
 

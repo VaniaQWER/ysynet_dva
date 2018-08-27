@@ -90,7 +90,7 @@ class MenuMgt extends PureComponent{
       },
       {
         title: '备注',
-        dataIndex: 'remark',
+        dataIndex: 'remarks',
       },
       {
         title: '操作',

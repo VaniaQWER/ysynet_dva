@@ -1065,19 +1065,19 @@ export const getNavData = app => [
       name: "角色管理",
       icon: 'setting',
       path: '/system/role/roleMgt',
-      component: dynamicWrapper(app, [], () => import('../routes/SystemMgt/role/roleMgt')),
+      component: dynamicWrapper(app, ['systemMgt/roleMgt'], () => import('../routes/SystemMgt/role/roleMgt')),
     },
     {
       name: "角色管理-新增",
       icon: 'setting',
       path: '/system/role/roleMgt/add',
-      component: dynamicWrapper(app, [], () => import('../routes/SystemMgt/role/roleMgt/add')),
+      component: dynamicWrapper(app, ['systemMgt/roleMgt'], () => import('../routes/SystemMgt/role/roleMgt/add')),
     },
     {
       name: "角色管理-编辑",
       icon: 'setting',
       path: '/system/role/roleMgt/edit',
-      component: dynamicWrapper(app, [], () => import('../routes/SystemMgt/role/roleMgt/edit')),
+      component: dynamicWrapper(app, ['systemMgt/roleMgt'], () => import('../routes/SystemMgt/role/roleMgt/edit')),
     },
      /* *********************** 系统管理 系统设置     ******************** */
     {
