@@ -46,7 +46,7 @@ class SearchForm extends PureComponent {
       <Form onSubmit={this.handleSearch}>
         <Row gutter={30}>
           <Col span={8}>
-            <FormItem label={'制单时间'} {...formItemLayout}>
+            <FormItem label={'盘点时间'} {...formItemLayout}>
               {getFieldDecorator('makingTime')(
                 <RangePicker showTime={{ format: 'HH:mm' }} format={'YYYY-MM-DD HH:mm'} style={{ width: 313 }} />
               )}
@@ -131,6 +131,13 @@ class NewInventory extends PureComponent {
       setTimeout(()=>{this.setState({loading: false, selected: []});}, 500);
     }
   }
+  onChange = (value, dateString) =>{
+    console.log('Selected Time: ', value);
+    console.log('Formatted Selected Time: ', dateString);
+  }
+  onOk = (value) => {
+    console.log('onOk: ', value);
+  }
   render() {
     const { getFieldDecorator } = this.props.form;
     const formItemLayoutAdd = { labelCol: { span: 6 }, wrapperCol: { span: 18 } };
@@ -166,7 +173,7 @@ class NewInventory extends PureComponent {
         key: 'dept'
       },
       {
-        title: '制单人',
+        title: '盘点责任人',
         dataIndex: 'oddUser',
         key: 'oddUser'
       },
@@ -580,22 +587,21 @@ class NewInventory extends PureComponent {
                     <FormItem label={'起始时间'} {...formItemLayoutAdd}>
                       {getFieldDecorator('startTime', {
                         rules: [{ required: true, message: '请选择起始时间' }],
-                        initialValue: moment(new Date(), moment().format('YYYY-MM-DD HH:mm'))
+                        initialValue: moment(new Date(), moment().format('YYYY-MM-DD 00:00'))
                       })(
-                        <DatePicker showTime={{ format: 'HH:mm' }} style={{ width: 280 }} />
-                      )}
+                        <DatePicker
+                          showTime
+                          format="YYYY-MM-DD HH:mm"
+                          onChange={this.onChange}
+                          onOk={this.onOk}
+                          style={{ width: 280 }}
+                        />
+                        )
+                      }
                     </FormItem>
                   </Col> 
                   : 
-                  <Col span={24} style={{ display: 'none' }}>
-                    <FormItem label={'起始时间'} {...formItemLayoutAdd}>
-                      {getFieldDecorator('startTime', {
-                        rules: [{ required: true, message: '请选择起始时间' }],
-                      })(
-                        <DatePicker showTime={{ format: 'HH:mm' }} format={'YYYY-MM-DD HH:mm'} style={{ width: 280 }} />
-                      )}
-                    </FormItem>
-                  </Col>
+                  null
               }
               <Col span={24}>
                 <FormItem label={'备注'} {...formItemLayoutAdd}>
