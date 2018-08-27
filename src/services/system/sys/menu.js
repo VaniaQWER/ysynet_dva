@@ -32,7 +32,6 @@ export function MenuDetail(options){
   return request(`${_local}/a/spd/sys/menu/detail`,{
     methods: 'GET',
     type: 'formData',
-    credentials: 'omit',
     body: options
   })
 }

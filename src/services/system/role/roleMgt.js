@@ -22,7 +22,6 @@ export function RoleDelete(options){
   return request(`${_local}/a/spd/role/delete`,{ 
     methods: 'POST',
     type: 'formData',
-    credentials: 'omit',
     body: options
   })
 }
@@ -31,7 +30,6 @@ export function RoleDetail(options){
   return request(`${_local}/a/spd/sys/role/detail`,{ //新增角色
     methods: 'GET',
     type: 'formData',
-    credentials: 'omit',
     body: options
   })
 }

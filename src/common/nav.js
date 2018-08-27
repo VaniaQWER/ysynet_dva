@@ -1026,26 +1026,26 @@ export const getNavData = app => [
       name: "供应商管理",
       icon: 'setting',
       path: '/system/organization/supplierMgt',
-      component: dynamicWrapper(app, [], () => import('../routes/SystemMgt/organization/supplierMgt')),
+      component: dynamicWrapper(app, ['systemMgt/organization'], () => import('../routes/SystemMgt/organization/supplierMgt')),
     },
     // 组织机构 -- 部门管理
     {
       name: "部门管理",
       icon: 'setting',
       path: '/system/organization/departmentMgt',
-      component: dynamicWrapper(app, [], () => import('../routes/SystemMgt/organization/departmentMgt')),
+      component: dynamicWrapper(app, ['systemMgt/organization'], () => import('../routes/SystemMgt/organization/departmentMgt')),
     },
     {
       name: "部门管理-编辑",
       icon: 'setting',
       path: '/system/organization/departmentMgt/edit',
-      component: dynamicWrapper(app, [], () => import('../routes/SystemMgt/organization/departmentMgt/edit')),
+      component: dynamicWrapper(app, ['systemMgt/organization'], () => import('../routes/SystemMgt/organization/departmentMgt/edit')),
     },
     {
       name: "部门管理-货位",
       icon: 'setting',
       path: '/system/organization/departmentMgt/goodsAllocation',
-      component: dynamicWrapper(app, [], () => import('../routes/SystemMgt/organization/departmentMgt/goodsAllocation')),
+      component: dynamicWrapper(app, ['systemMgt/organization'], () => import('../routes/SystemMgt/organization/departmentMgt/goodsAllocation')),
     },
     // 组织机构 -- 用户管理
     {
@@ -1084,13 +1084,13 @@ export const getNavData = app => [
       name: "菜单管理",
       icon: 'setting',
       path: '/system/setting/menuMgt',
-      component: dynamicWrapper(app, [], () => import('../routes/SystemMgt/setting/menuMgt')),
+      component: dynamicWrapper(app, ['systemMgt/systemMgt'], () => import('../routes/SystemMgt/setting/menuMgt')),
     },
     {
       name: "菜单管理-新增",
       icon: 'setting',
       path: '/system/setting/menuMgt/add',
-      component: dynamicWrapper(app, [], () => import('../routes/SystemMgt/setting/menuMgt/add')),
+      component: dynamicWrapper(app, ['systemMgt/systemMgt'], () => import('../routes/SystemMgt/setting/menuMgt/add')),
     },
     {
       name: "字典管理",

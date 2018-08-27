@@ -9,6 +9,9 @@
 import React, { PureComponent } from 'react';
 import { Form, Row, Col, Input, Button, Table, Modal , DatePicker } from 'antd';
 import { formItemLayout } from '../../../../utils/commonStyles';
+import { connect } from 'dva';
+import { systemMgt } from '../../../../api/systemMgt';
+import RemoteTable from '../../../../components/TableGrid';
 const FormItem = Form.Item;
 const { RangePicker } = DatePicker;
 const singleFormItemLayout = {
@@ -128,6 +131,13 @@ class UserMgt extends PureComponent{
   }
 
   save = (e) =>{
+    this.props.dispatch({
+      type:'Organization/SupplierSave',
+      payload:{values:''},
+      callback:(data)=>{
+        console.log(data)
+      }
+    })
     e.preventDefault();
     this.props.form.validateFields((err,values)=>{
       if(!err){
@@ -144,15 +154,15 @@ class UserMgt extends PureComponent{
     const columns = [
       {
         title: '供应商名称',
-        dataIndex: 'userNo',
+        dataIndex: 'ctmaSupplierName',
       },
       {
         title: '内部编码',
-        dataIndex: 'name',
+        dataIndex: 'ctmaSupplierCode',
       },
       {
         title: '创建时间',
-        dataIndex: 'deptName',
+        dataIndex: 'createDate',
       },
       {
         title: '编辑人',
@@ -160,7 +170,7 @@ class UserMgt extends PureComponent{
       },
       {
         title: '编辑时间',
-        dataIndex: 'editTime',
+        dataIndex: 'updateDate',
       },
       {
         title: '操作',
@@ -178,7 +188,7 @@ class UserMgt extends PureComponent{
         <div>
           <Button type='primary' icon='plus' onClick={this.add}>新增</Button>
         </div>
-        <Table 
+        {/* <Table 
           columns={columns}
           bordered
           loading={this.state.loading}
@@ -191,7 +201,24 @@ class UserMgt extends PureComponent{
           }}
           style={{marginTop: 20}}
           dataSource={dataSource}
+        /> */}
+
+        <RemoteTable 
+          ref='table'
+          bordered
+          style={{marginTop: 20}}
+          columns={columns}
+          showHeader={true}
+          scroll={{ x: '100%' }}
+          url={systemMgt.SupplierList}
+          rowSelection={{
+            onChange:(selectRowKeys, selectedRows)=>{
+              this.setState({selectRowKeys})
+            }
+          }}
+          rowKey='id'
         />
+
         <Modal
           title={editTitle}
           width={488}
@@ -207,7 +234,7 @@ class UserMgt extends PureComponent{
           <Form onSubmit={this.onSubmit}>
             <FormItem {...singleFormItemLayout} label={`供应商名称`}>
               {
-                getFieldDecorator(`deptName`,{
+                getFieldDecorator(`ctmaSupplierName`,{
                   rules: [{ required: true,message: '请填写供应商名称' }]
                 })(
                   <Input />
@@ -223,7 +250,7 @@ class UserMgt extends PureComponent{
                 <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-17">
                   <div className="ant-form-item-control">
                     <span className="ant-form-item-children">
-                      {record.name}
+                      {record.ctmaSupplierCode}
                     </span>
                   </div>
                 </div>
@@ -236,4 +263,4 @@ class UserMgt extends PureComponent{
     )
   }
 }
-export default Form.create()(UserMgt);
+export default connect(state=>state)(Form.create()(UserMgt));
