@@ -4,8 +4,9 @@
 * @Last Modified time: 2018-07-24 13:13:55 
  */
 import React, { PureComponent } from 'react';
-import { Table ,Row, Col, Button, Modal , message , Input , Tooltip , Card} from 'antd';
+import { Table ,Row, Col, Button, Modal ,Tabs , message , Input , Tooltip , Card} from 'antd';
 import { createData } from '../../../../common/data';
+const TabPane = Tabs.TabPane; 
 const Conform = Modal.confirm;
 class DetailsPickSoldOut extends PureComponent{
 
@@ -41,11 +42,6 @@ class DetailsPickSoldOut extends PureComponent{
         render:(text,record)=>record.productName
       },
       {
-        title: '商品名称',
-        width: 150,
-        dataIndex: 'productName',
-      },
-      {
         title: '规格',
         width: 150,
         dataIndex: 'spec',
@@ -53,27 +49,6 @@ class DetailsPickSoldOut extends PureComponent{
         render:(text)=>(
           <Tooltip placement="topLeft" title={text}>{text}</Tooltip>
         )
-      },
-      {
-        title: '剂型',
-        width: 150,
-        dataIndex: 'fmodal',
-      },
-      {
-        title: '包装单位',
-        width: 150,
-        dataIndex: 'unit',
-        render:(text)=>'g'
-      },
-      {
-        title: '最小单位',
-        width: 150,
-        dataIndex: 'unit1',
-      },
-      {
-        title: '批准文号',
-        width: 150,
-        dataIndex: 'approvalNo',
       },
       {
         title: '生产厂家',
@@ -96,6 +71,17 @@ class DetailsPickSoldOut extends PureComponent{
         dataIndex: 'productCompany4',
       },
       {
+        title: '包装规格',
+        width: 150,
+        dataIndex: 'unit',
+        render:(text)=>'g'
+      },
+      {
+        title: '单位',
+        width: 150,
+        dataIndex: 'unit1',
+      },
+      {
         title: '指示货位',
         width: 150,
         dataIndex: 'productCompany23',
@@ -106,28 +92,17 @@ class DetailsPickSoldOut extends PureComponent{
         dataIndex: 'productCompany12',
       },
       {
-        title: '实际数量',
+        title: '实际拣货数量',
         width: 150,
         dataIndex: 'productCompany5',
         render:(text)=>(<Input/>)
       },
-      {
-        title: '申领数量',
-        width: 150,
-        dataIndex: 'productCompany123',
-      },
-      {
-        title: '欠品数',
-        width: 150,
-        dataIndex: 'productCompany6',
-      }
     ];
     return (
       <div className='bgf fadeIn'>
         <Card>
           <h3>单据信息 
             <Button style={{float:'right'}} onClick={()=>this.onPrint()}>打印</Button>
-            <Button type='primary' className='button-gap' style={{float:'right'}} onClick={()=>this.onSubmit()}>拣货完成</Button>
           </h3>
           <Row>
             <Col span={8}>
@@ -164,15 +139,6 @@ class DetailsPickSoldOut extends PureComponent{
             </Col>
             <Col span={8}>
               <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
-                <label>拣货人</label>
-              </div>
-              <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
-                <div className='ant-form-item-control'>
-                </div>
-              </div>
-            </Col>
-            <Col span={8}>
-              <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
                 <label>拣货时间</label>
               </div>
               <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
@@ -182,12 +148,23 @@ class DetailsPickSoldOut extends PureComponent{
           </Row>
           <hr className='hr'/>
           <h3>产品信息</h3>
+
+          <Tabs tabBarExtraContent={<Button  type='primary'  onClick={()=>this.onSubmit()}>确认拣货</Button>}>
+            <TabPane tab="待拣货" key="1"></TabPane>
+            <TabPane tab="已拣货" key="2"></TabPane>
+          </Tabs>
+
           <Table
             dataSource={createData()}
             bordered
             scroll={{x: '200%'}}
             columns={columns}
             rowKey={'id'}
+            rowSelection={{
+              onChange:(key,row)=>{
+                console.log(key,row)
+              }
+            }}
             pagination={{
               size: 'small',
               showQuickJumper: true,

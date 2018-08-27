@@ -1,8 +1,8 @@
 /*
  * @Author: gaofengjiao 
  * @Date: 2018-08-06
- * @Last Modified by: gaofengjiao
- * @Last Modified time: 2018-08-06
+ * @Last Modified by: mikey.zhaopeng
+ * @Last Modified time: 2018-08-27 15:11:46
  */
 /* 
   @file 补货计划 详情
@@ -92,8 +92,8 @@ const columns = [
 class ReplenishmentDetail extends PureComponent{
   render(){
     return (
-      <div className='fullCol fadeIn'>
-        <div className='fullCol-fullChild'>
+      <div>
+        <div className='detailCard'>
           <h3>单据信息</h3>
           <Row>
             <Col span={8}>
@@ -147,26 +147,10 @@ class ReplenishmentDetail extends PureComponent{
             </Col>
             <Col span={8}>
               <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
-                  <label>入库人</label>
-              </div>
-              <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
-                <div className='ant-form-item-control'>张三三</div>
-              </div>
-            </Col>
-            <Col span={8}>
-              <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
                   <label>入库时间</label>
               </div>
               <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
                 <div className='ant-form-item-control'>2018-07-12 17:09:15</div>
-              </div>
-            </Col>
-            <Col span={8}>
-              <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
-                  <label>上架人</label>
-              </div>
-              <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
-                <div className='ant-form-item-control'>张三三</div>
               </div>
             </Col>
             <Col span={8}>

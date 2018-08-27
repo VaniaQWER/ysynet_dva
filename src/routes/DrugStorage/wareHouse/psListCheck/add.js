@@ -1,17 +1,18 @@
 /*
  * @Author: gaofengjiao 
  * @Date: 2018-08-06
- * @Last Modified by: wwb
- * @Last Modified time: 2018-08-21 11:33:45
+ * @Last Modified by: mikey.zhaopeng
+ * @Last Modified time: 2018-08-27 11:36:50
  */
 /* 
   @file  药库 - 入库--配送单验收-新建验收
 */
 import React, { PureComponent } from 'react';
-import { Table ,Row, Col, Button, Input, DatePicker,Tooltip } from 'antd';
+import { Table ,Row, Col, Button, Input, DatePicker,Tooltip ,Affix , Tabs} from 'antd';
 import { Link } from 'react-router-dom';
 import moment from 'moment';
 import { createData } from '../../../../common/data';
+const TabPane = Tabs.TabPane;
 const columns = [
   {
     title: '通用名称',
@@ -33,33 +34,23 @@ const columns = [
     )
   },
   {
-    title: '剂型',
-    dataIndex: 'fmodel',
-    width: 180,
-  },
-  // {
-  //   title: '包装单位',
-  //   dataIndex: 'unit',
-  //   width:120,
-  // },
-  {
-    title: '批准文号',
-    width:180,
-    dataIndex: 'approvalNo',
-    render: (text,record,index)=>{
-      return <Input defaultValue={text || 'PH123'}/>
-    }
-  },
-  {
     title: '生产厂家',
     width:180,
     dataIndex: 'productCompany'
   },
-  /* {
-    title: '包装规格',
-    dataIndex: 'spec',
-    width:180,
-  }, */
+  {
+    title: '单位',
+    dataIndex: 'unit',
+    width: 180,
+  },
+  {
+    title: '配送数量',
+    dataIndex: 'amount',
+    width: 120,
+    render: (text,record,index)=> {
+      return text || 100
+    }
+  },  
   {
     title: '生产批号',
     dataIndex: 'flot',
@@ -89,25 +80,47 @@ const columns = [
     dataIndex: 'template',
     width: 120,
     render: (text,record,index)=> {
-      return <Input defaultValue={text|| 5 }/>
+      return <Input defaultValue={text|| 5 } addonAfter={`℃`}/>
     }
   },
   {
-    title: '配送数量',
-    dataIndex: 'amount',
-    width: 120,
-    render: (text,record,index)=> {
-      return text || 100
-    }
+    title: '包装规格',
+    dataIndex: 'spec',
+    width:180,
   },
   {
-    title: '实际数量',
-    dataIndex: 'sjamount',
-    width: 150,
-    render: (text,record,index)=> {
-      return <Input defaultValue={text || 100}/>
+    title: '剂型',
+    dataIndex: 'fmodel',
+    width: 180,
+  },
+  {
+    title: '供应商',
+    dataIndex: 'fOrgName',
+    width: 180,
+    render: (text,record)=> `武汉供应商`
+  },
+  {
+    title: '批准文号',
+    width:180,
+    dataIndex: 'approvalNo',
+    render: (text,record,index)=>{
+      return <Input defaultValue={text || 'PH123'}/>
     }
-  }, 
+  },
+  
+  // {
+  //   title: '包装单位',
+  //   dataIndex: 'unit',
+  //   width:120,
+  // },
+  // {
+  //   title: '实际数量',
+  //   dataIndex: 'sjamount',
+  //   width: 150,
+  //   render: (text,record,index)=> {
+  //     return <Input defaultValue={text || 100}/>
+  //   }
+  // }, 
   // {
   //   title: '价格',
   //   dataIndex: 'price',
@@ -118,11 +131,7 @@ const columns = [
   //   dataIndex: 'total',
   //   render: (text,record,index)=> `1200.00`
   // },
-  {
-    title: '供应商',
-    dataIndex: 'fOrgName',
-    render: (text,record)=> `武汉供应商`
-  },
+ 
   {
     title: '操作',
     width: 120,
@@ -136,6 +145,11 @@ const columns = [
 ];
 
 class PllistCheckAdd extends PureComponent{
+
+  callback = (key) =>{
+    console.log(key);
+  }
+
   render(){
     return (
       <div className='fullCol fadeIn'>
@@ -148,21 +162,10 @@ class PllistCheckAdd extends PureComponent{
                 </div>
               </div>
             </Col>
-            <Col span={8}>
-              <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
-                <label>备注</label>
-                </div>
-                <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
-                  <div className='ant-form-item-control'>
-                    <Input placeholder='请输入'/>
-                  </div>
-                </div>
-            </Col>
-            <Col style={{ textAlign:'right' }}>
-              <Button type='primary'>保存</Button>
-              <Button type='danger' style={{ marginLeft: 8 }} ghost>取消</Button>
-            </Col>
+            
           </Row>
+        </div>
+        <div className='detailCard'>
           <h3>单据信息</h3>
           <Row>
             <Col span={8}>
@@ -250,6 +253,10 @@ class PllistCheckAdd extends PureComponent{
           </Row>
         </div>
         <div className='detailCard'>
+          <Tabs defaultActiveKey="1" onChange={this.callback}>
+            <TabPane tab="待验收" key="1"></TabPane>
+            <TabPane tab="已验收" key="2"></TabPane>
+          </Tabs>
           <Table
             dataSource={createData()}
             bordered
@@ -264,6 +271,11 @@ class PllistCheckAdd extends PureComponent{
             style={{marginTop: 24}}
           />
         </div>
+        <Affix className='affix' offsetBottom={0} style={{height:60,textAlign:'left',marginLeft: '-32px',marginRight:' -32px'}}>
+          共 <span style={{color: 'red'}}>  3 </span>种产品
+           
+          <Button type='primary' style={{float:'right'}}>确认验收</Button>
+        </Affix>
       </div>
     )
   }

@@ -9,7 +9,10 @@
 import React, { PureComponent } from 'react';
 import { Form, Row, Col, Input, Button, Table, message} from 'antd';
 import { formItemLayout } from '../../../../utils/commonStyles';
+import { systemMgt } from '../../../../api/systemMgt';
+import RemoteTable from '../../../../components/TableGrid';
 import { Link } from 'dva/router';
+import { connect } from 'dva';
 const FormItem = Form.Item;
 
 class SearchForm extends PureComponent{
@@ -126,8 +129,7 @@ class RoleMgt extends PureComponent{
           <Button type='primary' icon='minus' onClick={this.delete}>删除</Button>
           
         </div>
-        <Table 
-
+        {/* <Table 
           columns={columns}
           bordered
           loading={this.state.loading}
@@ -145,9 +147,19 @@ class RoleMgt extends PureComponent{
           }}
           style={{marginTop: 20}}
           dataSource={dataSource}
+        /> */}
+
+        <RemoteTable 
+          ref='table'
+          columns={columns}
+          showHeader={true}
+          scroll={this.props.scroll || { x: '100%' }}
+          url={systemMgt.RoleList}
+          rowKey='staticDataGuid'
         />
+
       </div>
     )
   }
 }
-export default RoleMgt;
+export default connect( state => state)(Form.create()(RoleMgt));

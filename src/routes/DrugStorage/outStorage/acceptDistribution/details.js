@@ -84,23 +84,29 @@ class DetailsPicking extends PureComponent{
         render:()=>`100`
       },
       {
-        title: '预分配数',
+        title: '当前库存',
         width:150,
-        dataIndex: 'unit2',
+        dataIndex: 'unit4',
         render:()=>`80`
       },
       {
-        title: '欠品数量',
+        title: '已分配',
+        width:150,
+        dataIndex: 'unit232',
+        render:()=>`0`
+      },
+      {
+        title: '欠品数',
         width:150,
         dataIndex: 'unit3',
         render:()=>`20`
       },
       {
-        title: '当前库存',
+        title: '预分配数',
         width:150,
-        dataIndex: 'unit4',
+        dataIndex: 'unit2',
         render:()=>`80`
-      }
+      },
     ];
     const rightColumns =  [
       {

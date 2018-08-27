@@ -52,8 +52,9 @@ class AddRoleMgt extends PureComponent{
       console.log(values)
       if(!err){
         console.log(values)
-        console.log(this.state.treeSelectedKeys[0]);//获取上级菜单的key值
-
+        if(this.state.selectRowKeys&& this.state.selectRowKeys.length){
+          console.log(this.state.selectRowKeys[0]);//获取上级菜单的key值
+        }
       }
     })  
   }
@@ -86,7 +87,8 @@ class AddRoleMgt extends PureComponent{
                   <FormItem {...formItemLayout} label={`角色名称`}>
                     {
                       getFieldDecorator(`userName`,{
-                        initialValue: ''
+                        initialValue: '',
+                        rules:[{required:true,message:'请输入角色名称！'}]
                       })(
                         <Input placeholder='请输入' />
                       )

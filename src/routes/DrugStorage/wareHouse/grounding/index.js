@@ -80,12 +80,12 @@ class Putaway extends PureComponent{
         width:150,
         dataIndex: 'planTime',
       },
-      {
-        title: '上架人',
-        width:150,
-        dataIndex: 'unit',
-        render:(text)=>'g'
-      },
+      // {
+      //   title: '上架人',
+      //   width:150,
+      //   dataIndex: 'unit',
+      //   render:(text)=>'g'
+      // },
       {
         title: '上架时间',
         width:180,

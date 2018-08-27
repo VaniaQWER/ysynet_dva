@@ -308,7 +308,7 @@ td:hover .editable-cell-icon {
   padding:25px 30px 40px;
 }
 .button-gap{
-  margin-right:8px;
+  margin-right:8px !important;
 }
 .hr{
   height: 0 !important;

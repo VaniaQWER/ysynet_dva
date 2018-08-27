@@ -1,17 +1,18 @@
 /*
  * @Author: gaofengjiao 
  * @Date: 2018-08-06
- * @Last Modified by: gaofengjiao
- * @Last Modified time: 2018-08-06
+ * @Last Modified by: mikey.zhaopeng
+ * @Last Modified time: 2018-08-27 11:41:01
  */
 /* 
   @file  药库 - 入库--配送单验收-详情
 */
 import React, { PureComponent } from 'react';
-import { Table ,Row, Col, Tooltip, Input, DatePicker } from 'antd';
+import { Table ,Row, Col, Tooltip, Input, DatePicker , Tabs , Button} from 'antd';
 import { Link } from 'react-router-dom';
 import moment from 'moment';
 import { createData } from '../../../../common/data';
+const TabPane = Tabs.TabPane;
 const columns = [
   {
     title: '通用名称',
@@ -25,7 +26,7 @@ const columns = [
   },
   {
     title: '规格',
-    dataIndex: 'spec',
+    dataIndex: 'spec1',
     width: 180,
     className:'ellipsis',
     render:(text)=>(
@@ -33,37 +34,27 @@ const columns = [
     )
   },
   {
-    title: '剂型',
-    dataIndex: 'fmodel',
-    width: 180,
-  },
-  {
-    title: '批准文号',
-    width:180,
-    dataIndex: 'approvalNo',
-    render: (text,record,index)=>{
-      return <Input defaultValue={text || 'PH123'}/>
-    }
-  },
-  {
     title: '生产厂家',
     width:180,
     dataIndex: 'productCompany'
   },
   {
-    title: '包装规格',
-    dataIndex: 'spec',
-    width:180,
-  },
-  {
     title: '单位',
     dataIndex: 'unit',
-    width:120,
+    width: 180,
   },
   {
+    title: '配送数量',
+    dataIndex: 'amount',
+    width: 120,
+    render: (text,record,index)=> {
+      return text || 100
+    }
+  },  
+  {
     title: '生产批号',
-    width:180,
     dataIndex: 'flot',
+    width: 180,
     render: (text,record,index)=>{
       return <Input defaultValue={text || 'PH123'}/>
     }
@@ -89,31 +80,58 @@ const columns = [
     dataIndex: 'template',
     width: 120,
     render: (text,record,index)=> {
-      return <Input defaultValue={text|| 5 }/>
+      return <Input defaultValue={text|| 5 } addonAfter={`℃`}/>
     }
   },
   {
-    title: '配送数量',
-    dataIndex: 'amount',
-    width: 120,
-    render: (text,record,index)=> {
-      return text || 100
-    }
+    title: '包装规格',
+    dataIndex: 'spe3c',
+    width:180,
   },
   {
-    title: '实际数量',
-    dataIndex: 'sjamount',
-    width: 150,
-    render: (text,record,index)=> {
-      return <Input defaultValue={text || 100}/>
-    }
-  }, 
+    title: '剂型',
+    dataIndex: 'fmodel',
+    width: 180,
+  },
   {
     title: '供应商',
     dataIndex: 'fOrgName',
-    width: 150,
+    width: 180,
     render: (text,record)=> `武汉供应商`
   },
+  {
+    title: '批准文号',
+    width:180,
+    dataIndex: 'approvalNo',
+    render: (text,record,index)=>{
+      return <Input defaultValue={text || 'PH123'}/>
+    }
+  },
+  
+  // {
+  //   title: '包装单位',
+  //   dataIndex: 'unit',
+  //   width:120,
+  // },
+  // {
+  //   title: '实际数量',
+  //   dataIndex: 'sjamount',
+  //   width: 150,
+  //   render: (text,record,index)=> {
+  //     return <Input defaultValue={text || 100}/>
+  //   }
+  // }, 
+  // {
+  //   title: '价格',
+  //   dataIndex: 'price',
+  //   render: (text,record,index)=> `10`
+  // },
+  // {
+  //   title: '配送金额',
+  //   dataIndex: 'total',
+  //   render: (text,record,index)=> `1200.00`
+  // },
+ 
   {
     title: '操作',
     width: 120,
@@ -125,11 +143,13 @@ const columns = [
     }
    },
 ];
-
 class PslistCheck extends PureComponent{
   state = {
     selected: [],
     selectedRows: [],
+  }
+  callback = (key) =>{
+    console.log(key);
   }
   render(){
     return (
@@ -222,10 +242,13 @@ class PslistCheck extends PureComponent{
           </Row>
         </div>
         <div className='detailCard'>
+          <Tabs defaultActiveKey="1" onChange={this.callback} tabBarExtraContent={<Button type='primary'>确认验收</Button>}>
+            <TabPane tab="待验收" key="1"></TabPane>
+            <TabPane tab="已验收" key="2"></TabPane>
+          </Tabs>
          <Table
             dataSource={createData()}
             bordered
-            title={()=>'产品信息'}
             scroll={{x: '160%'}}
             columns={columns}
             pagination={{

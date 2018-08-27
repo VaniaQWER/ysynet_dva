@@ -61,12 +61,6 @@ class Putaway extends PureComponent{
         render:()=>`待上架`
       },
       {
-        title: '类型',
-        width:100,
-        dataIndex: 'productName1',
-        render:(text,record)=>`零库存补货`
-      },
-      {
         title: '入库分类',
         width:150,
         dataIndex: 'planTime',
@@ -79,16 +73,10 @@ class Putaway extends PureComponent{
         render: (text,record)=> `武汉供应商`
       },
       {
-        title: '上架人',
-        width:150,
-        dataIndex: 'unit',
-        render:(text)=>'g'
-      },
-      {
         title: '上架时间',
         width:180,
         dataIndex: 'planTime1',
-        render:(text,record)=>`${record.planTime}`
+        render:(text,record)=>`${record.planTime.substr(0,11)}`
       },
       {
         title: '操作',
@@ -156,7 +144,7 @@ class SearchFormWrapper extends PureComponent {
      <Form onSubmit={this.handleSearch}>
        <Row gutter={30}>
          <Col span={8}>
-           <FormItem label={`单据号`} {...formItemLayout}>
+           <FormItem label={`单号`} {...formItemLayout}>
              {getFieldDecorator('assetCode', {})(
               <Input placeholder='入库单/配送单/订单号'/>
              )}

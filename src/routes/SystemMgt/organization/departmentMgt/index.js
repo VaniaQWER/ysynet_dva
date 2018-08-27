@@ -64,7 +64,7 @@ class SearchForm extends PureComponent{
             </FormItem>
           </Col>
           <Col span={8}>
-            <FormItem {...formItemLayout} label={`角色名称`}>
+            <FormItem {...formItemLayout} label={`科室名称`}>
               {
                 getFieldDecorator(`userName`,{
                   initialValue: ''
@@ -80,7 +80,9 @@ class SearchForm extends PureComponent{
                 getFieldDecorator(`deptType`,{
                   initialValue: ''
                 })(
-                  <Input/>
+                  <Select>
+                    <Option value='' key=''>部门类型</Option>
+                  </Select>
                 )
               }
             </FormItem>
@@ -123,10 +125,15 @@ class DepartmentMgt extends PureComponent{
     modalTitle:"新增",
     record:{},//当前要编辑的信息
     subModalVisible:false,//科室弹窗显示状态
+    goodsModalVisible:false,//货位弹窗显示状态
     deptKeyword:'',//科室搜索关键字
+    goodsKeyword:'',//货位搜索关键字 - 货位
+    pharmacyKeyword:'',//货位搜索关键字- 药房
     hasStyle: null,
     subModalSelectRow:{},//科室点选-获取相关的信息
     subModalSelectRowCache:{},//科室点选-缓存
+    goodsModalSelectRow:{},//科室点选-获取相关的信息
+    goodsModalSelectRowCache:{},//科室点选-缓存
     
   }
 
@@ -139,6 +146,7 @@ class DepartmentMgt extends PureComponent{
   //新增部门 -提交表单
   onSubmitModal = () => {
     this.props.form.validateFields((err,values)=>{
+      console.log(values)
       if(!err){
         console.log(values)
         console.log(this.state.subModalSelectRowCache);//此数据为科室每次确认的最终数据
@@ -152,7 +160,7 @@ class DepartmentMgt extends PureComponent{
     this.props.form.resetFields();
     this.setState({visible:false})
   }
-
+  /* ====================== 新增部门 弹窗 ======================*/
   //新增部门-选择科室 - 打开弹窗
   showDeptModal = () => {
     this.setState({subModalVisible:true})
@@ -179,6 +187,34 @@ class DepartmentMgt extends PureComponent{
     this.setState({subModalVisible:false });
     this.props.form.setFieldsValue({dept:subModalSelectRowCache.deptName})
   }
+   /*====================== 新增货位 弹窗 ======================*/
+  //新增货位-选择货位 - 打开弹窗
+  showGoodsModal = () => {
+    this.setState({goodsModalVisible:true})
+  }
+  //搜索货位弹窗
+  searchGoodsModal = () => {
+    console.log(this.state.goodsKeyword)
+    //在此处发出请求，并且刷新货位弹窗中的table
+  }
+
+  //选择货位 - 确定
+  onSubmitGoodsModal = () =>{
+    console.log(this.state.subModalSelectRow)
+    //当前选择货位后的信息-需要赋值给新增部门的文本框
+    const { goodsModalSelectRow } = this.state;
+    //存入缓存
+    this.setState({goodsModalSelectRowCache:JSON.parse(JSON.stringify(goodsModalSelectRow)),goodsModalVisible:false  });
+    this.props.form.setFieldsValue({huowei:goodsModalSelectRow.deptName})
+
+  }
+   //选择货位 - 取消
+  onCancelGoodsModal = () =>{
+    const { goodsModalSelectRowCache } = this.state;
+    this.setState({goodsModalVisible:false });
+    this.props.form.setFieldsValue({huowei:goodsModalSelectRowCache.deptName});
+  }
+
 
   render(){
     const columns = [
@@ -227,9 +263,19 @@ class DepartmentMgt extends PureComponent{
         dataIndex: 'code',
       },
     ]
-    const { visible , modalTitle ,subModalVisible, hasStyle } = this.state;
+    const goodsModalCol = [
+      {
+        title: '部门名称',
+        dataIndex: 'manageName',
+      },
+      {
+        title: '货位名称',
+        dataIndex: 'huoweimingcheng',
+      },
+    ]
+    const { visible , modalTitle ,subModalVisible, hasStyle , goodsModalVisible } = this.state;
     const { getFieldDecorator } = this.props.form;
-
+    console.log(this.props.form.getFieldsValue(['deptType']))
 
     return (
       <div className='ysynet-main-content'>
@@ -267,18 +313,19 @@ class DepartmentMgt extends PureComponent{
           <Form onSubmit={this.onSubmit}>
             <FormItem {...singleFormItemLayout} label={`部门类型`}>
               {
-                getFieldDecorator(`userName`,{
+                getFieldDecorator(`deptType`,{
                   rules: [{ required: true,message: '请输入部门类型' }]
                 })(
-                  <Select>
-                    <Option key='0' value='0'>货位类型</Option>
+                  <Select onSelect={(val)=>this.props.form.setFieldsValue({deptType:val})}>
+                    <Option key='0' value='0'>药库</Option>
+                    <Option key='1' value='1'>基数药</Option>
                   </Select>
                 )
               }
             </FormItem>
             <FormItem {...singleFormItemLayout} label={`部门名称`}>
               {
-                getFieldDecorator(`userNo`,{
+                getFieldDecorator(`deptName`,{
                   rules: [{ required: true,message: '请输入部门名称' }]
                 })(
                   <Input />
@@ -294,9 +341,21 @@ class DepartmentMgt extends PureComponent{
                 )
               }
             </FormItem>
+            {
+              this.props.form.getFieldsValue(['deptType']).deptType ==='1'?
+              <FormItem {...singleFormItemLayout} label={`货位`}>
+              {
+                getFieldDecorator(`huowei`,{
+                  rules: [{ required: true,message: '请输入货位' }]
+                })(
+                  <Input onClick={this.showGoodsModal}/>
+                )
+              }
+            </FormItem>:null
+            }
             <FormItem {...singleFormItemLayout} label={`地址`}>
               {
-                getFieldDecorator(`adress`)(
+                getFieldDecorator(`deptLocation`)(
                   <Select>
                     <Option key='0' value='0'>地址1</Option>
                   </Select>
@@ -327,6 +386,51 @@ class DepartmentMgt extends PureComponent{
               }}
               rowClassName={ (record, index) => index === hasStyle ? 'rowClassBg' : ''}
               columns={subModalCol}
+              bordered
+              loading={this.state.loading}
+              scroll={{x: '100%'}}
+              rowKey={'id'}
+              pagination={{
+                size: "small",
+                showQuickJumper: true,
+                showSizeChanger: true
+              }}
+              style={{marginTop: 20}}
+              dataSource={dataSource}
+            />
+        </Modal>
+
+        {/* 新增部门 - 货位 - 弹窗  */}
+        <Modal
+          visible={goodsModalVisible} 
+          title='货位'     
+          onOk={this.onSubmitGoodsModal}
+          onCancel={this.onCancelGoodsModal}
+          >
+            <Row>
+              <Input  className='button-gap' style={{width:120}} 
+                value={this.state.pharmacyKeyword} 
+                placeholder='药房关键字'
+                onChange={(e)=>this.setState({pharmacyKeyword:e.target.value})}/>
+
+              <Input  className='button-gap' style={{width:120}} 
+              value={this.state.goodsKeyword} 
+              placeholder='货位关键字'
+              onChange={(e)=>this.setState({goodsKeyword:e.target.value})}/>
+
+              <Button className='button-gap' onClick={this.searchGoodsModal}>查询</Button>
+              <Button className='button-gap' onClick={()=>this.setState({goodsKeyword:'',pharmacyKeyword:''})}>重置</Button>
+            </Row>
+            <Table 
+              onRow={ (record, index) => {
+                return {
+                  onClick: () => {
+                    this.setState({ hasStyle: index , goodsModalSelectRow:record })
+                  }
+                };
+              }}
+              rowClassName={ (record, index) => index === hasStyle ? 'rowClassBg' : ''}
+              columns={goodsModalCol}
               bordered
               loading={this.state.loading}
               scroll={{x: '100%'}}

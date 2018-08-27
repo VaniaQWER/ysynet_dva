@@ -40,7 +40,6 @@ class PickSoldOut extends PureComponent{
       {
         title: '拣货单',
         dataIndex: 'medicinalCode',
-        fixed: 'left',
         width: 180,
         render:(text)=>(
           <span>
@@ -79,12 +78,6 @@ class PickSoldOut extends PureComponent{
         render: (text, record, index) => '2018-7-25 21:17'
       },
       {
-        title: '拣货人',
-        dataIndex: 'bDept',
-        width:150,
-        render: (text, record, index) => 'cheng'
-      },
-      {
         title: '拣货时间',
         dataIndex: 'time',
         width: 180,
@@ -93,7 +86,6 @@ class PickSoldOut extends PureComponent{
       {
         title: '操作',
         width: 90,
-        fixed: 'right',
         dataIndex: 'RN',
         render: (text, record) => 
           <span>
