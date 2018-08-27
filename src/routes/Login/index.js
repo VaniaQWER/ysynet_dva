@@ -2,8 +2,6 @@ import React, { PureComponent } from 'react';
 import { Form, Button, Checkbox, Input, Icon, message } from 'antd';
 import { connect } from 'dva';
 // import querystring from 'querystring';
-// import shajs from 'sha.js'
-// import ysy from '../../api/ysy';
 import styles from './style.css';
 const FormItem = Form.Item;
 
@@ -11,23 +9,20 @@ class Login extends PureComponent{
   state = {
     loading: false
   }
-  componentWillMount = () =>{
-    /* this.props.dispatch({
-      type: 'users/getOrgName',
-      payload: {},
-    }) */
-  }
   handleSubmit = (e) =>{
     e.preventDefault();
     this.props.form.validateFields((err, values) => {
       if(!err){
         this.setState({ loading: true });
-        const { userName, password } = values;
-        // const userInfo = {
-        //   userNo: userName, 
-        //   pwd: shajs('sha256').update(password).digest('hex'),
-        //   // token: 'vania'
-        // }
+         const { userName, password } = values;
+        /*this.props.dispatch({
+          type: 'users/EncryptPassword',
+          payload: { password },
+          callback: (data) =>{
+            let newPassword = data.password;
+            this.userLogin(userName,newPassword);
+          }
+        }) */
         if ( userName === 'admin' &&  password === 'admin' ) {
           setTimeout(()=>{
             this.setState({ loading: false  })
@@ -37,43 +32,16 @@ class Login extends PureComponent{
           this.setState({ loading: false  })
           message.error('账号或密码错误！');
         }
-        // this.setState({ loading: false });
-        // fetch(ysy.USERLOGIN,{
-        //   credentials: 'include',
-        //   method: 'post',
-        //   headers: {
-        //     'Content-Type': 'application/x-www-form-urlencoded'
-        //   },
-        //   body: querystring.stringify(userInfo)
-        // })
-        // .then((res)=>res.json())
-        // .then((data)=>{
-        //   this.setState({ loading: false });
-        //   if(!data.result.loginResult){
-        //     message.error(data.result.loginResult)
-        //   }else{
-        //     if(!data.result.subSystemFlag){
-        //       // 跳转到选择子系统页面
-        //       this.props.dispatch({
-        //         type: 'users/getSubSystem',
-        //         payload: {},
-        //         callback: () => {
-        //           this.props.dispatch({
-        //             type: 'users/fetch',
-        //             payload: {}
-        //           });
-        //           this.props.history.push({ pathname: '/subSystem' })
-        //         }
-        //       })
-        //     }else{
-        //       this.props.dispatch({
-        //         type: 'users/fetch',
-        //         payload: {}
-        //       });
-        //       this.props.history.push({ pathname: '/home' });
-        //     }
-        //   }
-        // })
+       
+      }
+    })
+  }
+  userLogin = (username,password) =>{
+    this.props.dispatch({
+      type: 'users/userLogin',
+      payload: { username, password },
+      callback: (data) => {
+        console.log(data,'userLogin')
       }
     })
   }

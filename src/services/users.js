@@ -1,34 +1,23 @@
 import request from '../utils/request';
 import { _local } from '../api/local'
 
-export function login(options){
-  return request(`${_local}/login/subSystemLogin`,{ //用户登陆
+export function EncryptPassword(options){
+  return request(`${_local}/7/a/his/entryptPassword`,{ //密码加密
     methods: 'POST',
     type: 'formData',
+    credentials: 'omit',
     body: options
   })
 }
-export function getDeployOrgName(options){
-  return request(`${_local}/login/getDeployOrgName`,{ //获取机构名称
+export function userLogin(options){
+  return request(`${_local}/7/a/login`,{ //登陆
     methods: 'POST',
     type: 'formData',
-    body: options
-  })
-}
-
-export function getUserM(options){
-  return request(`${_local}/user/getUserM`,{ // 获取菜单
-    methods: 'POST',
-    type: 'formData',
+    credentials: 'omit',
+    withCredentials: true,
     body: options
   })
 }
 
 
-export function getUserSubSystem(options){
-  return request(`${_local}/login/getUserSubSystem`,{ //获取子系统
-    methods: 'POST',
-    type: 'formData',
-    body: options
-  })
-}
+
