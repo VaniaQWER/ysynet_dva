@@ -2,7 +2,7 @@
  * @Author: wwb 
  * @Date: 2018-08-21 14:27:32 
  * @Last Modified by: wwb
- * @Last Modified time: 2018-08-28 21:11:04
+ * @Last Modified time: 2018-08-28 22:25:06
  */
 
  /**
@@ -81,7 +81,7 @@ class SearchForm extends PureComponent{
           <Col span={8}>
             <FormItem {...formItemLayout} label={`账号`}>
               {
-                getFieldDecorator(`userNo`,{
+                getFieldDecorator(`loginName`,{
                   initialValue: ''
                 })(
                   <Input placeholder='请输入' />
@@ -92,7 +92,7 @@ class SearchForm extends PureComponent{
           <Col span={8}>
             <FormItem {...formItemLayout} label={`姓名`}>
               {
-                getFieldDecorator(`userName`,{
+                getFieldDecorator(`name`,{
                   initialValue: ''
                 })(
                   <Input placeholder='请输入' />
@@ -103,7 +103,7 @@ class SearchForm extends PureComponent{
           <Col span={8}>
             <FormItem {...formItemLayout} label={`所属科室`}>
               {
-                getFieldDecorator(`deptGuid`,{
+                getFieldDecorator(`hisDeptIds`,{
                   initialValue: ''
                 })(
                   <Select
@@ -123,7 +123,7 @@ class SearchForm extends PureComponent{
           <Col span={8} style={{ display: display }}>
             <FormItem {...formItemLayout} label={`部门`}>
               {
-                getFieldDecorator(`department`,{
+                getFieldDecorator(`deptIds`,{
                   initialValue: ''
                 })(
                   <Select
@@ -168,7 +168,7 @@ class UserMgt extends PureComponent{
     console.log(record,index,'resetPwd');
     this.props.dispatch({
       type: 'Organization/ResetPwd',
-      payload: { id: record.id },
+      payload: { loginName: record.loginName },
       callback: () =>{
         this.refs.table.fetch(this.state.query);
       }
@@ -193,10 +193,12 @@ class UserMgt extends PureComponent{
       {
         title: '账号',
         dataIndex: 'loginName',
+        width: 150
       },
       {
         title: '姓名',
         dataIndex: 'userName',
+        width: 100
       },
       {
         title: '所属科室',
@@ -209,20 +211,24 @@ class UserMgt extends PureComponent{
       {
         title: '编辑人',
         dataIndex: 'updateUserName',
+        width: 100,
       },
       {
         title: '编辑时间',
         dataIndex: 'updateDate',
+        width: 180,
       },
       {
         title: '操作',
         dataIndex: 'action',
+        width: 130,
+        fixed: 'right',
         render: (text,record,index)=>{
           return <span>
             <Popconfirm title="是否确认重置该用户密码?" onConfirm={this.resetPwd.bind(null, record,index)} okText="是" cancelText="否">
               <a>重置密码</a>
             </Popconfirm>
-            <Link to={{pathname: `/system/drugDirectory/directory/edit/${record.loginName}`}}>{'编辑'}</Link>
+            <Link style={{ marginLeft: 8 }} to={{pathname: `/system/organization/userMgt/edit/${record.loginName}`}}>{'编辑'}</Link>
           </span>
         }
       },
@@ -241,9 +247,9 @@ class UserMgt extends PureComponent{
           columns={columns}
           bordered
           query={query}
+          scroll={{ x: '120%' }}
           url={systemMgt.FINDUSERLIST}
-          scroll={{x: '100%'}}
-          rowKey={'id'}
+          rowKey={'loginName'}
         />
         <Modal
           title={'用户修改'}

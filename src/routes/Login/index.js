@@ -15,7 +15,7 @@ class Login extends PureComponent{
       if(!err){
         this.setState({ loading: true });
          let { userName, password } = values;
-         password = '02a3f0772fcca9f415adc990734b45c6f059c7d33ee28362c4852032';
+         password = userName === 'admin'? '02a3f0772fcca9f415adc990734b45c6f059c7d33ee28362c4852032': 'a2357bb8ae6b26a14119a0591ab45847c437f7e9f42e90b154db07e9';
         //  this.test();
          this.userLogin(userName, password)
           /* this.props.dispatch({

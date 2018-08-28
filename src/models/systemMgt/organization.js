@@ -77,7 +77,9 @@ export default {
     // 重置密码
     *ResetPwd({ payload, callback },{ put, call }){
       const data = yield call(userMgtService.resetPwd, payload);
-      if(data.code !== 200){
+      if(data.code === 200 && data.msg === 'success'){
+        message.success('重置密码成功');
+      }else{
         message.error(data.msg ||'重置密码失败')
       }
       if(callback) callback();
@@ -86,7 +88,7 @@ export default {
     *findUserInfo({ payload, callback },{ put, call }){
       const data = yield call(userMgtService.findUserInfo, payload);
       if(data.code !== 200){
-        message.error(data.msg ||'获取所有得角色信息失败')
+        message.error(data.msg ||'获取角色信息详情失败')
       }
       if(callback) callback(data.data);
     },

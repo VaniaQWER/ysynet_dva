@@ -350,8 +350,8 @@ export const getNavData = app => [
     {
       name: "上架",
       icon: 'setting',
-      path: '/drugStorage/wareHouse/grounding/detail',
-      component: dynamicWrapper(app, [], () => import('../routes/DrugStorage/wareHouse/grounding/detail')),
+      path: '/drugStorage/wareHouse/grounding/detail/:id',
+      component: dynamicWrapper(app, ['drugStorage/wareHouse'], () => import('../routes/DrugStorage/wareHouse/grounding/detail')),
     },
     {
       name: "入库单管理",
@@ -1038,7 +1038,7 @@ export const getNavData = app => [
     {
       name: "部门管理-编辑",
       icon: 'setting',
-      path: '/system/organization/departmentMgt/edit/:id',
+      path: '/system/organization/departmentMgt/edit',
       component: dynamicWrapper(app, ['systemMgt/organization'], () => import('../routes/SystemMgt/organization/departmentMgt/edit')),
     },
     {
@@ -1055,10 +1055,16 @@ export const getNavData = app => [
       component: dynamicWrapper(app, ['systemMgt/organization'], () => import('../routes/SystemMgt/organization/userMgt')),
     },
     {
-      name: "用门管理--添加",
+      name: "用户管理--添加",
       icon: 'setting',
       path: '/system/organization/userMgt/add',
       component: dynamicWrapper(app, ['systemMgt/organization'], () => import('../routes/SystemMgt/organization/userMgt/add')),
+    },
+    {
+      name: "用户管理--编辑",
+      icon: 'setting',
+      path: '/system/organization/userMgt/edit/:loginName',
+      component: dynamicWrapper(app, ['systemMgt/organization'], () => import('../routes/SystemMgt/organization/userMgt/edit')),
     },
     /* *********************** 系统管理  角色管理     ******************** */
     {
@@ -1102,7 +1108,7 @@ export const getNavData = app => [
       name: "字典管理",
       icon: 'setting',
       path: '/system/setting/itemsData',
-      component: dynamicWrapper(app, ['ysy/dict'], () => import('../routes/SystemMgt/setting/itemsData')),
+      component: dynamicWrapper(app, [], () => import('../routes/SystemMgt/setting/itemsData')),
     },
      /* ********************   采购结算 子系统    ******************************* */
      {

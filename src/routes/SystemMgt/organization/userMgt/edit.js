@@ -2,13 +2,13 @@
  * @Author: wwb 
  * @Date: 2018-08-21 17:46:47 
  * @Last Modified by: wwb
- * @Last Modified time: 2018-08-28 21:06:36
+ * @Last Modified time: 2018-08-28 22:29:32
  */
  /**
  * @file 系统管理--组织机构--用户管理--编辑
  */
 import React, { PureComponent } from 'react';
-import { Row, Col, Button, Table, Affix } from 'antd';
+import { Row, Col, Button, Table, Input } from 'antd';
 import { DeptSelect } from '../../../../common/dic';
 import { connect } from 'dva';
 
@@ -31,10 +31,8 @@ const distributUser = [{
 }];
 class AddUser extends PureComponent{
   state = {
-    userDataSource: [],// 角色列表
-    userLoading: false,
-    deptDataSource: [],
-    deptLoading: false,
+    baseData: {},// 用户详情信息
+    loading: false,
     selected: [], // 所属部门
     selectedRows: [],
     userSelected: [], // 角色分配
@@ -43,46 +41,60 @@ class AddUser extends PureComponent{
     modalSelectedRows: []
   }
   componentWillMount = () =>{
+    this.setState({ loading: true })
     const { loginName } = this.props.match.params;
     this.props.dispatch({
       type: 'Organization/findUserInfo',
       payload: { loginName },
       callback: (data) =>{
-        this.setState({ baseData: data })
+        this.setState({ baseData: data, loading: false })
       }
     })
-    
+  }
+  save = () =>{
+    console.log('save')
   }
   render(){
-    const { deptDataSource, userDataSource, userLoading, deptLoading } = this.state;
+    const { baseData, loading } = this.state;
     return (
       <div>
       <div className='fullCol fadeIn'>
         <div className='fullCol-fullChild'>
           <div style={{ display:'flex',justifyContent: 'space-between' }}>
             <h3 style={{ fontWeight: 'bold' }}>用户信息</h3>
+            <Button type='primary' onClick={this.save}>保存</Button>
           </div>
-          <hr className='hr' />
+          {/* <hr className='hr' /> */}
           <Row>
             <Col span={8}>
               <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
                 <label>账号</label>
               </div>
               <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-19">
-                <div className='ant-form-item-control'>{  }</div>
+                <div className='ant-form-item-control'>{ baseData.loginName }</div>
+              </div>
+            </Col>
+            <Col span={8}>
+              <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
+                <label>姓名</label>
+              </div>
+              <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-19">
+                <div className='ant-form-item-control'>{ baseData.userName }</div>
               </div>
             </Col>
           </Row>
-          <Col span={8}>
-            <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
-              <label>手机号</label>
-            </div>
-            <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-19">
-              <div className='ant-form-item-control'>
-
+          <Row>
+            <Col span={8}>
+              <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
+                <label>手机号</label>
               </div>
-            </div>
-          </Col>
+              <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-19">
+                <div className='ant-form-item-control'>
+                  <Input  style={{ width: 200 }} defaultValue={baseData.phone ? baseData.phone: ''} ref='phone'/>
+                </div>
+              </div>
+            </Col>
+          </Row>
         </div>
         <div className='detailCard'>
           <h3>所属部门</h3>
@@ -91,8 +103,8 @@ class AddUser extends PureComponent{
             columns={deptColumns}
             bordered
             rowKey={'id'}
-            loading={deptLoading}
-            dataSource={deptDataSource}
+            loading={loading}
+            dataSource={baseData.listDept}
             pagination={false}
             size={'small'}
             scroll={{ x: '100%' }}
@@ -111,8 +123,8 @@ class AddUser extends PureComponent{
             columns={distributUser}
             bordered
             rowKey={'id'}
-            loading={userLoading}
-            dataSource={userDataSource}
+            loading={loading}
+            dataSource={baseData.listRole}
             pagination={false}
             size={'small'}
             scroll={{ x: '100%' }}
@@ -125,14 +137,6 @@ class AddUser extends PureComponent{
           />
         </div>
       </div>
-      <Affix offsetBottom={0}>
-        <Row>
-          <Col style={{ textAlign:'right', padding: '20px 10px', }}>
-            <Button type='primary'>保存</Button>
-            <Button type='danger' style={{ marginLeft: 8 }} ghost onClick={()=> window.history.go(-1)} >取消</Button>
-          </Col>
-        </Row>
-      </Affix>
       </div>
     )
   }

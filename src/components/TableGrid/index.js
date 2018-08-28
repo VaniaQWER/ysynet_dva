@@ -41,7 +41,7 @@ class RemoteTable extends Component {
     this.setState({ loading: true, searchParams: params });
     if(url){
       let pagination = this.state.pagination;
-      const body = querystring.stringify({
+      const body = JSON.stringify({
         pageSize: pagination.pageSize ?  pagination.pageSize : ( this.props.pagesize || this.defaultPageSize ),
         ...params,
         ...catchData
@@ -52,14 +52,15 @@ class RemoteTable extends Component {
         },
       }
       if(!this.props.method ||this.props.method ==='post'||  this.props.method ==='POST'){
+        
          bodyProps={
           body:body,
           headers: {
-            'Content-Type': 'application/x-www-form-urlencoded'
+            'Content-Type': 'application/json'
           },
         }
       }
-
+      
       fetch(url,{
         method: this.props.method || 'post',
         mode: 'cors',
@@ -106,7 +107,9 @@ class RemoteTable extends Component {
   }
   render () {
     const { columns, rowKey, rowClassName, 
-            rowSelection, scroll, footer,showHeader,title } = this.props;
+            rowSelection, scroll, footer,showHeader,title } = this.props;   
+            console.log(this.state.pagination);
+            
     return (
       <Table 
         style={this.props.style}
