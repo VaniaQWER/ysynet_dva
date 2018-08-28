@@ -11,4 +11,7 @@ import {_local} from '../local';
 
     // 组织机构--用户管理
   FINDUSERLIST:`${_local}/a/his/findUserList`,  //用户管理列表
+
+  // 药品目录
+  MEDICINEMATERIAL_LIST:`${_local}/a/his/hisctmedicinematerial/list`,  //药品目录基本信息列表
  }

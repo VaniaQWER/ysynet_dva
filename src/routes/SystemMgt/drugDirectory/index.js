@@ -1,7 +1,16 @@
+/*
+ * @Author: wwb 
+ * @Date: 2018-08-28 17:42:54 
+ * @Last Modified by: wwb
+ * @Last Modified time: 2018-08-28 17:43:58
+ */
+
 import React , {PureComponent} from 'react';
-import { Form, Row, Col, Button, Input, Select, Icon, Table, Tooltip, message, Modal  } from 'antd';
-import { createData } from '../../../common/data';
+import { Form, Row, Col, Button, Input, Select, Icon, Tooltip, Modal,Badge  } from 'antd';
+import RemoteTable from '../../../components/TableGrid';
+import { systemMgt } from '../../../api/systemMgt';
 import { Link } from 'react-router-dom';
+import { connect } from 'dva';
 const FormItem = Form.Item;
 const { Option } = Select;
 
@@ -36,6 +45,16 @@ class SearchForm extends PureComponent{
       display: display === 'none' ? 'block' : 'none',
       expand: !expand
     })
+  }
+  handleSearch = (e) => {
+    e.preventDefault();
+    this.props.form.validateFields((err, values) => {
+      this.props.query(values);
+    });
+  }
+  handleReset = () => {
+    this.props.form.resetFields();
+    this.props.query({});
   }
   render(){
     const { getFieldDecorator } = this.props.form;
@@ -82,7 +101,11 @@ class SearchForm extends PureComponent{
                 getFieldDecorator(`ctmmStatusCode`,{
                   initialValue: ''
                 })(
-                  <Input placeholder='请输入' />
+                  <Select>
+                    <Option value=''>全部</Option>
+                    <Option value='0'>启用</Option>
+                    <Option value='1'>停用</Option>
+                  </Select>
                 )
               }
             </FormItem>
@@ -117,7 +140,12 @@ const WrappSearchForm = Form.create()(SearchForm);
 
 const columns = [{
   title: '通用名称',
-  dataIndex: 'ctmmGenericName'
+  dataIndex: 'ctmmGenericName',
+  render: (text,record) =>{
+    return <span>
+            <Link to={{pathname: `/system/drugDirectory/directory/edit/${record.bigDrugCode}/${record.medDrugType}`}}>{text}</Link>
+          </span>
+  }
 },
 {
   title: '商品名',
@@ -137,12 +165,8 @@ const columns = [{
 },
 {
   title: '包装规格',
-  dataIndex: 'ctmmPackingUnit'
-},
-{
-  title: '单位',
-  dataIndex: 'ctmmDosUom',
-  render:(text)=>'g'
+  dataIndex: 'ctmmPackingUnit',
+  width: 100,
 },
 {
   title: '批准文号',
@@ -152,32 +176,38 @@ const columns = [{
 class DrugDirectory extends PureComponent{
   state = {
     addVisible: false,
-    addLoading: false
+    addLoading: false,
+    query: {}
   }
-  bitchEditConfirm = () =>{
-    this.props.form.validateFields( (err,values) =>{
-      if(!err){
-        this.setState({ loading: true });
-        console.log(values,'values');
-        setTimeout(()=>{
-          message.success('编辑成功');
-          this.setState({ loading: false, visible: false, selected:[],selectedRows: [] })
-        },500)
-      }
-    })
+  queryHandler = (query) => {
+    this.setState({ query });
+    this.refs.table.fetch(query);
   }
   add = () =>{
     this.setState({ addVisible: true })
   }
-  save = () =>{
-   
-    this.setState({ addLoading: true });
-    setTimeout(()=>{
-      message.success('添加成功');
+  save = (e) =>{
+    e.preventDefault();
+    let { dispatch, form } = this.props;
+    form.validateFields((err,values)=>{
+      if(!err){
+        console.log(values,'values');
+        values.medDrugType = '2';
+        dispatch({
+          type: "drugDirectory/addMedicine",
+          payload: {hisCtMedicineMaterial: values},
+          callback: () =>{
+            this.setState({ visible: false, addLoading: false });
+            this.refs.table.fetch(this.state.query);
+          }
+        })
+      }
     })
+    this.setState({ addLoading: true });
+    
   }
   render(){
-    const { addVisible, addLoading } = this.state;
+    const { addVisible, addLoading, query } = this.state;
     const { getFieldDecorator } = this.props.form;
     const IndexColumns = [
       ...columns,
@@ -186,20 +216,16 @@ class DrugDirectory extends PureComponent{
         dataIndex: 'ctmmManufacturerName'
       },
       {
-        title: '操作',
-        dataIndex: 'action',
-        fixed: 'right',
+        title: '状态',
+        dataIndex: 'ctmmStatusCode',
         width: 100,
-        render: (text,record)=>{
-          return  <span>
-            <Link to={{pathname: `/system/drugDirectory/directory/edit`}}>{'编辑'}</Link>
-          </span>
-        }
+        fixed: 'right',
+        render: text => <Badge status={text==="0" ? "success" :"error"} text={text==="0" ? "启用" :"停用"}/>
       },
     ];
     return (
     <div className='ysynet-main-content'>
-      <WrappSearchForm />
+      <WrappSearchForm query={this.queryHandler}/>
       <Row className='ant-row-bottom'>
         <Col>
           <Button type='primary' onClick={this.add} style={{ margin: '0 8px' }}>新增</Button>
@@ -350,20 +376,17 @@ class DrugDirectory extends PureComponent{
           </Row>
         </Form>
       </Modal>
-      <Table 
-        dataSource={createData()}
+      <RemoteTable
+        ref='table'
         bordered
-        scroll={{x: '160%'}}
+        query={query}
+        url={systemMgt.MEDICINEMATERIAL_LIST}
+        scroll={{x: '140%'}}
         columns={IndexColumns}
         rowKey={'id'}
-        pagination={{
-          size: 'small',
-          showQuickJumper: true,
-          showSizeChanger: true
-        }}
       />
     </div>
     )
   }
 }
-export default Form.create()(DrugDirectory);
+export default connect()(Form.create()(DrugDirectory))

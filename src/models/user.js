@@ -4,7 +4,9 @@ import { message } from 'antd';
 export default {
   namespace: 'users',
   state:{
-    userInfo: {}
+    userInfo: {
+      deptInfo: []
+    }
   },
   reducers: {
     userMenu(state,action){
@@ -45,7 +47,6 @@ export default {
     *setCookie({ payload,callback },{ call }){
       const data = yield call(usersService.setCookie,payload)
     }
-    
   },
   subscriptions: {
     
