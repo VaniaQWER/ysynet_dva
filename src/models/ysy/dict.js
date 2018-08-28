@@ -12,7 +12,6 @@ export default {
         //系统设置-系统管理-字典管理-新增/编辑
         *DictSave({ payload, callback }, { put, call }) {
             const data = yield call(sysDictService.DictSave, payload);
-            console.log(data, 'data-字典管理');
             if (data.code === 200) {
                 message.success('操作成功！');
             } else {
@@ -20,6 +19,16 @@ export default {
             }
             if (callback) {
                 callback();
+            }
+        },
+        //系统设置-系统管理-字典管理-类型下拉框
+        *DictTypeList({ payload, callback }, { put, call }) {
+            const data = yield call(sysDictService.DictTypeList, payload);
+            if (data.code !== 200) {
+                message.error(data.msg);
+            }
+            if (callback) {
+                callback(data.data);
             }
         }
     },

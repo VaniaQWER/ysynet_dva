@@ -7,12 +7,22 @@
 import request from '../../../utils/request';
 import { _local } from '../../../api/local';
 
-//新增菜单
-export function DictSave(options){
-    return request(`${_local}/a/spd/dict/save`,{ 
-      methods: 'POST',
-      type: 'formData',
+//新增/编辑
+export function DictSave(options) {
+  return request(`${_local}/a/spd/dict/save`, {
+    methods: 'POST',
+    type: 'formData',
     //   credentials: 'omit',
-      body: options
-    })
-  }
+    body: options
+  })
+}
+//类型下拉框
+export function DictTypeList(options) {
+  return request(`${_local}/a/spd/dict/typelist`, {
+    methods: 'POST',
+    type: 'formData',
+    //   credentials: 'omit',
+    body: options
+  })
+}
+

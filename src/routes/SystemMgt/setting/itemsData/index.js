@@ -8,7 +8,7 @@
  * @file 系统管理--系统设置--字典管理
  */
 import React, { PureComponent } from 'react';
-import { Form, Row, Col, Input, Select, Button, Table, Modal } from 'antd';
+import { Form, Row, Col, Input, Select, Button, Modal } from 'antd';
 import { formItemLayout } from '../../../../utils/commonStyles';
 import { systemMgt } from '../../../../api/systemMgt';
 import RemoteTable from '../../../../components/TableGrid';
@@ -29,9 +29,6 @@ const singleFormItemLayout = {
 }
 
 class SearchForm extends PureComponent{
-  state = {
-
-  }
   handleSearch = (e) =>{
     e.preventDefault();
     this.props.form.validateFields((err,values)=>{
@@ -63,6 +60,9 @@ class SearchForm extends PureComponent{
                     filterOption={(input, option) => option.props.children.indexOf(input) >= 0}
                   >
                     <Option value=''>请选择</Option>
+                    {
+                      this.props.typeListData.map((item, index) => <Option value={item.value} key={index}>{item.label}</Option>)
+                    }
                   </Select>
                 )
               }
@@ -97,7 +97,17 @@ class ItemsData extends PureComponent{
     query: {},
     ModalTitle: '',
     record: {},
-    loading: false
+    loading: false,
+    typeListData: []
+  }
+  componentDidMount = () => {
+    this.props.dispatch({
+      type: 'Dictionary/DictTypeList',
+      payload: {},
+      callback: (data) =>{
+        this.setState({ typeListData: data });
+      }
+    });
   }
   queryHandle = (query) =>{
     this.setState({ query });
@@ -157,10 +167,10 @@ class ItemsData extends PureComponent{
         title: '标签',
         dataIndex: 'label',
       },
-      {
-        title: '编码',
-        dataIndex: 'code',
-      },
+      // {
+      //   title: '编码',
+      //   dataIndex: 'code',
+      // },
       {
         title: '类型',
         dataIndex: 'type',
@@ -190,7 +200,7 @@ class ItemsData extends PureComponent{
     ]
     return (
       <div className='ysynet-main-content'>
-        <WrapperForm query={this.queryHandle}/>
+        <WrapperForm query={this.queryHandle} typeListData={this.state.typeListData}/>
         <div>
           <Button type='primary' icon='plus' onClick={this.add}>新建字典</Button>
         </div>
@@ -236,7 +246,7 @@ class ItemsData extends PureComponent{
                 )
               }
             </FormItem>
-            <FormItem {...singleFormItemLayout} label={`编码`}>
+            {/* <FormItem {...singleFormItemLayout} label={`编码`}>
               {
                 getFieldDecorator(`code`, {
                   initialValue: record ? record.code : '',
@@ -245,7 +255,7 @@ class ItemsData extends PureComponent{
                   <Input placeholder="请输入" />
                 )
               }
-            </FormItem>
+            </FormItem> */}
             <FormItem {...singleFormItemLayout} label={`类型`}>
               {
                 getFieldDecorator(`type`, {
