@@ -338,8 +338,8 @@ export const getNavData = app => [
     {
       name: '配送单验收--详情',
       iocn: 'setting',
-      path: '/drugStorage/wareHouse/psListCheck/detail',
-      component: dynamicWrapper(app, [], () => import('../routes/DrugStorage/wareHouse/psListCheck/detail')),
+      path: '/drugStorage/wareHouse/psListCheck/detail/:id',
+      component: dynamicWrapper(app, ['drugStorage/wareHouse'], () => import('../routes/DrugStorage/wareHouse/psListCheck/detail')),
     },
     {
       name: "上架",
@@ -362,7 +362,7 @@ export const getNavData = app => [
     {
       name: "入库单详情",
       icon: 'setting',
-      path: '/drugStorage/wareHouse/wareHouseReceiptMgt/detail',
+      path: '/drugStorage/wareHouse/wareHouseReceiptMgt/detail/:id',
       component: dynamicWrapper(app, [], () => import('../routes/DrugStorage/wareHouse/wareHouseReceiptMgt/detail')),
     },
     /* ***************  出库  ******************** */

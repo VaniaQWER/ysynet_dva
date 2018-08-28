@@ -22,14 +22,15 @@ class RemoteTable extends Component {
   }
   handleTableChange = (pagination, filters, sorter) => {
     const pager = this.state.pagination;
+    
     pager.pageSize = pagination.pageSize;
     pager.current = pagination.current;
     this.setState({
       pagination: pager,
     });
     const postData = Object.assign({}, this.state.searchParams, {
-      results: pagination.pagesize,
-      page: pagination.current,
+      results: pagination.pageSize,
+      pageNo: pagination.current,
       sortField: sorter.field,
       sortOrder: sorter.order,
       ...filters
@@ -41,7 +42,7 @@ class RemoteTable extends Component {
     if(url){
       let pagination = this.state.pagination;
       const body = querystring.stringify({
-        pagesize: pagination.pageSize ?  pagination.pageSize : ( this.props.pagesize || this.defaultPageSize ),
+        pageSize: pagination.pageSize ?  pagination.pageSize : ( this.props.pagesize || this.defaultPageSize ),
         ...params,
         ...catchData
       });
@@ -76,7 +77,7 @@ class RemoteTable extends Component {
           pagination.showQuickJumper = true;
           pagination.showTotal=(total, range) => `${range[0]}-${range[1]} 共 ${total} 条`;
           pagination.pageSize = pagination.pageSize ?  pagination.pageSize : ( this.props.pagesize || this.defaultPageSize );
-          if(!params.page) {
+          if(!params.pageNo) {
             pagination.current = 1;
           }
           if (typeof this.props.cb === 'function') {
@@ -106,6 +107,8 @@ class RemoteTable extends Component {
   render () {
     const { columns, rowKey, rowClassName, 
             rowSelection, scroll, footer,showHeader,title } = this.props;   
+            console.log(this.state.pagination);
+            
     return (
       <Table 
         style={this.props.style}
