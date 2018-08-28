@@ -63,7 +63,7 @@ export default {
       if(data.code !== 200){
         message.error(data.msg ||'获取所属科室失败')
       }
-      if(callback) callback();
+      if(callback) callback(data.data);
     },
     // 所属部门
     *getAllDepts({ payload, callback },{ call }){
@@ -81,8 +81,25 @@ export default {
       }
       if(callback) callback();
     },
+    // 用户详情
+    *findUserInfo({ payload, callback },{ put, call }){
+      const data = yield call(userMgtService.findUserInfo, payload);
+      if(data.code !== 200){
+        message.error(data.msg ||'获取所有得角色信息失败')
+      }
+      if(callback) callback(data.data);
+    },
+    // 所有角色列表
     *getRoleInfo({ payload, callback },{ put, call }){
       const data = yield call(userMgtService.getRoleInfo, payload);
+      if(data.code !== 200){
+        message.error(data.msg ||'获取所有得角色信息失败')
+      }
+      if(callback) callback(data.data);
+    },
+    // 用户信息
+    *getFilterCareProv({ payload, callback },{ put, call }){
+      const data = yield call(userMgtService.getFilterCareProv, payload);
       if(data.code !== 200){
         message.error(data.msg ||'获取所有得角色信息失败')
       }

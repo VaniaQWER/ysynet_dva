@@ -2,7 +2,7 @@
  * @Author: wwb 
  * @Date: 2018-08-27 20:02:14 
  * @Last Modified by: wwb
- * @Last Modified time: 2018-08-28 19:29:25
+ * @Last Modified time: 2018-08-28 19:49:30
  */
 import request from '../../../utils/request';
 import { _local } from '../../../api/local';
@@ -16,7 +16,7 @@ export function resetPwd(options){
 }
 
 export function getAllDeptByCondition(options){
-  return request(`${_local}/his/dept/getAllDeptByCondition`,{ //用户管理所属科室
+  return request(`${_local}/a/his/dept/getAllDeptByCondition`,{ //用户管理所属科室
     method: 'POST',
     type: 'formData',
     body: options
@@ -33,6 +33,22 @@ export function getAllDepts(options){
 
 export function getRoleInfo(options){
   return request(`${_local}/a/his/getRoleInfo`,{ //用户管理--获取所有得角色信息
+    method: 'GET',
+    type: 'formData',
+    body: options
+  })
+}
+
+export function findUserInfo(options){
+  return request(`${_local}/a/his/findUserInfo`,{ //用户管理--获取角色信息详情
+    method: 'GET',
+    type: 'formData',
+    body: options
+  })
+}
+
+export function getFilterCareProv(options){
+  return request(`${_local}/a/his/getFilterCareProv`,{ //用户管理--获取角色信息详情
     method: 'GET',
     type: 'formData',
     body: options

@@ -9,21 +9,6 @@ class Login extends PureComponent{
   state = {
     loading: false
   }
-  componentWillMount = () =>{
-    // this.setCookie();
-  }
-  setCookie = () =>{
-    this.props.dispatch({
-      type: 'users/setCookie',
-      payload: {  }
-    })
-  }
-  test = () =>{
-    this.props.dispatch({
-      type: 'users/test',
-      payload: { temp: '' }
-    })
-  }
   handleSubmit = (e) =>{
     e.preventDefault();
     this.props.form.validateFields((err, values) => {
@@ -52,7 +37,7 @@ class Login extends PureComponent{
       callback: (data) => {
         console.log(data,'data')
         this.setState({ loading: false });
-        if(data.deptInfo & data.deptInfo.length !== 1){
+        if(data.deptInfo && data.deptInfo.length !== 1){
           history.push({ pathname: '/subSystem' })
         }
       }

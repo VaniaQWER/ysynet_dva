@@ -3,17 +3,18 @@ import styles from './style.css';
 import { connect } from 'dva';
 class SubSystem extends PureComponent {
   state = {
-    subSystemList: []
+    deptInfo: []
   }
   componentWillReceiveProps = nextProps =>{
-    if(nextProps.users.subSystemList.length){
-      this.setState({ subSystemList: nextProps.users.subSystemList })
+    if(nextProps.users.userInfo.deptInfo.length){
+      this.setState({ deptInfo: nextProps.users.userInfo.deptInfo })
     }
   }
  
   render() {
-    console.log(this.state.subSystemList,'subSystemList')
-    // const { subSystemList } = this.props.users;
+    console.log(this.props,'props');
+    console.log(this.props.users.userInfo.deptInfo,'deptInfo');
+    // let { deptInfo } = this.props.users.userInfo;
     return (
       <div className={styles.container}>
         <div className={styles.header}>
@@ -26,15 +27,14 @@ class SubSystem extends PureComponent {
           <div className={styles.cardContent}>
             <div className={styles.cardList}>
               {
-                /* subSystemList.map(item => (
-                  <div key={item.subSystemId} className={styles.cardItem}>
+                /* deptInfo.map(item => (
+                  <div key={item.deptId} className={styles.cardItem}>
                     <div className={styles.upperCon}>
                       <div className={styles.cardBackground}></div>
                       <div className={styles.icon}></div>
                     </div>
                     <div className={styles.main}>
-                      <div className={styles.mainTitle}>{item.name}</div>
-                      <div className={styles.subTitle}> {item.subTitle} </div>
+                      <div className={styles.mainTitle}>{item.deptName}</div>
                       <a className={styles.enterBtn} onClick={()=>console.log(item,'item')}>进 入</a>
                     </div>
                   </div>

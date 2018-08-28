@@ -2,7 +2,7 @@
  * @Author: wwb 
  * @Date: 2018-08-21 14:27:32 
  * @Last Modified by: wwb
- * @Last Modified time: 2018-08-28 19:20:31
+ * @Last Modified time: 2018-08-28 21:11:04
  */
 
  /**
@@ -13,6 +13,7 @@ import { Form, Row, Col, Input, Select, Button, Icon, Popconfirm, Modal } from '
 import { formItemLayout } from '../../../../utils/commonStyles';
 import RemoteTable from '../../../../components/TableGrid';
 import { systemMgt } from '../../../../api/systemMgt';
+import { Link } from 'dva/router';
 import { connect } from 'dva';
 const FormItem = Form.Item;
 const { TextArea } = Input;
@@ -105,8 +106,15 @@ class SearchForm extends PureComponent{
                 getFieldDecorator(`deptGuid`,{
                   initialValue: ''
                 })(
-                  <Select>
+                  <Select
+                    allowClear={true}
+                    showSearch
+                    filterOption={(input, option) => option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0}
+                  >
                     <Option value=''>全部</Option>
+                    {
+                      deptOptions.map((item,index)=> <Option key={index} value={item.ctdCode}>{item.ctdName}</Option>)
+                    }
                   </Select>
                 )
               }
@@ -155,16 +163,7 @@ class UserMgt extends PureComponent{
     this.refs.table.fetch(query);
     this.setState({ query });
   }
-  // 修改
-  modify = (record,index) =>{
-    this.setState({ visible: true });
-    console.log(record,index,'modify');
-    const setFields = ['jobNum','loginName','userName','tel','mobile'];
-    let Fields = {};
-    setFields.map((item,index)=> Fields[item] = record[item]);
-    this.props.form.setFieldsValue(Fields);
-  }
-  // 删除
+  // 重置密码
   resetPwd = (record,index) =>{
     console.log(record,index,'resetPwd');
     this.props.dispatch({
@@ -223,7 +222,7 @@ class UserMgt extends PureComponent{
             <Popconfirm title="是否确认重置该用户密码?" onConfirm={this.resetPwd.bind(null, record,index)} okText="是" cancelText="否">
               <a>重置密码</a>
             </Popconfirm>
-            <a onClick={this.modify.bind(null,record,index)} style={{ marginLeft: 8 }}>编辑</a>
+            <Link to={{pathname: `/system/drugDirectory/directory/edit/${record.loginName}`}}>{'编辑'}</Link>
           </span>
         }
       },
@@ -242,7 +241,7 @@ class UserMgt extends PureComponent{
           columns={columns}
           bordered
           query={query}
-          // url={systemMgt.FINDUSERLIST}
+          url={systemMgt.FINDUSERLIST}
           scroll={{x: '100%'}}
           rowKey={'id'}
         />

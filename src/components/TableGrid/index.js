@@ -106,9 +106,7 @@ class RemoteTable extends Component {
   }
   render () {
     const { columns, rowKey, rowClassName, 
-            rowSelection, scroll, footer,showHeader,title } = this.props;   
-            console.log(this.state.pagination);
-            
+            rowSelection, scroll, footer,showHeader,title } = this.props;
     return (
       <Table 
         style={this.props.style}

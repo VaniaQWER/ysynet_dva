@@ -2,7 +2,7 @@
  * @Author: wwb 
  * @Date: 2018-08-21 17:46:47 
  * @Last Modified by: wwb
- * @Last Modified time: 2018-08-28 19:30:28
+ * @Last Modified time: 2018-08-28 21:23:30
  */
  /**
  * @file 系统管理--组织机构--用户管理--添加
@@ -10,6 +10,7 @@
 import React, { PureComponent } from 'react';
 import { Form, Row, Col, Radio, Input, Button, Table, Affix, Modal } from 'antd';
 import { formItemLayout } from '../../../../utils/commonStyles';
+import { DeptSelect } from '../../../../common/dic';
 import { connect } from 'dva';
 // const Option = Select.Option;
 const RadioGroup = Radio.Group;
@@ -17,28 +18,14 @@ const FormItem = Form.Item;
 const { Search } = Input;
 const deptColumns = [{
   title: '部门类别',
-  dataIndex: 'deptType'
+  dataIndex: 'deptType',
+  render: (text,record)=>{
+    return DeptSelect.filter(item => item.value === Number(text))[0].text
+  }
 },{
   title: '部门名称',
   dataIndex: 'deptName'
 }];
-const deptDataSource = [{
-  deptGuid: '1',
-  deptType: '药库',
-  deptName: '药库1'
-},{
-  deptGuid: '2',
-  deptType: '药库',
-  deptName: '药库2'
-},{
-  deptGuid: '3',
-  deptType: '系统管理',
-  deptName: '系统管理'
-},{
-  deptGuid: '4',
-  deptType: '采购结算',
-  deptName: '采购结算'
-}]
 const distributUser = [{
   title: '角色名称',
   dataIndex: 'roleName'
@@ -56,19 +43,14 @@ const modalColumns = [{
   title: '所属科室',
   dataIndex: 'deptName'
 }];
-let modalDataSource = [];
-for(let i=0;i<5; i++){
-  modalDataSource.push({
-    userNo: `zhangsan${i+1}`,
-    name: `张志之${i+1}`,
-    deptName: `科室${i+1}`
-  })
-}
 class AddUser extends PureComponent{
   state = {
     userType: '0',
     visible: false,
     userDataSource: [],// 角色列表
+    userLoading: false,
+    deptDataSource: [],
+    deptLoading: false,
     selected: [], // 所属部门
     selectedRows: [],
     userSelected: [], // 角色分配
@@ -77,18 +59,37 @@ class AddUser extends PureComponent{
     modalSelectedRows: []
   }
   componentWillMount = () =>{
+    this.setState({ userLoading: true, deptLoading: true });
     let { dispatch } = this.props;
+    // 所属部门
+    dispatch({
+      type: 'Organization/getAllDepts',
+      payload: {},
+      callback: (data) =>{
+        this.setState({ deptDataSource: data,deptLoading: false });
+      }
+    });
+    // 角色列表
     dispatch({
       type: 'Organization/getRoleInfo',
       payload: {},
       callback: (data) =>{
-        this.setState({ userDataSource: data })
+        this.setState({ userDataSource: data, userLoading: false });
       }
     });
   }
+  onSearch = () =>{
+    this.props.dispatch({
+      type: 'Organization/getFilterCareProv',
+      payload: {},
+      callback: (data) =>{
+        this.setState({ modalDataSource: data, visible: true })
+      }
+    })
+  }
   render(){
     const { getFieldDecorator } = this.props.form;
-    const { userType, visible, userDataSource } = this.state;
+    const { userType, visible, deptDataSource, userDataSource, userLoading, deptLoading, modalDataSource } = this.state;
     return (
       <div>
       <div className='fullCol fadeIn'>
@@ -129,7 +130,7 @@ class AddUser extends PureComponent{
                             <Search
                                
                               placeholder='请选择'
-                              onSearch={()=>this.setState({ visible: true })}
+                              onSearch={this.onSearch}
                             />
                           )
                         }
@@ -179,7 +180,8 @@ class AddUser extends PureComponent{
           <Table 
             columns={deptColumns}
             bordered
-            rowKey={'deptGuid'}
+            rowKey={'id'}
+            loading={deptLoading}
             dataSource={deptDataSource}
             pagination={false}
             size={'small'}
@@ -199,6 +201,7 @@ class AddUser extends PureComponent{
             columns={distributUser}
             bordered
             rowKey={'id'}
+            loading={userLoading}
             dataSource={userDataSource}
             pagination={false}
             size={'small'}
@@ -213,7 +216,7 @@ class AddUser extends PureComponent{
         </div>
       </div>
       <Modal 
-        titel={'用户信息'}
+        title={'用户信息'}
         visible={visible}
         onCancel={()=>this.setState({ visible: false })}
         footer={[
@@ -238,7 +241,7 @@ class AddUser extends PureComponent{
           size='small'
           pagination={false}
           dataSource={modalDataSource}
-          rowKey={'userNo'}
+          rowKey={'id'}
           scroll={{ x: '100%' }}
           onRow={(record)=>{
             return {
