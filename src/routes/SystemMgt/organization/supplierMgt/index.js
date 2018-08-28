@@ -7,7 +7,7 @@
  * @file 系统管理--组织机构--供应商管理
  */
 import React, { PureComponent } from 'react';
-import { Form, Row, Col, Input, Button, Modal , DatePicker } from 'antd';
+import { Form, Row, Col, Input, Button, Modal, DatePicker } from 'antd';
 import { formItemLayout } from '../../../../utils/commonStyles';
 import { connect } from 'dva';
 import { systemMgt } from '../../../../api/systemMgt';
@@ -26,35 +26,33 @@ const singleFormItemLayout = {
 }
 
 class SearchForm extends PureComponent{
-  state = {
-    display: 'none'
-  }
-  toggle = () => {
-    const { display, expand } = this.state;
-    this.setState({
-      display: display === 'none' ? 'block' : 'none',
-      expand: !expand
-    })
-  }
   handleSearch = (e) =>{
     e.preventDefault();
     this.props.form.validateFields((err,values)=>{
       if(!err){
+        const createDate = values.createDate === undefined ? "" : values.createDate;
+        if(createDate.length > 0){
+            values.startTime = createDate[0].format('YYYY-MM-DD');
+            values.endTime = createDate[1].format('YYYY-MM-DD');
+        }
         console.log(values,'查询数据');
-        this.props.query(values)
+        this.props.query(values);
       }
     })
   }
+  handleReset = () => {
+    this.props.form.resetFields();
+    this.props.query({});
+  }
   render(){
     const { getFieldDecorator } = this.props.form;
-    // const { display, expand } = this.state;
     return (
       <Form className="ant-advanced-search-form" onSubmit={this.handleSearch}>
         <Row gutter={30}>
           <Col span={8}>
             <FormItem {...formItemLayout} label={`供应商名称`}>
               {
-                getFieldDecorator(`userNo`,{
+                getFieldDecorator(`ctmaSupplierName`,{
                   initialValue: ''
                 })(
                   <Input placeholder='请输入' />
@@ -65,7 +63,7 @@ class SearchForm extends PureComponent{
           <Col span={8}>
             <FormItem {...formItemLayout} label={`创建时间`}>
               {
-                getFieldDecorator(`userName`,{
+                getFieldDecorator(`createDate`,{
                   initialValue: ''
                 })(
                   <RangePicker format={'YYYY-MM-DD'}/>
@@ -76,9 +74,6 @@ class SearchForm extends PureComponent{
           <Col span={8} style={{ textAlign: 'right', marginTop: 4}}>
            <Button type="primary" htmlType="submit">查询</Button>
            <Button type='default' style={{marginLeft: 8}} onClick={this.handleReset}>重置</Button>
-           {/* <a style={{marginLeft: 8, fontSize: 14}} onClick={this.toggle}>
-             {expand ? '收起' : '展开'} <Icon type={expand ? 'up' : 'down'} />
-           </a> */}
          </Col>
         </Row>
       </Form>
@@ -86,34 +81,19 @@ class SearchForm extends PureComponent{
   }
 }
 const WrapperForm = Form.create()(SearchForm);
-let dataSource = [];
-for( let i = 0; i<20; i++ ){
-  dataSource.push({
-    id: i,
-    userNo: `sd_admin${i}`,
-    name: `sd_admin${i}`,
-    deptName: '武大科室',
-    department: '财务科',
-    userName: `唐僧${i}`,
-    editMan: '苏努悟空',
-    editTime: '2018-08-21-17:00'
-    
-  })
-}
-
 
 class UserMgt extends PureComponent{
   state = {
     loading: false,
     visible: false,
     isEdit:true,
-    editTitle:'新增',
+    editTitle:'',
     query: {},
     record:{},//当前编辑的数据
   }
   queryHandle = (query) =>{
     this.setState({ query });
- // this.refs.table.fetch(query);
+    this.refs.table.fetch(query);
   }
   // 新增
   add = () =>{
@@ -123,31 +103,35 @@ class UserMgt extends PureComponent{
   // 修改
   modify = (record,index) =>{
     console.log(record,index,'modify');
-    let Fields = {
-      deptName:'供应商名称',
-    };
-    this.props.form.setFieldsValue(Fields);
+    // let Fields = {
+    //   deptName:'供应商名称',
+    // };
+    // this.props.form.setFieldsValue(Fields);
     this.setState({ visible: true , isEdit: true , editTitle:'编辑' , record });
   }
-
   save = (e) =>{
-    this.props.dispatch({
-      type:'Organization/SupplierSave',
-      payload:{values:''},
-      callback:(data)=>{
-        console.log(data)
-      }
-    })
     e.preventDefault();
     this.props.form.validateFields((err,values)=>{
       if(!err){
         const { record } = this.state;
+        if (this.state.isEdit) {
+          values.id = record.id;
+        }
         console.log(values,'values')
         console.log(record,'record')
+        this.setState({ loading: true });
+        this.props.dispatch({
+          type:'Organization/SupplierSave',
+          payload: values,
+          callback:(data)=>{
+            console.log(data);
+            this.setState({ loading: false, visible: false });
+            this.refs.table.fetch();
+          }
+        })
       }
     })
   }
-  
   render(){
     const { visible , isEdit , editTitle , record} = this.state;
     const { getFieldDecorator } = this.props.form;
@@ -188,22 +172,8 @@ class UserMgt extends PureComponent{
         <div>
           <Button type='primary' icon='plus' onClick={this.add}>新增</Button>
         </div>
-        {/* <Table 
-          columns={columns}
-          bordered
-          loading={this.state.loading}
-          scroll={{x: '100%'}}
-          rowKey={'id'}
-          pagination={{
-            size: "small",
-            showQuickJumper: true,
-            showSizeChanger: true
-          }}
-          style={{marginTop: 20}}
-          dataSource={dataSource}
-        /> */}
-
-        <RemoteTable 
+        <RemoteTable
+          query={this.state.query}
           ref='table'
           bordered
           style={{marginTop: 20}}
@@ -211,30 +181,28 @@ class UserMgt extends PureComponent{
           showHeader={true}
           scroll={{ x: '100%' }}
           url={systemMgt.SupplierList}
-          rowSelection={{
-            onChange:(selectRowKeys, selectedRows)=>{
-              this.setState({selectRowKeys})
-            }
-          }}
+          // rowSelection={{
+          //   onChange:(selectRowKeys, selectedRows)=>{
+          //     this.setState({selectRowKeys})
+          //   }
+          // }}
           rowKey='id'
         />
-
         <Modal
           title={editTitle}
           width={488}
           visible={visible}
           onCancel={()=>this.setState({ visible: false })}
           footer={[
-            <Button key="submit" htmlType='submit' type='primary' onClick={this.save}>
-                确认
-            </Button>,
-            <Button key="back"  type='default' onClick={()=>this.setState({ visible: false })}>取消</Button>
+            <Button key="submit" htmlType='submit' type='primary' onClick={this.save} loading={this.state.loading}>确认</Button>,
+            <Button key="back"  type='default' onClick={()=>{ this.setState({ visible: false }); this.props.form.resetFields(); }}>取消</Button>
           ]}
         >
           <Form onSubmit={this.onSubmit}>
             <FormItem {...singleFormItemLayout} label={`供应商名称`}>
               {
                 getFieldDecorator(`ctmaSupplierName`,{
+                  initialValue: isEdit ? record.ctmaSupplierName : '', 
                   rules: [{ required: true,message: '请填写供应商名称' }]
                 })(
                   <Input />

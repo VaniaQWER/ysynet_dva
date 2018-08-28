@@ -118,6 +118,7 @@ class RemoteTable extends Component {
         onChange={this.handleTableChange}
         rowClassName={rowClassName}
         title={title || null}
+        showHeader={showHeader || true }
         rowSelection={rowSelection || null}
         scroll={scroll || { x: '1300px' }}
         footer={footer || null}

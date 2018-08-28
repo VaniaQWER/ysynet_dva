@@ -1,6 +1,6 @@
 import { notification } from 'antd';
 import querystring from 'querystring';
-// import fetch from 'dva/fetch';
+import fetch from 'dva/fetch';
 
 function checkStatus(response) {
   if (response.status >= 200 && response.status < 300) {
@@ -46,8 +46,8 @@ export default function request(url, options) {
     // newOptions.body = JSON.stringify(newOptions.body);
     newOptions.body = newOptions.type ? querystring.stringify(newOptions.body) : JSON.stringify(newOptions.body);
   }else if(newOptions.method === 'GET' || newOptions.method === 'get'){
-    url = newOptions.type ? `${url}?${querystring.stringify(newOptions.body)}` : newOptions.url;
-    console.log(`${url}?${querystring.stringify(newOptions.body)}`)
+    url = newOptions.type ? `${url}?${querystring.stringify(newOptions.body)}` : '';
+    delete newOptions.body;
   }
   return fetch(url, newOptions)
   .then(response=> checkStatus(response))

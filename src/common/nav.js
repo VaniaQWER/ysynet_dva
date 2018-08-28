@@ -1013,13 +1013,13 @@ export const getNavData = app => [
       name: "系统管理-药品目录",
       icon: 'setting',
       path: '/system/drugDirectory/directory',
-      component: dynamicWrapper(app, [], () => import('../routes/SystemMgt/drugDirectory')),
+      component: dynamicWrapper(app, ['systemMgt/drugDirectory'], () => import('../routes/SystemMgt/drugDirectory')),
     },
     {
       name: "系统管理-药品目录--编辑",
       icon: 'setting',
-      path: '/system/drugDirectory/directory/edit',
-      component: dynamicWrapper(app, [], () => import('../routes/SystemMgt/drugDirectory/edit')),
+      path: '/system/drugDirectory/directory/edit/:bigDrugCode/:medDrugType',
+      component: dynamicWrapper(app, ['systemMgt/drugDirectory'], () => import('../routes/SystemMgt/drugDirectory/edit')),
     },
     /* ******************   组织机构     *********************** */
     {
