@@ -11,6 +11,9 @@ import {_local} from '../local';
 
     // 组织机构--用户管理
   FINDUSERLIST:`${_local}/a/his/findUserList`,  //用户管理列表
+  
+  // 系统设置-字典管理列表
+  DICTIONARYLIST: `${_local}/a/spd/dict/list`,
 
   // 药品目录
   MEDICINEMATERIAL_LIST:`${_local}/a/his/hisctmedicinematerial/list`,  //药品目录基本信息列表
