@@ -16,7 +16,8 @@
     "react-scripts": "1.1.4",
     "sha": "^2.0.1",
     "socket.io": "^2.1.1",
-    "wangeditor": "^3.1.1"
+    "wangeditor": "^3.1.1",
+    "whatwg-fetch": "^2.0.4"
   },
   "scripts": {
     "start": "react-app-rewired start",
@@ -24,8 +25,13 @@
     "test": "react-app-rewired test --env=jsdom",
     "eject": "react-scripts eject"
   },
-  "babel":{
-    "plugins":["transform-decorators-legacy"],
-    "presets":["react-app"]
-  }
+  "babel": {
+    "plugins": [
+      "transform-decorators-legacy"
+    ],
+    "presets": [
+      "react-app"
+    ]
+  },
+  "proxy": "http://192.168.31.50:8080/medicinal-web"
 }

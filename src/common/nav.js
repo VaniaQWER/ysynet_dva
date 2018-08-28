@@ -1052,13 +1052,13 @@ export const getNavData = app => [
       name: "用门管理",
       icon: 'setting',
       path: '/system/organization/userMgt',
-      component: dynamicWrapper(app, [], () => import('../routes/SystemMgt/organization/userMgt')),
+      component: dynamicWrapper(app, ['systemMgt/organization'], () => import('../routes/SystemMgt/organization/userMgt')),
     },
     {
       name: "用门管理--添加",
       icon: 'setting',
       path: '/system/organization/userMgt/add',
-      component: dynamicWrapper(app, [], () => import('../routes/SystemMgt/organization/userMgt/add')),
+      component: dynamicWrapper(app, ['systemMgt/organization'], () => import('../routes/SystemMgt/organization/userMgt/add')),
     },
     /* *********************** 系统管理  角色管理     ******************** */
     {

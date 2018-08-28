@@ -9,6 +9,21 @@ class Login extends PureComponent{
   state = {
     loading: false
   }
+  componentWillMount = () =>{
+    // this.setCookie();
+  }
+  setCookie = () =>{
+    this.props.dispatch({
+      type: 'users/setCookie',
+      payload: {  }
+    })
+  }
+  test = () =>{
+    this.props.dispatch({
+      type: 'users/test',
+      payload: { temp: '' }
+    })
+  }
   handleSubmit = (e) =>{
     e.preventDefault();
     this.props.form.validateFields((err, values) => {
@@ -16,6 +31,7 @@ class Login extends PureComponent{
         this.setState({ loading: true });
          let { userName, password } = values;
          password = '02a3f0772fcca9f415adc990734b45c6f059c7d33ee28362c4852032';
+        //  this.test();
          this.userLogin(userName, password)
           /* this.props.dispatch({
             type: 'users/EncryptPassword',
@@ -29,11 +45,16 @@ class Login extends PureComponent{
     })
   }
   userLogin = (username,password) =>{
-    this.props.dispatch({
+    let { dispatch, history } = this.props;
+    dispatch({
       type: 'users/userLogin',
-      payload: { username, password, mobileLogin: 'on' },
+      payload: { username, password },
       callback: (data) => {
-        console.log(data,'userLogin')
+        console.log(data,'data')
+        this.setState({ loading: false });
+        if(data.deptInfo & data.deptInfo.length !== 1){
+          history.push({ pathname: '/subSystem' })
+        }
       }
     })
   }

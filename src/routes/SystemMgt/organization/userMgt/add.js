@@ -2,7 +2,7 @@
  * @Author: wwb 
  * @Date: 2018-08-21 17:46:47 
  * @Last Modified by: wwb
- * @Last Modified time: 2018-08-21 20:13:17
+ * @Last Modified time: 2018-08-27 17:14:56
  */
  /**
  * @file 系统管理--组织机构--用户管理--添加
@@ -84,7 +84,7 @@ for(let i=0;i<5; i++){
 }
 class AddUser extends PureComponent{
   state = {
-    source: '00',
+    userType: '0',
     visible: false,
     selected: [], // 所属部门
     selectedRows: [],
@@ -95,7 +95,7 @@ class AddUser extends PureComponent{
   }
   render(){
     const { getFieldDecorator } = this.props.form;
-    const { source,visible } = this.state;
+    const { userType,visible } = this.state;
     return (
       <div>
       <div className='fullCol fadeIn'>
@@ -109,12 +109,12 @@ class AddUser extends PureComponent{
               <Col span={6}>
                 <FormItem colon={false} label={''} wrapperCol={{ span: 20 }}>
                   {
-                    getFieldDecorator(`source`,{
-                      initialValue: source
+                    getFieldDecorator(`userType`,{
+                      initialValue: userType
                     })(
-                      <RadioGroup onChange={e=> this.setState({ source: e.target.value })}>
-                        <Radio value={'00'}>已有医院用户</Radio>
-                        <Radio value={'01'}>无医院用户</Radio>
+                      <RadioGroup onChange={e=> this.setState({ userType: e.target.value })}>
+                        <Radio value={'0'}>已有医院用户</Radio>
+                        <Radio value={'1'}>无医院用户</Radio>
                       </RadioGroup>
                     )
                   }
@@ -126,10 +126,10 @@ class AddUser extends PureComponent{
                 <Row>
                   <Col span={6}>
                     {
-                      source === '00'?
+                      userType === '0'?
                       <FormItem {...formItemLayout} label={`账号`}>
                         {
-                          getFieldDecorator(`userNo`,{
+                          getFieldDecorator(`loginName`,{
                             initialValue: '',
                             rules: [{ required: true, message: '请选择账号' }]
                           })(
@@ -144,7 +144,7 @@ class AddUser extends PureComponent{
                       :
                       <FormItem {...formItemLayout} label={`账号`}>
                         {
-                          getFieldDecorator(`userNo`,{
+                          getFieldDecorator(`loginName`,{
                             initialValue: '',
                             rules: [{ required: true, message: '请选择账号' }]
                           })(
@@ -161,7 +161,7 @@ class AddUser extends PureComponent{
                           initialValue: '',
                           rules: [{ required: true, message: '请选择姓名' }]
                         })(
-                          <Input disabled={source === '00'? true: false }/>
+                          <Input disabled={userType === '0'? true: false }/>
                         )
                       }
                     </FormItem>
@@ -171,7 +171,7 @@ class AddUser extends PureComponent{
               <Col span={6}>
                 <FormItem {...formItemLayout} label={`手机号`}>
                   {
-                    getFieldDecorator(`mobile`)(
+                    getFieldDecorator(`phone`)(
                       <Input placeholder='请输入'/>
                     )
                   }

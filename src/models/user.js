@@ -4,7 +4,7 @@ import { message } from 'antd';
 export default {
   namespace: 'users',
   state:{
-    
+    userInfo: {}
   },
   reducers: {
     userMenu(state,action){
@@ -29,9 +29,21 @@ export default {
       }
       if(callback) callback(data.data);
     },
+    // 用户登陆
     *userLogin({ payload, callback },{ put, call }){
       const data = yield call(usersService.userLogin, payload);
-      console.log(data,'userLogin')
+      if(data.code !== 200){
+        message.error(data.msg ||'登陆失败')
+      }
+      yield put({ type: 'userInfo',payload: data.data });
+      if(callback) callback(data.data);
+    },
+    *test({ payload,callback },{ call }){
+      const data = yield call(usersService.test,payload);
+      console.log(data,'datasfs')
+    },
+    *setCookie({ payload,callback },{ call }){
+      const data = yield call(usersService.setCookie,payload)
     }
     
   },

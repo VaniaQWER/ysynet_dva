@@ -1,8 +1,23 @@
 import React from 'react';
 import { Menu, Dropdown, Icon } from 'antd';
+import { _local } from '../../api/local'
 class DropdownList extends React.Component {
   selectHandler = (link) => {
-    // const uri = window.location.hash.substring(2, window.location.hash.length);
+    console.log(link,'link')
+    const uri = window.location.hash.substring(2, window.location.hash.length);
+    if(uri !== link){
+      if(link === '/login'){
+        fetch(`${_local}/a/logout`,{
+          method: 'GET',
+          credentials: 'include',
+          mode: 'cors',
+        })
+        .then(res => res.json)
+        .then(data=>{
+          console.log(data,'data');
+        })
+      }
+    }
     window.location.hash = link;
   }
   menus = () => {

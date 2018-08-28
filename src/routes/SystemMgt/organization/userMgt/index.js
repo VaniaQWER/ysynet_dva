@@ -2,15 +2,18 @@
  * @Author: wwb 
  * @Date: 2018-08-21 14:27:32 
  * @Last Modified by: wwb
- * @Last Modified time: 2018-08-21 17:40:08
+ * @Last Modified time: 2018-08-27 20:19:56
  */
 
  /**
  * @file 系统管理--组织机构--用户管理
  */
 import React, { PureComponent } from 'react';
-import { Form, Row, Col, Input, Select, Button, Icon, Table, Popconfirm, Modal } from 'antd';
+import { Form, Row, Col, Input, Select, Button, Icon, Popconfirm, Modal } from 'antd';
 import { formItemLayout } from '../../../../utils/commonStyles';
+import RemoteTable from '../../../../components/TableGrid';
+import { systemMgt } from '../../../../api/systemMgt';
+import { connect } from 'dva';
 const FormItem = Form.Item;
 const { TextArea } = Input;
 const { Option } = Select;
@@ -131,8 +134,8 @@ class UserMgt extends PureComponent{
     query: {}
   }
   queryHandle = (query) =>{
+    this.refs.table.fetch(query);
     this.setState({ query });
- // this.refs.table.fetch(query);
   }
   // 修改
   modify = (record,index) =>{
@@ -145,7 +148,14 @@ class UserMgt extends PureComponent{
   }
   // 删除
   resetPwd = (record,index) =>{
-    console.log(record,index,'resetPwd')
+    console.log(record,index,'resetPwd');
+    this.props.dispatch({
+      type: 'organization/ResetPwd',
+      payload: { id: record.id },
+      callback: () =>{
+        this.refs.table.fetch(this.state.query);
+      }
+    })
   }
   save = (e) =>{
     e.preventDefault();
@@ -160,39 +170,40 @@ class UserMgt extends PureComponent{
     history.push({ pathname: '/system/organization/userMgt/add' })
   }
   render(){
-    const { visible } = this.state;
+    console.log(this.props,'props')
+    const { visible, query } = this.state;
     const { getFieldDecorator } = this.props.form;
     const columns = [
       {
         title: '账号',
-        dataIndex: 'userNo',
+        dataIndex: 'loginName',
       },
       {
         title: '姓名',
-        dataIndex: 'name',
+        dataIndex: 'userName',
       },
       {
         title: '所属科室',
-        dataIndex: 'deptName',
+        dataIndex: 'hisCtDeptNme',
       },
       {
         title: '部门',
-        dataIndex: 'department',
+        dataIndex: 'deptName',
       },
       {
         title: '编辑人',
-        dataIndex: 'editMan',
+        dataIndex: 'updateUserName',
       },
       {
         title: '编辑时间',
-        dataIndex: 'editTime',
+        dataIndex: 'updateDate',
       },
       {
         title: '操作',
         dataIndex: 'action',
         render: (text,record,index)=>{
           return <span>
-            <Popconfirm title="是否确认重置该用户密码?" onConfirm={this.resetPwd.bind(null, record)} okText="是" cancelText="否">
+            <Popconfirm title="是否确认重置该用户密码?" onConfirm={this.resetPwd.bind(null, record,index)} okText="是" cancelText="否">
               <a>重置密码</a>
             </Popconfirm>
             <a onClick={this.modify.bind(null,record,index)} style={{ marginLeft: 8 }}>编辑</a>
@@ -203,22 +214,17 @@ class UserMgt extends PureComponent{
     return (
       <div className='ysynet-main-content'>
         <WrapperForm query={this.queryHandle}/>
-        <div>
+        <div style={{ marginBottom: 24 }}>
           <Button type='primary' icon='plus' onClick={this.add}>新增用户</Button>
         </div>
-        <Table 
+        <RemoteTable
+          ref='table'
           columns={columns}
           bordered
-          loading={this.state.loading}
+          query={query}
+          url={systemMgt.FINDUSERLIST}
           scroll={{x: '100%'}}
           rowKey={'id'}
-          pagination={{
-            size: "small",
-            showQuickJumper: true,
-            showSizeChanger: true
-          }}
-          style={{marginTop: 20}}
-          dataSource={dataSource}
         />
         <Modal
           title={'用户修改'}
@@ -287,4 +293,4 @@ class UserMgt extends PureComponent{
     )
   }
 }
-export default Form.create()(UserMgt);
+export default connect( state => state)(Form.create()(UserMgt));

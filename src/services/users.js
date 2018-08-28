@@ -12,9 +12,23 @@ export function EncryptPassword(options){
 export function userLogin(options){
   return request(`${_local}/a/login`,{ //登陆
     method: 'POST',
-    mode: 'no-cors',
     type: 'formData',
-    // credentials: 'omit',
+    credentials: 'omit',
+    body: options
+  })
+}
+export function test(options){
+  return request(`http://192.168.31.186:7001/cookieTest`,{ //登陆
+    method: 'POST',
+    type: 'formData',
+    body: options
+  })
+}
+
+export function setCookie(options){
+  return request(`http://192.168.31.186:7001/setCookie`,{ //登陆
+    method: 'POST',
+    type: 'formData',
     body: options
   })
 }
