@@ -15,13 +15,23 @@ export default {
     *RoleSave({ payload, callback },{ put, call }){
       const data = yield call(roleMgtService.RoleSave, payload);
       if(data.code !== 200){
-        message.error(data.msg ||'密码加密失败')
+        message.error(data.msg ||'操作失败')
       }
-      if(callback) callback(data.data);
+      if(callback) callback(data);
     },
     *RoleDelete({ payload, callback },{ put, call }){
       const data = yield call(roleMgtService.RoleDelete, payload);
-      console.log(data,'userLogin')
+      if(data.code !== 200){
+        message.error(data.msg ||'删除失败')
+      }
+      if(callback) callback(data);
+    },
+    *RoleDetail({ payload, callback },{ put, call }){
+      const data = yield call(roleMgtService.RoleDetail, payload);
+      if(data.code !== 200){
+        message.error(data.msg)
+      }
+      if(callback) callback(data);
     }
     
   },

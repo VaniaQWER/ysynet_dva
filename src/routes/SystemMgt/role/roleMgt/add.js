@@ -7,63 +7,39 @@
  * @file 系统管理--角色管理--角色-新增
  */
 import React, { PureComponent } from 'react';
-import { Form, Row, Col, Input, Affix ,Button, Card } from 'antd';
+import { Form, Row, Col, Input, Affix ,Button, Card , message} from 'antd';
 import { connect } from 'dva';
 import { formItemLayout } from '../../../../utils/commonStyles';
 import { systemMgt } from '../../../../api/systemMgt';
 import RemoteTable from '../../../../components/TableGrid';
 const FormItem = Form.Item;
 
-let dataSource = [];
-for( let i = 0; i<20; i++ ){
-  dataSource.push({
-    id: (i+1),
-    sort: `${i+1}`,
-    userNo: `菜单名称${i}`,
-    name: `sd_admin/${i}`,
-    deptName: '武大科室',
-    department: '财务科',
-    deptType: `部门类型${i}`,
-    remark: '苏努悟空',
-    status: '可见',
-    children:[
-      {
-        id: (i+1)*10+2,
-        sort: `${(i+1)*10}`,
-        userNo: `菜单名称${(i+1)*10}`,
-        name: `sd_admin/${(i+1)*10}`,
-        deptName: '武大科室',
-        department: '财务科',
-        deptType: `部门类型${(i+1)*10}`,
-        remark: '苏努悟空',
-        status: '可见'
-      }
-    ]  
-  })
-}
-
 class AddRoleMgt extends PureComponent{
 
   state = {
     loading: false,
+    query:{}
   }
 
    //提交表单
    onSubmit = () => {
     this.props.form.validateFieldsAndScroll((err,values)=>{
-      console.log(values)
       if(!err){
         console.log(values)
         if(this.state.selectRowKeys&& this.state.selectRowKeys.length){
           console.log(this.state.selectRowKeys[0]);//获取上级菜单的key值
-
+          const menuIds = this.state.selectRowKeys;
           this.props.dispatch({
             type: 'systemRole/RoleSave',
-            payload: { id:[123,2,3],name:'123213'},
+            payload: { menuIds,...values},
             callback: (data) => {
               console.log(data,'RoleSave')
+              message.success('保存成功！')
+              this.props.history.push('/system/role/roleMgt')
             }
           })
+        }else{
+          message.warn('请至少选择一个角色权限！')
         }
       }
     })  
@@ -78,6 +54,7 @@ class AddRoleMgt extends PureComponent{
 
   render(){
     const { getFieldDecorator } = this.props.form;
+    const { query } = this.state;
     const columns = [
       {
         title: '菜单名称',
@@ -85,7 +62,7 @@ class AddRoleMgt extends PureComponent{
       },
       {
         title: '路径',
-        dataIndex: 'remarks',
+        dataIndex: 'href',
       }
     ]
     return (
@@ -121,33 +98,12 @@ class AddRoleMgt extends PureComponent{
         </Card>
 
         <Card title='角色权限' className='detailCard'>
-          {/* <Table 
-            columns={columns}
-            bordered
-            loading={this.state.loading}
-            scroll={{x: '100%'}}
-            rowKey={'id'}
-            pagination={{
-              size: "small",
-              showQuickJumper: true,
-              showSizeChanger: true
-            }}
-            rowSelection={{
-              onChange:(selectRowKeys, selectedRows)=>{
-                this.setState({selectRowKeys})
-              }
-            }}
-            style={{marginTop: 20,width: '70%'}}
-            dataSource={dataSource}
-          /> */}
-          
-
           <RemoteTable 
             ref='table'
-            bordered
+            query={query}
+            method='GET'
             style={{marginTop: 20}}
             columns={columns}
-            showHeader={true}
             scroll={{ x: '100%' }}
             url={systemMgt.MenuList}
             rowSelection={{
@@ -155,7 +111,7 @@ class AddRoleMgt extends PureComponent{
                 this.setState({selectRowKeys})
               }
             }}
-            rowKey='staticDataGuid'
+            rowKey='id'
           />
         </Card>
 

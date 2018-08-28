@@ -11,16 +11,15 @@ import { _local } from '../../../api/local';
 //新增角色
 export function RoleSave(options){
   return request(`${_local}/a/spd/sys/role/save`,{ 
-    methods: 'POST',
+    method: 'POST',
     type: 'formData',
-    credentials: 'omit',
     body: options
   })
 }
 //删除角色
 export function RoleDelete(options){
-  return request(`${_local}/a/spd/role/delete`,{ 
-    methods: 'POST',
+  return request(`${_local}/a/spd/sys/role/delete`,{ 
+    method: 'GET',
     type: 'formData',
     body: options
   })
@@ -28,7 +27,7 @@ export function RoleDelete(options){
 //角色详情
 export function RoleDetail(options){
   return request(`${_local}/a/spd/sys/role/detail`,{ //新增角色
-    methods: 'GET',
+    method: 'GET',
     type: 'formData',
     body: options
   })

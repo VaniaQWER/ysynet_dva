@@ -1076,7 +1076,7 @@ export const getNavData = app => [
     {
       name: "角色管理-编辑",
       icon: 'setting',
-      path: '/system/role/roleMgt/edit',
+      path: '/system/role/roleMgt/edit/:id',
       component: dynamicWrapper(app, ['systemMgt/roleMgt'], () => import('../routes/SystemMgt/role/roleMgt/edit')),
     },
      /* *********************** 系统管理 系统设置     ******************** */
