@@ -13,4 +13,12 @@ export function detailsInfo(options) {
     type: 'formData',
     body: options
   })
+};
+/* 上架 */
+export function putawayInfo(options) {
+  return request(`${_local}/a/depot/shelfList/selectDistributeDetail`,{ //上架列表详情
+    method: 'GET',
+    type: 'formData',
+    body: options
+  })
 }
