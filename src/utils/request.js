@@ -45,6 +45,9 @@ export default function request(url, options) {
     }
     // newOptions.body = JSON.stringify(newOptions.body);
     newOptions.body = newOptions.type ? querystring.stringify(newOptions.body) : JSON.stringify(newOptions.body);
+  }else if(newOptions.method === 'GET' || newOptions.method === 'get'){
+    url = newOptions.type ? `${url}?${querystring.stringify(newOptions.body)}` : newOptions.url;
+    console.log(`${url}?${querystring.stringify(newOptions.body)}`)
   }
   return fetch(url, newOptions)
   .then(response=> checkStatus(response))
