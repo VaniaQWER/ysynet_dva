@@ -45,10 +45,17 @@ class RemoteTable extends Component {
         ...params,
         ...catchData
       });
-      let bodyProps={}
-      if(this.props.method ==='post'||  this.props.method ==='POST'){
+      let bodyProps={
+        headers: {
+          'Content-Type': 'application/json'
+        },
+      }
+      if(!this.props.method ||this.props.method ==='post'||  this.props.method ==='POST'){
          bodyProps={
-          body:body
+          body:body,
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+          },
         }
       }
 
@@ -56,9 +63,6 @@ class RemoteTable extends Component {
         method: this.props.method || 'post',
         mode: 'cors',
         credentials: 'include',
-        headers: {
-          'Content-Type': 'application/json'
-        },
         ...bodyProps
       }).then(res => res.json())
         .then((data)=> {
