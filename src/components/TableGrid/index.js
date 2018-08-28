@@ -112,6 +112,7 @@ class RemoteTable extends Component {
             
     return (
       <Table 
+       onRow={this.props.onRow || null}
         style={this.props.style}
         columns={columns || null}
         rowKey={rowKey}
