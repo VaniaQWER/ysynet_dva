@@ -7,7 +7,7 @@
  * @file 系统管理--组织机构--供应商管理
  */
 import React, { PureComponent } from 'react';
-import { Form, Row, Col, Input, Button, Table, Modal , DatePicker } from 'antd';
+import { Form, Row, Col, Input, Button, Modal , DatePicker } from 'antd';
 import { formItemLayout } from '../../../../utils/commonStyles';
 import { connect } from 'dva';
 import { systemMgt } from '../../../../api/systemMgt';

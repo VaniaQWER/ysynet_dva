@@ -45,14 +45,21 @@ class RemoteTable extends Component {
         ...params,
         ...catchData
       });
+      let bodyProps={}
+      if(this.props.method ==='post'||  this.props.method ==='POST'){
+         bodyProps={
+          body:body
+        }
+      }
+
       fetch(url,{
-        method: 'post',
+        method: this.props.method || 'post',
         mode: 'cors',
         credentials: 'include',
         headers: {
-          'Content-Type': 'application/x-www-form-urlencoded'
+          'Content-Type': 'application/json'
         },
-        body: body
+        ...bodyProps
       }).then(res => res.json())
         .then((data)=> {
           if(data.code !== 200){

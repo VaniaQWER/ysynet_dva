@@ -167,6 +167,7 @@ class RoleMgt extends PureComponent{
 
         <RemoteTable 
           ref='table'
+          method='GET'
           bordered
           style={{marginTop: 20}}
           columns={columns}
