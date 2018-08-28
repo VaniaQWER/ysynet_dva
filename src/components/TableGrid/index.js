@@ -67,7 +67,8 @@ class RemoteTable extends Component {
       }).then(res => res.json())
         .then((data)=> {
           if(data.code !== 200){
-            message.error(data.msg);
+            this.setState({ loading: false })
+            return message.error(data.msg);
           }
           pagination.total = data.data.count;
           pagination.showSizeChanger = true;
