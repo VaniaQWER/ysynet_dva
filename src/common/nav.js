@@ -1093,6 +1093,12 @@ export const getNavData = app => [
       component: dynamicWrapper(app, ['systemMgt/systemMgt'], () => import('../routes/SystemMgt/setting/menuMgt/add')),
     },
     {
+      name: "菜单管理-编辑",
+      icon: 'setting',
+      path: '/system/setting/menuMgt/add/:id',
+      component: dynamicWrapper(app, ['systemMgt/systemMgt'], () => import('../routes/SystemMgt/setting/menuMgt/add')),
+    },
+    {
       name: "字典管理",
       icon: 'setting',
       path: '/system/setting/itemsData',

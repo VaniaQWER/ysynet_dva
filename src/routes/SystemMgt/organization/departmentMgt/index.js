@@ -9,6 +9,9 @@
 import React, { PureComponent } from 'react';
 import { Form, Row, Col, Input, Button, Table,Icon,Modal,Select} from 'antd';
 import { formItemLayout } from '../../../../utils/commonStyles';
+import RemoteTable from '../../../../components/TableGrid';
+import { systemMgt } from '../../../../api/systemMgt';
+import { DeptSelect } from '../../../../common/dic';
 import { Link } from 'dva/router';
 const FormItem = Form.Item;
 const Option = Select.Option;
@@ -66,7 +69,7 @@ class SearchForm extends PureComponent{
           <Col span={8}>
             <FormItem {...formItemLayout} label={`科室名称`}>
               {
-                getFieldDecorator(`userName`,{
+                getFieldDecorator(`hisCtDeptName`,{
                   initialValue: ''
                 })(
                   <Input placeholder='请输入' />
@@ -80,8 +83,13 @@ class SearchForm extends PureComponent{
                 getFieldDecorator(`deptType`,{
                   initialValue: ''
                 })(
-                  <Select>
-                    <Option value='' key=''>部门类型</Option>
+                  <Select
+                    placeholder='请选择部门类型'>
+                  {
+                    DeptSelect.map(item=>(
+                      <Option value={item.value} key={item.value}>{item.text}</Option>
+                    ))
+                  }
                   </Select>
                 )
               }
@@ -100,22 +108,8 @@ class SearchForm extends PureComponent{
   }
 }
 const WrapperForm = Form.create()(SearchForm);
-let dataSource = [];
-for( let i = 0; i<20; i++ ){
-  dataSource.push({
-    id: i,
-    userNo: `sd_admin${i}`,
-    name: `sd_admin${i}`,
-    deptName: '武大科室',
-    department: '财务科',
-    userName: `唐僧${i}`,
-    editMan: '苏努悟空',
-    editTime: '2018-08-21-17:00',
-    code:`code123${i}`
-  })
-}
 
-
+const dataSource = []
 class DepartmentMgt extends PureComponent{
 
   state = {
@@ -273,7 +267,7 @@ class DepartmentMgt extends PureComponent{
         dataIndex: 'huoweimingcheng',
       },
     ]
-    const { visible , modalTitle ,subModalVisible, hasStyle , goodsModalVisible } = this.state;
+    const { visible , modalTitle ,subModalVisible, hasStyle , goodsModalVisible , query} = this.state;
     const { getFieldDecorator } = this.props.form;
     console.log(this.props.form.getFieldsValue(['deptType']))
 
@@ -283,26 +277,22 @@ class DepartmentMgt extends PureComponent{
         <div>
           <Button type='primary' icon='plus' className='button-gap' onClick={this.add}>新增</Button>
         </div>
-        <Table 
 
+        <RemoteTable 
+          ref='table'
+          query={query}
+          style={{marginTop: 20}}
           columns={columns}
-          bordered
-          loading={this.state.loading}
-          scroll={{x: '100%'}}
-          rowKey={'id'}
-          pagination={{
-            size: "small",
-            showQuickJumper: true,
-            showSizeChanger: true
-          }}
+          scroll={{ x: '100%' }}
+          url={systemMgt.DeptList}
           rowSelection={{
             onChange:(selectRowKeys, selectedRows)=>{
               this.setState({selectRowKeys})
             }
           }}
-          style={{marginTop: 20}}
-          dataSource={dataSource}
+          rowKey='id'
         />
+
         {/* 新增部门 - 弹窗  */}
         <Modal 
           visible={visible}
@@ -334,7 +324,7 @@ class DepartmentMgt extends PureComponent{
             </FormItem>
             <FormItem {...singleFormItemLayout} label={`科室`}>
               {
-                getFieldDecorator(`dept`,{
+                getFieldDecorator(`hisCtDeptName`,{
                   rules: [{ required: true,message: '请输入科室' }]
                 })(
                   <Input onClick={this.showDeptModal}/>

@@ -8,43 +8,17 @@
  */
 import React, { PureComponent } from 'react';
 import { Row, Input, Button } from 'antd';
+import querystring from 'querystring';
 import { Link } from 'dva/router';
 import { systemMgt } from '../../../../api/systemMgt';
+import { DeptFormat } from '../../../../common/dic';
 import RemoteTable from '../../../../components/TableGrid';
-
-let dataSource = [];
-for( let i = 0; i<20; i++ ){
-  dataSource.push({
-    id: (i+1),
-    sort: `${i+1}`,
-    userNo: `菜单名称${i}`,
-    name: `sd_admin/${i}`,
-    deptName: '武大科室',
-    department: '财务科',
-    deptType: `部门类型${i}`,
-    remark: '苏努悟空',
-    status: '可见',
-    children:[
-      {
-        id: (i+1)*10+2,
-        sort: `${(i+1)*10}`,
-        userNo: `菜单名称${(i+1)*10}`,
-        name: `sd_admin/${(i+1)*10}`,
-        deptName: '武大科室',
-        department: '财务科',
-        deptType: `部门类型${(i+1)*10}`,
-        remark: '苏努悟空',
-        status: '可见'
-      }
-    ]  
-  })
-}
 
 class MenuMgt extends PureComponent{
 
   state = {
     loading: false,
-    dataSource:dataSource,
+    query:{}
   }
 
   // 添加菜单
@@ -65,6 +39,7 @@ class MenuMgt extends PureComponent{
   }
 
   render(){
+    const { query } = this.state;
     const columns = [
       {
         title: '菜单名称',
@@ -86,10 +61,12 @@ class MenuMgt extends PureComponent{
       {
         title: '可见',
         dataIndex: 'isShow',
+        render:(text,record,index)=>text==="1"?"是":"否"
       },
       {
         title: '部门类型',
         dataIndex: 'depType',
+        render:(text,record,index)=>text?DeptFormat[text]:text
       },
       {
         title: '备注',
@@ -100,7 +77,7 @@ class MenuMgt extends PureComponent{
         dataIndex: 'action',
         render: (text,record,index)=>{
           return <span>
-            <Link className='button-gap' to={{pathname:'/system/setting/menuMgt/add',state:record}}>编辑</Link>
+            <Link className='button-gap' to={{pathname:`/system/setting/menuMgt/add/${querystring.stringify({id:record.id,parentId:record.parentId})}`}}>编辑</Link>
             <Link className='button-gap' to={{pathname:'/system/setting/menuMgt/add',state:record}}>添加下级菜单</Link>
           </span>
         }
@@ -111,27 +88,12 @@ class MenuMgt extends PureComponent{
         <Row>
           <Button type='primary' icon='plus' onClick={this.add}>添加菜单</Button>
         </Row>
-        {/*   <Table 
-            columns={columns}
-            bordered
-            loading={this.state.loading}
-            scroll={{x: '100%'}}
-            rowKey={'id'}
-            pagination={{
-              size: "small",
-              showQuickJumper: true,
-              showSizeChanger: true
-            }}
-            style={{marginTop: 20}}
-            dataSource={dataSource}
-          /> */}
-      
         <RemoteTable 
           ref='table'
-          bordered
+          method='get'
+          query={query}
           style={{marginTop: 20}}
           columns={columns}
-          showHeader={true}
           scroll={{ x: '100%' }}
           url={systemMgt.MenuList}
           rowSelection={{
@@ -139,7 +101,7 @@ class MenuMgt extends PureComponent{
               this.setState({selectRowKeys})
             }
           }}
-          rowKey='staticDataGuid'
+          rowKey='id'
         />
 
       </div>

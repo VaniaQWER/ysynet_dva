@@ -5,9 +5,10 @@
  */
 
 import React, { PureComponent } from 'react';
-import { Form, Row, Col, Input, Button, Select , Radio , Affix , Modal , Tree} from 'antd';
+import { Form, Row, Col, Input, Button, Select , Radio , Affix , Modal , Tree , message} from 'antd';
 import { connect } from 'dva';
-import { DeptSelect } from '../../../../common/dic';
+import querystring from 'querystring';
+import { DeptSelect , DeptFormat } from '../../../../common/dic';
 const FormItem = Form.Item;
 const { Option } = Select;
 const TreeNode = Tree.TreeNode;
@@ -27,36 +28,56 @@ class AddMenuMgt extends PureComponent{
     baseInfo:{},
     loading: false,
     visible:false,
+    treeDataSource:[],//树状菜单的所有列表
     treeSelectedKeys:[],
     treeInfo:{},
     selectCache:{},//打开上级菜单之前存储的内容
-    topMenuTitle:''
+    parentId:''
   }
 
   componentDidMount (){
-    console.log(this.props.location.state)
-    if(this.props.location.state){
-      this.setState({
-        baseInfo:this.props.location.state
+    //编辑的时候进行回填操作
+    if(this.props.match.params.id){
+      this.props.dispatch({
+        type:'sysSetting/MenuDetail',
+        payload:querystring.parse( this.props.match.params.id ),
+        callback:(data)=>{
+          console.log(data.data)
+          this.setState({
+            baseInfo:data.data
+          })
+        }
       })
     }
+    this.props.dispatch({
+      type:'sysSetting/MenuList',
+      payload:{},
+      callback:(data)=>{
+        console.log(data.data)
+        this.setState({treeDataSource:data.data})
+      }
+    })
   }
 
   //提交表单
   onSubmit = () => {
-    this.props.dispatch({
-      type: 'sysSetting/MenuSave',
-      payload: { id:[123,2,3],name:'123213'},
-      callback: (data) => {
-        console.log(data)
-      }
-    })
     this.props.form.validateFieldsAndScroll((err,values)=>{
-      console.log(values)
       if(!err){
-        console.log(values)
-        console.log(this.state.treeSelectedKeys[0]);//获取上级菜单的key值
-
+        const { baseInfo } = this.state;
+        values['parent.Id'] = this.state.treeSelectedKeys[0];
+        if(baseInfo.id){//修改的时候传递ID
+          values.id=baseInfo.id
+        }
+        console.log(JSON.stringify(values),'新增菜单')
+        this.props.dispatch({
+          type: 'sysSetting/MenuSave',
+          payload: values,
+          callback: (data) => {
+            debugger
+            message.success('添加成功！')
+            this.props.history.push('/system/setting/menuMgt')
+          }
+        })
       }
     })  
   }
@@ -79,12 +100,14 @@ class AddMenuMgt extends PureComponent{
   //选择上级菜单
   submitModal =()=>{
     const { treeInfo , treeSelectedKeys} = this.state;
-    this.setState({visible:false,topMenuTitle:treeInfo.node.props.title,
+    this.setState({
+      visible:false,
+      parentId:treeInfo.node.props.title,
       selectCache:{
         treeSelectedKeys,treeInfo
       }
     })
-    this.props.form.setFieldsValue({topMenuTitle:treeInfo.node.props.title})
+    this.props.form.setFieldsValue({'parent.Id':treeInfo.node.props.title})
   }
 
   //取消选择上级菜单
@@ -96,7 +119,7 @@ class AddMenuMgt extends PureComponent{
         treeSelectedKeys:selectCache.treeSelectedKeys,
         treeInfo:selectCache.treeInfo,
       })
-      this.props.form.setFieldsValue({topMenuTitle:selectCache.treeInfo.node.props.title})
+      this.props.form.setFieldsValue({'parent.Id':selectCache.treeInfo.node.props.title})
     }else{
       this.setState({visible:false})
     }
@@ -104,7 +127,14 @@ class AddMenuMgt extends PureComponent{
 
   render(){
     const { getFieldDecorator } = this.props.form;
-    const { visible , baseInfo } = this.state;
+    const { visible , baseInfo , treeDataSource } = this.state;
+    const loop = data => data?data.map((item) => {
+      if (item.children && item.children.length) {
+        return <TreeNode key={item.id} title={item.name}>{loop(item.children)}</TreeNode>;
+      }
+      return <TreeNode key={item.id} title={item.name} />;
+    }):null;
+
     return (
       <div className='ysynet-main-content'>
         <Form className="ant-advanced-search-form" onSubmit={this.handleSearch}>
@@ -112,8 +142,8 @@ class AddMenuMgt extends PureComponent{
             <Col span={8}>
               <FormItem {...singleFormItemLayout} label={`上级菜单`}>
                 {
-                  getFieldDecorator(`parentId`,{
-                    initialValue:baseInfo?baseInfo.parentId:'',
+                  getFieldDecorator(`parent.id`,{
+                    initialValue:baseInfo?baseInfo['parent.id']:'',
                     rules: [{ required: true,message: '请输入' }]
                   })(
                     <Input onClick={()=>this.setState({visible:true})  } />
@@ -172,7 +202,7 @@ class AddMenuMgt extends PureComponent{
               <FormItem {...singleFormItemLayout} label={`部门类型`}>
                 {
                   getFieldDecorator(`depType`,{
-                    initialValue:baseInfo?baseInfo.depType:'0',
+                    initialValue:baseInfo?DeptFormat[baseInfo.depType]:'0',
                     rules: [{ required: true,message: '请选择部门类型' }]
                   })(
                     <Select
@@ -196,11 +226,11 @@ class AddMenuMgt extends PureComponent{
               <FormItem {...singleFormItemLayout} label={`是否可见`}>
                 {
                   getFieldDecorator(`isShow`,{
-                    initialValue:baseInfo?baseInfo.isShow:'0',
+                    initialValue:baseInfo?baseInfo.isShow:'1',
                   })(
                     <Radio.Group>
-                      <Radio value='0' key='0'>是</Radio>
-                      <Radio value='1' key='1'>否</Radio>
+                      <Radio value='1' key='1'>是</Radio>
+                      <Radio value='0' key='0'>否</Radio>
                     </Radio.Group>
                   )
                 }
@@ -214,8 +244,8 @@ class AddMenuMgt extends PureComponent{
             <Col span={8}>
               <FormItem {...singleFormItemLayout} label={`权限标识`}>
                 {
-                  getFieldDecorator(`depTypeflag`,{
-                    initialValue:baseInfo?baseInfo.depType?baseInfo.depType:'0':'',
+                  getFieldDecorator(`permission`,{
+                    initialValue:baseInfo?baseInfo.permission?baseInfo.permission:'0':'',
                   })(
                     <Input placeholder='请输入' />
                   )
@@ -268,20 +298,7 @@ class AddMenuMgt extends PureComponent{
               defaultExpandedKeys={['0-0-0']}
               onSelect={this.onSelect}
             >
-              <TreeNode title="parent 1" key="0-0">
-                <TreeNode title="parent 1-0" key="0-0-0">
-                  <TreeNode title="leaf" key="0-0-0-0" />
-                  <TreeNode title="leaf" key="0-0-0-1" />
-                  <TreeNode title="leaf" key="0-0-0-2" />
-                </TreeNode>
-                <TreeNode title="parent 1-1" key="0-0-1">
-                  <TreeNode title="leaf" key="0-0-1-0" />
-                </TreeNode>
-                <TreeNode title="parent 1-2" key="0-0-2">
-                  <TreeNode title="leaf" key="0-0-2-0" />
-                  <TreeNode title="leaf" key="0-0-2-1" />
-                </TreeNode>
-              </TreeNode>
+              {loop(treeDataSource)}
             </Tree>
           </Modal>
       </div>

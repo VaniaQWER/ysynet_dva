@@ -11,18 +11,26 @@ import { _local } from '../../../api/local';
 //新增菜单
 export function MenuSave(options){
   return request(`${_local}/a/spd/sys/menu/save`,{ 
-    methods: 'POST',
+    method: 'POST',
     type: 'formData',
-    credentials: 'omit',
     body: options
   })
 }
+
+//菜单列表
+export function MenuList(options){
+  return request(`${_local}/a/spd/sys/menu/list`,{ 
+    method: 'GET',
+    type: 'formData',
+    body: options
+  })
+}
+
 //删除菜单
 export function MenuDelete(options){
   return request(`${_local}/a/spd/sys/menu/delete`,{ 
-    methods: 'POST',
+    method: 'POST',
     type: 'formData',
-    credentials: 'omit',
     body: options
   })
 }
@@ -30,7 +38,7 @@ export function MenuDelete(options){
 //菜单详情
 export function MenuDetail(options){
   return request(`${_local}/a/spd/sys/menu/detail`,{
-    methods: 'GET',
+    method: 'GET',
     type: 'formData',
     body: options
   })
