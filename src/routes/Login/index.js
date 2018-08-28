@@ -1,5 +1,5 @@
 import React, { PureComponent } from 'react';
-import { Form, Button, Checkbox, Input, Icon, message } from 'antd';
+import { Form, Button, Checkbox, Input, Icon } from 'antd';
 import { connect } from 'dva';
 // import querystring from 'querystring';
 import styles from './style.css';

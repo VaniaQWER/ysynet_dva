@@ -45,7 +45,8 @@ export default {
       console.log(data,'datasfs')
     },
     *setCookie({ payload,callback },{ call }){
-      const data = yield call(usersService.setCookie,payload)
+      const data = yield call(usersService.setCookie,payload);
+      console.log(data);
     }
   },
   subscriptions: {
