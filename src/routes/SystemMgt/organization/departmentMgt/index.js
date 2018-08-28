@@ -11,7 +11,7 @@ import { Form, Row, Col, Input, Button, Table,Icon,Modal,Select} from 'antd';
 import { formItemLayout } from '../../../../utils/commonStyles';
 import RemoteTable from '../../../../components/TableGrid';
 import { systemMgt } from '../../../../api/systemMgt';
-import { DeptSelect } from '../../../../common/dic';
+import { DeptSelect , DeptFormat } from '../../../../common/dic';
 import { Link } from 'dva/router';
 const FormItem = Form.Item;
 const Option = Select.Option;
@@ -47,6 +47,10 @@ class SearchForm extends PureComponent{
         this.props.query(values)
       }
     })
+  }
+  handleReset = () => {
+    this.props.form.resetFields();
+    this.props.query({})
   }
   render(){
     const { getFieldDecorator } = this.props.form;
@@ -129,6 +133,12 @@ class DepartmentMgt extends PureComponent{
     goodsModalSelectRow:{},//科室点选-获取相关的信息
     goodsModalSelectRowCache:{},//科室点选-缓存
     
+  }
+
+  //搜索列表
+  queryHandle = (data) =>{
+    console.log(data)
+    this.refs.table.fetch(data);
   }
 
   //新增部门 - 打开弹窗
@@ -214,34 +224,35 @@ class DepartmentMgt extends PureComponent{
     const columns = [
       {
         title: '部门名称',
-        dataIndex: 'userNo',
+        dataIndex: 'deptName',
       },
       {
         title: '科室名称',
-        dataIndex: 'remark',
+        dataIndex: 'hisDeptName',
       },
       {
         title: '部门类型',
-        dataIndex: 'editMan',
+        dataIndex: 'deptType',
+        render:(text,record,index)=>text?DeptFormat[text]:''
       },
       {
         title: '地址',
-        dataIndex: 'adress',
+        dataIndex: 'deptLocation',
       },
       {
         title: '编辑人',
-        dataIndex: 'editor',
+        dataIndex: 'updateUserId',
       },
       {
         title: '编辑时间',
-        dataIndex: 'editTime',
+        dataIndex: 'updateDate',
       },
       {
         title: '操作',
         dataIndex: 'action',
         render: (text,record,index)=>{
           return <span>
-            <Link className='button-gap' to={{pathname:'/system/organization/departmentMgt/edit',state:record}}>编辑</Link>
+            <Link className='button-gap' to={{pathname:`/system/organization/departmentMgt/edit/${record.id}`,state:record}}>编辑</Link>
             <Link to={{pathname:'/system/organization/departmentMgt/goodsAllocation',state:record}}>货位 </Link>
           </span>
         }
@@ -269,11 +280,10 @@ class DepartmentMgt extends PureComponent{
     ]
     const { visible , modalTitle ,subModalVisible, hasStyle , goodsModalVisible , query} = this.state;
     const { getFieldDecorator } = this.props.form;
-    console.log(this.props.form.getFieldsValue(['deptType']))
 
     return (
       <div className='ysynet-main-content'>
-        <WrapperForm query={this.queryHandle}/>
+        <WrapperForm query={(data)=>this.queryHandle(data)}/>
         <div>
           <Button type='primary' icon='plus' className='button-gap' onClick={this.add}>新增</Button>
         </div>
@@ -307,8 +317,11 @@ class DepartmentMgt extends PureComponent{
                   rules: [{ required: true,message: '请输入部门类型' }]
                 })(
                   <Select onSelect={(val)=>this.props.form.setFieldsValue({deptType:val})}>
-                    <Option key='0' value='0'>药库</Option>
-                    <Option key='1' value='1'>基数药</Option>
+                    {
+                      DeptSelect.map(item=>(
+                        <Option value={item.value} key={item.value}>{item.text}</Option>
+                      ))
+                    }
                   </Select>
                 )
               }
@@ -324,7 +337,7 @@ class DepartmentMgt extends PureComponent{
             </FormItem>
             <FormItem {...singleFormItemLayout} label={`科室`}>
               {
-                getFieldDecorator(`hisCtDeptName`,{
+                getFieldDecorator(`openDeptCode`,{
                   rules: [{ required: true,message: '请输入科室' }]
                 })(
                   <Input onClick={this.showDeptModal}/>
@@ -332,10 +345,10 @@ class DepartmentMgt extends PureComponent{
               }
             </FormItem>
             {
-              this.props.form.getFieldsValue(['deptType']).deptType ==='1'?
+              this.props.form.getFieldsValue(['deptType']).deptType === 5?
               <FormItem {...singleFormItemLayout} label={`货位`}>
               {
-                getFieldDecorator(`huowei`,{
+                getFieldDecorator(`positionName`,{
                   rules: [{ required: true,message: '请输入货位' }]
                 })(
                   <Input onClick={this.showGoodsModal}/>

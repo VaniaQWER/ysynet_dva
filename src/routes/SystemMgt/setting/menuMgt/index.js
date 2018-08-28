@@ -7,7 +7,7 @@
  * @file 系统管理--系统设置--菜单管理
  */
 import React, { PureComponent } from 'react';
-import { Row, Input, Button } from 'antd';
+import { Row, Button } from 'antd';
 import querystring from 'querystring';
 import { Link } from 'dva/router';
 import { systemMgt } from '../../../../api/systemMgt';
@@ -33,9 +33,10 @@ class MenuMgt extends PureComponent{
     console.log(record)
     console.log(index)
     console.log(e.target.value)
-    let ds = this.state.dataSource.slice() ; 
-    ds[index].sort=e.target.value;
-    this.setState({dataSource:ds})
+    debugger
+    // let ds = this.state.dataSource.slice() ; 
+    // ds[index].sort=e.target.value;
+    // this.setState({dataSource:ds})
   }
 
   render(){
@@ -52,11 +53,6 @@ class MenuMgt extends PureComponent{
       {
         title: '排序',
         dataIndex: 'sort',
-        render:(text,record,index)=>{
-          return(
-            <Input type='number' value={record.sort} onChange={this.changeRow.bind(this,record,index)} placeholder='请输入'/>
-          )
-        }
       },
       {
         title: '可见',
@@ -78,7 +74,7 @@ class MenuMgt extends PureComponent{
         render: (text,record,index)=>{
           return <span>
             <Link className='button-gap' to={{pathname:`/system/setting/menuMgt/add/${querystring.stringify({id:record.id,parentId:record.parentId})}`}}>编辑</Link>
-            <Link className='button-gap' to={{pathname:'/system/setting/menuMgt/add',state:record}}>添加下级菜单</Link>
+            <Link className='button-gap' to={{pathname: `/system/setting/menuMgt/add/${querystring.stringify({parentId:record.id,parentName:record.name})}` ,state:record }}>添加下级菜单</Link>
           </span>
         }
       }

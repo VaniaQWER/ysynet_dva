@@ -6,7 +6,6 @@
 import React, { PureComponent } from 'react';
 import { DatePicker, Form, Input , Row, Col, Button, Icon, Select, message, Popconfirm } from 'antd';
 import { formItemLayout } from '../../../../utils/commonStyles';
-import { createData } from '../../../../common/data';
 import { Link } from 'react-router-dom';
 import RemoteTable from '../../../../components/TableGrid';
 import wareHouse from '../../../../api/drugStorage/wareHouse';

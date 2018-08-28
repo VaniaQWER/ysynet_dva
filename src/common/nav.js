@@ -1038,7 +1038,7 @@ export const getNavData = app => [
     {
       name: "部门管理-编辑",
       icon: 'setting',
-      path: '/system/organization/departmentMgt/edit',
+      path: '/system/organization/departmentMgt/edit/:id',
       component: dynamicWrapper(app, ['systemMgt/organization'], () => import('../routes/SystemMgt/organization/departmentMgt/edit')),
     },
     {

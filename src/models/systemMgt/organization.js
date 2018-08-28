@@ -3,6 +3,7 @@
  */
 import * as supplierMgtService from '../../services/system/organization/supplierMgt';
 import * as userMgtService from '../../services/system/organization/userMgt';
+import * as DepartmentService from '../../services/system/organization/departmentMgt';
 import { message } from 'antd';
 
 export default {
@@ -13,6 +14,26 @@ export default {
   reducers: {
   },
   effects:{
+    /******   部门管理  *****/
+    //部门管理-新增/编辑
+    *OperSysDept({ payload, callback },{ put, call }){
+      const data = yield call(DepartmentService.OperSysDept, payload);
+      if (data.code === 200) {
+        if (callback) callback(data);
+      } else {
+        message.error(data.msg);
+      }
+    },
+    //部门编辑-详情
+    *DepartmentDetails({ payload, callback },{ put, call }){
+      const data = yield call(DepartmentService.DepartmentDetails, payload);
+      if (data.code === 200) {
+        if (callback) callback(data);
+      } else {
+        message.error(data.msg);
+      }
+    },
+    /******   供应商管理  *****/
     *SupplierSave({ payload, callback },{ put, call }){
       const data = yield call(supplierMgtService.SupplierSave, payload);
       console.log(data,'userLogin');

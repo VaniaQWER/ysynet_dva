@@ -9,27 +9,42 @@
 
  import React , { PureComponent } from 'react';
 import { Button , Row , Col, Input} from 'antd';
-
+import { connect } from 'dva';
 
 class EditDepartmentMgt extends PureComponent {
 
   state={
-    record:{}
+    record:{},
+    deptLocation:''
   }
 
   componentDidMount (){
 
-    if(this.props.location.state){
-      this.setState({
-        record:this.props.location.state
-      })
-    }
+    console.log(this.props.match.params)
+    this.props.dispatch({
+      type:'Organization/DepartmentDetails',
+      payload:this.props.match.params,
+      callback:(data)=>{
+        console.log(data)
+        this.setState({
+          record:data.data
+        })
+      }
+    })
   }
 
 
   //提交该表单
   onSubmit = ()=>{
-
+    const { deptLocation } = this.state;
+    console.log(deptLocation);
+    this.props.dispatch({
+      type:'Organization/OperSysDept',
+      payload:{deptLocation},
+      callback:(data)=>{
+        console.log(data)
+      }
+    })
   }
   render(){
     const { record } = this.state;
@@ -45,7 +60,7 @@ class EditDepartmentMgt extends PureComponent {
             <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-17">
               <div className="ant-form-item-control">
                 <span className="ant-form-item-children">
-                  {record.name||'123123'}
+                  {record.deptLabel||''}
                 </span>
               </div>
             </div>
@@ -57,7 +72,7 @@ class EditDepartmentMgt extends PureComponent {
             <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-17">
               <div className="ant-form-item-control">
                 <span className="ant-form-item-children">
-                  {record.name||'部门名称'}
+                  {record.deptName||''}
                 </span>
               </div>
             </div>
@@ -71,7 +86,7 @@ class EditDepartmentMgt extends PureComponent {
             <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-17">
               <div className="ant-form-item-control">
                 <span className="ant-form-item-children">
-                  {record.name||'科室名称'}
+                  {record.hisDeptName||''}
                 </span>
               </div>
             </div>
@@ -83,7 +98,7 @@ class EditDepartmentMgt extends PureComponent {
             <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-17">
               <div className="ant-form-item-control">
                 <span className="ant-form-item-children">
-                  {record.name||'内部编码'}
+                  {record.id||''}
                 </span>
               </div>
             </div>
@@ -97,7 +112,7 @@ class EditDepartmentMgt extends PureComponent {
             <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-17">
               <div className="ant-form-item-control">
                 <span className="ant-form-item-children">
-                  {record.name||'医院科室代码'}
+                  {record.hisDeptCode||''}
                 </span>
               </div>
             </div>
@@ -111,9 +126,9 @@ class EditDepartmentMgt extends PureComponent {
             <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-17">
               <div className="ant-form-item-control">
                 <span className="ant-form-item-children">
-                 
-                  <Input.TextArea value={record.remark||'remark'}></Input.TextArea>
-
+                  <Input.TextArea 
+                  value={this.state.deptLocation !=='' ? this.state.deptLocation : record.deptLocation } 
+                  onChange={(e)=>this.setState({deptLocation:e.target.value})}></Input.TextArea>
                 </span>
               </div>
             </div>
@@ -125,4 +140,4 @@ class EditDepartmentMgt extends PureComponent {
 
 
  }
- export default EditDepartmentMgt 
+ export default connect ( state => state)(EditDepartmentMgt) 

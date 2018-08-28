@@ -8,7 +8,7 @@ import React, { PureComponent } from 'react';
 import { Form, Row, Col, Input, Button, Select , Radio , Affix , Modal , Tree , message} from 'antd';
 import { connect } from 'dva';
 import querystring from 'querystring';
-import { DeptSelect , DeptFormat } from '../../../../common/dic';
+import { DeptSelect } from '../../../../common/dic';
 const FormItem = Form.Item;
 const { Option } = Select;
 const TreeNode = Tree.TreeNode;
@@ -37,23 +37,31 @@ class AddMenuMgt extends PureComponent{
 
   componentDidMount (){
     //编辑的时候进行回填操作
-    if(this.props.match.params.id){
+    const params = this.props.match.params.id;
+    const paramsJson = querystring.parse(params);
+    if(params && paramsJson.id){
+      //console.log('编辑')
       this.props.dispatch({
         type:'sysSetting/MenuDetail',
-        payload:querystring.parse( this.props.match.params.id ),
+        payload:paramsJson,
         callback:(data)=>{
-          console.log(data.data)
           this.setState({
             baseInfo:data.data
           })
         }
       })
+    }else if(params && paramsJson.parentId){
+      //console.log('添加下级菜单')
+      this.setState({
+        treeSelectedKeys:[paramsJson.parentId]
+      })
+      this.props.form.setFieldsValue({parentName:paramsJson.parentName})
     }
+
     this.props.dispatch({
       type:'sysSetting/MenuList',
       payload:{},
       callback:(data)=>{
-        console.log(data.data)
         this.setState({treeDataSource:data.data})
       }
     })
@@ -64,7 +72,10 @@ class AddMenuMgt extends PureComponent{
     this.props.form.validateFieldsAndScroll((err,values)=>{
       if(!err){
         const { baseInfo } = this.state;
-        values['parent.Id'] = this.state.treeSelectedKeys[0];
+        values['parent.id'] = this.state.treeSelectedKeys[0];
+        delete values['parent']
+        delete values['parentName']
+        values.depType = Number(values.depType)
         if(baseInfo.id){//修改的时候传递ID
           values.id=baseInfo.id
         }
@@ -73,7 +84,6 @@ class AddMenuMgt extends PureComponent{
           type: 'sysSetting/MenuSave',
           payload: values,
           callback: (data) => {
-            debugger
             message.success('添加成功！')
             this.props.history.push('/system/setting/menuMgt')
           }
@@ -95,19 +105,18 @@ class AddMenuMgt extends PureComponent{
       treeSelectedKeys,
       treeInfo
     })
-    console.log('selected', treeSelectedKeys, treeInfo);
   }
   //选择上级菜单
   submitModal =()=>{
     const { treeInfo , treeSelectedKeys} = this.state;
     this.setState({
       visible:false,
-      parentId:treeInfo.node.props.title,
+      parentId:treeSelectedKeys,
       selectCache:{
         treeSelectedKeys,treeInfo
       }
     })
-    this.props.form.setFieldsValue({'parent.Id':treeInfo.node.props.title})
+    this.props.form.setFieldsValue({'parentName':treeInfo.node.props.title})
   }
 
   //取消选择上级菜单
@@ -119,7 +128,7 @@ class AddMenuMgt extends PureComponent{
         treeSelectedKeys:selectCache.treeSelectedKeys,
         treeInfo:selectCache.treeInfo,
       })
-      this.props.form.setFieldsValue({'parent.Id':selectCache.treeInfo.node.props.title})
+      this.props.form.setFieldsValue({'parent.id':selectCache.treeInfo.node.props.title})
     }else{
       this.setState({visible:false})
     }
@@ -142,8 +151,8 @@ class AddMenuMgt extends PureComponent{
             <Col span={8}>
               <FormItem {...singleFormItemLayout} label={`上级菜单`}>
                 {
-                  getFieldDecorator(`parent.id`,{
-                    initialValue:baseInfo?baseInfo['parent.id']:'',
+                  getFieldDecorator(`parentName`,{// parent.id
+                    initialValue:baseInfo?baseInfo.parentName:'',
                     rules: [{ required: true,message: '请输入' }]
                   })(
                     <Input onClick={()=>this.setState({visible:true})  } />
@@ -202,7 +211,7 @@ class AddMenuMgt extends PureComponent{
               <FormItem {...singleFormItemLayout} label={`部门类型`}>
                 {
                   getFieldDecorator(`depType`,{
-                    initialValue:baseInfo?DeptFormat[baseInfo.depType]:'0',
+                    initialValue:baseInfo.depType?`${baseInfo.depType}`:'',
                     rules: [{ required: true,message: '请选择部门类型' }]
                   })(
                     <Select
