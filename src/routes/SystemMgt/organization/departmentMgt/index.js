@@ -119,6 +119,7 @@ class DepartmentMgt extends PureComponent{
   state = {
     loading: false,
     query: {},
+    queryDept:{},//科室table的query
     visible:false,
     modalTitle:"新增",
     record:{},//当前要编辑的信息
@@ -278,7 +279,7 @@ class DepartmentMgt extends PureComponent{
         dataIndex: 'huoweimingcheng',
       },
     ]
-    const { visible , modalTitle ,subModalVisible, hasStyle , goodsModalVisible , query} = this.state;
+    const { visible , modalTitle ,subModalVisible, hasStyle , goodsModalVisible , query , queryDept} = this.state;
     const { getFieldDecorator } = this.props.form;
 
     return (
@@ -359,9 +360,7 @@ class DepartmentMgt extends PureComponent{
             <FormItem {...singleFormItemLayout} label={`地址`}>
               {
                 getFieldDecorator(`deptLocation`)(
-                  <Select>
-                    <Option key='0' value='0'>地址1</Option>
-                  </Select>
+                  <Input/>
                 )
               }
             </FormItem>
@@ -379,7 +378,14 @@ class DepartmentMgt extends PureComponent{
               <Button className='button-gap' onClick={this.searchSubModal}>查询</Button>
               <Button className='button-gap' onClick={()=>this.setState({deptKeyword:''})}>重置</Button>
             </Row>
-            <Table 
+            <RemoteTable 
+              ref='tableDept'
+              query={queryDept}
+              style={{marginTop: 20}}
+              columns={subModalCol}
+              scroll={{ x: '100%' }}
+              url={systemMgt.findHisDept}
+              rowClassName={ (record, index) => index === hasStyle ? 'rowClassBg' : ''}
               onRow={ (record, index) => {
                 return {
                   onClick: () => {
@@ -387,7 +393,12 @@ class DepartmentMgt extends PureComponent{
                   }
                 };
               }}
-              rowClassName={ (record, index) => index === hasStyle ? 'rowClassBg' : ''}
+              rowKey='id'
+            />
+            {/* 
+            <Table 
+              
+              
               columns={subModalCol}
               bordered
               loading={this.state.loading}
@@ -399,8 +410,8 @@ class DepartmentMgt extends PureComponent{
                 showSizeChanger: true
               }}
               style={{marginTop: 20}}
-              dataSource={dataSource}
-            />
+              dataSource={dataSource} */}
+            
         </Modal>
 
         {/* 新增部门 - 货位 - 弹窗  */}

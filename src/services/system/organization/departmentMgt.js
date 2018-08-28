@@ -11,7 +11,7 @@ import { _local } from '../../../api/local';
 export function OperSysDept(options){
   return request(`${_local}/a/sys/sysdept/operSysDept`,{ 
     method: 'POST',
-    type: 'formData',
+    type: 'json',
     body: options
   })
 }

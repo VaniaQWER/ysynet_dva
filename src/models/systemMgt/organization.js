@@ -19,6 +19,7 @@ export default {
     *OperSysDept({ payload, callback },{ put, call }){
       const data = yield call(DepartmentService.OperSysDept, payload);
       if (data.code === 200) {
+        message.success('操作成功！')
         if (callback) callback(data);
       } else {
         message.error(data.msg);

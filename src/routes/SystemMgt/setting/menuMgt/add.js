@@ -254,7 +254,7 @@ class AddMenuMgt extends PureComponent{
               <FormItem {...singleFormItemLayout} label={`权限标识`}>
                 {
                   getFieldDecorator(`permission`,{
-                    initialValue:baseInfo?baseInfo.permission?baseInfo.permission:'0':'',
+                    initialValue:baseInfo?baseInfo.permission?baseInfo.permission:'':'',
                   })(
                     <Input placeholder='请输入' />
                   )

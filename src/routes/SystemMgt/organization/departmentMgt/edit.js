@@ -36,13 +36,14 @@ class EditDepartmentMgt extends PureComponent {
 
   //提交该表单
   onSubmit = ()=>{
-    const { deptLocation } = this.state;
+    const { deptLocation , record} = this.state;
     console.log(deptLocation);
     this.props.dispatch({
       type:'Organization/OperSysDept',
-      payload:{deptLocation},
+      payload:{deptLocation,id:record.id,deptType:record.deptType,deptName:record.deptName},
       callback:(data)=>{
         console.log(data)
+        this.props.history.push('/system/organization/departmentMgt')
       }
     })
   }

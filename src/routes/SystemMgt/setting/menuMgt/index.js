@@ -28,17 +28,6 @@ class MenuMgt extends PureComponent{
     history.push('/system/setting/menuMgt/add');
   }
 
-  //改变单行排序
-  changeRow = (record,index,e)=>{
-    console.log(record)
-    console.log(index)
-    console.log(e.target.value)
-    debugger
-    // let ds = this.state.dataSource.slice() ; 
-    // ds[index].sort=e.target.value;
-    // this.setState({dataSource:ds})
-  }
-
   render(){
     const { query } = this.state;
     const columns = [
