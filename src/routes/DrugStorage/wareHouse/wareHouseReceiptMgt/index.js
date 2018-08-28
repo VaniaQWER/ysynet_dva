@@ -4,10 +4,12 @@
 * @Last Modified time: 2018-08-06 15:31:15 
  */
 import React, { PureComponent } from 'react';
-import { Table , DatePicker , Form, Input , Row, Col, Button, Icon, Select  , message  , Popconfirm } from 'antd';
+import { DatePicker, Form, Input , Row, Col, Button, Icon, Select, message, Popconfirm } from 'antd';
 import { formItemLayout } from '../../../../utils/commonStyles';
 import { createData } from '../../../../common/data';
 import { Link } from 'react-router-dom';
+import RemoteTable from '../../../../components/TableGrid';
+import wareHouse from '../../../../api/drugStorage/wareHouse';
 const FormItem = Form.Item;
 const Option = Select.Option;
 const { RangePicker } = DatePicker;
@@ -24,7 +26,7 @@ class Putaway extends PureComponent{
   }
 
   queryHandler = (query) => {
-    this.setState({ query:query })
+    this.setState({ query: query })
   }
 
   //单行确认 
@@ -37,46 +39,42 @@ class Putaway extends PureComponent{
       {
        title: '入库单',
        width:170,
-       dataIndex: 'applyNo',
+       dataIndex: 'inStoreCode',
        render: (text,record) =>{
         return <span>
-           <Link to={{pathname: `/drugStorage/wareHouse/wareHouseReceiptMgt/detail`}}>{text}</Link>
+           <Link to={{pathname: `/drugStorage/wareHouse/wareHouseReceiptMgt/detail/${record.inStoreCode}`}}>{text}</Link>
          </span>
         }
       },
       {
         title: '配送单',
         width:170,
-        dataIndex: 'planNo',
+        dataIndex: 'distributeCode',
       },
       {
         title: '订单',
         width:170,
-        dataIndex: 'approvalNo',
+        dataIndex: 'orderCode',
       },
       {
         title: '状态',
         width:100,
-        dataIndex: 'fstate',
-        render:()=>`待上架`
+        dataIndex: 'auditStatuslName',
       },
       {
         title: '入库分类',
         width:150,
-        dataIndex: 'planTime',
-        render:(text,record)=>`零库存入库`
+        dataIndex: 'inStoreTypeName',
       },
       {
         title: '供应商',
         width:150,
-        dataIndex: 'fOrgName',
-        render: (text,record)=> `武汉供应商`
+        dataIndex: 'ctmaSupplierName',
       },
       {
         title: '上架时间',
         width:180,
-        dataIndex: 'planTime1',
-        render:(text,record)=>`${record.planTime.substr(0,11)}`
+        dataIndex: 'createDate'
       },
       {
         title: '操作',
@@ -90,19 +88,15 @@ class Putaway extends PureComponent{
           </span>  
       }
     ];
+    const {query} = this.state;
     return (
       <div className='ysynet-main-content'>
         <SearchForm query={this.queryHandler} />
-        <Table
-          dataSource={createData()}
-          bordered
-          loading={ this.state.loading}
-          scroll={{x: '100%'}}
-          pagination={{
-            size: "small",
-            showQuickJumper: true,
-            showSizeChanger: true
-          }}
+        <RemoteTable
+          query={query}
+          url={wareHouse.depotinstoreList}
+          ref="tab"
+          scroll={{x: '150%'}}
           columns={columns}
           rowKey={'id'}
           style={{marginTop: 24}}
@@ -128,6 +122,16 @@ class SearchFormWrapper extends PureComponent {
  handleSearch = (e) => {
    e.preventDefault();
    this.props.form.validateFields((err, values) => {
+     for (const key in values) {
+       values[key] = values[key] === undefined? "" : values[key]
+     };
+     if(values.time !== "") {
+       values.startTime = values.time[0].format('YYYY-MM-DD');
+       values.endTime = values.time[1].format('YYYY-MM-DD');
+     }else {
+       values.startTime = "";
+       values.endTime = "";
+     }
      this.props.query(values);
    });
  }
@@ -145,14 +149,14 @@ class SearchFormWrapper extends PureComponent {
        <Row gutter={30}>
          <Col span={8}>
            <FormItem label={`单号`} {...formItemLayout}>
-             {getFieldDecorator('assetCode', {})(
+             {getFieldDecorator('inStoreCode', {})(
               <Input placeholder='入库单/配送单/订单号'/>
              )}
            </FormItem>
          </Col>
          <Col span={8}>
           <FormItem label={`供应商`} {...formItemLayout}>
-            {getFieldDecorator('fOrgName', {})(
+            {getFieldDecorator('supplierCode', {})(
               <Select 
                 showSearch
                 placeholder={'请选择'}
@@ -169,14 +173,14 @@ class SearchFormWrapper extends PureComponent {
         </Col>
         <Col span={8}>
            <FormItem label={`入库时间`} {...formItemLayout}>
-             {getFieldDecorator('shijian', {})(
+             {getFieldDecorator('time', {})(
               <RangePicker/>
              )}
            </FormItem>
          </Col>
          <Col span={8} style={{display: display}}>
            <FormItem label={`入库分类`} {...formItemLayout}>
-             {getFieldDecorator('assetName', {})(
+             {getFieldDecorator('inStoreType', {})(
               <Select 
                 showSearch
                 placeholder={'请选择'}
