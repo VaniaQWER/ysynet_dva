@@ -1102,7 +1102,7 @@ export const getNavData = app => [
       name: "字典管理",
       icon: 'setting',
       path: '/system/setting/itemsData',
-      component: dynamicWrapper(app, [], () => import('../routes/SystemMgt/setting/itemsData')),
+      component: dynamicWrapper(app, ['ysy/dict'], () => import('../routes/SystemMgt/setting/itemsData')),
     },
      /* ********************   采购结算 子系统    ******************************* */
      {

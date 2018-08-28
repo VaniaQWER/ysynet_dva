@@ -8,8 +8,12 @@
  * @file 系统管理--系统设置--字典管理
  */
 import React, { PureComponent } from 'react';
-import { Form, Row, Col, Input, Select, Button, Table, Popconfirm, Modal } from 'antd';
+import { Form, Row, Col, Input, Select, Button, Table, Modal } from 'antd';
 import { formItemLayout } from '../../../../utils/commonStyles';
+import { systemMgt } from '../../../../api/systemMgt';
+import RemoteTable from '../../../../components/TableGrid';
+import { connect } from 'dva';
+
 const FormItem = Form.Item;
 const { Option } = Select;
 const { TextArea } = Input;
@@ -33,9 +37,13 @@ class SearchForm extends PureComponent{
     this.props.form.validateFields((err,values)=>{
       if(!err){
         console.log(values,'查询数据');
-        this.props.query(values)
+        this.props.query(values);
       }
     })
+  }
+  handleReset = () => {
+    this.props.form.resetFields();
+    this.props.query({});
   }
   render(){
     const { getFieldDecorator } = this.props.form;
@@ -49,7 +57,7 @@ class SearchForm extends PureComponent{
                   initialValue: ''
                 })(
                   <Select
-                    style={{ width: 200 }}
+                    style={{ width: 240 }}
                     showSearch
                     optionFilterProp="children"
                     filterOption={(input, option) => option.props.children.indexOf(input) >= 0}
@@ -63,16 +71,17 @@ class SearchForm extends PureComponent{
           <Col span={6}>
             <FormItem {...formItemLayout} label={`描述`}>
               {
-                getFieldDecorator(`userName`,{
+                getFieldDecorator(`description`,{
                   initialValue: ''
                 })(
-                  <Input placeholder='请输入' style={{ width: 200 }} />
+                  <Input placeholder='请输入' style={{ width: 240 }} />
                 )
               }
             </FormItem>
           </Col>
-          <Col span={6}>
+          <Col span={12} style={{ textAlign: 'right' }}>
             <Button type='primary' htmlType='submit'>查询</Button>
+            <Button type="default" onClick={this.handleReset} style={{ marginLeft: 10 }}>查询</Button>
           </Col>
         </Row>
       </Form>
@@ -80,87 +89,101 @@ class SearchForm extends PureComponent{
   }
 }
 const WrapperForm = Form.create()(SearchForm);
-let dataSource = [];
-for(let i=0; i<20; i++){
-  dataSource.push({
-    id: i,
-    keyValue: i,
-    tag: i%3 === 0 ? '待审核': i%2 === 0? '完成': '上架完成',
-    type: i%3 === 0 ? 'audit_plan_status': i%2 === 0? 'audit_status': 'first_level_department',
-    describe: i%3 === 0 ? '计划审核列表': i%2 === 0? '上架类型': '模块标识',
-    sort: i +"0"
-  })
-}
-
 
 class ItemsData extends PureComponent{
   state = {
     visible: false,
     isDisabled: false,
-    query: {}
+    query: {},
+    ModalTitle: '',
+    record: {},
+    loading: false
   }
   queryHandle = (query) =>{
     this.setState({ query });
-    // this.refs.table.fetch(query);
+    this.refs.table.fetch(query);
   }
   // 修改
   modify = (record,index) =>{
     console.log(record,index,'modify');
-    this.setState({ visible: true,isDisabled: false });
-    const setFields = ['keyValue','tag','type','describe','sort'];
-    let Fields = {};
-    setFields.map((item,index)=> Fields[item] = record[item]);
-    this.props.form.setFieldsValue(Fields);
+    this.setState({ visible: true,isDisabled: false, ModalTitle: '编辑', record });
+    // const setFields = ['keyValue','tag','type','describe','sort'];
+    // let Fields = {};
+    // setFields.map((item,index)=> Fields[item] = record[item]);
+    // this.props.form.setFieldsValue(Fields);
   }
-  // 删除
-  delete = (record,index) =>{
-    console.log(record,index,'delete')
+  add = () => {
+    this.props.form.resetFields();
+    this.setState({ ModalTitle: '新增', visible: true, record: {} });
+  }
+  newAdd = (e) => {
+    e.preventDefault();
+    this.props.form.validateFields((err, values) => {
+      if (!err) {
+        const { record } = this.state;
+        if (this.state.ModalTitle === '编辑') {
+          values.id = record.id;
+        }
+        this.setState({ loading: true });
+        console.log('确认条件：', values);
+        this.props.dispatch({
+          type:'Dictionary/DictSave',
+          payload: values,
+          callback:(data)=>{
+            console.log(data);
+            this.setState({ loading: false, visible: false });
+            this.refs.table.fetch();
+          }
+        })
+      }
+    });
   }
   // 添加键值对
-  addkeyValue = (record,index) =>{
-    console.log(record,index,'addkeyValue');
-    this.props.form.setFieldsValue({ type: record.type,describe: record.describe,sort: record.sort, keyValue: '', tag: '' });
-    this.setState({ visible: true, isDisabled: true });
-  }
+  // addkeyValue = (record,index) =>{
+  //   console.log(record,index,'addkeyValue');
+  //   this.props.form.setFieldsValue({ type: record.type,describe: record.describe,sort: record.sort, keyValue: '', tag: '' });
+  //   this.setState({ visible: true, isDisabled: true });
+  // }
   render(){
-    const { visible,isDisabled } = this.state;
+    const { visible, record } = this.state;
     const { getFieldDecorator } = this.props.form;
     const columns = [
       {
         title: '键值',
-        dataIndex: 'keyValue',
-        width: 90,
-        render: (text,record,index)=>{
-          return index
-        }
+        dataIndex: 'value',
+        // width: 90
       },
       {
         title: '标签',
-        dataIndex: 'tag',
+        dataIndex: 'label',
+      },
+      {
+        title: '编码',
+        dataIndex: 'code',
       },
       {
         title: '类型',
         dataIndex: 'type',
       },
       {
-        title: '描述',
-        dataIndex: 'describe',
-       
-      },
-      {
         title: '排序',
         dataIndex: 'sort',
+      },
+      {
+        title: '描述',
+        dataIndex: 'description',
+       
       },
       {
         title: '操作',
         dataIndex: 'action',
         render: (text,record,index)=>{
           return <span>
-            <a onClick={this.modify.bind(null,record,index)} style={{ marginRight: 8 }}>修改</a>
-            <Popconfirm title="是否确认删除此条记录?" onConfirm={this.delete.bind(null, record)} okText="是" cancelText="否">
+            <a onClick={this.modify.bind(null,record,index)} style={{ marginRight: 8 }}>编辑</a>
+            {/* <Popconfirm title="是否确认删除此条记录?" onConfirm={this.delete.bind(null, record)} okText="是" cancelText="否">
               <a>删除</a>
             </Popconfirm>
-            <a onClick={this.addkeyValue.bind(null,record,index)} style={{ marginLeft: 8 }}>添加键值对</a>
+            <a onClick={this.addkeyValue.bind(null,record,index)} style={{ marginLeft: 8 }}>添加键值对</a> */}
           </span>
         }
       },
@@ -168,72 +191,86 @@ class ItemsData extends PureComponent{
     return (
       <div className='ysynet-main-content'>
         <WrapperForm query={this.queryHandle}/>
-        <Table 
+        <div>
+          <Button type='primary' icon='plus' onClick={this.add}>新建字典</Button>
+        </div>
+        <RemoteTable
+          query={this.state.query}
+          ref="table"
           columns={columns}
           bordered
-          loading={this.state.loading}
           scroll={{x: '100%'}}
           rowKey={'id'}
-          pagination={{
-            size: "small",
-            showQuickJumper: true,
-            showSizeChanger: true
-          }}
           style={{marginTop: 20}}
-          dataSource={dataSource}
+          url={systemMgt.DICTIONARYLIST}
+          showHeader={true}
         />
         <Modal
-          title={'字典修改'}
+          title={this.state.ModalTitle}
           width={488}
           visible={visible}
-          onCancel={()=>this.setState({ visible: false,isDisabled: false })}
+          onCancel={()=>this.setState({ visible: false })}
           footer={[
-            <Button key="submit" type='primary' onClick={this.newAdd}>
-                确认
-            </Button>,
-            <Button key="back"  type='default' onClick={()=>this.setState({ visible: false, isDisabled: false })}>取消</Button>
+            <Button key="submit" htmlType='submit' type='primary' onClick={this.newAdd} loading={this.state.loading}>确认</Button>,
+            <Button key="back"  type='default' onClick={()=>{this.setState({ visible: false }); this.props.form.resetFields();}}>取消</Button>
           ]}
         >
           <Form>
             <FormItem {...singleFormItemLayout} label={`键值`}>
               {
-                getFieldDecorator(`keyValue`)(
-                  <Input />
+                getFieldDecorator(`value`, {
+                  initialValue: record ? record.value : '',
+                  rules: [{ required: true, message: '请填写键值' }]
+                })(
+                  <Input placeholder="请输入" />
                 )
               }
             </FormItem>
             <FormItem {...singleFormItemLayout} label={`标签`}>
               {
-                getFieldDecorator(`tag`)(
-                  <Input />
+                getFieldDecorator(`label`, {
+                  initialValue: record ? record.label : '',
+                  rules: [{ required: true, message: '请填写标签' }]
+                })(
+                  <Input placeholder="请输入" />
+                )
+              }
+            </FormItem>
+            <FormItem {...singleFormItemLayout} label={`编码`}>
+              {
+                getFieldDecorator(`code`, {
+                  initialValue: record ? record.code : '',
+                  rules: [{ required: true, message: '请填写编码' }]
+                })(
+                  <Input placeholder="请输入" />
                 )
               }
             </FormItem>
             <FormItem {...singleFormItemLayout} label={`类型`}>
               {
-                getFieldDecorator(`type`)(
-                  <Input disabled={isDisabled}/>
-                )
-              }
-            </FormItem>
-            <FormItem {...singleFormItemLayout} label={`描述`}>
-              {
-                getFieldDecorator(`describe`)(
-                  <Input disabled={isDisabled}/>
+                getFieldDecorator(`type`, {
+                  initialValue: record ? record.type : '',
+                  rules: [{ required: true, message: '请填写类型' }]
+                })(
+                  <Input placeholder="请输入" />
                 )
               }
             </FormItem>
             <FormItem {...singleFormItemLayout} label={`排序`}>
               {
-                getFieldDecorator(`sort`)(
-                  <Input disabled={isDisabled}/>
+                getFieldDecorator(`sort`, {
+                  initialValue: record ? record.sort : ''
+                })(
+                  <Input placeholder="请输入" />
                 )
               }
             </FormItem>
-            <FormItem {...singleFormItemLayout} label={`备注`}>
+            <FormItem {...singleFormItemLayout} label={`描述`}>
               {
-                getFieldDecorator(`tfRemark`)(
-                  <TextArea rows={2}/>
+                getFieldDecorator(`description`, {
+                  initialValue: record ? record.description : ''
+                })(
+                  <TextArea rows={2} placeholder="请输入" />
                 )
               }
             </FormItem>
@@ -243,4 +280,4 @@ class ItemsData extends PureComponent{
     )
   }
 }
-export default Form.create()(ItemsData);
+export default connect(state=>state)(Form.create()(ItemsData));
