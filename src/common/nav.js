@@ -1055,10 +1055,16 @@ export const getNavData = app => [
       component: dynamicWrapper(app, ['systemMgt/organization'], () => import('../routes/SystemMgt/organization/userMgt')),
     },
     {
-      name: "用门管理--添加",
+      name: "用户管理--添加",
       icon: 'setting',
       path: '/system/organization/userMgt/add',
       component: dynamicWrapper(app, ['systemMgt/organization'], () => import('../routes/SystemMgt/organization/userMgt/add')),
+    },
+    {
+      name: "用户管理--编辑",
+      icon: 'setting',
+      path: '/system/organization/userMgt/edit/:loginName',
+      component: dynamicWrapper(app, ['systemMgt/organization'], () => import('../routes/SystemMgt/organization/userMgt/edit')),
     },
     /* *********************** 系统管理  角色管理     ******************** */
     {
