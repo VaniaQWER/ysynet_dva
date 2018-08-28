@@ -13,7 +13,7 @@ export function userLogin(options){
   return request(`${_local}/a/login`,{ //登陆
     method: 'POST',
     type: 'formData',
-    credentials: 'omit',
+    credentials: 'include',
     body: options
   })
 }

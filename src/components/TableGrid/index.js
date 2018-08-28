@@ -86,7 +86,7 @@ class RemoteTable extends Component {
           }
           this.setState({
             loading: false,
-            data: data.data.list || (Array.isArray(data.data.list) ? data.data.list : []),
+            data: data.data.list || (Array.isArray(data.data.list) ? data.data.list : (Array.isArray(data.data) ? data.data : []) ) ,
             // fieldName: data.result.fieldName,
             pagination,
           });

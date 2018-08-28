@@ -34,7 +34,7 @@ class SearchForm extends PureComponent{
           <Col span={8}>
             <FormItem {...formItemLayout} label={`角色名称`}>
               {
-                getFieldDecorator(`userName`,{
+                getFieldDecorator(`name`,{
                   initialValue: ''
                 })(
                   <Input placeholder='请输入' />
@@ -113,11 +113,11 @@ class RoleMgt extends PureComponent{
     const columns = [
       {
         title: '角色名称',
-        dataIndex: 'userNo',
+        dataIndex: 'name',
       },
       {
         title: '备注',
-        dataIndex: 'remark',
+        dataIndex: 'remarks',
       },
       {
         title: '编辑人',
@@ -179,7 +179,7 @@ class RoleMgt extends PureComponent{
               this.setState({selectRowKeys})
             }
           }}
-          rowKey='staticDataGuid'
+          rowKey='id'
         />
 
       </div>
