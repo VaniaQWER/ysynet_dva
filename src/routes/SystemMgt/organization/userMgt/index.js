@@ -2,7 +2,7 @@
  * @Author: wwb 
  * @Date: 2018-08-21 14:27:32 
  * @Last Modified by: wwb
- * @Last Modified time: 2018-08-27 20:19:56
+ * @Last Modified time: 2018-08-28 19:20:31
  */
 
  /**
@@ -30,7 +30,30 @@ const singleFormItemLayout = {
 
 class SearchForm extends PureComponent{
   state = {
-    display: 'none'
+    display: 'block',
+    expand: true,
+    deptOptions: [], //所属科室
+    departmentOptions: [] //所属部门
+  }
+  componentWillMount = () =>{
+    let { dispatch } = this.props;
+    // 所属科室
+    dispatch({
+      type: 'Organization/getAllDeptByCondition',
+      payload: {},
+      callback: (data) =>{
+        this.setState({ deptOptions: data })
+      }
+    });
+    // 所属部门
+    dispatch({
+      type: 'Organization/getAllDepts',
+      payload: {},
+      callback: (data) =>{
+        this.setState({ departmentOptions: data })
+      }
+    });
+
   }
   toggle = () => {
     const { display, expand } = this.state;
@@ -50,7 +73,7 @@ class SearchForm extends PureComponent{
   }
   render(){
     const { getFieldDecorator } = this.props.form;
-    const { display, expand } = this.state;
+    const { display, expand, deptOptions, departmentOptions } = this.state;
     return (
       <Form className="ant-advanced-search-form" onSubmit={this.handleSearch}>
         <Row gutter={30}>
@@ -76,7 +99,7 @@ class SearchForm extends PureComponent{
               }
             </FormItem>
           </Col>
-          <Col span={8} style={{ display: display }}>
+          <Col span={8}>
             <FormItem {...formItemLayout} label={`所属科室`}>
               {
                 getFieldDecorator(`deptGuid`,{
@@ -95,12 +118,21 @@ class SearchForm extends PureComponent{
                 getFieldDecorator(`department`,{
                   initialValue: ''
                 })(
-                  <Input placeholder='请输入'/>
+                  <Select
+                  allowClear={true}
+                  showSearch
+                  filterOption={(input, option) => option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0}
+                  >
+                    <Option value=''>全部</Option>
+                    {
+                      departmentOptions.map((item,index)=> <Option key={index} value={item.id}>{item.deptName}</Option>)
+                    }
+                  </Select>
                 )
               }
             </FormItem>
           </Col>
-          <Col span={expand ? 16: 8} style={{ textAlign: 'right', marginTop: 4}} >
+          <Col span={expand ? 16: 24} style={{ textAlign: 'right', marginTop: 4}} >
            <Button type="primary" htmlType="submit">查询</Button>
            <Button type='default' style={{marginLeft: 8}} onClick={this.handleReset}>重置</Button>
            <a style={{marginLeft: 8, fontSize: 14}} onClick={this.toggle}>
@@ -113,20 +145,6 @@ class SearchForm extends PureComponent{
   }
 }
 const WrapperForm = Form.create()(SearchForm);
-let dataSource = [];
-for( let i = 0; i<20; i++ ){
-  dataSource.push({
-    id: i,
-    userNo: `sd_admin${i}`,
-    name: `sd_admin${i}`,
-    deptName: '武大科室',
-    department: '财务科',
-    userName: `唐僧${i}`,
-    editMan: '苏努悟空',
-    editTime: '2018-08-21-17:00'
-    
-  })
-}
 class UserMgt extends PureComponent{
   state = {
     loading: false,
@@ -150,7 +168,7 @@ class UserMgt extends PureComponent{
   resetPwd = (record,index) =>{
     console.log(record,index,'resetPwd');
     this.props.dispatch({
-      type: 'organization/ResetPwd',
+      type: 'Organization/ResetPwd',
       payload: { id: record.id },
       callback: () =>{
         this.refs.table.fetch(this.state.query);
@@ -170,7 +188,6 @@ class UserMgt extends PureComponent{
     history.push({ pathname: '/system/organization/userMgt/add' })
   }
   render(){
-    console.log(this.props,'props')
     const { visible, query } = this.state;
     const { getFieldDecorator } = this.props.form;
     const columns = [
@@ -213,7 +230,10 @@ class UserMgt extends PureComponent{
     ]
     return (
       <div className='ysynet-main-content'>
-        <WrapperForm query={this.queryHandle}/>
+        <WrapperForm 
+          query={this.queryHandle}
+          dispatch={this.props.dispatch}
+        />
         <div style={{ marginBottom: 24 }}>
           <Button type='primary' icon='plus' onClick={this.add}>新增用户</Button>
         </div>
@@ -222,7 +242,7 @@ class UserMgt extends PureComponent{
           columns={columns}
           bordered
           query={query}
-          url={systemMgt.FINDUSERLIST}
+          // url={systemMgt.FINDUSERLIST}
           scroll={{x: '100%'}}
           rowKey={'id'}
         />

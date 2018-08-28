@@ -2,6 +2,7 @@
  * 系统管理 - 组织机构
  */
 import * as supplierMgtService from '../../services/system/organization/supplierMgt';
+import * as userMgtService from '../../services/system/organization/userMgt';
 import { message } from 'antd';
 
 export default {
@@ -34,13 +35,37 @@ export default {
         message.error(data.msg);
       }
     },
-    //用户管理 重置密码
+    /******   用户管理  *****/
+    // 所属科室
+    *getAllDeptByCondition({ payload, callback },{ call }){
+      const data = yield call(userMgtService.getAllDeptByCondition, payload);
+      if(data.code !== 200){
+        message.error(data.msg ||'获取所属科室失败')
+      }
+      if(callback) callback();
+    },
+    // 所属部门
+    *getAllDepts({ payload, callback },{ call }){
+      const data = yield call(userMgtService.getAllDepts, payload);
+      if(data.code !== 200){
+        message.error(data.msg ||'获取所属部门失败')
+      }
+      if(callback) callback(data.data);
+    },
+    // 重置密码
     *ResetPwd({ payload, callback },{ put, call }){
-      /* const data = yield call(userMgtService.resetPwd, payload);
+      const data = yield call(userMgtService.resetPwd, payload);
       if(data.code !== 200){
         message.error(data.msg ||'重置密码失败')
       }
-      if(callback) callback(); */
+      if(callback) callback();
+    },
+    *getRoleInfo({ payload, callback },{ put, call }){
+      const data = yield call(userMgtService.getRoleInfo, payload);
+      if(data.code !== 200){
+        message.error(data.msg ||'获取所有得角色信息失败')
+      }
+      if(callback) callback(data.data);
     },
     
   },

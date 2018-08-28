@@ -2,7 +2,7 @@
  * @Author: wwb 
  * @Date: 2018-08-21 17:46:47 
  * @Last Modified by: wwb
- * @Last Modified time: 2018-08-27 17:14:56
+ * @Last Modified time: 2018-08-28 19:30:28
  */
  /**
  * @file 系统管理--组织机构--用户管理--添加
@@ -10,6 +10,7 @@
 import React, { PureComponent } from 'react';
 import { Form, Row, Col, Radio, Input, Button, Table, Affix, Modal } from 'antd';
 import { formItemLayout } from '../../../../utils/commonStyles';
+import { connect } from 'dva';
 // const Option = Select.Option;
 const RadioGroup = Radio.Group;
 const FormItem = Form.Item;
@@ -40,30 +41,11 @@ const deptDataSource = [{
 }]
 const distributUser = [{
   title: '角色名称',
-  dataIndex: 'userName'
+  dataIndex: 'roleName'
 },{
   title: '备注',
-  dataIndex: 'tfRemark'
+  dataIndex: 'remarks'
 }];
-const userDataSource = [
-  {
-    userName: '药库管理员',
-    tfRemark: '',
-    userId: '1',
-  },{
-    userName: '药库普通用户',
-    tfRemark: '',
-    userId: '2',
-  },{
-    userName: '系统管理',
-    tfRemark: '',
-    userId: '3',
-  },{
-    userName: '基数药管理员',
-    tfRemark: '',
-    userId: '4',
-  }
-];
 const modalColumns = [{
   title: '账号',
   dataIndex: 'userNo'
@@ -86,6 +68,7 @@ class AddUser extends PureComponent{
   state = {
     userType: '0',
     visible: false,
+    userDataSource: [],// 角色列表
     selected: [], // 所属部门
     selectedRows: [],
     userSelected: [], // 角色分配
@@ -93,9 +76,19 @@ class AddUser extends PureComponent{
     modalSelected: [], // 人员选择
     modalSelectedRows: []
   }
+  componentWillMount = () =>{
+    let { dispatch } = this.props;
+    dispatch({
+      type: 'Organization/getRoleInfo',
+      payload: {},
+      callback: (data) =>{
+        this.setState({ userDataSource: data })
+      }
+    });
+  }
   render(){
     const { getFieldDecorator } = this.props.form;
-    const { userType,visible } = this.state;
+    const { userType, visible, userDataSource } = this.state;
     return (
       <div>
       <div className='fullCol fadeIn'>
@@ -205,7 +198,7 @@ class AddUser extends PureComponent{
           <Table 
             columns={distributUser}
             bordered
-            rowKey={'userId'}
+            rowKey={'id'}
             dataSource={userDataSource}
             pagination={false}
             size={'small'}
@@ -275,4 +268,4 @@ class AddUser extends PureComponent{
     )
   }
 }
-export default Form.create()(AddUser) ;
+export default connect()(Form.create()(AddUser));
