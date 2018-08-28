@@ -55,10 +55,10 @@ class RemoteTable extends Component {
         body: body
       }).then(res => res.json())
         .then((data)=> {
-          if(!data.status){
+          if(data.code !== 200){
             message.error(data.msg);
           }
-          pagination.total = data.result.records;
+          pagination.total = data.data.count;
           pagination.showSizeChanger = true;
           pagination.pageSizeOptions=['10','20','30'];
           pagination.showQuickJumper = true;
@@ -68,14 +68,14 @@ class RemoteTable extends Component {
             pagination.current = 1;
           }
           if (typeof this.props.cb === 'function') {
-            this.props.cb(data.result.rows, data.result);
+            this.props.cb(data.data.list, data.data);
           }
           if (typeof this.props.getTotal === 'function') {
-            this.props.getTotal(data.result);
+            this.props.getTotal(data.data);
           }
           this.setState({
             loading: false,
-            data: data.result.rows || (Array.isArray(data.result) ? data.result : []),
+            data: data.data.list || (Array.isArray(data.data.list) ? data.data.list : []),
             // fieldName: data.result.fieldName,
             pagination,
           });
