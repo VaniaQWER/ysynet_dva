@@ -10,6 +10,7 @@ import React, { PureComponent } from 'react';
 import { Row, Button } from 'antd';
 import querystring from 'querystring';
 import { Link } from 'dva/router';
+import { menuFormat } from '../../../../utils/utils';
 import { systemMgt } from '../../../../api/systemMgt';
 import { DeptFormat } from '../../../../common/dic';
 import RemoteTable from '../../../../components/TableGrid';
@@ -85,6 +86,9 @@ class MenuMgt extends PureComponent{
             onChange:(selectRowKeys, selectedRows)=>{
               this.setState({selectRowKeys})
             }
+          }}
+          cb={(dataList,data)=>{
+            menuFormat(data)
           }}
           rowKey='id'
         />

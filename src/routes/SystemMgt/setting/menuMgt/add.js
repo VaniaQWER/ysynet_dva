@@ -9,6 +9,7 @@ import { Form, Row, Col, Input, Button, Select , Radio , Affix , Modal , Tree , 
 import { connect } from 'dva';
 import querystring from 'querystring';
 import { DeptSelect } from '../../../../common/dic';
+import { menuFormat } from '../../../../utils/utils';
 const FormItem = Form.Item;
 const { Option } = Select;
 const TreeNode = Tree.TreeNode;
@@ -62,7 +63,8 @@ class AddMenuMgt extends PureComponent{
       type:'sysSetting/MenuList',
       payload:{},
       callback:(data)=>{
-        this.setState({treeDataSource:data.data})
+        let ret = menuFormat(data.data,true) ;
+        this.setState({treeDataSource:ret})
       }
     })
   }
@@ -85,7 +87,7 @@ class AddMenuMgt extends PureComponent{
           payload: values,
           callback: (data) => {
             message.success('添加成功！')
-            this.props.history.push('/system/setting/menuMgt')
+            this.props.history.push('/sys/setting/menuMgt')
           }
         })
       }
@@ -95,7 +97,7 @@ class AddMenuMgt extends PureComponent{
   //取消 - 提交表单
   goBack = () => {
     const { history } = this.props;
-    history.push({pathname:'/system/setting/menuMgt'})
+    history.push({pathname:'/sys/setting/menuMgt'})
   }
 
   // 选择上级菜单 

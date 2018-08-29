@@ -10,6 +10,7 @@ import React, { PureComponent } from 'react';
 import { Form, Row, Col, Input, Affix ,Button, Card , message} from 'antd';
 import { connect } from 'dva';
 import { formItemLayout } from '../../../../utils/commonStyles';
+import { menuFormat } from '../../../../utils/utils';
 import { systemMgt } from '../../../../api/systemMgt';
 import RemoteTable from '../../../../components/TableGrid';
 const FormItem = Form.Item;
@@ -35,7 +36,7 @@ class AddRoleMgt extends PureComponent{
             callback: (data) => {
               console.log(data,'RoleSave')
               message.success('保存成功！')
-              this.props.history.push('/system/role/roleMgt')
+              this.props.history.push('/sys/role/roleMgt')
             }
           })
         }else{
@@ -48,7 +49,7 @@ class AddRoleMgt extends PureComponent{
   //取消 - 提交表单
   goBack = () => {
     const { history } = this.props;
-    history.push({pathname:'/system/role/roleMgt'})
+    history.push({pathname:'/sys/role/roleMgt'})
   }
 
 
@@ -112,6 +113,9 @@ class AddRoleMgt extends PureComponent{
               }
             }}
             rowKey='id'
+            cb={(dataList,data)=>{
+              menuFormat(data)
+            }}
           />
         </Card>
 

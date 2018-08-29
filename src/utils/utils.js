@@ -86,3 +86,52 @@ export const getMenuData  = (key, menuList) => {
     return [];
   }
 }
+
+
+export const menuFormat = (menuData,returnToggle) => {
+    let menuList = menuData ;
+    for (let i=0; i<menuList.length; i++) {
+      menuList[i].parentIds = menuList[i].parentIds.split(',')
+      menuList[i].parentIds.pop();
+      if(!menuList[i].children){
+        delete menuList[i].children
+      }
+    }
+    let index = 1, tree = [], currentNode = '';
+    menuList.sort(function(a, b) {
+      return a.parentIds.length - b.parentIds.length;
+    })
+
+    let max = menuList[menuList.length - 1].parentIds.length;
+
+    function genRoot(keyNodes, target) {
+      for (let i=0; i<target.length; i++) {
+        if (target[i].id === keyNodes.parentId) {
+          target[i].children = target[i].children || [];
+          target[i].children = [ ...target[i].children, keyNodes ]
+        } else if (target[i].children){
+          genRoot(keyNodes, target[i].children)
+        }
+      }
+    }
+    function genTree(index) {
+      for (let i=0; i<menuList.length; i++) {
+        if (menuList[i].parentIds.length === index) {
+          if (index === 2) {
+            tree.push(menuList[i])
+          } else {
+            genRoot(menuList[i], tree);
+          }
+        }
+      }
+    }
+    let min = 1;
+    while (min < max) {
+      genTree(min);
+      min++;
+    }
+    console.log(JSON.stringify(tree),'tree');
+    if(returnToggle){
+      return tree
+    }
+}

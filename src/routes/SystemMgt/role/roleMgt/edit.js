@@ -10,6 +10,7 @@ import React, { PureComponent } from 'react';
 import { Form, Row, Col, Input, Button , message} from 'antd';
 import { formItemLayout } from '../../../../utils/commonStyles';
 import { systemMgt } from '../../../../api/systemMgt';
+import { menuFormat } from '../../../../utils/utils';
 import RemoteTable from '../../../../components/TableGrid';
 import { connect } from 'dva';
 const FormItem = Form.Item;
@@ -39,7 +40,7 @@ class EditRoleMgt extends PureComponent{
           payload:postData,
           callback: (data) => {
             message.success('修改成功！')
-            this.props.history.push('/system/role/roleMgt')
+            this.props.history.push('/sys/role/roleMgt')
           }
         })
 
@@ -124,6 +125,9 @@ class EditRoleMgt extends PureComponent{
               onChange:(selectRowKeys, selectedRows)=>{
                 this.setState({selectRowKeys})
               }
+            }}
+            cb={(dataList,data)=>{
+              menuFormat(data)
             }}
             rowKey='id'
           />
