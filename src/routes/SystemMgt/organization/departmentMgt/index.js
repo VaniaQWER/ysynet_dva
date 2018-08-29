@@ -156,9 +156,13 @@ class DepartmentMgt extends PureComponent{
       if(!err){
         console.log(values)
         console.log(this.state.subModalSelectRowCache);//此数据为科室每次确认的最终数据
-        const { subModalSelectRowCache } = this.state;
+        const { subModalSelectRowCache , goodsModalSelectRowCache } = this.state;
         values.openDeptCode = subModalSelectRowCache.ctdCode;//ctdCode为编码 
+        if(values.deptType===5){//选择基数药的时候获取选中的Id
+          values.parentId = goodsModalSelectRowCache.id;
+        }
         delete values['openDeptName'] ;
+        console.log(JSON.stringify(values))
         this.props.dispatch({
           type:'Organization/OperSysDept',
           payload:values,
@@ -217,24 +221,30 @@ class DepartmentMgt extends PureComponent{
   //搜索货位弹窗
   searchGoodsModal = () => {
     console.log(this.state.goodsKeyword)
+    console.log(this.state.pharmacyKeyword)
+    let postData = {
+      deptName:this.state.pharmacyKeyword,
+      positionName:this.state.goodsKeyword
+    }
     //在此处发出请求，并且刷新货位弹窗中的table
+    this.refs.tableGoods.fetch(postData)
   }
 
   //选择货位 - 确定
   onSubmitGoodsModal = () =>{
-    console.log(this.state.subModalSelectRow)
+    console.log(this.state.goodsModalSelectRow)
     //当前选择货位后的信息-需要赋值给新增部门的文本框
     const { goodsModalSelectRow } = this.state;
     //存入缓存
     this.setState({goodsModalSelectRowCache:JSON.parse(JSON.stringify(goodsModalSelectRow)),goodsModalVisible:false  });
-    this.props.form.setFieldsValue({huowei:goodsModalSelectRow.deptName})
+    this.props.form.setFieldsValue({positionName:goodsModalSelectRow.positionName})
 
   }
    //选择货位 - 取消
   onCancelGoodsModal = () =>{
     const { goodsModalSelectRowCache } = this.state;
     this.setState({goodsModalVisible:false });
-    this.props.form.setFieldsValue({huowei:goodsModalSelectRowCache.deptName});
+    this.props.form.setFieldsValue({positionName:goodsModalSelectRowCache.positionName});
   }
 
 
@@ -289,7 +299,7 @@ class DepartmentMgt extends PureComponent{
     const goodsModalCol = [
       {
         title: '部门名称',
-        dataIndex: 'deptName',
+        dataIndex: 'deptCode',
       },
       {
         title: '货位名称',
@@ -358,7 +368,7 @@ class DepartmentMgt extends PureComponent{
                 getFieldDecorator(`openDeptName`,{//openDeptCode
                   rules: [{ required: true,message: '请输入科室' }]
                 })(
-                  <Input onClick={this.showDeptModal}/>
+                  <Input onClick={this.showDeptModal} readOnly/>
                 )
               }
             </FormItem>
@@ -369,7 +379,7 @@ class DepartmentMgt extends PureComponent{
                 getFieldDecorator(`positionName`,{
                   rules: [{ required: true,message: '请输入货位' }]
                 })(
-                  <Input onClick={this.showGoodsModal}/>
+                  <Input onClick={this.showGoodsModal} readOnly/>
                 )
               }
             </FormItem>:null
@@ -433,18 +443,18 @@ class DepartmentMgt extends PureComponent{
               onChange={(e)=>this.setState({goodsKeyword:e.target.value})}/>
 
               <Button className='button-gap' onClick={this.searchGoodsModal}>查询</Button>
-              <Button className='button-gap' onClick={()=>this.setState({goodsKeyword:'',pharmacyKeyword:''})}>重置</Button>
+              <Button className='button-gap' onClick={()=>{this.setState({goodsKeyword:'',pharmacyKeyword:''});this.refs.tableGoods.fetch({}) }}>重置</Button>
             </Row>
 
             
             <RemoteTable 
               ref='tableGoods'
               query={queryGoods}
-              isJson={true}
+              // isJson={true}
               style={{marginTop: 20}}
               columns={goodsModalCol}
               scroll={{ x: '100%' }}
-              url={systemMgt.getGoodsList}
+              url={systemMgt.getGoodsLocationInfo}
               rowClassName={ (record, index) => index === hasStyle ? 'rowClassBg' : ''}
               onRow={ (record, index) => {
                 return {

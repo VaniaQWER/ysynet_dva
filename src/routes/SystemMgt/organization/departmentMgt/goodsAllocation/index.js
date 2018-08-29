@@ -82,8 +82,6 @@ class GoodsAllocation extends PureComponent{
         if(values.positionType){
           values.positionType=Number(values.positionType);
         }
-        values.chargeInPerson = values.id? values.id:''
-        
         this.props.dispatch({
           type:'Organization/OperSysDept',
           payload:{goods:[values]},
@@ -110,7 +108,7 @@ class GoodsAllocation extends PureComponent{
   }
 
   render(){
-    const { visible , modalTitle , query , goosTypeSelect , getUserListSelect , record} = this.state;
+    const { visible , modalTitle , query , goosTypeSelect , getUserListSelect } = this.state;
     const { getFieldDecorator } = this.props.form;
     const columns = [
       {
@@ -135,7 +133,7 @@ class GoodsAllocation extends PureComponent{
       },
       {
         title: '货位责任人',
-        dataIndex: 'chargeInPerson',
+        dataIndex: 'personName',
       },
       {
         title: '操作',
@@ -216,9 +214,7 @@ class GoodsAllocation extends PureComponent{
             </FormItem>
             <FormItem {...singleFormItemLayout} label={`责任人`}>
               {
-                getFieldDecorator(`id`,{
-                  initialValue:record?record.id:''
-                })(
+                getFieldDecorator(`chargeInPerson`)(
                   <Select>
                     {
                       getUserListSelect.map(item=>(
