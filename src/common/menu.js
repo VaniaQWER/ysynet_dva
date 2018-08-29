@@ -785,12 +785,12 @@ const menu = [
         "icon": "setting",
         "subMenus": [
           {
-            "path": "/sys/setting/menuMgt",
+            "path": "/sys/menu",
             "level": 2,
             "fsort": 3010101,
             "name": "菜单管理",
             "id": "3010101",
-            "key": "/sys/setting/menuMgt",
+            "key": "/sys/menu",
             "parentId": "m303"
           },
           {

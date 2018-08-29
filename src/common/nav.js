@@ -1127,13 +1127,13 @@ export const getNavData = app => [
       name: "采购结算-补货管理--目录外采购",
       icon: 'setting',
       path: '/purchase/replenishment/outCatalogPurchase',
-      component: dynamicWrapper(app, [], () => import('../routes/Purchase/replenishment/outCatalogPurchase')),
+      component: dynamicWrapper(app, ['replenishment/replenish'], () => import('../routes/Purchase/replenishment/outCatalogPurchase')),
     },
     {
       name: "采购结算-补货管理--目录外采购--详情",
       icon: 'setting',
       path: '/purchase/replenishment/outCatalogPurchase/detail',
-      component: dynamicWrapper(app, [], () => import('../routes/Purchase/replenishment/outCatalogPurchase/detail')),
+      component: dynamicWrapper(app, ['replenishment/replenish'], () => import('../routes/Purchase/replenishment/outCatalogPurchase/detail')),
     },
     {
       name: "采购结算-补货管理--计划审核",

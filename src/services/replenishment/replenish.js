@@ -14,3 +14,11 @@ export function ReplenishDelete(options) {
     body: options
   })
 }
+
+export function typelist(options) {
+  return request(`${_local}/a/spd/dict/typelist`, {
+    methods: 'GET',
+    type: 'json',
+    body: options
+  })
+}

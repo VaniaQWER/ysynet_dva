@@ -2,7 +2,7 @@
  * @Author: wwb 
  * @Date: 2018-07-24 18:49:01 
  * @Last Modified by: wwb
- * @Last Modified time: 2018-08-21 20:34:47
+ * @Last Modified time: 2018-08-29 16:00:18
  */
 /**
  * @file 药库 - 补货管理--补货计划--新建计划
@@ -127,10 +127,19 @@ class NewAdd extends PureComponent{
             <h2>新建计划</h2>
             <hr className='hr'/>
           </div>
-          <div className='ant-row-bottom'> 
-            <Button type='primary' icon='plus' onClick={()=>this.setState({ visible: true })}>添加产品</Button>
-            <Button type='default' style={{ marginLeft: 8 }}>删除</Button>
-          </div>
+          <Row>
+            <Col span={6}>
+              <FormItem labelCol={{ span: 6 }} wrapperCol={{ span: 18 }} label={`采购部门`}>
+                <Select style={{ width: 200 }}>
+                  <Option value=''>请选择</Option>
+                </Select>
+              </FormItem>
+            </Col>
+            <Col span={6}>
+              <Button type='primary' icon='plus' onClick={()=>this.setState({ visible: true })}>添加产品</Button>
+              <Button type='default' style={{ marginLeft: 8 }}>删除</Button>
+            </Col>
+          </Row>
         </Affix>
         <Modal
           title={'添加产品'}

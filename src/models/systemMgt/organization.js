@@ -62,7 +62,8 @@ export default {
     *getAllDeptByCondition({ payload, callback },{ call }){
       const data = yield call(userMgtService.getAllDeptByCondition, payload);
       if(data.code !== 200){
-        message.error(data.msg ||'获取所属科室失败')
+        if(callback) callback([]);
+        return message.error(data.msg ||'获取所属科室失败');
       }
       if(callback) callback(data.data);
     },

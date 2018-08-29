@@ -2,16 +2,16 @@
  * @Author: wwb 
  * @Date: 2018-07-24 16:08:53 
  * @Last Modified by: wwb
- * @Last Modified time: 2018-08-06 22:01:33
+ * @Last Modified time: 2018-08-29 15:52:42
  */
 
 /**
  * @file 药库 - 补货管理--补货计划
  */
 import React, { PureComponent } from 'react';
-import { Form, Button, Table, message, Tooltip, DatePicker, Select, Row, Col, Input,Icon  } from 'antd';
+import { Form, Button, message, Tooltip, DatePicker, Select, Row, Col, Input,Icon  } from 'antd';
 import { Link } from 'react-router-dom';
-import { createData } from '../../../../common/data';
+import RemoteTable from '../../../../components/TableGrid';
 const FormItem = Form.Item;
 const { RangePicker } = DatePicker;
 const { Option } = Select;
@@ -36,6 +36,22 @@ class SearchForm extends PureComponent{
       display: display === 'none' ? 'block' : 'none',
       expand: !expand
     })
+  }
+  handleSearch = e => {
+    e.preventDefault();
+    this.props.form.validateFields((err, values) => {
+      if (!err) {
+        values.startTime = values.orderTime[0].format('YYYY-MM-DD HH:mm');
+        values.endTime = values.orderTime[1].format('YYYY-MM-DD HH:mm');
+        console.log(values, '查询条件');
+        this.props.query(values);
+      }
+    })
+  }
+  //重置
+  handleReset = () => {
+    this.props.form.resetFields();
+    this.props.query({});
   }
   render(){
     const { getFieldDecorator } = this.props.form;
@@ -110,7 +126,7 @@ class PlanCheck extends PureComponent{
     selected: [],
     selectedRows: [],
     loading: false,
-    dataSource: createData()
+    query: {},
   }
   delete = () =>{
     const dataSource = this.state.dataSource;
@@ -134,7 +150,12 @@ class PlanCheck extends PureComponent{
       },500)
     }
   }
+  queryHandle = (query) => {
+    this.refs.table.fetch(query);
+    this.setState({ query })
+  }
   render(){
+    const { query } = this.state;
     const columns = [{
       title: '计划单号',
       dataIndex: 'planNo',
@@ -184,25 +205,20 @@ class PlanCheck extends PureComponent{
         render:(text)=>(
           <Tooltip placement="topLeft" title={text}>{text}</Tooltip>
         )
-    },];
+    }];
     return (
       <div className='ysynet-main-content'>
-         <WrapperForm />
+         <WrapperForm query={this.queryHandle}/>
          <div className='ant-row-bottom'>
             <Button type='primary' onClick={this.delete} style={{ marginLeft: 8 }}>批量通过</Button>
          </div>
-         <Table 
+         <RemoteTable 
+          ref='table'
+          query={query}
           columns={columns}
           bordered
-          loading={this.state.loading}
-          dataSource={this.state.dataSource}
           scroll={{ x: '130%' }}
           rowKey={'id'}
-          pagination={{
-            size: "small",
-            showQuickJumper: true,
-            showSizeChanger: true
-          }}
           rowSelection={{
             selectedRowKeys: this.state.selected,
             onChange: (selectedRowKeys, selectedRows) => {
