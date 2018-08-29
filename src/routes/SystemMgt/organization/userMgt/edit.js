@@ -2,7 +2,7 @@
  * @Author: wwb 
  * @Date: 2018-08-21 17:46:47 
  * @Last Modified by: wwb
- * @Last Modified time: 2018-08-29 21:29:01
+ * @Last Modified time: 2018-08-29 23:57:20
  */
  /**
  * @file 系统管理--组织机构--用户管理--编辑
@@ -136,10 +136,17 @@ class AddUser extends PureComponent{
             rowKey={'id'}
             loading={loading}
             dataSource={baseData.listDept}
-            pagination={false}
             size={'small'}
             scroll={{ x: '100%' }}
+            pagination={{
+              size: 'small',
+              showQuickJumper: true,
+              showSizeChanger: true
+            }}
             rowSelection={{
+              getCheckboxProps: record => ({
+                defaultChecked: record.checked === 1
+              }),
               selectedRowKeys: this.state.selected,
               onChange: (selectedRowKeys, selectedRows) => {
                 this.setState({selected: selectedRowKeys, selectedRows: selectedRows})
@@ -156,10 +163,17 @@ class AddUser extends PureComponent{
             rowKey={'id'}
             loading={loading}
             dataSource={baseData.listRole}
-            pagination={false}
             size={'small'}
             scroll={{ x: '100%' }}
+            pagination={{
+              size: "small",
+              showQuickJumper: true,
+              showSizeChanger: true
+            }}
             rowSelection={{
+              getCheckboxProps: record => ({
+                defaultChecked: record.checked === 1
+              }), 
               selectedRowKeys: this.state.userSelected,
               onChange: (selectedRowKeys, selectedRows) => {
                 this.setState({userSelected: selectedRowKeys, UserselectedRows: selectedRows})
