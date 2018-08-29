@@ -11,12 +11,12 @@ class BasicLayout extends PureComponent {
     collapsed: false,
     title: {}
   }
-  componentWillMount = () =>{
+  /* componentWillMount = () =>{
     this.props.dispatch({
       type:'users/getUserM',
       payload: {}
     })
-  }
+  } */
   toggle = () => {
     this.setState({
       collapsed: !this.state.collapsed,

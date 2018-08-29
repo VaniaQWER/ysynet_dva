@@ -2,7 +2,7 @@
  * @Author: wwb 
  * @Date: 2018-08-21 14:27:32 
  * @Last Modified by: wwb
- * @Last Modified time: 2018-08-28 22:25:06
+ * @Last Modified time: 2018-08-28 22:36:39
  */
 
  /**
@@ -165,7 +165,6 @@ class UserMgt extends PureComponent{
   }
   // 重置密码
   resetPwd = (record,index) =>{
-    console.log(record,index,'resetPwd');
     this.props.dispatch({
       type: 'Organization/ResetPwd',
       payload: { loginName: record.loginName },

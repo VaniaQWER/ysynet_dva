@@ -5,22 +5,23 @@ export default {
   namespace: 'users',
   state:{
     userInfo: {
-      deptInfo: []
-    }
+      deptInfo: [],
+    },
+    currentMenuList: []
   },
   reducers: {
-    userMenu(state,action){
-      return {
-        ...state,
-        menuList: action.payload
-      }
-    },
     userInfo(state,action){
       return {
         ...state,
         userInfo: action.payload
       }
     },
+    saveCurrentMenu(state,action){
+      return {
+        ...state,
+        currentMenuList: action.payload.menu
+      }
+    }
   },
   effects:{
     // 密码加密
@@ -40,13 +41,8 @@ export default {
       yield put({ type: 'userInfo',payload: data.data });
       if(callback) callback(data.data);
     },
-    *test({ payload,callback },{ call }){
-      const data = yield call(usersService.test,payload);
-      console.log(data,'datasfs')
-    },
-    *setCookie({ payload,callback },{ call }){
-      const data = yield call(usersService.setCookie,payload);
-      console.log(data);
+    *setCurrentMenu({ payload },{ put }){
+      yield put({ type: 'saveCurrentMenu', payload })
     }
   },
   subscriptions: {

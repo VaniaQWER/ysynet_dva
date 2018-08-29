@@ -109,6 +109,17 @@ export default {
       if(callback) callback(data.data);
     },
     
+    // 编辑用户信息
+    *operUserInfo({ payload, callback },{ put, call }){
+      const data = yield call(userMgtService.operUserInfo, payload);
+      if(data.code === 200 && data.msg === 'success'){
+        message.success('编辑成功');
+      }else{
+        message.error(data.msg ||'获取所有得角色信息失败')
+      }
+      if(callback) callback(data.data);
+    },
+    
   },
   subscriptions: {}
 }

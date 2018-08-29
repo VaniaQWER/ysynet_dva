@@ -2,7 +2,7 @@
  * @Author: wwb 
  * @Date: 2018-08-21 17:46:47 
  * @Last Modified by: wwb
- * @Last Modified time: 2018-08-28 22:29:32
+ * @Last Modified time: 2018-08-28 23:27:30
  */
  /**
  * @file 系统管理--组织机构--用户管理--编辑
@@ -32,6 +32,7 @@ const distributUser = [{
 class AddUser extends PureComponent{
   state = {
     baseData: {},// 用户详情信息
+    phone: '',
     loading: false,
     selected: [], // 所属部门
     selectedRows: [],
@@ -52,7 +53,27 @@ class AddUser extends PureComponent{
     })
   }
   save = () =>{
-    console.log('save')
+    let userInfo = {}, deptList = [];
+    let { selectedRows, userSelected, baseData } = this.state;
+    selectedRows.map((item,index)=>{
+      return deptList.push({
+        deptType: item.deptType,
+        id: item.id
+      })
+    })
+    userInfo.deptList = deptList;
+    userInfo.roleList = userSelected;
+    userInfo.loginName = baseData.loginName;
+    userInfo.name = baseData.userName;
+    userInfo.phone = this.state.phone;
+    console.log(userInfo,'userInfo');
+    /* this.props.dispatch({
+      type: 'Organization/operUserInfo',
+      payload: { userInfo },
+      callback: () =>{
+        
+      } 
+    })*/
   }
   render(){
     const { baseData, loading } = this.state;
@@ -90,7 +111,7 @@ class AddUser extends PureComponent{
               </div>
               <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-19">
                 <div className='ant-form-item-control'>
-                  <Input  style={{ width: 200 }} defaultValue={baseData.phone ? baseData.phone: ''} ref='phone'/>
+                  <Input  style={{ width: 200 }} defaultValue={baseData.phone ? baseData.phone: ''} onBlur={(e)=>this.setState({ phone: e.target.value })}/>
                 </div>
               </div>
             </Col>

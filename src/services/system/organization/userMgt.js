@@ -48,9 +48,17 @@ export function findUserInfo(options){
 }
 
 export function getFilterCareProv(options){
-  return request(`${_local}/a/his/getFilterCareProv`,{ //用户管理--获取角色信息详情
+  return request(`${_local}/a/his/getFilterCareProv`,{ //用户管理--获取用户信息
     method: 'GET',
     type: 'formData',
+    body: options
+  })
+}
+
+export function operUserInfo(options){
+  return request(`${_local}/a/his/operUserInfo`,{ //用户管理--编辑用户信息
+    method: 'POST',
+    type: 'json',
     body: options
   })
 }
