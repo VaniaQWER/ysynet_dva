@@ -113,7 +113,7 @@ class SiderMenu extends PureComponent{
     const keys = pathname.split('/');
     let selectedKeys = '', newOpenKeys = [];
     selectedKeys = pathname;
-    newOpenKeys = openKeys.length ? openKeys : [ keys.slice(0, 2).join('/') ];
+    newOpenKeys = openKeys.length ? openKeys : [ keys.slice(0, 3).join('/') ];
     this.setState({selectedKeys, openKeys: newOpenKeys});
   }
   componentWillMount = () => {

@@ -12,8 +12,8 @@ class SubSystem extends PureComponent {
   }
  
   render() {
-    console.log(this.props,'props');
-    console.log(this.props.users.userInfo.deptInfo,'deptInfo');
+    /* console.log(this.props,'props');
+    console.log(this.props.users.userInfo.deptInfo,'deptInfo'); */
     // let { deptInfo } = this.props.users.userInfo;
     return (
       <div className={styles.container}>

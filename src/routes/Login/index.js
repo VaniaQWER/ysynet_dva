@@ -83,7 +83,9 @@ class Login extends PureComponent{
             payload: { menu : tree[0].children[0] }
           })
           // history.push({ pathname: href })
-          history.push({ pathname: '/subSystem' })
+          // history.push({ pathname: '/subSystem' })
+          history.push({ pathname: '/sys/drugDirectory/directory' })
+
         }
       }
     })

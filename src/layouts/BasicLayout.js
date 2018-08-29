@@ -22,6 +22,9 @@ class BasicLayout extends PureComponent {
       collapsed: !this.state.collapsed,
     });
   }
+  handleClick = (e) =>{
+    console.log(e,'e')
+  }
   menu = (list,deptId) => (
     <Menu 
       selectable
