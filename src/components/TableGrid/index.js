@@ -41,7 +41,15 @@ class RemoteTable extends Component {
     this.setState({ loading: true, searchParams: params });
     if(url){
       let pagination = this.state.pagination;
-      const body = JSON.stringify({
+      let dataMethod, contentType;
+      if(this.props.isJson) {
+        dataMethod = JSON.stringify;
+        contentType = 'application/json';
+      }else {
+        dataMethod = querystring.stringify;
+        contentType = 'application/x-www-form-urlencoded';
+      }
+      const body = dataMethod({
         pageSize: pagination.pageSize ?  pagination.pageSize : ( this.props.pagesize || this.defaultPageSize ),
         ...params,
         ...catchData
@@ -56,7 +64,7 @@ class RemoteTable extends Component {
          bodyProps={
           body:body,
           headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': contentType
           },
         }
       }
@@ -109,10 +117,10 @@ class RemoteTable extends Component {
     const { columns, rowKey, rowClassName, 
             rowSelection, scroll, footer,showHeader,title } = this.props;   
             console.log(this.state.pagination);
-            
+
     return (
       <Table 
-       onRow={this.props.onRow || null}
+        onRow={this.props.onRow || null}
         style={this.props.style}
         columns={columns || null}
         rowKey={rowKey}
