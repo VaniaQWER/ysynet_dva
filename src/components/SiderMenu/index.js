@@ -6,6 +6,42 @@ import styles from './style.css';
 import { getMenuData } from '../../utils/utils'
 const SubMenu = Menu.SubMenu;
 // 使用递归创建菜单
+/* const createMenu = menuList => {
+  return (
+    Array.isArray(menuList.children) ? menuList.children.map((menu, index) => {
+      let key;
+      if(menu.children){
+        let href = menu.children[0].href;
+        if(href){
+          let hrefArr = href.split('/');
+          key = hrefArr.slice(0,2).join('/');
+        }
+      }
+      return (
+        menu.children && menu.name ? (
+          <SubMenu
+            className='ysy-menu-Item'
+            key={key?key: menu.id} 
+            title={<span><Icon type={menu.icon} /><span>{menu.name}</span></span>}
+          >
+            { createMenu(menu) }
+          </SubMenu>
+        ) : (
+          menu.name ? 
+          <Menu.Item name={menu.name} key={menu.href.substring(0,menu.href.length-1)} href={menu.href} className='ysy-subMneu-Item'>
+            <Icon type={menu.icon} />
+            <span> { menu.name } </span>
+          </Menu.Item> : null
+        )
+      )
+    }) : (
+      <Menu.Item name={menuList.name} key={menuList.key} href={menuList.href}>
+        <Icon type={menuList.icon} />
+        <span> { menuList.name } </span>
+      </Menu.Item>
+    )
+  )
+} */
 const createMenu = menuList => {
   return (
     Array.isArray(menuList) ? menuList.map((menu, index) => {
@@ -39,7 +75,6 @@ class SiderMenu extends PureComponent{
   state = {
     selectedKeys: [],
     openKeys: [],
-    firstTime: true,
     recordKeys: []//修复官方hover bug
   };
   setSubTitle = (menuList,path) =>{
@@ -83,7 +118,7 @@ class SiderMenu extends PureComponent{
   }
   componentWillMount = () => {
     this.changeActiveKeys();
-    this.setSubTitle(menu)
+    // this.setSubTitle(menu)
   }
   onOpenChange = openKeys => {
     let changeKey = openKeys.length ? openKeys[openKeys.length - 1] : [];
@@ -110,23 +145,19 @@ class SiderMenu extends PureComponent{
     if (nextProps.collapsed) {
       this.setState({ openKeys: [] })
     }
-    /* if( this.state.firstTime && nextProps.users.menuList !== this.props.users.menuList){
-      this.setSubTitle(nextProps.users.menuList);
-      this.setState({ firstTime: false })
-    } */
   }
   render(){
     const { history } = this.props;
+    // let menu = this.props.users.currentMenuList;
     const { selectedKeys, openKeys } = this.state;
     return (
     <div>
       <div className='logoWrapper'>
-        {/* <img src={require('../../assets/logo.png')} alt='logo' className='logo'/>
-        <h1 className='logoDesc'>P H X L</h1> */}
         <div className='logo'></div>
       </div>
       {
-        menu && menu.length ? //menuList && menuList.length ?
+        // menu.children && menu.children.length ?
+        menu && menu.length ?
         <Menu 
           className={styles.fullscreen}
           theme="light" 
@@ -140,6 +171,13 @@ class SiderMenu extends PureComponent{
               // this.setSubTitle(this.props.users.menuList, `${item.key}`)
               this.setSubTitle(menu, `${item.key}`)
               history.push({pathname: `${item.key}`})
+            /* }
+            let href = item.item.props.href;
+            href = href.substring(0,href.length-1)
+            if (pathname !== href){
+              // this.setSubTitle(this.props.users.menuList, `${item.key}`)
+              // this.setSubTitle(menu, `${item.key}`)
+              history.push({pathname: href}) */
             }else{
               message.info('您正位于该页面')
             }
@@ -147,6 +185,7 @@ class SiderMenu extends PureComponent{
         >
           {
             createMenu(getMenuData(history.location.pathname.split('/')[1], menu))
+            // createMenu(menu)
           }
           </Menu> :
           <Spin tip="数据加载中" style={{width: '100%', height: 200, marginTop: 200}}/>

@@ -2,7 +2,7 @@
  * @Author: wwb 
  * @Date: 2018-08-28 17:42:54 
  * @Last Modified by: wwb
- * @Last Modified time: 2018-08-28 17:43:58
+ * @Last Modified time: 2018-08-29 10:34:43
  */
 
 import React , {PureComponent} from 'react';
@@ -161,12 +161,12 @@ const columns = [{
 },
 {
   title: '剂型',
-  dataIndex: 'ctmmDosageFormDesc'
+  dataIndex: 'ctmmDosageFormDesc',
+  width: 150
 },
 {
   title: '包装规格',
   dataIndex: 'ctmmPackingUnit',
-  width: 100,
 },
 {
   title: '批准文号',
@@ -197,7 +197,7 @@ class DrugDirectory extends PureComponent{
           type: "drugDirectory/addMedicine",
           payload: {hisCtMedicineMaterial: values},
           callback: () =>{
-            this.setState({ visible: false, addLoading: false });
+            this.setState({ addVisible: false, addLoading: false });
             this.refs.table.fetch(this.state.query);
           }
         })
@@ -296,23 +296,14 @@ class DrugDirectory extends PureComponent{
                   )
                 }
               </FormItem>
+             
+            </Col>
+            <Col span={10} push={1}>
               <FormItem {...singleFormItemLayout} label={`批准文号`}>
                 {
                   getFieldDecorator(`approvalNo`,{
                     initialValue: '',
                     rules: [{ required: true,message: '请输入批准文号' }]
-                  })(
-                    <Input placeholder='请输入' />
-                  )
-                }
-              </FormItem>
-            </Col>
-            <Col span={10} push={1}>
-              <FormItem {...singleFormItemLayout} label={`默认供应商`}>
-                {
-                  getFieldDecorator(`ctmmManufacturerName`,{
-                    initialValue: '',
-                    rules: [{ required: true,message: '请输入默认供应商' }]
                   })(
                     <Input placeholder='请输入' />
                   )
@@ -333,30 +324,6 @@ class DrugDirectory extends PureComponent{
                   getFieldDecorator(`spec`,{
                     initialValue: '',
                     rules: [{ required: true,message: '请输入最小发药单位' }]
-                  })(
-                    <Input placeholder='请输入' />
-                  )
-                }
-              </FormItem>
-              <FormItem {...singleFormItemLayout} label={`采购单位`}>
-                {
-                  getFieldDecorator(`ctmmDosUom`,{
-                    initialValue: '',
-                    rules: [{ required: true,message: '请选择采购单位' }]
-                  })(
-                    <Select>
-                      <Option key={-1} value=''>请选择</Option>
-                      <Option key={1} value='个'>个</Option>
-                      <Option key={2} value='颗'>颗</Option>
-                    </Select>
-                  )
-                }
-              </FormItem>
-              <FormItem {...singleFormItemLayout} label={`采购价格`}>
-                {
-                  getFieldDecorator(`ctmmRetailPrice`,{
-                    initialValue: '',
-                    rules: [{ required: true,message: '请输入采购价格' }]
                   })(
                     <Input placeholder='请输入' />
                   )

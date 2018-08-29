@@ -684,122 +684,122 @@ const menu = [
     "parentId": "m3"
   },
   {
-    "path": "/system",
+    "path": "/sys",
     "level": 0,
     "fsort": 301,
     "name": "系统管理",
     "icon": "table",
     "id": "m301",
-    "key": "/system",
+    "key": "/sys",
     "parentId": "m3",
     "subMenus": [
       {
-        "path": "/system/drugDirectory",
+        "path": "/sys/drugDirectory",
         "level": 1,
         "fsort": 30101,
         "name": "药品目录",
         "id": "30101",
-        "key": "/system/drugDirectory",
+        "key": "/sys/drugDirectory",
         "parentId": "m301",
         "icon": "book",
         "subMenus": [
           {
-            "path": "/system/drugDirectory/directory",
+            "path": "/sys/drugDirectory/directory",
             "level": 2,
             "fsort": 3010101,
             "name": "药品目录",
             "id": "3010101",
-            "key": "/system/drugDirectory/directory",
+            "key": "/sys/drugDirectory/directory",
             "parentId": "m303"
           },
         ]
       },
       {
-        "path": "/system/organization",
+        "path": "/sys/organization",
         "level": 1,
         "fsort": 30101,
         "name": "组织机构",
         "id": "30101",
-        "key": "/system/organization",
+        "key": "/sys/organization",
         "parentId": "m301",
         "icon": "usb",
         "subMenus": [
           {
-            "path": "/system/organization/supplierMgt",
+            "path": "/sys/organization/supplierMgt",
             "level": 2,
             "fsort": 3010101,
             "name": "供应商管理",
             "id": "3010101",
-            "key": "/system/organization/supplierMgt",
+            "key": "/sys/organization/supplierMgt",
             "parentId": "m303"
           },
           {
-            "path": "/system/organization/departmentMgt",
+            "path": "/sys/organization/departmentMgt",
             "level": 2,
             "fsort": 3010101,
             "name": "部门管理",
             "id": "3010101",
-            "key": "/system/organization/departmentMgt",
+            "key": "/sys/organization/departmentMgt",
             "parentId": "m303"
           },
           {
-            "path": "/system/organization/userMgt",
+            "path": "/sys/organization/userMgt",
             "level": 2,
             "fsort": 3010101,
             "name": "用户管理",
             "id": "3010101",
-            "key": "/system/organization/userMgt",
+            "key": "/sys/organization/userMgt",
             "parentId": "m303"
           },
         ]
       },
       {
-        "path": "/system/role",
+        "path": "/sys/role",
         "level": 1,
         "fsort": 30101,
         "name": "角色管理",
         "id": "30101",
-        "key": "/system/role",
+        "key": "/sys/role",
         "parentId": "m301",
         "icon": "user",
         "subMenus": [
           {
-            "path": "/system/role/roleMgt",
+            "path": "/sys/role/roleMgt",
             "level": 2,
             "fsort": 3010101,
             "name": "角色管理",
             "id": "3010101",
-            "key": "/system/role/roleMgt",
+            "key": "/sys/role/roleMgt",
             "parentId": "m303"
           },
         ]
       },
       {
-        "path": "/system/setting",
+        "path": "/sys/setting",
         "level": 1,
         "fsort": 30101,
         "name": "系统设置",
         "id": "30101",
-        "key": "/system/setting",
+        "key": "/sys/setting",
         "parentId": "m301",
         "icon": "setting",
         "subMenus": [
           {
-            "path": "/system/setting/menuMgt",
+            "path": "/sys/setting/menuMgt",
             "level": 2,
             "fsort": 3010101,
             "name": "菜单管理",
             "id": "3010101",
-            "key": "/system/setting/menuMgt",
+            "key": "/sys/setting/menuMgt",
             "parentId": "m303"
           },
           {
-            "path": "/system/setting/itemsData",
+            "path": "/sys/setting/itemsData",
             "level": 2,
             "fsort": 3010101,
             "name": "字典管理",
             "id": "3010101",
-            "key": "/system/setting/itemsData",
+            "key": "/sys/setting/itemsData",
             "parentId": "m303"
           },
         ]

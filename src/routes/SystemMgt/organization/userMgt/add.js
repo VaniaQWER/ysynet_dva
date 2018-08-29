@@ -2,7 +2,7 @@
  * @Author: wwb 
  * @Date: 2018-08-21 17:46:47 
  * @Last Modified by: wwb
- * @Last Modified time: 2018-08-28 21:23:30
+ * @Last Modified time: 2018-08-28 22:06:19
  */
  /**
  * @file 系统管理--组织机构--用户管理--添加
@@ -38,11 +38,25 @@ const modalColumns = [{
   dataIndex: 'userNo'
 },{
   title: '姓名',
-  dataIndex: 'name'
+  dataIndex: 'ctcpName'
 },{
   title: '所属科室',
-  dataIndex: 'deptName'
+  dataIndex: 'ctcpDeptCode'
 }];
+const modalDataSource = [
+  {
+    "ctcpDeptCode": '科室1',
+    'ctcpCode': '1',
+    'id': '1',
+    'ctcpName': '姓名1',
+  },
+  {
+    "ctcpDeptCode": '科室2',
+    'ctcpCode': '2',
+    'id': '2',
+    'ctcpName': '姓名2',
+  }
+]
 class AddUser extends PureComponent{
   state = {
     userType: '0',
@@ -89,7 +103,7 @@ class AddUser extends PureComponent{
   }
   render(){
     const { getFieldDecorator } = this.props.form;
-    const { userType, visible, deptDataSource, userDataSource, userLoading, deptLoading, modalDataSource } = this.state;
+    const { userType, visible, deptDataSource, userDataSource, userLoading, deptLoading } = this.state;
     return (
       <div>
       <div className='fullCol fadeIn'>

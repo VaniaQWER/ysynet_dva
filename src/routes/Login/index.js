@@ -71,17 +71,20 @@ class Login extends PureComponent{
           }
           
           let min = 1;
-          while (min < max) {
+          while (min < max + 1) {
             genTree(min);
             min++;
           }
           console.log(tree,'tree');
-          console.log(tree[0].children[0])
+          console.log(tree[0].children[0]);
+          let href = tree[0].children[0].children[0].children[0].href;
+          href = href.substring(0,href.length-1);
           this.props.dispatch({
             type: 'users/setCurrentMenu',
             payload: { menu : tree[0].children[0] }
           })
-          // history.push({ pathname: '/subSystem' })/
+          // history.push({ pathname: href })
+          history.push({ pathname: '/subSystem' })
         }
       }
     })

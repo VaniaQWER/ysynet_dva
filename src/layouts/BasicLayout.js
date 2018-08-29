@@ -30,6 +30,7 @@ class BasicLayout extends PureComponent {
         <Sider
           trigger={null}
           collapsible
+          width={232}
           collapsed={this.state.collapsed}
           style={{
             backgroundColor: '#fff'

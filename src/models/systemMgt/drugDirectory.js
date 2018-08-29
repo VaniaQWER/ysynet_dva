@@ -21,7 +21,9 @@ export default {
     },
     *addMedicine({ payload, callback },{ put, call }){
       const data = yield call(drugDirectoryService.operMedicineInfo, payload);
-      if(data.code !== 200 ){
+      if(data.code === 200 ){
+        message.success('添加成功');
+      }else{
         message.error(data.msg||'添加失败');
       }
       if(callback) callback();

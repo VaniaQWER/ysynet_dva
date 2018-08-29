@@ -25,7 +25,7 @@ class MenuMgt extends PureComponent{
   add = () =>{
     //跳转至添加菜单页面
     const {history} = this.props;
-    history.push('/system/setting/menuMgt/add');
+    history.push('/sys/menu/add');
   }
 
   render(){
@@ -62,8 +62,8 @@ class MenuMgt extends PureComponent{
         dataIndex: 'action',
         render: (text,record,index)=>{
           return <span>
-            <Link className='button-gap' to={{pathname:`/system/setting/menuMgt/add/${querystring.stringify({id:record.id,parentId:record.parentId})}`}}>编辑</Link>
-            <Link className='button-gap' to={{pathname: `/system/setting/menuMgt/add/${querystring.stringify({parentId:record.id,parentName:record.name})}` ,state:record }}>添加下级菜单</Link>
+            <Link className='button-gap' to={{pathname:`/sys/menu/add/${querystring.stringify({id:record.id,parentId:record.parentId})}`}}>编辑</Link>
+            <Link className='button-gap' to={{pathname: `/sys/menu/add/${querystring.stringify({parentId:record.id,parentName:record.name})}` ,state:record }}>添加下级菜单</Link>
           </span>
         }
       }
