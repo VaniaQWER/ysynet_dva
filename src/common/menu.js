@@ -764,12 +764,12 @@ const menu = [
         "icon": "user",
         "subMenus": [
           {
-            "path": "/sys/role/roleMgt",
+            "path": "/sys/role",
             "level": 2,
             "fsort": 3010101,
             "name": "角色管理",
             "id": "3010101",
-            "key": "/sys/role/roleMgt",
+            "key": "/sys/role",
             "parentId": "m303"
           },
         ]
