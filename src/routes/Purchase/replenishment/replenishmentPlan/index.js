@@ -50,6 +50,7 @@ class SearchForm extends PureComponent{
           values.startTime = createDate[0].format('YYYY-MM-DD');
           values.endTime = createDate[1].format('YYYY-MM-DD');
         }
+        values.planType = '1';
         console.log('搜索条件：', values);
         this.props.query(values);
       }
@@ -78,12 +79,16 @@ class SearchForm extends PureComponent{
                 getFieldDecorator(`auditStatus`,{
                   initialValue: ''
                 })(
-                  <Select className={'ysynet-formItem-width'}>
+                  <Select
+                    className={'ysynet-formItem-width'}
+                    showSearch
+                    optionFilterProp="children"
+                    filterOption={(input, option) => option.props.children.indexOf(input) >= 0}
+                  >
                     <Option value=''>全部</Option>
-                    <Option value={1}>草稿</Option>
-                    <Option value={2}>待审核</Option>
-                    <Option value={3}>驳回</Option>
-                    <Option value={4}>完成</Option>
+                    {
+                      this.props.typeListDate.map((item, index) => <Option value={item.label} key={index}>{item.label}</Option>)
+                    }
                   </Select>
                 )
               }
@@ -130,9 +135,20 @@ const WrapperForm = Form.create()(SearchForm);
 class ReplenishmentPlan extends PureComponent {
   state = {
     loading: false,
-    query: {},
+    query: { planType: '1' },
     selectedRowKeys: [],
-    selectedRows: []
+    selectedRows: [],
+    typeListDate: []
+  }
+  componentDidMount = () => {
+    // 状态下拉框
+    this.props.dispatch({
+      type:'replenish/typelist',
+      payload: { type: 'plan_status' },
+      callback:(data)=>{
+        this.setState({ typeListDate: data });
+      }
+    });
   }
   queryHandle = query => {
     this.refs.table.fetch(query);
@@ -140,15 +156,17 @@ class ReplenishmentPlan extends PureComponent {
   }
   delete = () => {
     if (this.state.selectedRows.length > 0) {
-      if (this.state.selectedRowKeys) {
+      const planCode = [];
+      this.state.selectedRows.map((item, index) => planCode.push(item.planCode));
+      console.log('计划单号：', planCode);
+      if (planCode) {
         this.props.dispatch({
           type:'replenish/ReplenishDelete',
-          payload: {list: this.state.selectedRowKeys, opType: '1'},
+          payload: {list: planCode, opType: '1'},
           callback:(data)=>{
-            console.log(data);
             this.refs.table.fetch();
           }
-        })
+        });
       }
     } else {
       message.warn("请至少添加一条数据！");
@@ -162,7 +180,7 @@ class ReplenishmentPlan extends PureComponent {
         width: 200,
         render: (text, record) => {
           return <span>
-            <Link to={{ pathname: `/purchase/replenishment/replenishmentPlan/detail` }}>{text}</Link>
+            <Link to={{ pathname: `/purchase/replenishment/replenishmentPlan/detail/${record.planCode}` }}>{text}</Link>
           </span>
         }
       }, {
@@ -193,7 +211,7 @@ class ReplenishmentPlan extends PureComponent {
     ];
     return (
       <div className='ysynet-main-content'>
-        <WrapperForm query={this.queryHandle} />
+        <WrapperForm query={this.queryHandle} typeListDate={this.state.typeListDate} />
         <div className='ant-row-bottom'>
           <Button type='primary' onClick={() => this.props.history.push({ pathname: `/createReplenishment` })}>新建补货计划</Button>
           <Button type='default' onClick={this.delete} style={{ marginLeft: 8 }}>删除</Button>
@@ -209,7 +227,6 @@ class ReplenishmentPlan extends PureComponent {
           rowSelection={{
             selectedRowKeys: this.state.selectedRowKeys,
             onChange: (selectedRowKeys, selectedRows) => {
-              console.log('selectCheck：', selectedRowKeys, selectedRows);
               this.setState({ selectedRowKeys, selectedRows })
             }
           }}

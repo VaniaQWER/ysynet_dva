@@ -1120,8 +1120,8 @@ export const getNavData = app => [
     {
       name: "采购结算-补货管理--补货计划--详情",
       icon: 'setting',
-      path: '/purchase/replenishment/replenishmentPlan/detail',
-      component: dynamicWrapper(app, [], () => import('../routes/Purchase/replenishment/replenishmentPlan/detail')),
+      path: '/purchase/replenishment/replenishmentPlan/detail/:id',
+      component: dynamicWrapper(app, ['replenishment/replenish'], () => import('../routes/Purchase/replenishment/replenishmentPlan/detail')),
     },
     {
       name: "采购结算-补货管理--目录外采购",

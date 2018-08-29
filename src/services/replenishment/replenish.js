@@ -14,6 +14,14 @@ export function ReplenishDelete(options) {
     body: options
   })
 }
+// 补货计划 - 详情
+export function ReplenishDetails(options) {
+  return request(`${_local}/a/depot/depotplan/detail`, {
+    method: 'GET',
+    type: 'planCode',
+    body: options
+  })
+}
 
 export function typelist(options) {
   return request(`${_local}/a/spd/dict/typelist`, {

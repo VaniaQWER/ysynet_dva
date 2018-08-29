@@ -10,12 +10,10 @@
 import React, { PureComponent } from 'react';
 import { Form, Row, Col, Button, Input, Table, Modal, Icon, Tooltip, message, Affix, Select } from 'antd';
 import { formItemLayout } from '../../../../utils/commonStyles'
-import { createData } from '../../../../common/data';
 
 const FormItem = Form.Item;
 const { Search } = Input;
 const { Option } = Select;
-const modalData = createData().splice(5, 16);
 
 class NewAdd extends PureComponent {
   state = {
@@ -38,15 +36,14 @@ class NewAdd extends PureComponent {
     console.log(record, index, 'onchange')
   }
   render() {
-    const { getFieldDecorator } = this.props.form;
     const { visible } = this.state;
     const columns = [
       {
         title: '通用名称',
         dataIndex: 'ctmmGenericName'
       }, {
-        title: '产品名称',
-        dataIndex: 'productName'
+        title: '商品名',
+        dataIndex: 'ctmmTradeName'
       }, {
         title: '规格',
         dataIndex: 'ctmmSpecification',
@@ -56,63 +53,88 @@ class NewAdd extends PureComponent {
         )
       }, {
         title: '剂型',
-        dataIndex: 'fmodal',
+        dataIndex: 'ctmmDosageFormDesc',
         width: 150
       }, {
-        title: '包装单位',
-        dataIndex: 'unit',
+        title: '生产厂家',
+        dataIndex: 'ctmmManufacturerName'
+      }, {
+        title: '供应商',
+        dataIndex: 'supplierName',
+        width: 240,
+        render: (text, record, index) => {
+          return (
+            <Select style={{ width: 210 }}>
+              <Option value={''}>供应商</Option>
+            </Select>
+          )
+        }
+      }, {
+        title: '包装规格',
+        dataIndex: 'packageSpecification',
         width: 100,
       }, {
-        title: '批准文号',
-        dataIndex: 'medicinalCode',
+        title: '单位',
+        dataIndex: 'replanUnit',
         width: 150,
       }, {
-        title: '生产厂家',
-        dataIndex: 'productCompany'
-      }, {
         title: '需求数量',
-        dataIndex: 'amount',
+        dataIndex: 'demandQuantity',
         width: 120,
         render: (text, record, index) => {
           return <Input defaultValue={text || 1} onChange={this.onChange.bind(this, record, index)} />
         }
       }, {
         title: '当前库存',
-        dataIndex: 'kcsl',
+        dataIndex: 'totalStoreNum',
       }, {
         title: '库存上限',
-        dataIndex: 'uLimit'
+        dataIndex: 'upperQuantity'
       }, {
         title: '库存下限',
-        dataIndex: 'lLimit'
+        dataIndex: 'usableQuantity'
+      }, {
+        title: '参考价格',
+        dataIndex: 'referencePrice'
+      }, {
+        title: '金额',
+        dataIndex: 'totalPrice'
+      }, {
+        title: '批准文号',
+        dataIndex: 'approvalNo',
+        width: 150,
       }
     ];
     const modalColumns = [
       {
         title: '通用名称',
-        dataIndex: 'geName'
+        dataIndex: 'ctmmGenericName'
       }, {
-        title: '产品名称',
-        dataIndex: 'productName'
+        title: '商品名',
+        dataIndex: 'ctmmTradeName'
       }, {
         title: '规格',
-        dataIndex: 'spec'
+        dataIndex: 'ctmmSpecification'
       }, {
-        title: '剂型',
-        dataIndex: 'fmodal',
-        width: 150
-      }, {
-        title: '包装单位',
-        dataIndex: 'unit',
+        title: '当前库存',
+        dataIndex: 'totalStoreNum',
         width: 100,
       }, {
-        title: '批准文号',
-        dataIndex: 'medicinalCode',
-        width: 150,
+        title: '剂型',
+        dataIndex: 'ctmmDosageFormDesc',
+        width: 150
+      }, {
+        title: '包装规格',
+        dataIndex: 'packageSpecification',
+        width: 150
       }, {
         title: '生产厂家',
-        dataIndex: 'productCompany'
-      }
+        dataIndex: 'ctmmManufacturerName'
+      }, {
+        title: '批准文号',
+        dataIndex: 'approvalNo',
+        width: 150,
+      },
     ]
     return (
       <div style={{ padding: 24 }}>
@@ -157,15 +179,16 @@ class NewAdd extends PureComponent {
               <Search
                 style={{ width: 248 }}
                 placeholder='通用名/商品名'
+                ref="paramName"
               />
             </Col>
-            <Col span={7} style={{ textAlign: 'left', marginTop: 4 }}>
+            {/* <Col span={7} style={{ textAlign: 'left', marginTop: 4 }}>
               <a style={{ userSelect: 'none' }} onClick={() => this.setState({ isShow: !this.state.isShow })}>
                 <Icon type={this.state.isShow ? 'up-circle-o' : 'down-circle-o'} /> {this.state.isShow ? '收起' : '更多筛选'}
               </a>
-            </Col>
+            </Col> */}
           </Row>
-          <Form style={{ marginTop: 20, display: this.state.isShow ? 'block' : 'none' }} onSubmit={this.onSubmit}>
+          {/* <Form style={{ marginTop: 20, display: this.state.isShow ? 'block' : 'none' }} onSubmit={this.onSubmit}>
             <Row>
               <Col span={7}>
                 <FormItem label={`产品名称`} {...formItemLayout}>
@@ -216,20 +239,12 @@ class NewAdd extends PureComponent {
                 <Button onClick={() => this.props.form.resetFields()}>重置</Button>
               </Col>
             </Row>
-          </Form>
+          </Form> */}
           <div className='detailCard'>
             <Table
-              style={{ marginTop: 16 }}
               columns={modalColumns}
-              dataSource={modalData}
-              bordered
               scroll={{ x: '150%' }}
               rowKey='id'
-              pagination={{
-                size: "small",
-                showQuickJumper: true,
-                showSizeChanger: true
-              }}
               rowSelection={{
                 selectedRowKeys: this.state.modalSelected,
                 onChange: (selectedRowKeys, selectedRows) => {
@@ -244,11 +259,8 @@ class NewAdd extends PureComponent {
             <Table
               title={() => '产品信息'}
               columns={columns}
-              bordered
-              dataSource={createData()}
               rowKey='id'
               scroll={{ x: '150%' }}
-              pagination={false}
               rowSelection={{
                 selectedRowKeys: this.state.selected,
                 onChange: (selectedRowKeys, selectedRows) => {

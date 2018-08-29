@@ -61,7 +61,7 @@ class SearchForm extends PureComponent{
                   >
                     <Option value=''>请选择</Option>
                     {
-                      this.props.typeListData.map((item, index) => <Option value={item.type} key={index}>{item.description}</Option>)
+                      this.props.typeListData.map((item, index) => <Option value={item.value} key={index}>{item.label}</Option>)
                     }
                   </Select>
                 )
@@ -106,7 +106,7 @@ class ItemsData extends PureComponent{
       payload: {},
       callback: (data) =>{
         console.log(data, 'sdadada');
-        // this.setState({ typeListData: data });
+        this.setState({ typeListData: data });
       }
     });
   }

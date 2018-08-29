@@ -9,7 +9,6 @@ export default {
     // 补货计划 - 删除
     *ReplenishDelete({ payload, callback },{ put, call }){
       const data = yield call(replenishment.ReplenishDelete, payload);
-      console.log(data,'删除');
       if (data.code === 200) {
         message.success('删除成功！');
       } else {
@@ -17,6 +16,18 @@ export default {
       }
       if (callback) {
         callback();
+      }
+    },
+    // 补货计划 - 详情
+    *ReplenishDetails({ payload, callback },{ put, call }){
+      const data = yield call(replenishment.ReplenishDetails, payload);
+      console.log(data,'详情');
+      if (data.code === 200 && data.msg === 'success') {
+        if (callback) {
+          callback(data.data);
+        }
+      } else {
+        message.error(data.msg);
       }
     },
 
