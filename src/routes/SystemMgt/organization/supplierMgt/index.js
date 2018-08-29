@@ -175,10 +175,8 @@ class UserMgt extends PureComponent{
         <RemoteTable
           query={this.state.query}
           ref='table'
-          bordered
           style={{marginTop: 20}}
           columns={columns}
-          showHeader={true}
           scroll={{ x: '100%' }}
           url={systemMgt.SupplierList}
           // rowSelection={{
