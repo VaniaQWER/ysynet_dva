@@ -16,7 +16,6 @@ class Login extends PureComponent{
         this.setState({ loading: true });
          let { userName, password } = values;
          password = userName === 'admin'? '02a3f0772fcca9f415adc990734b45c6f059c7d33ee28362c4852032': 'a2357bb8ae6b26a14119a0591ab45847c437f7e9f42e90b154db07e9';
-        //  this.test();
          this.userLogin(userName, password)
           /* this.props.dispatch({
             type: 'users/EncryptPassword',
@@ -35,17 +34,61 @@ class Login extends PureComponent{
       type: 'users/userLogin',
       payload: { username, password },
       callback: (data) => {
-        console.log(data,'data')
         this.setState({ loading: false });
         if(data.deptInfo && data.deptInfo.length !== 1){
-          history.push({ pathname: '/subSystem' })
+          let { menuList } = data.deptInfo[0];
+          for (let i=0; i<menuList.length; i++) {
+            menuList[i].parentIds = menuList[i].parentIds.split(',')
+            menuList[i].parentIds.pop();
+          }
+          let index = 1, tree = [], currentNode = '';
+          menuList.sort(function(a, b) {
+            return a.parentIds.length - b.parentIds.length;
+          })
+
+          let max = menuList[menuList.length - 1].parentIds.length;
+
+          function genRoot(keyNodes, target) {
+            for (let i=0; i<target.length; i++) {
+              if (target[i].id === keyNodes.parentId) {
+                target[i].children = target[i].children || [];
+                target[i].children = [ ...target[i].children, keyNodes ]
+              } else if (target[i].children){
+                genRoot(keyNodes, target[i].children)
+              }
+            }
+          }
+          function genTree(index) {
+            for (let i=0; i<menuList.length; i++) {
+              if (menuList[i].parentIds.length === index) {
+                if (index === 1) {
+                  tree.push(menuList[i])
+                } else {
+                  genRoot(menuList[i], tree);
+                }
+              }
+            }
+          }
+          
+          let min = 1;
+          while (min < max) {
+            genTree(min);
+            min++;
+          }
+          console.log(tree,'tree');
+          console.log(tree[0].children[0])
+          this.props.dispatch({
+            type: 'users/setCurrentMenu',
+            payload: { menu : tree[0].children[0] }
+          })
+          // history.push({ pathname: '/subSystem' })/
         }
       }
     })
   }
   render(){
     const { getFieldDecorator } = this.props.form;
-    // const { orgName } = this.props.users;
+    console.log(this.props.users,'users')
     const wrapperLayout = {
       wrapperCol:{ span: 15, offset: 5 }
     }
