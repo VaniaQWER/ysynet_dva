@@ -167,7 +167,6 @@ class GoodsAllocation extends PureComponent{
           <RemoteTable 
               ref='tableGoods'
               query={query}
-              isJson={true}
               style={{marginTop: 20}}
               columns={columns}
               scroll={{ x: '100%' }}
