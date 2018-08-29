@@ -2,16 +2,18 @@
  * @Author: wwb 
  * @Date: 2018-07-24 16:08:53 
  * @Last Modified by: wwb
- * @Last Modified time: 2018-08-21 20:44:10
+ * @Last Modified time: 2018-08-29 17:00:50
  */
 
 /**
- * @file 药库 - 补货管理--补货计划
+ * @file 药库 - 补货管理--目录外采购
  */
 import React, { PureComponent } from 'react';
-import { Form, Button, Table, message, Tooltip, DatePicker, Select, Row, Col, Input, Icon  } from 'antd';
+import { Form, Button, message, Tooltip, DatePicker, Select, Row, Col, Input  } from 'antd';
 import { Link } from 'react-router-dom';
-import { createData } from '../../../../common/data';
+import RemoteTable from '../../../../components/TableGrid';
+import { replenishmentPlan } from '../../../../api/replenishment/replenishmentPlan';
+import { connect } from 'dva';
 const FormItem = Form.Item;
 const { RangePicker } = DatePicker;
 const { Option } = Select;
@@ -28,23 +30,42 @@ const formItemLayout = {
 
 class SearchForm extends PureComponent{
   state = {
-    display: 'none'
+    fstateOptions: []// 状态下拉框
   }
-  toggle = () => {
-    const { display, expand } = this.state;
-    this.setState({
-      display: display === 'none' ? 'block' : 'none',
-      expand: !expand
+  componentWillMount = () =>{
+    const { dispatch } = this.props;
+    dispatch({
+      type: 'replenish/typelist',
+      payload: { type : 'plan_status' },
+      callback: (data) =>{
+        this.setState({ fstateOptions: data })
+      }
     })
+  }
+  handleSearch = e => {
+    e.preventDefault();
+    this.props.form.validateFields((err, values) => {
+      if (!err) {
+        values.startTime = values.orderTime[0].format('YYYY-MM-DD HH:mm');
+        values.endTime = values.orderTime[1].format('YYYY-MM-DD HH:mm');
+        console.log(values, '查询条件');
+        this.props.query(values);
+      }
+    })
+  }
+  //重置
+  handleReset = () => {
+    this.props.form.resetFields();
+    this.props.query({});
   }
   render(){
     const { getFieldDecorator } = this.props.form;
-    const { display, expand } = this.state;
+    const { fstateOptions } = this.state;
     return (
       <Form className="ant-advanced-search-form" onSubmit={this.handleSearch}>
         <Row gutter={30}>
           <Col span={8}>
-            <FormItem {...formItemLayout} label={`订单号`}>
+            <FormItem {...formItemLayout} label={`计划单号`}>
               {
                 getFieldDecorator(`planNo`,{
                   initialValue: ''
@@ -55,20 +76,27 @@ class SearchForm extends PureComponent{
             </FormItem>
           </Col>
           <Col span={8}>
-            <FormItem {...formItemLayout} label={`供应商`}>
+            <FormItem {...formItemLayout} label={`状态`}>
               {
-                getFieldDecorator(`fOrgId`,{
+                getFieldDecorator(`fstate`,{
                   initialValue: ''
                 })(
-                  <Select className={'ysynet-formItem-width'}>
-                    <Option key={-1} value=''>请选择</Option>
+                  <Select
+                  allowClear={true}
+                  showSearch
+                  filterOption={(input, option) => option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0}
+                  >
+                    <Option key={-1} value=''>全部</Option>
+                    {
+                      fstateOptions.map((item,index)=> <Option key={index} value={item.value}>{ item.label }</Option>)
+                    }
                   </Select>
                 )
               }
             </FormItem>
           </Col>
           <Col span={8}>
-            <FormItem {...formItemLayout} label={`下单时间`}>
+            <FormItem {...formItemLayout} label={`发起时间`}>
               {
                 getFieldDecorator(`orderTime`,{
                   initialValue: ''
@@ -78,38 +106,12 @@ class SearchForm extends PureComponent{
               }
             </FormItem>
           </Col>
-          <Col span={8} style={{ display: display }}>
-            <FormItem {...formItemLayout} label={`订单状态`}>
-              {
-                getFieldDecorator(`fstate`,{
-                  initialValue: ''
-                })(
-                  <Select>
-                    <Option key={-1} value=''>全部</Option>
-                  </Select>
-                )
-              }
-            </FormItem>
-          </Col>
-          <Col span={8} style={{ display: display }}>
-            <FormItem {...formItemLayout} label={`订单类型`}>
-              {
-                getFieldDecorator('type',{
-                  initialValue: ''
-                })(
-                  <Select className={'ysynet-formItem-width'}>
-                    <Option key={-1} value=''>全部</Option>
-                  </Select>
-                )
-              }
-            </FormItem>
-          </Col>
-          <Col span={expand ? 8: 24} style={{ textAlign: 'right', marginTop: 4}} >
+          <Col span={24} style={{ textAlign: 'right', marginTop: 4}} >
            <Button type="primary" htmlType="submit">查询</Button>
            <Button type='default' style={{marginLeft: 8}} onClick={this.handleReset}>重置</Button>
-           <a style={{marginLeft: 8, fontSize: 14}} onClick={this.toggle}>
+           {/* <a style={{marginLeft: 8, fontSize: 14}} onClick={this.toggle}>
              {expand ? '收起' : '展开'} <Icon type={expand ? 'up' : 'down'} />
-           </a>
+           </a> */}
          </Col>
         </Row>
       </Form>
@@ -123,7 +125,13 @@ class OutCatalogPurchase extends PureComponent{
     selected: [],
     selectedRows: [],
     loading: false,
-    dataSource: createData()
+    query: {
+      planType: '2'
+    },
+  }
+  queryHandle = (query) => {
+    this.refs.table.fetch(query);
+    this.setState({ query })
   }
   delete = () =>{
     const dataSource = this.state.dataSource;
@@ -148,8 +156,9 @@ class OutCatalogPurchase extends PureComponent{
     }
   }
   render(){
+    const { query } = this.state;
     const columns = [{
-      title: '订单号',
+      title: '计划单号',
       dataIndex: 'planNo',
       width: 180,
       render: (text,record) =>{
@@ -158,7 +167,7 @@ class OutCatalogPurchase extends PureComponent{
         </span>  
       }
     },{
-      title: '订单状态',
+      title: '状态',
       dataIndex: 'fstate',
       render: (text,record) =>{
         if(text === '00'){
@@ -172,16 +181,13 @@ class OutCatalogPurchase extends PureComponent{
         }
       }
     },{
-      title: '订单类型',
+      title: '类型',
       dataIndex: 'planType'
     },{
-      title: '供应商',
-      dataIndex: 'forgName'
-    },{
-      title: '下单人',
+      title: '发起人',
       dataIndex: 'createUser'
     },{
-      title: '下单时间',
+      title: '发起时间',
       dataIndex: 'planTime'
     },{
       title: '收货地址',
@@ -194,23 +200,21 @@ class OutCatalogPurchase extends PureComponent{
     },];
     return (
       <div className='ysynet-main-content'>
-         <WrapperForm />
+         <WrapperForm 
+          query={this.queryHandle}
+          dispatch={this.props.dispatch}
+          />
          <div className='ant-row-bottom'>
             <Button type='primary' onClick={()=>this.props.history.push({ pathname: `/createOutCatalogPurcahsePlan` })}>新建计划</Button>
             <Button type='default' onClick={this.delete} style={{ marginLeft: 8 }}>删除</Button>
          </div>
-         <Table 
+         <RemoteTable
+          ref='table'
+          query={query}
+          url={replenishmentPlan.PLANLIST}
           columns={columns}
-          bordered
-          loading={this.state.loading}
-          dataSource={this.state.dataSource}
           scroll={{ x: '130%' }}
           rowKey={'id'}
-          pagination={{
-            size: "small",
-            showQuickJumper: true,
-            showSizeChanger: true
-          }}
           rowSelection={{
             selectedRowKeys: this.state.selected,
             onChange: (selectedRowKeys, selectedRows) => {
@@ -222,4 +226,4 @@ class OutCatalogPurchase extends PureComponent{
     )
   }
 }
-export default OutCatalogPurchase;
+export default connect()(OutCatalogPurchase)

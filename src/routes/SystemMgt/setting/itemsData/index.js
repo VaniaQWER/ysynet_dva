@@ -79,7 +79,7 @@ class SearchForm extends PureComponent{
               }
             </FormItem>
           </Col>
-          <Col span={12} style={{ textAlign: 'right' }}>
+          <Col span={6} style={{ textAlign: 'right' }}>
             <Button type='primary' htmlType='submit'>查询</Button>
             <Button type="default" onClick={this.handleReset} style={{ marginLeft: 10 }}>查询</Button>
           </Col>
@@ -93,7 +93,7 @@ const WrapperForm = Form.create()(SearchForm);
 class ItemsData extends PureComponent{
   state = {
     visible: false,
-    isDisabled: false,
+    isDisabled: true,
     query: {},
     ModalTitle: '',
     record: {},
@@ -105,6 +105,7 @@ class ItemsData extends PureComponent{
       type: 'Dictionary/DictTypeList',
       payload: {},
       callback: (data) =>{
+        console.log(data, 'sdadada');
         this.setState({ typeListData: data });
       }
     });
@@ -116,7 +117,7 @@ class ItemsData extends PureComponent{
   // 修改
   modify = (record,index) =>{
     console.log(record,index,'modify');
-    this.setState({ visible: true,isDisabled: false, ModalTitle: '编辑', record });
+    this.setState({ visible: true, isDisabled: true, ModalTitle: '编辑', record });
     // const setFields = ['keyValue','tag','type','describe','sort'];
     // let Fields = {};
     // setFields.map((item,index)=> Fields[item] = record[item]);
@@ -124,7 +125,7 @@ class ItemsData extends PureComponent{
   }
   add = () => {
     this.props.form.resetFields();
-    this.setState({ ModalTitle: '新增', visible: true, record: {} });
+    this.setState({ ModalTitle: '新增', visible: true, record: {}, isDisabled: false });
   }
   newAdd = (e) => {
     e.preventDefault();
@@ -208,12 +209,10 @@ class ItemsData extends PureComponent{
           query={this.state.query}
           ref="table"
           columns={columns}
-          bordered
           scroll={{x: '100%'}}
           rowKey={'id'}
           style={{marginTop: 20}}
           url={systemMgt.DICTIONARYLIST}
-          showHeader={true}
         />
         <Modal
           title={this.state.ModalTitle}
@@ -226,6 +225,18 @@ class ItemsData extends PureComponent{
           ]}
         >
           <Form>
+            {
+              this.state.isDisabled ?
+                <FormItem {...singleFormItemLayout} label={`编码`}>
+                  {
+                    getFieldDecorator(`id`, {
+                      initialValue: record ? record.id : ''
+                    })(
+                      <Input placeholder="请输入" disabled={this.state.isDisabled} />
+                    )
+                  }
+                </FormItem> : null
+            }
             <FormItem {...singleFormItemLayout} label={`键值`}>
               {
                 getFieldDecorator(`value`, {
@@ -246,16 +257,6 @@ class ItemsData extends PureComponent{
                 )
               }
             </FormItem>
-            {/* <FormItem {...singleFormItemLayout} label={`编码`}>
-              {
-                getFieldDecorator(`code`, {
-                  initialValue: record ? record.code : '',
-                  rules: [{ required: true, message: '请填写编码' }]
-                })(
-                  <Input placeholder="请输入" />
-                )
-              }
-            </FormItem> */}
             <FormItem {...singleFormItemLayout} label={`类型`}>
               {
                 getFieldDecorator(`type`, {
