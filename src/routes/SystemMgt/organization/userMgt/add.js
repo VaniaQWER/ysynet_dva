@@ -2,7 +2,7 @@
  * @Author: wwb 
  * @Date: 2018-08-21 17:46:47 
  * @Last Modified by: wwb
- * @Last Modified time: 2018-08-28 22:06:19
+ * @Last Modified time: 2018-08-29 21:18:57
  */
  /**
  * @file 系统管理--组织机构--用户管理--添加
@@ -35,7 +35,7 @@ const distributUser = [{
 }];
 const modalColumns = [{
   title: '账号',
-  dataIndex: 'userNo'
+  dataIndex: 'ctcpCode'
 },{
   title: '姓名',
   dataIndex: 'ctcpName'
@@ -43,24 +43,14 @@ const modalColumns = [{
   title: '所属科室',
   dataIndex: 'ctcpDeptCode'
 }];
-const modalDataSource = [
-  {
-    "ctcpDeptCode": '科室1',
-    'ctcpCode': '1',
-    'id': '1',
-    'ctcpName': '姓名1',
-  },
-  {
-    "ctcpDeptCode": '科室2',
-    'ctcpCode': '2',
-    'id': '2',
-    'ctcpName': '姓名2',
-  }
-]
 class AddUser extends PureComponent{
   state = {
     userType: '0',
+    hasStyle: null,// 选中行变色 index
+    record: {},// 选中行 
     visible: false,
+    tableLoading: false,
+    btnLoading: false,
     userDataSource: [],// 角色列表
     userLoading: false,
     deptDataSource: [],
@@ -93,17 +83,50 @@ class AddUser extends PureComponent{
     });
   }
   onSearch = () =>{
+    this.setState({ visible: true, tableLoading: true,record: {},hasStyle: null })
     this.props.dispatch({
       type: 'Organization/getFilterCareProv',
       payload: {},
       callback: (data) =>{
-        this.setState({ modalDataSource: data, visible: true })
+        this.setState({ modalDataSource: data, tableLoading: false })
+      }
+    })
+  }
+  setUser = () =>{
+    let { record } = this.state;
+    this.props.form.setFieldsValue({ loginName: record.ctcpCode, name: record.ctcpName  });
+    this.setState({ visible: false });
+  }
+  addUser = () =>{
+    let { form, dispatch, history } = this.props;
+    form.validateFields((err,values)=>{
+      if(!err){
+        let userInfo = {}, deptList = [],roleList = [];
+        let { selectedRows, userSelected } = this.state;
+        selectedRows.map(item => deptList.push({ deptType: item.deptType, id: item.id }));
+        userSelected.map(item => roleList.push({ id: item }));
+        userInfo.deptList = deptList;
+        userInfo.roleList = roleList;
+        userInfo.loginName = values.loginName;
+        userInfo.name = values.name;
+        userInfo.phone = values.phone;
+        console.log(userInfo,'userInfo');
+        this.setState({ btnLoading: true })
+        dispatch({
+          type: 'Organization/operUserInfo',
+          payload: { userInfo },
+          callback: () =>{
+            this.setState({ btnLoading: false });
+            history.push({ pathname: '/sys/organization/userMgt' })
+          } 
+        })
       }
     })
   }
   render(){
     const { getFieldDecorator } = this.props.form;
-    const { userType, visible, deptDataSource, userDataSource, userLoading, deptLoading } = this.state;
+    const { userType, visible, deptDataSource, userDataSource, modalDataSource, 
+      userLoading, btnLoading, deptLoading, tableLoading, hasStyle } = this.state;
     return (
       <div>
       <div className='fullCol fadeIn'>
@@ -120,7 +143,10 @@ class AddUser extends PureComponent{
                     getFieldDecorator(`userType`,{
                       initialValue: userType
                     })(
-                      <RadioGroup onChange={e=> this.setState({ userType: e.target.value })}>
+                      <RadioGroup onChange={e => {
+                        this.props.form.resetFields();
+                        this.setState({ userType: e.target.value,record: {},hasStyle: null })
+                      }}>
                         <Radio value={'0'}>已有医院用户</Radio>
                         <Radio value={'1'}>无医院用户</Radio>
                       </RadioGroup>
@@ -142,7 +168,7 @@ class AddUser extends PureComponent{
                             rules: [{ required: true, message: '请选择账号' }]
                           })(
                             <Search
-                               
+                              readOnly
                               placeholder='请选择'
                               onSearch={this.onSearch}
                             />
@@ -179,7 +205,12 @@ class AddUser extends PureComponent{
               <Col span={6}>
                 <FormItem {...formItemLayout} label={`手机号`}>
                   {
-                    getFieldDecorator(`phone`)(
+                    getFieldDecorator(`phone`,{
+                      rules: [
+                      {min:11, message: '电话号最少11位!' },
+                      {pattern: /^\d+$/,message:'只能是数字'},
+                      {max:11, message: '联系电话最多11位!' }]
+                    })(
                       <Input placeholder='请输入'/>
                     )
                   }
@@ -234,7 +265,7 @@ class AddUser extends PureComponent{
         visible={visible}
         onCancel={()=>this.setState({ visible: false })}
         footer={[
-          <Button key="submit" type='primary' onClick={this.newAdd}>
+          <Button key="submit" type='primary' onClick={this.setUser}>
               确认
           </Button>,
           <Button key="back"  type='default' onClick={()=>this.setState({ visible: false })}>取消</Button>
@@ -254,29 +285,24 @@ class AddUser extends PureComponent{
           columns={modalColumns}
           size='small'
           pagination={false}
+          loading={tableLoading}
           dataSource={modalDataSource}
+          rowClassName={ (record, index) => index === hasStyle ? 'rowClassBg' : ''}
           rowKey={'id'}
           scroll={{ x: '100%' }}
-          onRow={(record)=>{
+          onRow={(record,index)=>{
             return {
               onClick: () =>{
-                console.log(record,'record')
+                this.setState({ hasStyle: index, record });
               }
             }
-          }}
-          rowSelection={{
-            type: 'radio',
-            selectedRowKeys: this.state.modalSelected,
-              onChange: (selectedRowKeys, selectedRows) => {
-                this.setState({modalSelected: selectedRowKeys, modalSelectedRows: selectedRows})
-              }
           }}
         />
       </Modal>
       <Affix offsetBottom={0}>
         <Row>
           <Col style={{ textAlign:'right', padding: '20px 10px', }}>
-            <Button type='primary'>保存</Button>
+            <Button type='primary' loading={btnLoading} onClick={this.addUser}>保存</Button>
             <Button type='danger' style={{ marginLeft: 8 }} ghost onClick={()=> window.history.go(-1)} >取消</Button>
           </Col>
         </Row>

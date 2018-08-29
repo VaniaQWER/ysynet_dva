@@ -22,11 +22,20 @@ export function ReplenishDetails(options) {
     body: options
   })
 }
-
+// 状态
 export function typelist(options) {
   return request(`${_local}/a/spd/dict/typelist`, {
-    methods: 'GET',
-    type: 'json',
+    method: 'POST',
+    type: 'formData',
+    body: options
+  })
+}
+
+// 目录外采购新建计划-- 采购部门
+export function getModule(options) {
+  return request(`${_local}/a/sys/sysdept/getByModule`, {
+    method: 'GET',
+    type: 'formData',
     body: options
   })
 }

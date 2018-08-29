@@ -2,7 +2,7 @@
  * @Author: wwb 
  * @Date: 2018-08-21 14:27:32 
  * @Last Modified by: wwb
- * @Last Modified time: 2018-08-28 22:36:39
+ * @Last Modified time: 2018-08-29 19:58:30
  */
 
  /**
@@ -71,6 +71,10 @@ class SearchForm extends PureComponent{
         this.props.query(values)
       }
     })
+  }
+  handleReset = () => {
+    this.props.form.resetFields();
+    this.props.query({});
   }
   render(){
     const { getFieldDecorator } = this.props.form;
@@ -183,7 +187,7 @@ class UserMgt extends PureComponent{
   }
   add = () =>{
     const { history } = this.props;
-    history.push({ pathname: '/system/organization/userMgt/add' })
+    history.push({ pathname: '/sys/organization/userMgt/add' })
   }
   render(){
     const { visible, query } = this.state;
@@ -227,7 +231,7 @@ class UserMgt extends PureComponent{
             <Popconfirm title="是否确认重置该用户密码?" onConfirm={this.resetPwd.bind(null, record,index)} okText="是" cancelText="否">
               <a>重置密码</a>
             </Popconfirm>
-            <Link style={{ marginLeft: 8 }} to={{pathname: `/system/organization/userMgt/edit/${record.loginName}`}}>{'编辑'}</Link>
+            <Link style={{ marginLeft: 8 }} to={{pathname: `/sys/organization/userMgt/edit/${record.loginName}`}}>{'编辑'}</Link>
           </span>
         }
       },

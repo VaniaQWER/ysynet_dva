@@ -2,7 +2,7 @@
  * @Author: wwb 
  * @Date: 2018-07-24 16:08:53 
  * @Last Modified by: wwb
- * @Last Modified time: 2018-08-29 17:00:50
+ * @Last Modified time: 2018-08-29 19:05:29
  */
 
 /**
@@ -59,6 +59,7 @@ class SearchForm extends PureComponent{
     this.props.query({});
   }
   render(){
+    console.log(this.props,'props')
     const { getFieldDecorator } = this.props.form;
     const { fstateOptions } = this.state;
     return (
@@ -226,4 +227,4 @@ class OutCatalogPurchase extends PureComponent{
     )
   }
 }
-export default connect()(OutCatalogPurchase)
+export default connect(state =>state)(OutCatalogPurchase)

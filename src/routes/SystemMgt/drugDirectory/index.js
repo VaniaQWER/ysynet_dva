@@ -2,7 +2,7 @@
  * @Author: wwb 
  * @Date: 2018-08-28 17:42:54 
  * @Last Modified by: wwb
- * @Last Modified time: 2018-08-29 16:25:59
+ * @Last Modified time: 2018-08-29 18:01:37
  */
 
 import React , {PureComponent} from 'react';
@@ -143,7 +143,7 @@ const columns = [{
   dataIndex: 'ctmmGenericName',
   render: (text,record) =>{
     return <span>
-            <Link to={{pathname: `/system/drugDirectory/directory/edit/${record.bigDrugCode}/${record.medDrugType}`}}>{text}</Link>
+            <Link to={{pathname: `/sys/drugDirectory/directory/edit/${record.bigDrugCode}/${record.medDrugType}`}}>{text}</Link>
           </span>
   }
 },

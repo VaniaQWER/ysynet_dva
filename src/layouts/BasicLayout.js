@@ -1,6 +1,6 @@
 import React, { PureComponent } from 'react';
 import { Route, Switch, Redirect } from 'dva/router';
-import { Layout, Icon, Row, Col, Tooltip  } from 'antd';
+import { Layout, Icon, Row, Col, Tooltip, Menu  } from 'antd';
 import { connect } from 'dva';
 import Profile from '../components/profile'
 import SiderMenu from '../components/SiderMenu';
@@ -22,6 +22,19 @@ class BasicLayout extends PureComponent {
       collapsed: !this.state.collapsed,
     });
   }
+  /* menu = (subSystemList) => (
+    <Menu 
+      selectable
+      onClick={this.handleClick}
+      defaultSelectedKeys={[subSystemId?subSystemId+"":""]}
+    >
+      {
+        subSystemList.map((item,index) =>{
+          return <Menu.Item key={item.subSystemId} name={item.name} deptguid={item.deptGuid}>{ item.name }</Menu.Item>
+        })
+      }
+    </Menu>
+  ); */
   render() {
     const { getRouteData } = this.props;
     const { title } = this.state;
@@ -40,21 +53,29 @@ class BasicLayout extends PureComponent {
             history={this.props.history}
             cb={(title)=> this.setState({ title })}
           />
+          <div className={styles.triggerWrapp} style={{ width: this.state.collapsed ? 80: 232 }}>
+            <Icon
+              style={{ color: '#fff',fontSize: 18 }}
+              className={styles.trigger}
+              type={this.state.collapsed ? 'menu-unfold' : 'menu-fold'}
+              onClick={this.toggle}
+              />
+          </div>
         </Sider>
         <Content>
           <Header className={`${styles.header}`} style={{ marginBottom: 3,padding: 0 }}>
             <Row>
-              <Col span={4}>
-                <Icon 
-                  onClick={() => {
-                    const { collapsed } = this.state;
-                    this.setState({
-                      collapsed: !collapsed
-                    })
-                  }}
-                  className='ysyenert-header-icon ysynet-collapsed'
-                  type={this.state.collapsed ? 'menu-unfold' : 'menu-fold'} 
-                /> {title.mainTitle}
+              <Col span={4} style={{ paddingLeft: 16 }}>
+                {
+                  /* subSystemName &&
+                  <Dropdown overlay={this.menu(subSystemList)} trigger={['click']}>
+                    <Tooltip title='子系统切换' placement='right'>
+                      <span className="ant-dropdown-link">
+                        {subSystemName} <Icon type="down" style={{ marginLeft: 8 }}/>
+                      </span>
+                    </Tooltip>
+                  </Dropdown> */
+                }
               </Col>
               <Col span={20} style={{textAlign: 'right'}}>
                 <div className={styles.profile}>

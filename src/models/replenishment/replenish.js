@@ -30,7 +30,7 @@ export default {
         message.error(data.msg);
       }
     },
-
+    
     /* 目录外采购 */
     // 状态
     *typelist({ payload,callback },{ call }){
@@ -40,7 +40,6 @@ export default {
       }
       if(callback) callback(data.data)
     },
-
     subscriptions: {
       
     }

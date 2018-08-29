@@ -132,7 +132,7 @@ export default {
     *getFilterCareProv({ payload, callback },{ put, call }){
       const data = yield call(userMgtService.getFilterCareProv, payload);
       if(data.code !== 200){
-        message.error(data.msg ||'获取所有得角色信息失败')
+        message.error(data.msg ||'获取所用户信息失败')
       }
       if(callback) callback(data.data);
     },
@@ -141,9 +141,9 @@ export default {
     *operUserInfo({ payload, callback },{ put, call }){
       const data = yield call(userMgtService.operUserInfo, payload);
       if(data.code === 200 && data.msg === 'success'){
-        message.success('编辑成功');
+        message.success('操作成功');
       }else{
-        message.error(data.msg ||'获取所有得角色信息失败')
+        message.error(data.msg ||'编辑角色信息失败')
       }
       if(callback) callback(data.data);
     },

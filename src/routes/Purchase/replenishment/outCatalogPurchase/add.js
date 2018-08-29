@@ -2,7 +2,7 @@
  * @Author: wwb 
  * @Date: 2018-07-24 18:49:01 
  * @Last Modified by: wwb
- * @Last Modified time: 2018-08-29 16:00:18
+ * @Last Modified time: 2018-08-29 19:50:12
  */
 /**
  * @file 药库 - 补货管理--补货计划--新建计划
@@ -10,21 +10,32 @@
 import React, { PureComponent } from 'react';
 import { Form, Row, Col, Button, Input, Select, Table, Modal, Icon, Tooltip, message, Affix  } from 'antd';
 import { formItemLayout } from '../../../../utils/commonStyles'
-import { createData } from '../../../../common/data';
+import RemoteTable from '../../../../components/TableGrid';
+import { replenishmentPlan } from '../../../../api/replenishment/replenishmentPlan';
+import { connect } from 'dva';
 const FormItem = Form.Item;
 const { Search } = Input;
 const { Option } = Select;
-const modalData = createData().splice(5,16);
-
 class NewAdd extends PureComponent{
   state = {
     isShow: false,
+    deptModules: [],// 采购部门
     visible: false,
     loading: false,
     selected: [],
     selectedRows: [],
     modalSelected: [],
     modalSelectedRows: []
+  }
+  componentWillMount = () =>{
+    const { dispatch } = this.props;
+    dispatch({
+      type: 'base/getModule',
+      payload: { deptType : '3' },
+      callback: (data) =>{
+        this.setState({ deptModules: data })
+      }
+    })
   }
   handleOk = () =>{
     this.setState({ loading: true });
@@ -38,7 +49,7 @@ class NewAdd extends PureComponent{
   }
   render(){
     const { getFieldDecorator } = this.props.form;
-    const { visible } = this.state;
+    const { visible, deptModules } = this.state;
     const columns = [{
       title: '通用名称',
       dataIndex: 'geName'
@@ -130,8 +141,17 @@ class NewAdd extends PureComponent{
           <Row>
             <Col span={6}>
               <FormItem labelCol={{ span: 6 }} wrapperCol={{ span: 18 }} label={`采购部门`}>
-                <Select style={{ width: 200 }}>
+                <Select
+                  showSearch
+                  defaultValue={deptModules.length?deptModules[0].value:''}
+                  optionFilterProp="children"
+                  filterOption={(input, option) => option.props.children.indexOf(input) >= 0} 
+                  style={{ width: 200 }}
+                >
                   <Option value=''>请选择</Option>
+                  {
+                    deptModules.map((item,index)=> <Option key={index} value={item.id}>{ item.deptName }</Option>)
+                  }
                 </Select>
               </FormItem>
             </Col>
@@ -218,18 +238,12 @@ class NewAdd extends PureComponent{
           </Row>
         </Form>
         <div className='detailCard'>
-          <Table
+          <RemoteTable
             style={{ marginTop: 16 }} 
             columns={modalColumns}
-            dataSource={modalData}
             bordered
             scroll={{ x: '130%' }}
             rowKey='id'
-            pagination={{
-              size: "small",
-              showQuickJumper: true,
-              showSizeChanger: true
-            }}
             rowSelection={{
               selectedRowKeys: this.state.modalSelected,
               onChange: (selectedRowKeys, selectedRows) => {
@@ -241,14 +255,12 @@ class NewAdd extends PureComponent{
         </Modal>
         <div className='newPageBorder'>
           <div className='ysynet-table-Content'>
-            <Table 
+            <RemoteTable 
               title={()=>'产品信息'}
               columns={columns}
-              dataSource={createData()}
               bordered
               rowKey='id'
               scroll={{ x: '130%' }}
-              pagination={false}
               rowSelection={{
                 selectedRowKeys: this.state.selected,
                 onChange: (selectedRowKeys, selectedRows) => {
@@ -270,4 +282,4 @@ class NewAdd extends PureComponent{
     )
   }
 }
-export default Form.create()(NewAdd);
+export default connect(state => state)(Form.create()(NewAdd));
