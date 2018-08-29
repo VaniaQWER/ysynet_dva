@@ -8,8 +8,11 @@
  */
 
 import React , { PureComponent } from 'react';
-import {Form , Button , Row , Col, Input , Table , Select , Modal} from 'antd';
+import {Form , Button , Row , Col, Input , Select , Modal} from 'antd';
 import { formItemLayout } from '../../../../../utils/commonStyles';
+import RemoteTable from '../../../../../components/TableGrid';
+import { systemMgt } from '../../../../../api/systemMgt';
+import { connect } from 'dva';
 const FormItem = Form.Item;
 const Option = Select.Option;
 const singleFormItemLayout = {
@@ -23,22 +26,6 @@ const singleFormItemLayout = {
   },
 }
 
-
-let dataSource = [];
-for( let i = 0; i<20; i++ ){
-  dataSource.push({
-    id: i,
-    userNo: `sd_admin${i}`,
-    name: `sd_admin${i}`,
-    deptName: '武大科室',
-    department: '财务科',
-    userName: `唐僧${i}`,
-    editMan: '苏努悟空',
-    editTime: '2018-08-21-17:00'
-    
-  })
-}
-
 class GoodsAllocation extends PureComponent{
 
   state={
@@ -46,7 +33,40 @@ class GoodsAllocation extends PureComponent{
     visible:false,
     modalTitle:"新增",
     record:{},//当前要编辑的信息
+    query:{
+      deptCode:this.props.match.params.id
+    },
+    goosTypeSelect:[],//货位类型接口下拉框
+    getUserListSelect:[],//责任人下拉框
   }
+
+  componentDidMount(){
+
+    //所有的货位类型
+    this.props.dispatch({
+      type:'Organization/GetGoodsType',
+      payload:null,
+      callback:(data)=>{
+        console.log(data)
+        this.setState({
+          goosTypeSelect:data.data
+        })
+      }
+    })
+
+    //责任人
+    this.props.dispatch({
+      type:'Organization/GetUserList',
+      payload:null,
+      callback:(data)=>{
+        console.log(data)
+        this.setState({
+          getUserListSelect:data.data
+        })
+      }
+    })
+  }
+
   //新加货位 - 打开弹窗
   add = () => {
     this.props.form.resetFields();
@@ -57,7 +77,21 @@ class GoodsAllocation extends PureComponent{
   onSubmitModal = () => {
     this.props.form.validateFields((err,values)=>{
       if(!err){
-        console.log(values)
+        console.log(JSON.stringify(values)  )
+        values.deptCode = this.props.match.params.id;
+        if(values.positionType){
+          values.positionType=Number(values.positionType);
+        }
+        values.chargeInPerson = values.id? values.id:''
+        
+        this.props.dispatch({
+          type:'Organization/OperSysDept',
+          payload:{goods:[values]},
+          callback:(data)=>{
+            this.onCancelModal();
+            this.refs.tableGoods.fetch();
+          }
+        })
       }
     })
   }
@@ -71,25 +105,37 @@ class GoodsAllocation extends PureComponent{
   //编辑货位-
   editModal=(record)=>{
     this.setState({record,visible:true,modalTitle:'编辑'})
-    const { userNo , userName , loginName } = record
-    this.props.form.setFieldsValue({ userNo , userName , loginName })
+    const { positionName , positionType , chargeInPerson } = record ;
+    this.props.form.setFieldsValue({ positionName , positionType :`${positionType}`, chargeInPerson })
   }
 
   render(){
-    const { visible , modalTitle } = this.state;
+    const { visible , modalTitle , query , goosTypeSelect , getUserListSelect , record} = this.state;
     const { getFieldDecorator } = this.props.form;
     const columns = [
       {
         title: '货位名称',
-        dataIndex: 'userNo',
+        dataIndex: 'positionName',
       },
       {
         title: '货位类型',
-        dataIndex: 'remark',
+        dataIndex: 'positionType',
+        render:(text)=>{
+          if(goosTypeSelect && goosTypeSelect.length){
+            let a =  goosTypeSelect.filter(item=>{
+              return item.id===`${text}`? item.locationName:false
+            })
+            if(a.length){
+              return a[0].locationName
+            }else{
+              return ''
+            }
+          }
+        }
       },
       {
         title: '货位责任人',
-        dataIndex: 'editMan',
+        dataIndex: 'chargeInPerson',
       },
       {
         title: '操作',
@@ -113,28 +159,28 @@ class GoodsAllocation extends PureComponent{
             货位信息
             </Col>
             <Col span={18}>
-              <WrapperForm></WrapperForm>
+              <WrapperForm 
+              query={(data)=>this.refs.tableGoods.fetch(data)} 
+              goosTypeSelect={goosTypeSelect}
+              deptCode={this.props.match.params.id}
+              ></WrapperForm>
             </Col>
           </Row>
-          <Table 
-            columns={columns}
-            bordered
-            loading={this.state.loading}
-            scroll={{x: '100%'}}
-            rowKey={'id'}
-            pagination={{
-              size: "small",
-              showQuickJumper: true,
-              showSizeChanger: true
-            }}
-            rowSelection={{
-              onChange:(selectRowKeys, selectedRows)=>{
-                this.setState({selectRowKeys})
-              }
-            }}
-            style={{marginTop: 20}}
-            dataSource={dataSource}
-          />
+          <RemoteTable 
+              ref='tableGoods'
+              query={query}
+              isJson={true}
+              style={{marginTop: 20}}
+              columns={columns}
+              scroll={{ x: '100%' }}
+              url={systemMgt.goodsAllocation}
+              rowSelection={{
+                onChange:(selectRowKeys, selectedRows)=>{
+                  this.setState({selectRowKeys})
+                }
+              }}
+              rowKey='id'
+            />
         </div>
 
         <Modal 
@@ -142,11 +188,11 @@ class GoodsAllocation extends PureComponent{
           title={modalTitle}
           onOk={this.onSubmitModal}
           onCancel={this.onCancelModal}
-        >
+          >
           <Form onSubmit={this.onSubmit}>
             <FormItem {...singleFormItemLayout} label={`货位名称`}>
               {
-                getFieldDecorator(`userNo`,{
+                getFieldDecorator(`positionName`,{
                   rules: [{ required: true,message: '请输入货位名称' }]
                 })(
                   <Input />
@@ -155,20 +201,30 @@ class GoodsAllocation extends PureComponent{
             </FormItem>
             <FormItem {...singleFormItemLayout} label={`货位类型`}>
               {
-                getFieldDecorator(`userName`,{
+                getFieldDecorator(`positionType`,{
                   rules: [{ required: true,message: '请输入货位类型' }]
                 })(
                   <Select>
-                    <Option key='0' value='0'>货位类型</Option>
+                    {
+                      goosTypeSelect.map(item=>(
+                        <Option key={item.id} value={item.id}>{item.locationName}</Option>
+                      ))
+                    }
                   </Select>
                 )
               }
             </FormItem>
             <FormItem {...singleFormItemLayout} label={`责任人`}>
               {
-                getFieldDecorator(`loginName`)(
+                getFieldDecorator(`id`,{
+                  initialValue:record?record.id:''
+                })(
                   <Select>
-                    <Option key='0' value='0'>责任人1</Option>
+                    {
+                      getUserListSelect.map(item=>(
+                        <Option key={item.id} value={item.id}>{item.name}</Option>
+                      ))
+                    }
                   </Select>
                 )
               }
@@ -179,7 +235,7 @@ class GoodsAllocation extends PureComponent{
     )
   }
 }
-export default Form.create()(GoodsAllocation) ; 
+export default connect(state=>state)( Form.create()(GoodsAllocation)) ; 
 
 
 
@@ -190,9 +246,18 @@ class SearchForm extends PureComponent{
     this.props.form.validateFields((err,values)=>{
       if(!err){
         console.log(values,'查询数据');
+        if(values.deptType!==''){
+          values.deptType=Number(values.deptType)
+        }else{
+          delete values['deptType']
+        }
         this.props.query(values)
       }
     })
+  }
+  handleReset = () =>{
+    this.props.form.resetFields();
+    this.props.query({deptCode:this.props.deptCode})
   }
   render(){
     const { getFieldDecorator } = this.props.form;
@@ -202,7 +267,7 @@ class SearchForm extends PureComponent{
           <Col span={9}>
             <FormItem {...formItemLayout} label={`货位名称`}>
               {
-                getFieldDecorator(`deptName`,{
+                getFieldDecorator(`positionName`,{
                   initialValue: ''
                 })(
                   <Input placeholder='请输入' />
@@ -213,11 +278,16 @@ class SearchForm extends PureComponent{
           <Col span={9}>
             <FormItem {...formItemLayout} label={`货位类型`}>
               {
-                getFieldDecorator(`userName`,{
+                getFieldDecorator(`deptType`,{
                   initialValue: ''
                 })(
                   <Select>
-                    <Option value='0' key='0'>货位类型</Option>
+                    {
+                      this.props.goosTypeSelect?
+                      this.props.goosTypeSelect.map(item=>(
+                        <Option key={item.id} value={item.id}>{item.locationName}</Option>
+                      )):null
+                    }
                   </Select>
                 )
               }

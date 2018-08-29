@@ -24,7 +24,7 @@ class RoleMgt extends PureComponent{
   //新增角色
   add = ()=> {
     const { history } =this.props;
-    history.push({pathname:'/system/role/roleMgt/add'})
+    history.push({pathname:'/sys/role/add'})
 
   }
   //删除角色
@@ -61,7 +61,7 @@ class RoleMgt extends PureComponent{
         dataIndex: 'action',
         render: (text,record,index)=>{
           return <span>
-            <Link to={{pathname:`/system/role/roleMgt/edit/${record.id}`,state:record}}>编辑</Link>
+            <Link to={{pathname:`/sys/role/edit/${record.id}`,state:record}}>编辑</Link>
           </span>
         }
       },

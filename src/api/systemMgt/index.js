@@ -10,7 +10,9 @@ import {_local} from '../local';
   SupplierList:`${_local}/a/depot/supplier/list`,//组织机构-供应商管理
   DeptList:`${_local}/a/sys/sysdept/getDeptListInfo`,//组织机构-部门管理
   findHisDept:`${_local}/a/sys/sysdept/findHisDept`,//组织机构-部门管理-新增部门-获取医院科室table
-    // 组织机构--用户管理
+  getGoodsList:`${_local}/a/sys/goods/list`,//部门管理 - 新增部门 - 基数药 - 货位table 
+  goodsAllocation:`${_local}/a/dept/getLocationPageInfo`,//部门-货位
+  // 组织机构--用户管理
   FINDUSERLIST:`${_local}/a/his/findUserList`,  //用户管理列表
   
   // 系统设置-字典管理列表

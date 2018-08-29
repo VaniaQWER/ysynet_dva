@@ -24,3 +24,31 @@ export function DepartmentDetails(options){
     body: options
   })
 }
+
+//部门管理 - 新增部门 - 选择货位 -table数据
+
+export function GetGoodsList(options){
+  return request(`${_local}/a/sys/goods/list`,{ 
+    method: 'POST',
+    type: 'json',
+    body: options
+  })
+}
+
+ //部门管理-货位-新增货位 -获取所有货位类型
+export function GetGoodsType(options){
+  return request(`${_local}/a/dept/getLocationType`,{ 
+    method: 'GET',
+    type: 'json',
+    body: options
+  })
+}
+
+ //部门管理-货位-新增货位 -新增货位时：责任人接口
+ export function GetUserList(options){
+  return request(`${_local}/a/his/searchUserList`,{ 
+    method: 'POST',
+    type: 'formData',
+    body: options
+  })
+}

@@ -34,6 +34,33 @@ export default {
         message.error(data.msg);
       }
     },
+    //部门管理 - 新增部门 - 基数药 - 货位table 
+    *GetGoodsList({ payload, callback },{ put, call }){
+      const data = yield call(DepartmentService.GetGoodsList, payload);
+      if (data.code === 200) {
+        if (callback) callback(data);
+      } else {
+        message.error(data.msg);
+      }
+    },
+    //部门管理-货位-新增货位 -获取所有货位类型
+    *GetGoodsType({ payload, callback },{ put, call }){
+      const data = yield call(DepartmentService.GetGoodsType, payload);
+      if (data.code === 200) {
+        if (callback) callback(data);
+      } else {
+        message.error(data.msg);
+      }
+    },
+    //部门管理-货位-新增货位 -新增货位时：责任人接口
+    *GetUserList({ payload, callback },{ put, call }){
+      const data = yield call(DepartmentService.GetUserList, payload);
+      if (data.code === 200) {
+        if (callback) callback(data);
+      } else {
+        message.error(data.msg);
+      }
+    },
     /******   供应商管理  *****/
     *SupplierSave({ payload, callback },{ put, call }){
       const data = yield call(supplierMgtService.SupplierSave, payload);
