@@ -2,14 +2,14 @@
  * @Author: wwb 
  * @Date: 2018-07-24 20:15:54 
  * @Last Modified by: wwb
- * @Last Modified time: 2018-08-21 20:45:30
+ * @Last Modified time: 2018-08-29 23:46:42
  */
 /* 
   @file 补货计划 详情
 */
 import React, { PureComponent } from 'react';
 import { Table ,Row, Col,Tooltip, Button, Form } from 'antd';
-import { createData } from '../../../../common/data';
+// import { createData } from '../../../../common/data';
 import { connect } from 'dva';
 const columns = [
   {

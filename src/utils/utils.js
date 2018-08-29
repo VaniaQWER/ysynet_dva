@@ -97,7 +97,8 @@ export const menuFormat = (menuData,returnToggle) => {
         delete menuList[i].children
       }
     }
-    let index = 1, tree = [], currentNode = '';
+    // let index = 1, tree = [], currentNode = '';
+    let tree = [];
     menuList.sort(function(a, b) {
       return a.parentIds.length - b.parentIds.length;
     })

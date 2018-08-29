@@ -1,6 +1,6 @@
 import React, { PureComponent } from 'react';
 import { Route, Switch, Redirect } from 'dva/router';
-import { Layout, Icon, Row, Col, Tooltip, Menu  } from 'antd';
+import { Layout, Icon, Row, Col, Tooltip, Menu, Dropdown  } from 'antd';
 import { connect } from 'dva';
 import Profile from '../components/profile'
 import SiderMenu from '../components/SiderMenu';
@@ -22,21 +22,22 @@ class BasicLayout extends PureComponent {
       collapsed: !this.state.collapsed,
     });
   }
-  /* menu = (subSystemList) => (
+  menu = (list,deptId) => (
     <Menu 
       selectable
       onClick={this.handleClick}
-      defaultSelectedKeys={[subSystemId?subSystemId+"":""]}
+      defaultSelectedKeys={[deptId?deptId+"":""]}
     >
       {
-        subSystemList.map((item,index) =>{
-          return <Menu.Item key={item.subSystemId} name={item.name} deptguid={item.deptGuid}>{ item.name }</Menu.Item>
+        list.map((item,index) =>{
+          return <Menu.Item key={item.deptId} name={item.deptName} >{ item.deptName }</Menu.Item>
         })
       }
     </Menu>
-  ); */
+  );
   render() {
     const { getRouteData } = this.props;
+    let { userInfo, currentDept, deptList } = this.props.users;
     const { title } = this.state;
     return (
       <Layout>
@@ -67,14 +68,14 @@ class BasicLayout extends PureComponent {
             <Row>
               <Col span={4} style={{ paddingLeft: 16 }}>
                 {
-                  /* subSystemName &&
-                  <Dropdown overlay={this.menu(subSystemList)} trigger={['click']}>
+                  currentDept.deptId &&
+                  <Dropdown overlay={this.menu(deptList,currentDept.deptId)} trigger={['click']}>
                     <Tooltip title='子系统切换' placement='right'>
                       <span className="ant-dropdown-link">
-                        {subSystemName} <Icon type="down" style={{ marginLeft: 8 }}/>
+                        {currentDept.deptName} <Icon type="down" style={{ marginLeft: 8 }}/>
                       </span>
                     </Tooltip>
-                  </Dropdown> */
+                  </Dropdown>
                 }
               </Col>
               <Col span={20} style={{textAlign: 'right'}}>
@@ -86,7 +87,7 @@ class BasicLayout extends PureComponent {
                       })}/> 
                     </Tooltip>
                   </div>
-                  <Profile userName={'系统管理员'}/>
+                  <Profile userName={userInfo.name}/>
                 </div>
               </Col>
             </Row>

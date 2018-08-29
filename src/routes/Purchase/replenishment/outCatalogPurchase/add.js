@@ -2,16 +2,16 @@
  * @Author: wwb 
  * @Date: 2018-07-24 18:49:01 
  * @Last Modified by: wwb
- * @Last Modified time: 2018-08-29 19:50:12
+ * @Last Modified time: 2018-08-29 23:46:24
  */
 /**
  * @file 药库 - 补货管理--补货计划--新建计划
  */
 import React, { PureComponent } from 'react';
-import { Form, Row, Col, Button, Input, Select, Table, Modal, Icon, Tooltip, message, Affix  } from 'antd';
+import { Form, Row, Col, Button, Input, Select, Modal, Icon, Tooltip, message, Affix  } from 'antd';
 import { formItemLayout } from '../../../../utils/commonStyles'
 import RemoteTable from '../../../../components/TableGrid';
-import { replenishmentPlan } from '../../../../api/replenishment/replenishmentPlan';
+// import { replenishmentPlan } from '../../../../api/replenishment/replenishmentPlan';
 import { connect } from 'dva';
 const FormItem = Form.Item;
 const { Search } = Input;

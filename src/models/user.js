@@ -5,15 +5,23 @@ export default {
   namespace: 'users',
   state:{
     userInfo: {
-      deptInfo: [],
+      
     },
-    currentMenuList: []
+    currentMenuList: [],
+    deptList: [],
+    currentDept: {}
   },
   reducers: {
     userInfo(state,action){
+      let { payload } = action;
+      let deptList = [];
+      payload.deptInfo.map(item => deptList.push({ deptId: item.deptId,deptName: item.deptName }))
+      let dept = payload.deptInfo[0];
       return {
         ...state,
-        userInfo: action.payload
+        userInfo: payload,
+        currentDept: { deptId: dept.deptId, deptName: dept.deptName },
+        deptList
       }
     },
     saveCurrentMenu(state,action){

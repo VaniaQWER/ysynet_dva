@@ -41,7 +41,8 @@ class Login extends PureComponent{
             menuList[i].parentIds = menuList[i].parentIds.split(',')
             menuList[i].parentIds.pop();
           }
-          let index = 1, tree = [], currentNode = '';
+          // let index = 1, tree = [], currentNode = '';
+          let tree = [];
           menuList.sort(function(a, b) {
             return a.parentIds.length - b.parentIds.length;
           })
@@ -75,10 +76,8 @@ class Login extends PureComponent{
             genTree(min);
             min++;
           }
-          console.log(tree,'tree');
-          console.log(tree[0].children[0]);
-          let href = tree[0].children[0].children[0].children[0].href;
-          href = href.substring(0,href.length-1);
+          /* let href = tree[0].children[0].children[0].children[0].href;
+          href = href.substring(0,href.length-1); */
           this.props.dispatch({
             type: 'users/setCurrentMenu',
             payload: { menu : tree[0].children[0] }
@@ -91,7 +90,6 @@ class Login extends PureComponent{
   }
   render(){
     const { getFieldDecorator } = this.props.form;
-    console.log(this.props.users,'users')
     const wrapperLayout = {
       wrapperCol:{ span: 15, offset: 5 }
     }
