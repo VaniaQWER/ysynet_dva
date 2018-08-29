@@ -6,6 +6,11 @@
 
 import {_local} from '../local';
 export default {
+  /* 库存 */
   depotinstoreList: `${_local}depot/depotinstore/list`,    //库存列表
   depotinstoreInfo: `${_local}depot/depotinstore/info`,    //库存详情
+  /* 配送单 */
+  depotdistributeList: `${_local}/a/DepotDistribute/depotdistribute/list`,  //配送单列表
+  /* 上架 */
+  shelfList: `${_local}/a/depot/shelfList/selectShelf`,           //上架列表
 }

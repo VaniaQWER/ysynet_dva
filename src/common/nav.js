@@ -357,13 +357,13 @@ export const getNavData = app => [
       name: "入库单管理",
       icon: 'setting',
       path: '/drugStorage/wareHouse/wareHouseReceiptMgt',
-      component: dynamicWrapper(app, [], () => import('../routes/DrugStorage/wareHouse/wareHouseReceiptMgt')),
+      component: dynamicWrapper(app, ['drugStorage/wareHouse'], () => import('../routes/DrugStorage/wareHouse/wareHouseReceiptMgt')),
     },
     {
       name: "入库单详情",
       icon: 'setting',
       path: '/drugStorage/wareHouse/wareHouseReceiptMgt/detail/:id',
-      component: dynamicWrapper(app, [], () => import('../routes/DrugStorage/wareHouse/wareHouseReceiptMgt/detail')),
+      component: dynamicWrapper(app, ['drugStorage/wareHouse'], () => import('../routes/DrugStorage/wareHouse/wareHouseReceiptMgt/detail')),
     },
     /* ***************  出库  ******************** */
     {

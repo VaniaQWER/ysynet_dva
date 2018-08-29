@@ -116,7 +116,6 @@ class RemoteTable extends Component {
   render () {
     const { columns, rowKey, rowClassName, 
             rowSelection, scroll, footer,showHeader,title } = this.props;   
-            console.log(this.state.pagination);
 
     return (
       <Table 

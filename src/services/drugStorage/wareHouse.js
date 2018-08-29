@@ -21,4 +21,19 @@ export function putawayInfo(options) {
     type: 'formData',
     body: options
   })
+};
+/* 入库管理 */
+export function getsupplierList() {     //供应商下拉框
+  return request(`${_local}/a/depot/supplier/supplierList`, {
+    method: 'GET',
+    type: 'formData',
+  })
+}
+
+export function getPutStorageInfo(options) {    //入库单详情
+  return request(`${_local}/depot/depotinstore/info`, {
+    method: 'POST',
+    type: 'formData',
+    body: options
+  })
 }
