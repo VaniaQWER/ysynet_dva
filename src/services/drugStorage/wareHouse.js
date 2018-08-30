@@ -23,10 +23,11 @@ export function putawayInfo(options) {
   })
 };
 /* 入库管理 */
-export function getsupplierList() {     //供应商下拉框
-  return request(`${_local}/a/depot/supplier/supplierList`, {
-    method: 'GET',
+export function getsupplierList(options) {     //供应商下拉框
+  return request(`${_local}/a/depot/supplier/list`, {    
+    method: 'POST',
     type: 'formData',
+    body: options
   })
 }
 
@@ -34,6 +35,22 @@ export function getPutStorageInfo(options) {    //入库单详情
   return request(`${_local}/depot/depotinstore/info`, {
     method: 'POST',
     type: 'formData',
+    body: options
+  })
+};
+
+export function saveCheck(options) {       //增加验收批号
+  return request(`${_local}/a/depot/depotdistributedetail/checkList`, {
+    method: 'POST',
+    type: 'json',
+    body: options
+  })
+};
+
+export function putSaveCheck(options) {   //上架完成
+  return request(`${_local}/a/depot/shelfList/finish`, {
+    method: 'POST',
+    type: 'json',
     body: options
   })
 }
