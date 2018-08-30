@@ -1,6 +1,7 @@
 import React, { PureComponent } from 'react';
 import { Form, Button, Checkbox, Input, Icon } from 'antd';
 import { connect } from 'dva';
+import { menuFormat } from '../../utils/utils';
 // import querystring from 'querystring';
 import styles from './style.css';
 const FormItem = Form.Item;
@@ -36,52 +37,17 @@ class Login extends PureComponent{
       callback: (data) => {
         this.setState({ loading: false });
         if(data.deptInfo && data.deptInfo.length !== 1){
-          let { menuList } = data.deptInfo[0];
-          for (let i=0; i<menuList.length; i++) {
-            menuList[i].parentIds = menuList[i].parentIds.split(',')
-            menuList[i].parentIds.pop();
-          }
-          // let index = 1, tree = [], currentNode = '';
-          let tree = [];
-          menuList.sort(function(a, b) {
-            return a.parentIds.length - b.parentIds.length;
-          })
-
-          let max = menuList[menuList.length - 1].parentIds.length;
-
-          function genRoot(keyNodes, target) {
-            for (let i=0; i<target.length; i++) {
-              if (target[i].id === keyNodes.parentId) {
-                target[i].children = target[i].children || [];
-                target[i].children = [ ...target[i].children, keyNodes ]
-              } else if (target[i].children){
-                genRoot(keyNodes, target[i].children)
-              }
-            }
-          }
-          function genTree(index) {
-            for (let i=0; i<menuList.length; i++) {
-              if (menuList[i].parentIds.length === index) {
-                if (index === 1) {
-                  tree.push(menuList[i])
-                } else {
-                  genRoot(menuList[i], tree);
-                }
-              }
-            }
-          }
-          
-          let min = 1;
-          while (min < max + 1) {
-            genTree(min);
-            min++;
-          }
+          let deptInfo = data.deptInfo;
+          let { menuList } = deptInfo[0];
+          let tree = menuFormat(menuList,true,1) ;
+        
+          console.log(tree,'ret')
           /* let href = tree[0].children[0].children[0].children[0].href;
           href = href.substring(0,href.length-1); */
-          this.props.dispatch({
-            type: 'users/setCurrentMenu',
-            payload: { menu : tree[0].children[0] }
-          })
+          // this.props.dispatch({
+          //   type: 'users/setCurrentMenu',
+          //   payload: { menu : tree[0].children[0] }
+          // })
           // history.push({ pathname: href })
           // history.push({ pathname: '/subSystem' })
           history.push({ pathname: '/sys/drugDirectory/directory' })

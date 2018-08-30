@@ -2,7 +2,7 @@
  * @Author: wwb 
  * @Date: 2018-08-21 17:46:47 
  * @Last Modified by: wwb
- * @Last Modified time: 2018-08-29 21:18:57
+ * @Last Modified time: 2018-08-30 09:36:21
  */
  /**
  * @file 系统管理--组织机构--用户管理--添加
@@ -41,7 +41,7 @@ const modalColumns = [{
   dataIndex: 'ctcpName'
 },{
   title: '所属科室',
-  dataIndex: 'ctcpDeptCode'
+  dataIndex: 'hisDeptName'
 }];
 class AddUser extends PureComponent{
   state = {
@@ -59,8 +59,8 @@ class AddUser extends PureComponent{
     selectedRows: [],
     userSelected: [], // 角色分配
     UserselectedRows: [],
-    modalSelected: [], // 人员选择
-    modalSelectedRows: []
+    ctcpName: null,// 新增人员查询输入库姓名
+    hisDeptName: null // 新增人员查询输入库 所属科室
   }
   componentWillMount = () =>{
     this.setState({ userLoading: true, deptLoading: true });
@@ -82,11 +82,11 @@ class AddUser extends PureComponent{
       }
     });
   }
-  onSearch = () =>{
+  onSearch = (values) =>{
     this.setState({ visible: true, tableLoading: true,record: {},hasStyle: null })
     this.props.dispatch({
       type: 'Organization/getFilterCareProv',
-      payload: {},
+      payload: values ? {...values}: {},
       callback: (data) =>{
         this.setState({ modalDataSource: data, tableLoading: false })
       }
@@ -122,6 +122,14 @@ class AddUser extends PureComponent{
         })
       }
     })
+  }
+  search = () =>{
+    let { ctcpName, hisDeptName } = this.state;
+    let values = { ctcpName, hisDeptName };
+    this.onSearch(values);
+  }
+  reset = () =>{
+    this.onSearch()
   }
   render(){
     const { getFieldDecorator } = this.props.form;
@@ -228,9 +236,13 @@ class AddUser extends PureComponent{
             rowKey={'id'}
             loading={deptLoading}
             dataSource={deptDataSource}
-            pagination={false}
             size={'small'}
             scroll={{ x: '100%' }}
+            pagination={{
+              size: 'small',
+              showQuickJumper: true,
+              showSizeChanger: true
+            }}
             rowSelection={{
               selectedRowKeys: this.state.selected,
               onChange: (selectedRowKeys, selectedRows) => {
@@ -248,9 +260,13 @@ class AddUser extends PureComponent{
             rowKey={'id'}
             loading={userLoading}
             dataSource={userDataSource}
-            pagination={false}
             size={'small'}
             scroll={{ x: '100%' }}
+            pagination={{
+              size: 'small',
+              showQuickJumper: true,
+              showSizeChanger: true
+            }}
             rowSelection={{
               selectedRowKeys: this.state.userSelected,
               onChange: (selectedRowKeys, selectedRows) => {
@@ -273,22 +289,34 @@ class AddUser extends PureComponent{
       >
         <Row style={{ marginBottom: 16 }}>
           <Col span={16}>
-            <Input style={{ width: 120 }} placeholder='姓名关键字'/>
-            <Input style={{ width: 120,marginLeft: 8 }} placeholder='科室关键字'/>
+            <Input 
+              style={{ width: 120 }} 
+              onBlur={(e)=>this.setState({ ctcpName: e.target.value  })} 
+              placeholder='姓名关键字'
+            />
+            <Input 
+              style={{ width: 120, marginLeft: 8 }} 
+              onBlur={(e)=>this.setState({ hisDeptName: e.target.value  })} 
+              placeholder='科室关键字'
+            />
           </Col>
           <Col span={8} style={{ textAlign: 'right' }}>
-            <Button type='primary'>查询</Button>
-            <Button type='primary' style={{ marginLeft: 8 }}>重置</Button>
+            <Button type='primary' onClick={this.search}>查询</Button>
+            <Button type='primary' style={{ marginLeft: 8 }} onClick={this.reset}>重置</Button>
           </Col>
         </Row>
         <Table 
           columns={modalColumns}
           size='small'
-          pagination={false}
           loading={tableLoading}
           dataSource={modalDataSource}
           rowClassName={ (record, index) => index === hasStyle ? 'rowClassBg' : ''}
           rowKey={'id'}
+          pagination={{
+            size: 'small',
+            showQuickJumper: true,
+            showSizeChanger: true
+          }}
           scroll={{ x: '100%' }}
           onRow={(record,index)=>{
             return {

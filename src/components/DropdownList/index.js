@@ -3,7 +3,7 @@ import { Menu, Dropdown, Icon } from 'antd';
 import { _local } from '../../api/local'
 class DropdownList extends React.Component {
   selectHandler = (link) => {
-    console.log(link,'link')
+    // console.log(link,'link')
     const uri = window.location.hash.substring(2, window.location.hash.length);
     if(uri !== link){
       if(link === '/login'){
@@ -14,7 +14,7 @@ class DropdownList extends React.Component {
         })
         .then(res => res.json)
         .then(data=>{
-          console.log(data,'data');
+          // console.log(data,'data');
         })
       }
     }

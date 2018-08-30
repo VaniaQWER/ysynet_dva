@@ -88,7 +88,8 @@ export const getMenuData  = (key, menuList) => {
 }
 
 
-export const menuFormat = (menuData,returnToggle) => {
+export const menuFormat = (menuData,returnToggle,returnIndex) => {
+    let menuIndex = returnIndex ? 1: 2;
     let menuList = menuData ;
     for (let i=0; i<menuList.length; i++) {
       menuList[i].parentIds = menuList[i].parentIds.split(',')
@@ -118,7 +119,7 @@ export const menuFormat = (menuData,returnToggle) => {
     function genTree(index) {
       for (let i=0; i<menuList.length; i++) {
         if (menuList[i].parentIds.length === index) {
-          if (index === 2) {
+          if (index === menuIndex) {
             tree.push(menuList[i])
           } else {
             genRoot(menuList[i], tree);
@@ -131,7 +132,7 @@ export const menuFormat = (menuData,returnToggle) => {
       genTree(min);
       min++;
     }
-    console.log(JSON.stringify(tree),'tree');
+    // console.log(JSON.stringify(tree),'tree');
     if(returnToggle){
       return tree
     }

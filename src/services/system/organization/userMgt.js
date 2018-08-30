@@ -2,7 +2,7 @@
  * @Author: wwb 
  * @Date: 2018-08-27 20:02:14 
  * @Last Modified by: wwb
- * @Last Modified time: 2018-08-28 19:49:30
+ * @Last Modified time: 2018-08-30 09:19:11
  */
 import request from '../../../utils/request';
 import { _local } from '../../../api/local';
@@ -49,7 +49,7 @@ export function findUserInfo(options){
 
 export function getFilterCareProv(options){
   return request(`${_local}/a/his/getFilterCareProv`,{ //用户管理--获取用户信息
-    method: 'GET',
+    method: 'POST',
     type: 'formData',
     body: options
   })

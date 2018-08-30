@@ -29,6 +29,12 @@ export default {
         ...state,
         currentMenuList: action.payload.menu
       }
+    },
+    setCurrentDeptInfo(state,action){
+      return {
+        ...state,
+        currentDept: { deptId: action.payload.id,deptName: action.payload.deptName }
+      }
     }
   },
   effects:{
@@ -51,6 +57,17 @@ export default {
     },
     *setCurrentMenu({ payload },{ put }){
       yield put({ type: 'saveCurrentMenu', payload })
+    },
+    // 设置当前系统
+    *setCurrentDept({payload,callback},{ call, put }){
+      const data = yield call(usersService.cacheCurrentDept,payload);
+      if(data.code === 200 && data.msg === 'success'){
+        message.success('切换子系统成功');
+        yield put({ type: 'setCurrentDeptInfo', payload });
+      }else{
+        return message.error(data.msg ||'系统切换失败')
+      }
+      if(callback) callback();
     }
   },
   subscriptions: {

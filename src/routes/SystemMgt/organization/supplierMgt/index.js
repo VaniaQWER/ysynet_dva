@@ -178,13 +178,8 @@ class UserMgt extends PureComponent{
           style={{marginTop: 20}}
           columns={columns}
           scroll={{ x: '100%' }}
+          rowKey='ctmaSupplierCode'
           url={systemMgt.SupplierList}
-          // rowSelection={{
-          //   onChange:(selectRowKeys, selectedRows)=>{
-          //     this.setState({selectRowKeys})
-          //   }
-          // }}
-          rowKey='id'
         />
         <Modal
           title={editTitle}

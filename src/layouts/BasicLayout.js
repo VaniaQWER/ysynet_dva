@@ -4,6 +4,7 @@ import { Layout, Icon, Row, Col, Tooltip, Menu, Dropdown  } from 'antd';
 import { connect } from 'dva';
 import Profile from '../components/profile'
 import SiderMenu from '../components/SiderMenu';
+import { menuFormat } from '../utils/utils';
 import styles from './style.css';
 const { Header, Content, Sider } = Layout;
 class BasicLayout extends PureComponent {
@@ -11,22 +12,40 @@ class BasicLayout extends PureComponent {
     collapsed: false,
     title: {}
   }
-  /* componentWillMount = () =>{
-    this.props.dispatch({
-      type:'users/getUserM',
-      payload: {}
-    })
-  } */
+  componentWillMount = () =>{
+    let { dispatch, users } = this.props;
+    let { userInfo } = users;
+    if(!userInfo.id && !userInfo.loginName){
+      dispatch({
+        type: 'users/userLogin',
+        payload: { refresh: true }
+      })
+    }
+  }
   toggle = () => {
     this.setState({
       collapsed: !this.state.collapsed,
     });
   }
   handleClick = (e) =>{
-    console.log(e,'e')
+    let { dispatch, users } = this.props;
+    let { deptInfo } = users.userInfo;
+    dispatch({
+      type: 'users/setCurrentDept',
+      payload: { id: e.key, deptName: e.item.props.children },
+      callback: () =>{
+        let currMenuList = deptInfo.filter(item => item.deptId === e.key)[0].menuList;
+        let addMenu = deptInfo[0].menuList.filter(item => item.id === '1')[0];
+        currMenuList.push(addMenu);
+        console.log(currMenuList,'current')
+        let tree = menuFormat(currMenuList, true, 1);
+        console.log(tree,'tree')
+      }
+    })
   }
-  menu = (list,deptId) => (
-    <Menu 
+  menu = (list,deptId) => {
+    return (
+      <Menu 
       selectable
       onClick={this.handleClick}
       defaultSelectedKeys={[deptId?deptId+"":""]}
@@ -37,7 +56,8 @@ class BasicLayout extends PureComponent {
         })
       }
     </Menu>
-  );
+    )
+  }
   render() {
     const { getRouteData } = this.props;
     let { userInfo, currentDept, deptList } = this.props.users;

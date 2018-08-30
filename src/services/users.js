@@ -10,13 +10,22 @@ export function EncryptPassword(options){
   })
 }
 export function userLogin(options){
+  let body = options.refresh ? {} : options;
   return request(`${_local}/a/login`,{ //登陆
-    method: 'POST',
+    method: options.refresh ? 'GET': 'POST',
     type: 'formData',
     credentials: 'include',
-    body: options
+    body: body
   })
 }
 
+export function cacheCurrentDept(options){
+  return request(`${_local}/a/cacheCurrentDept/${options.id}`,{ //设置当前系统，系统切换
+    method: 'GET',
+    type: 'formData',
+    credentials: 'include',
+    body: {}
+  })
+}
 
 
