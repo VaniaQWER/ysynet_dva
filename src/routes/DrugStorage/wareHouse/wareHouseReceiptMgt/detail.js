@@ -5,27 +5,29 @@
  * @Last Modified time: 2018-08-27 15:11:46
  */
 /* 
-  @file 补货计划 详情
+  @file 入库 详情
 */
 import React, { PureComponent } from 'react';
+
 import { Table ,Row, Col,Tooltip } from 'antd';
-import { createData } from '../../../../common/data';
+
+import {connect} from 'dva';
+
 const columns = [
   {
     title: '通用名',
     width: 180,
-    dataIndex: 'productName1',
-    render:(text,record)=>record.productName
+    dataIndex: 'ctmmGenericName'
   },
   {
     title: '商品名',
     width: 150,
-    dataIndex: 'productName',
+    dataIndex: 'ctmmTradeName',
   },
   {
     title: '规格',
     width: 270,
-    dataIndex: 'spec',
+    dataIndex: 'ctmmSpecification',
     className:'ellipsis',
     render:(text)=>(
       <Tooltip placement="topLeft" title={text}>{text}</Tooltip>
@@ -34,48 +36,42 @@ const columns = [
   {
     title: '剂型',
     width: 150,
-    dataIndex: 'fmodal',
+    dataIndex: 'ctmmDosageFormDesc',
   },
   {
     title: '包装规格',
     width: 150,
-    dataIndex: 'packSpec',
-    render:(text)=>'g'
+    dataIndex: 'packageSpecification',
   },
   {
     title: '单位',
     width: 150,
-    dataIndex: 'unit',
-    render:(text)=>'箱'
+    dataIndex: 'replanUnit',
   },
   {
     title: '入库数量',
-    dataIndex: 'amount',
+    dataIndex: 'inQuantity',
     width: 80,
-    render: (text,record,index) => '120' 
   },
   {
     title: '生产批号',
     width: 180,
-    dataIndex: 'flot',
+    dataIndex: 'productBatchNo',
   },
   {
     title: '生产日期',
     width: 200,
-    dataIndex: 'produceTime',
-    render: (text,record,index) => '2018-07-10' 
+    dataIndex: 'realProductTime',
   },
   {
     title: '有效期至',
     width: 200,
-    dataIndex: 'UserfulDate',
-    render: (text,record,index) => '2022-07-09' 
+    dataIndex: 'realValidEndDate',
   },
   {
     title: '货位',
     width: 200,
-    dataIndex: 'huowei',
-    render: (text,record,index) => 'A1231' 
+    dataIndex: 'realPositionCode',
   },
   {
     title: '批准文号',
@@ -85,109 +81,114 @@ const columns = [
   {
     title: '生产厂家',
     width: 200,
-    dataIndex: 'productCompany',
+    dataIndex: 'ctmmManufacturerName',
   }
 ];
 
 class ReplenishmentDetail extends PureComponent{
+  componentDidMount = () => {
+    this.props.dispatch({
+      type: 'wareHouse/getPutStorageInfo',
+      payload: {
+        inStoreCode: this.props.match.params.id,
+      }
+    })
+  }
   render(){
+    let {putStorageInfo: data} = this.props;
+    let {list} = data;
     return (
-      <div>
-        <div className='detailCard'>
+      <div  className="fullCol fadeIn">
+        <div className='fullCol-fullChild'>
           <h3>单据信息</h3>
           <Row>
             <Col span={8}>
-              <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
+              <div className="ant-form-item-label ant-col-xs-24 ant-col-sm-5">
                 <label>部门</label>
               </div>
               <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
-                <div className='ant-form-item-control'>药库</div>
+                <div className='ant-form-item-control'>{data.deptName || ''}</div>
               </div>
             </Col>
             <Col span={8}>
-            <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
+            <div className="ant-form-item-label ant-col-xs-24 ant-col-sm-5">
               <label>入库分类</label>
             </div>
             <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
-              <div className='ant-form-item-control'>采购入库</div>
+              <div className='ant-form-item-control'>{data.inStoreTypeName || ''}</div>
             </div>
             </Col>
             <Col span={8}>
-              <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
+              <div className="ant-form-item-label ant-col-xs-24 ant-col-sm-5">
                 <label>供应商</label>
               </div>
               <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
-                <div className='ant-form-item-control'>裕美供应商</div>
+                <div className='ant-form-item-control'>{data.ctmaSupplierName || ''}</div>
               </div>
             </Col>
             <Col span={8}>
-              <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
+              <div className="ant-form-item-label ant-col-xs-24 ant-col-sm-5">
                   <label>入库单</label>
               </div>
               <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
-                <div className='ant-form-item-control'>RK00221180700005QU</div>
+                <div className='ant-form-item-control'>{data.inStoreCode || ''}</div>
               </div>
             </Col>
             <Col span={8}>
-              <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
+              <div className="ant-form-item-label ant-col-xs-24 ant-col-sm-5">
                   <label>配送单</label>
               </div>
               <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
-                <div className='ant-form-item-control'>PO0022118070000383
-                </div>
+                <div className='ant-form-item-control'>{data.distributeCode || ''}</div>
               </div>
             </Col>
             <Col span={8}>
-              <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
+              <div className="ant-form-item-label ant-col-xs-24 ant-col-sm-5">
                   <label>订单</label>
               </div>
               <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
-                <div className='ant-form-item-control'>DD0022118070000383</div>
+                <div className='ant-form-item-control'>{data.orderCode || ''}</div>
               </div>
             </Col>
             <Col span={8}>
-              <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
+              <div className="ant-form-item-label ant-col-xs-24 ant-col-sm-5">
                   <label>入库时间</label>
               </div>
               <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
-                <div className='ant-form-item-control'>2018-07-12 17:09:15</div>
+                <div className='ant-form-item-control'>{data.updateDate || ''}</div>
               </div>
             </Col>
             <Col span={8}>
-              <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
+              <div className="ant-form-item-label ant-col-xs-24 ant-col-sm-5">
                   <label>上架时间</label>
               </div>
               <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
-                <div className='ant-form-item-control'>2018-07-12 17:09:15</div>
+                <div className='ant-form-item-control'>{data.createDate || ''}</div>
               </div>
             </Col>
             <Col span={8}>
-              <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
+              <div className="ant-form-item-label ant-col-xs-24 ant-col-sm-5">
                   <label>备注</label>
               </div>
               <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
-                <div className='ant-form-item-control'></div>
+                <div className='ant-form-item-control'>{data.remarks || ''}</div>
               </div>
             </Col>
           </Row>
         </div>
         <div className='detailCard'>
+          <h3 style={{margin: '0 0 20px 0', paddingBottom: 10, borderBottom: '1px solid #e8e8e8'}}>产品信息</h3>
           <Table
-            dataSource={createData()}
             bordered
-            title={()=>'产品信息'}
+            dataSource={list}
             scroll={{x: '130%'}}
             columns={columns}
             rowKey={'id'}
-            pagination={{
-              size: 'small',
-              showQuickJumper: true,
-              showSizeChanger: true
-            }}
+            pagination={false}
           />
         </div>
       </div>
     )
   }
 }
-export default ReplenishmentDetail;
+export default connect(state=>state.wareHouse)(ReplenishmentDetail);

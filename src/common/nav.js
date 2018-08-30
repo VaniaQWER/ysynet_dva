@@ -327,13 +327,13 @@ export const getNavData = app => [
       name: "配送单验收",
       icon: 'setting',
       path: '/drugStorage/wareHouse/psListCheck',
-      component: dynamicWrapper(app, [], () => import('../routes/DrugStorage/wareHouse/psListCheck')),
+      component: dynamicWrapper(app, ['drugStorage/wareHouse'], () => import('../routes/DrugStorage/wareHouse/psListCheck')),
     },
     {
       name: '配送单验收--新建',
       iocn: 'setting',
       path: '/drugStorage/wareHouse/psListCheck/add',
-      component: dynamicWrapper(app, [], () => import('../routes/DrugStorage/wareHouse/psListCheck/add')),
+      component: dynamicWrapper(app, ['drugStorage/wareHouse'], () => import('../routes/DrugStorage/wareHouse/psListCheck/add')),
     },
     {
       name: '配送单验收--详情',
@@ -1044,7 +1044,7 @@ export const getNavData = app => [
     {
       name: "部门管理-货位",
       icon: 'setting',
-      path: '/sys/organization/departmentMgt/goodsAllocation/:id',
+      path: '/sys/organization/departmentMgt/goodsAllocation',
       component: dynamicWrapper(app, ['systemMgt/organization'], () => import('../routes/SystemMgt/organization/departmentMgt/goodsAllocation')),
     },
     // 组织机构 -- 用户管理
@@ -1120,20 +1120,20 @@ export const getNavData = app => [
     {
       name: "采购结算-补货管理--补货计划--详情",
       icon: 'setting',
-      path: '/purchase/replenishment/replenishmentPlan/detail/:id',
-      component: dynamicWrapper(app, ['replenishment/replenish'], () => import('../routes/Purchase/replenishment/replenishmentPlan/detail')),
+      path: '/purchase/replenishment/replenishmentPlan/detail',
+      component: dynamicWrapper(app, [], () => import('../routes/Purchase/replenishment/replenishmentPlan/detail')),
     },
     {
       name: "采购结算-补货管理--目录外采购",
       icon: 'setting',
       path: '/purchase/replenishment/outCatalogPurchase',
-      component: dynamicWrapper(app, ['replenishment/replenish'], () => import('../routes/Purchase/replenishment/outCatalogPurchase')),
+      component: dynamicWrapper(app, [], () => import('../routes/Purchase/replenishment/outCatalogPurchase')),
     },
     {
       name: "采购结算-补货管理--目录外采购--详情",
       icon: 'setting',
       path: '/purchase/replenishment/outCatalogPurchase/detail',
-      component: dynamicWrapper(app, ['replenishment/replenish'], () => import('../routes/Purchase/replenishment/outCatalogPurchase/detail')),
+      component: dynamicWrapper(app, [], () => import('../routes/Purchase/replenishment/outCatalogPurchase/detail')),
     },
     {
       name: "采购结算-补货管理--计划审核",

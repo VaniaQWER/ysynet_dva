@@ -8,17 +8,17 @@
  * @file 药库 - 入库--配送单验收--列表
  */
 import React, { PureComponent } from 'react';
-import { Form, Input, Row, Col, Select, Button, Table, Tooltip, Icon } from 'antd';
+import { Form, Input, Row, Col, Select, Button, Tooltip, Icon } from 'antd';
 import { Link } from 'react-router-dom';
-import { createData } from '../../../../common/data';
+import wareHouse from '../../../../api/drugStorage/wareHouse';
+import RemoteTable from '../../../../components/TableGrid';
+import request from '../../../../utils/request';
+import {_local} from '../../../../api/local';
+import {connect} from 'dva';
+import _ from 'loadsh';
+
 const FormItem = Form.Item;
 const { Option } = Select;
-let data = createData();
-let dataSource =  data.map(item=> {
-  item.checkUser = '高晓松'
-  item.checkTime = '2018-07-22 18:33';
-  return item
-});
 const formItemLayout = {
   labelCol: {
     xs: { span: 24 },
@@ -32,79 +32,90 @@ const formItemLayout = {
 const columns = [
   {
    title: '配送单号',
-   width:150,
-   dataIndex: 'medicinalCode',
+   dataIndex: 'distributeCode',
    render: (text,record) =>{
      return <span>
-        <Link to={{pathname: `/drugStorage/wareHouse/psListCheck/detail`}}>{text}</Link>
+        <Link to={{pathname: `/drugStorage/wareHouse/psListCheck/detail/id=${record.distributeCode}&state=${record.auditStatus}`}}>{text}</Link>
       </span>
    }
   },
   {
     title: '订单号',
-    width:140,
-    dataIndex: 'planNo',
+    dataIndex: 'orderCode',
   },
   {
     title: '供应商',
-    width:120,
-    dataIndex: 'fOrgName',
+    dataIndex: 'supplierName',
   },
   {
     title: '状态',
-    width:100,
-    dataIndex: 'fstate',
-    render: (text,record) =>{
-      if(text === '00'){
-        return '待确认'
-      }else if( text === '01' ){
-        return '采购中'
-      }else if(text === '09'){
-        return '已驳回'
-      }else{
-        return ''
-      }
-    }
+    dataIndex: 'statusName'
   },
   {
     title: '类型',
-    width: 100,
-    dataIndex: 'planType',
+    dataIndex: 'typeName',
   },
   {
     title: '收货地址',
-    dataIndex: 'tfAddress',
-    width: 270,
+    dataIndex: 'deptAddress',
     className: 'ellipsis',
       render:(text)=>(
         <Tooltip placement="topLeft" title={text}>{text}</Tooltip>
       )
   },
-  // {
-  //   title: '制单人',
-  //   width: 150,
-  //   dataIndex: 'createUser',
-  // },
-  // {
-  //   title: '制单时间',
-  //   width: 150,
-  //   dataIndex: 'planTime',
-  // },
-  // {
-  //   title: '验收人',
-  //   width: 120,
-  //   dataIndex: 'checkUser',
-  // },
   {
     title: '验收时间',
-    width:150,
-    dataIndex: 'checkTime',
+    dataIndex: 'receptionTime',
   }
 ];
 
 class SearchForm extends PureComponent{
   state = {
-    display: 'none'
+    display: 'none',
+    type: [],
+    status: []
+  }
+  constructor(props) {
+    super(props)
+    this.ChangeSupplier = _.debounce(this.ChangeSupplier, 300);
+  }
+  componentDidMount = () => {
+    let status = request(`${_local}/a/spd/dict/type`, {
+      methods: 'POST',
+      type: 'formData',
+      body: {
+        type: "audit_status"
+      }
+    });
+    status.then(({data}) => {
+      this.setState({
+        status: data
+      })
+    });
+
+    let type = request(`${_local}/a/spd/dict/type`, {
+      methods: 'POST',
+      type: 'formData',
+      body: {
+        type: "in_store_type"
+      }
+    });
+    type.then(({data}) => {
+      this.setState({
+        type: data
+      })
+    });
+  }
+  handleSearch = (e) => {
+    e.preventDefault();
+    this.props.form.validateFields((err, values) => {
+      if(!err) {
+        for (const key in values) {
+          values[key] = values[key] === undefined? "" : values[key];
+        }
+        this.props.query(values);
+      };
+    });
   }
   toggle = () => {
     const { display, expand } = this.state;
@@ -113,18 +124,35 @@ class SearchForm extends PureComponent{
       expand: !expand
     })
   }
+  ChangeSupplier = (value) => {
+    if(value === "") return;
+    this.props.dispatch({
+      type: 'wareHouse/getsupplierList',
+      payload: {
+        ctmaSupplierName: value
+      }
+    });
+  }
   render(){
     const { getFieldDecorator } = this.props.form;
-    const { display, expand } = this.state;
+    let { display, expand, type, status } = this.state;
+    let {supplierList} = this.props;
+    supplierList = supplierList.map(item=>{
+      return (<Option key={item.ctmaSupplierCode} value={item.ctmaSupplierCode}>{item.ctmaSupplierName}</Option>)
+    })
+    type = type.map(item => {
+      return (<Option key={item.value} value={item.value}>{item.label}</Option>)
+    });
+    status = status.map(item => {
+      return (<Option key={item.value} value={item.value}>{item.label}</Option>)
+    });
     return (
       <Form className="ant-advanced-search-form" onSubmit={this.handleSearch}>
         <Row gutter={30}>
           <Col span={8}>
             <FormItem {...formItemLayout} label={`配送单/订单号`}>
               {
-                getFieldDecorator(`planNo`,{
-                  initialValue: ''
-                })(
+                getFieldDecorator(`distributeCode`)(
                   <Input placeholder='扫描或输入配送单/订单号' />
                 )
               }
@@ -133,10 +161,16 @@ class SearchForm extends PureComponent{
           <Col span={8}>
             <FormItem {...formItemLayout} label={`供应商`}>
               {
-                getFieldDecorator(`fOrgName`,{
-                  initialValue: ''
-                })(
-                  <Input placeholder='请输入' />
+                getFieldDecorator(`supplierCode`)(
+                  <Select
+                    allowClear
+                    showSearch
+                    placeholder={'请选择'}
+                    optionFilterProp="children"
+                    onSearch={this.ChangeSupplier}
+                  >
+                      {supplierList}
+                  </Select>
                 )
               }
             </FormItem>
@@ -144,11 +178,15 @@ class SearchForm extends PureComponent{
           <Col span={8} style={{ display: display }}>
             <FormItem {...formItemLayout} label={`状态`}>
               {
-                getFieldDecorator(`fstate`,{
-                  initialValue: ''
-                })(
-                  <Select >
-                    <Option key={-1} value=''>请选择</Option>
+                getFieldDecorator(`auditStatus`)(
+                  <Select 
+                    allowClear
+                    showSearch
+                    placeholder={'请选择'}
+                    optionFilterProp="children"
+                    filterOption={(input, option) => option.props.children.indexOf(input) >= 0}
+                  >
+                    {status}
                   </Select>
                 )
               }
@@ -157,11 +195,15 @@ class SearchForm extends PureComponent{
           <Col span={8} style={{ display: display }}>
             <FormItem {...formItemLayout} label={`类型`}>
               {
-                getFieldDecorator('type',{
-                  initialValue: ''
-                })(
-                  <Select >
-                    <Option key={-1} value=''>全部</Option>
+                getFieldDecorator('type')(
+                  <Select 
+                    allowClear
+                    showSearch
+                    placeholder={'请选择'}
+                    optionFilterProp="children"
+                    filterOption={(input, option) => option.props.children.indexOf(input) >= 0}
+                  >
+                    {type}
                   </Select>
                 )
               }
@@ -174,40 +216,38 @@ class SearchForm extends PureComponent{
              {expand ? '收起' : '展开'} <Icon type={expand ? 'up' : 'down'} />
            </a>
          </Col>
-         {/*  <Col span={15} style={{ textAlign: 'right', marginTop: 4}} >
-           <Button type="primary" htmlType="submit">查询</Button>
-           <Button type='default' style={{marginLeft: 8}} onClick={this.handleReset}>重置</Button>
-         </Col> */}
         </Row>
       </Form>
     )
   }
 }
-const WrapperForm = Form.create()(SearchForm);
+const WrapperForm = connect(state=>state.wareHouse)(Form.create()(SearchForm));
+
 class DistributionCheck extends PureComponent{
   state = {
-    dataSource: dataSource
+    query: {},
+    data: []
   }
-  
+
+  queryHandler = (query) => {
+    query.type = query.type === ""? 0 : query.type;
+    this.refs.tab.fetch(query);
+  }
   render(){
+    let {query} = this.state;
     return (
       <div className='ysynet-main-content'>
-         <WrapperForm />
+         <WrapperForm query={this.queryHandler} />
          <div className='ant-row-bottom'>
             <Button type='primary' onClick={()=>this.props.history.push({ pathname: `/drugStorage/wareHouse/psListCheck/add` })}>新建验收</Button>
          </div>
-         <Table 
+         <RemoteTable
+          query={query}
+          ref="tab"
+          url={wareHouse.depotdistributeList}
           columns={columns}
-          bordered
-          loading={this.state.loading}
-          dataSource={this.state.dataSource}
-          scroll={{ x: '150%' }}
-          rowKey={'id'}
-          pagination={{
-            size: "small",
-            showQuickJumper: true,
-            showSizeChanger: true
-          }}
+          scroll={{ x: '100%' }}
+          rowKey={'createUserId'}
          />
       </div>
     )

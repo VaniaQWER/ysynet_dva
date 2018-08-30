@@ -5,12 +5,13 @@ export default {
   namespace: "wareHouse",
   state: {
     detailInfo: {
-      unVerifyList: [],
+      unVerfiyList: [],
       verifyList: []
     },
     putawayInfo: {
       shevleDetailList: [],
-      unShevleDetailList: []
+      unShevleDetailList: [],
+      goodsLists: []
     },
     supplierList: [],
     putStorageInfo: {}
@@ -45,7 +46,7 @@ export default {
       if(data.code === 200) {
         yield put({
           type: "setsupplierList",
-          payload: data.data
+          payload: data.data.list
         });
         callback && callback();
       }else {
@@ -63,9 +64,48 @@ export default {
       }else {
         message.error(data.msg);
       }
+    },
+    *saveCheck({ payload, callback }, {put, call}) {
+      
+      const data = yield call(wareHouse.saveCheck, payload);
+      if(data.code === 200) {
+        callback && callback(data);
+      }
+    },
+    *putSaveCheck({ payload, callback }, {put, call}) {
+      const data = yield call(wareHouse.putSaveCheck, payload);
+      if(data.code === 200) {
+        callback && callback(data);
+      }
     }
   },
-  reducers: { 
+  reducers: {
+    addBatch(state, action) {
+      let {detailInfo} = state;
+      let {record} = action.payload;
+      let index;
+      detailInfo.unVerfiyList.map((item, i)=> {
+        if(item.upUserDate === record.upUserDate) {
+          index = i + 1;
+        };
+        return item;
+      })
+      record = JSON.parse(JSON.stringify(record));
+      if(record.id === null) {
+        record.parentId = record.parentId;
+      }else {
+        record.parentId = record.id;
+      }
+      record.id = null;
+      record.upUserDate = new Date().getTime();
+      record.realReceiveQuantity = '';
+      
+      detailInfo.unVerfiyList.splice(index, 0, record);
+      return {
+        ...state,
+        detailInfo
+      }
+    },
     setPutStorageInfo(state, action) {
       return {
         ...state,

@@ -5,13 +5,15 @@
  */
 
 import React, { PureComponent } from 'react';
-import { Table , DatePicker , Form, Input , Row, Col, Button, Icon, Select , Modal , message  , Popconfirm } from 'antd';
+import {DatePicker, Form, Input, Row, Col, Button, Icon, Select, message, Popconfirm } from 'antd';
 import {Link} from 'react-router-dom';
+import RemoteTable from '../../../../components/TableGrid';
+import wareHouse from '../../../../api/drugStorage/wareHouse';
+import request from '../../../../utils/request';
+import {_local} from '../../../../api/local';
 import { formItemLayout } from '../../../../utils/commonStyles';
-import { createData } from '../../../../common/data';
 const FormItem = Form.Item;
 const Option = Select.Option;
-const Confirm = Modal.confirm;
 const { RangePicker } = DatePicker;
 class Putaway extends PureComponent{
 
@@ -21,28 +23,12 @@ class Putaway extends PureComponent{
       loading: false,
       query:{},
       messageError:"",
-      selectedRowKeys:[]
+      selectedRowKeys:[],
     }
   }
 
   queryHandler = (query) => {
-    this.setState({ query:query })
-  }
-
-  //批量编辑 - 打开弹窗
-  onSubmit = () =>{
-    const { selectedRowKeys } = this.state;
-    if(selectedRowKeys.length>0){
-      Confirm({
-        content:"您确定要执行此操作？",
-        onOk:()=>{
-          message.success('操作成功！')
-        },
-        onCancel:()=>{}
-      })
-    }else{
-      message.warn('最少选择一条数据进行操作！')
-    }
+    this.refs.tab.fetch(query);
   }
 
   //单行确认 
@@ -51,51 +37,43 @@ class Putaway extends PureComponent{
   }
 
   render(){
+    let {query} = this.state;
     const columns = [
       {
        title: '配送单',
        width:150,
-       dataIndex: 'medicinalCode',
-       render: (text) => <span><Link to={{ pathname: `/drugStorage/wareHouse/grounding/detail` }}>{text}</Link></span>
+       dataIndex: 'shelfCode',
+       render: (text, record) => 
+       <span>
+        <Link 
+          to={{ pathname: `/drugStorage/wareHouse/grounding/detail/id=${record.shelfCode}&status=${record.status === '待上架'? 2 : 3}`}}>
+          {text}
+        </Link>
+       </span>
       },
       {
         title: '状态',
         width:100,
-        dataIndex: 'fstate',
-        render:()=>`待上架`
+        dataIndex: 'status'
       },
       {
         title: '类型',
         width:100,
-        dataIndex: 'productName1',
-        render:(text,record)=>`零库存补货`
-      },
-      {
-        title: '验收人',
-        width:150,
-        dataIndex: 'createUser',
+        dataIndex: 'shelfType'
       },
       {
         title: '验收时间',
         width:150,
-        dataIndex: 'planTime',
+        dataIndex: 'shelfTime',
       },
-      // {
-      //   title: '上架人',
-      //   width:150,
-      //   dataIndex: 'unit',
-      //   render:(text)=>'g'
-      // },
       {
         title: '上架时间',
         width:180,
-        dataIndex: 'planTime1',
-        render:(text,record)=>`${record.planTime}`
+        dataIndex: 'sjsj',
       },
       {
         title: '操作',
         width: 90,
-        fixed: 'right',
         dataIndex: 'RN',
         render: (text, record) => 
           <span>
@@ -108,18 +86,14 @@ class Putaway extends PureComponent{
     return (
       <div className='ysynet-main-content'>
         <SearchForm query={this.queryHandler} />
-        <Table
-          dataSource={createData()}
-          bordered
-          loading={ this.state.loading}
+        <RemoteTable
+          query={query}
+          isJson={true}
+          ref="tab"
+          url={wareHouse.shelfList}
           scroll={{x: '100%'}}
-          pagination={{
-            size: "small",
-            showQuickJumper: true,
-            showSizeChanger: true
-          }}
           columns={columns}
-          rowKey={'id'}
+          rowKey={'shelfCode'}
           style={{marginTop: 24}}
         />
       </div>
@@ -132,6 +106,35 @@ export default Putaway;
 class SearchFormWrapper extends PureComponent {
  state = {
    display: 'none',
+   type: [],
+   status: []
+ }
+ componentDidMount() {
+   let status = request(`${_local}/a/spd/dict/type`, {
+      methods: 'POST',
+      type: 'formData',
+      body: {
+        type: "audit_status"
+      }
+    });
+    status.then(({data}) => {
+      this.setState({
+        status: data
+      })
+    });
+
+    let type = request(`${_local}/a/spd/dict/type`, {
+      methods: 'POST',
+      type: 'formData',
+      body: {
+        type: "in_store_type"
+      }
+    });
+    type.then(({data}) => {
+      this.setState({
+        type: data
+      })
+    });
  }
  toggle = () => {
    const { display, expand } = this.state;
@@ -143,64 +146,78 @@ class SearchFormWrapper extends PureComponent {
  handleSearch = (e) => {
    e.preventDefault();
    this.props.form.validateFields((err, values) => {
-     this.props.query(values);
+    for (const key in values) {
+      values[key] = values[key] === undefined? "" : values[key]
+    };
+    if(values.shelfTime === "") {
+      values.startTime = "";
+      values.endTime = "";
+    }else {
+      values.startTime = values.shelfTime[0].format('YYYY-MM-DD');
+      values.endTime = values.shelfTime[1].format('YYYY-MM-DD');
+    };
+    delete values.shelfTime;
+    this.props.query(values);
    });
  }
  //重置
  handleReset = () => {
    this.props.form.resetFields();
-   this.props.query({});
  }
 
  render() {
-   const { display } = this.state;
+   let { display, status, type } = this.state;
    const { getFieldDecorator } = this.props.form;
+   type = type.map(item => {
+      return (<Option key={item.value} value={item.value}>{item.label}</Option>)
+    });
+    status = status.filter(item => item.value !== "1").map(item => {
+      return (<Option key={item.value} value={item.value}>{item.label}</Option>)
+    });
    return (
      <Form onSubmit={this.handleSearch}>
        <Row gutter={30}>
          <Col span={8}>
            <FormItem label={`单据号`} {...formItemLayout}>
-             {getFieldDecorator('assetCode', {})(
+             {getFieldDecorator('shelfCode', {})(
               <Input placeholder='验收单'/>
              )}
            </FormItem>
          </Col>
          <Col span={8} >
            <FormItem label={`状态`} {...formItemLayout}>
-             {getFieldDecorator('time')(
-              <Select 
+             {getFieldDecorator('shelfStatus')(
+              <Select
+                
                 showSearch
                 placeholder={'请选择'}
                 optionFilterProp="children"
                 filterOption={(input, option) => option.props.children.indexOf(input) >= 0}
                 >
-                    <Option key="" value="">全部</Option>
-                    <Option key="01" value="01">待上架</Option>
-                    <Option key="02" value="02">已上架</Option>
+                  <Option key="0" value="0">全部</Option>
+                  {status}
               </Select>
              )}
            </FormItem>
          </Col>
          <Col span={8} style={{display: display}}>
            <FormItem label={`类型`} {...formItemLayout}>
-             {getFieldDecorator('assetName', {})(
+            {getFieldDecorator('shelfType', {})(
               <Select 
                 showSearch
                 placeholder={'请选择'}
                 optionFilterProp="children"
                 filterOption={(input, option) => option.props.children.indexOf(input) >= 0}
-                >
-                    <Option key="" value="">全部</Option>
-                    <Option key="01" value="01">零库存补货</Option>
-                    <Option key="02" value="02">采购</Option>
-                    <Option key="03" value="03">报告药</Option>
+                > 
+                  <Option key="0" value="0">全部</Option>  
+                  {type}
               </Select>
              )}
            </FormItem>
          </Col>
          <Col span={8} style={{display: display}}>
            <FormItem label={`验收时间`} {...formItemLayout}>
-             {getFieldDecorator('shijian', {})(
+             {getFieldDecorator('shelfTime', {})(
               <RangePicker/>
              )}
            </FormItem>
