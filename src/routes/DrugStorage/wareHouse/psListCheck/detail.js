@@ -1,8 +1,8 @@
 /*
  * @Author: gaofengjiao 
  * @Date: 2018-08-06
- * @Last Modified by: mikey.zhaopeng
- * @Last Modified time: 2018-08-27 11:41:01
+ * @Last Modified by: wwb
+ * @Last Modified time: 2018-08-31 00:23:44
  */
 /* 
   @file  药库 - 入库--配送单验收-详情
@@ -43,7 +43,7 @@ class PslistCheck extends PureComponent{
     this.queryDetail();
   }
   saveCheck = () => {
-    let {selectedRows, defaultActiveKey} = this.state;
+    let {selectedRows} = this.state;
     if(selectedRows.length === 0) {
       message.error('至少选择一条数据');
       return;

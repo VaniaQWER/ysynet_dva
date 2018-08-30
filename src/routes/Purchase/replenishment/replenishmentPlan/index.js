@@ -56,6 +56,11 @@ class SearchForm extends PureComponent{
       }
     })
   }
+  //重置
+  handleReset = () => {
+    this.props.form.resetFields();
+    this.props.query({ planType: '1' });
+  }
   render(){
     const { getFieldDecorator } = this.props.form;
     const { display, expand } = this.state;

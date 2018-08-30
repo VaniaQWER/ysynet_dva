@@ -1,5 +1,5 @@
 import React, {PureComponent} from 'react';
-import {Row, Col, Table, Button, Input, Tabs, Select, message, InputNumber} from 'antd';
+import {Row, Col, Table, Button, Tabs, Select, message, InputNumber} from 'antd';
 import {connect} from 'dva';
 import querystring from 'querystring';
 const TabPane = Tabs.TabPane;

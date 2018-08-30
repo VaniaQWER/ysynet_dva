@@ -1051,19 +1051,19 @@ export const getNavData = app => [
     {
       name: "用门管理",
       icon: 'setting',
-      path: '/sys/organization/userMgt',
+      path: '/sys/user',
       component: dynamicWrapper(app, ['systemMgt/organization'], () => import('../routes/SystemMgt/organization/userMgt')),
     },
     {
       name: "用户管理--添加",
       icon: 'setting',
-      path: '/sys/organization/userMgt/add',
+      path: '/sys/user/add',
       component: dynamicWrapper(app, ['systemMgt/organization'], () => import('../routes/SystemMgt/organization/userMgt/add')),
     },
     {
       name: "用户管理--编辑",
       icon: 'setting',
-      path: '/sys/organization/userMgt/edit/:loginName',
+      path: '/sys/user/edit/:loginName',
       component: dynamicWrapper(app, ['systemMgt/organization'], () => import('../routes/SystemMgt/organization/userMgt/edit')),
     },
     /* *********************** 系统管理  角色管理     ******************** */
@@ -1107,7 +1107,7 @@ export const getNavData = app => [
     {
       name: "字典管理",
       icon: 'setting',
-      path: '/sys/setting/itemsData',
+      path: '/sys/dict',
       component: dynamicWrapper(app, ['ysy/dict'], () => import('../routes/SystemMgt/setting/itemsData')),
     },
      /* ********************   采购结算 子系统    ******************************* */
@@ -1120,7 +1120,7 @@ export const getNavData = app => [
     {
       name: "采购结算-补货管理--补货计划--详情",
       icon: 'setting',
-      path: '/purchase/replenishment/replenishmentPlan/detail',
+      path: '/purchase/replenishment/replenishmentPlan/detail/:planCode',
       component: dynamicWrapper(app, [], () => import('../routes/Purchase/replenishment/replenishmentPlan/detail')),
     },
     {
@@ -1132,7 +1132,7 @@ export const getNavData = app => [
     {
       name: "采购结算-补货管理--目录外采购--详情",
       icon: 'setting',
-      path: '/purchase/replenishment/outCatalogPurchase/detail',
+      path: '/purchase/replenishment/outCatalogPurchase/detail/:planCode',
       component: dynamicWrapper(app, [], () => import('../routes/Purchase/replenishment/outCatalogPurchase/detail')),
     },
     {

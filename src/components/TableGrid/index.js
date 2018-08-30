@@ -102,6 +102,11 @@ class RemoteTable extends Component {
             pagination,
           });
         })
+        .catch((error) => {
+          if (error.code) {
+            message.error('出错啦！！');
+          }
+        })
     }
     else{
       this.setState({

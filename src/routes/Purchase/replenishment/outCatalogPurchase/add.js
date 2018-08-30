@@ -2,14 +2,13 @@
  * @Author: wwb 
  * @Date: 2018-07-24 18:49:01 
  * @Last Modified by: wwb
- * @Last Modified time: 2018-08-29 23:46:24
+ * @Last Modified time: 2018-08-31 00:09:24
  */
 /**
  * @file 药库 - 补货管理--补货计划--新建计划
  */
 import React, { PureComponent } from 'react';
-import { Form, Row, Col, Button, Input, Select, Modal, Icon, Tooltip, message, Affix  } from 'antd';
-import { formItemLayout } from '../../../../utils/commonStyles'
+import { Form, Row, Col, Button, Input, Select, Modal, Tooltip, message, Affix  } from 'antd';
 import RemoteTable from '../../../../components/TableGrid';
 // import { replenishmentPlan } from '../../../../api/replenishment/replenishmentPlan';
 import { connect } from 'dva';
@@ -19,6 +18,9 @@ const { Option } = Select;
 class NewAdd extends PureComponent{
   state = {
     isShow: false,
+    query: {
+      medDrugType: '1'
+    },
     deptModules: [],// 采购部门
     visible: false,
     loading: false,
@@ -48,36 +50,27 @@ class NewAdd extends PureComponent{
     console.log(record,index,'onChange')
   }
   render(){
-    const { getFieldDecorator } = this.props.form;
-    const { visible, deptModules } = this.state;
+    const { visible, deptModules, query } = this.state;
     const columns = [{
       title: '通用名称',
-      dataIndex: 'geName'
+      dataIndex: 'ctmmGenericName'
     },{
       title: '商品名',
-      dataIndex: 'productName'
+      dataIndex: 'ctmmTradeName'
     },{
       title: '规格',
-      dataIndex: 'spec',
+      dataIndex: 'ctmmSpecification',
       className:'ellipsis',
       render:(text)=>(
         <Tooltip placement="topLeft" title={text}>{text}</Tooltip>
       )
     },{
-      title: '批准文号',
-      dataIndex: 'medicinalCode',
-      width: 150,
-    },{
+      title: '剂型',
+      dataIndex: 'ctmmDosageFormDesc',
+      width: 150
+    }, {
       title: '生产厂家',
-      dataIndex: 'productCompany'
-    },{
-      title: '报告药申请单号',
-      dataIndex: 'planNo',
-      render: (text,record) =>{
-        return (
-          <Input />
-        )
-      }
+      dataIndex: 'ctmmManufacturerName'
     },{
       title: '供应商',
       dataIndex: 'fOrgName',
@@ -86,6 +79,18 @@ class NewAdd extends PureComponent{
           <Select defaultValue=''>
             <Option key={-1} value=''>xxxxxxxx</Option>
           </Select>
+        )
+      }
+    },{
+      title: '包装规格',
+      dataIndex: 'packageSpecification',
+      width: 100,
+    }, {
+      title: '报告药申请单号',
+      dataIndex: 'planNo',
+      render: (text,record) =>{
+        return (
+          <Input />
         )
       }
     },{
@@ -103,33 +108,37 @@ class NewAdd extends PureComponent{
       title: '金额',
       dataIndex: 'total',
       render: (text,record) => '2100.00'
+    },{
+      title: '批准文号',
+      dataIndex: 'approvalNo',
+      width: 150,
     }];
     const modalColumns = [
       {
         title: '通用名称',
-        dataIndex: 'geName'
-      },{
-        title: '产品名称',
-        dataIndex: 'productName'
-      },{
+        dataIndex: 'ctmmGenericName'
+      }, {
+        title: '商品名',
+        dataIndex: 'ctmmTradeName'
+      }, {
         title: '规格',
-        dataIndex: 'spec'
-      },{
+        dataIndex: 'ctmmSpecification'
+      }, {
         title: '剂型',
-        dataIndex: 'fmodal',
+        dataIndex: 'ctmmDosageFormDesc',
         width: 150
-      },{
-        title: '包装单位',
-        dataIndex: 'unit',
-        width: 100,
-      },{
-        title: '批准文号',
-        dataIndex: 'medicinalCode',
-        width: 150,
-      },{
+      }, {
+        title: '包装规格',
+        dataIndex: 'packageSpecification',
+        width: 150
+      }, {
         title: '生产厂家',
-        dataIndex: 'productCompany'
-      }
+        dataIndex: 'ctmmManufacturerName'
+      }, {
+        title: '批准文号',
+        dataIndex: 'approvalNo',
+        width: 150,
+      },
     ]
     return (
       <div style={{ padding: 24 }}>
@@ -177,68 +186,14 @@ class NewAdd extends PureComponent{
             <Search 
               style={{ width: 248 }}
               placeholder='通用名/商品名'
+              onSearch={val => this.refs.table.fetch({ ...query, paramName: val })}
             />
           </Col>
-          <Col span={7} style={{textAlign: 'left', marginTop: 4}}>
-            <a style={{userSelect: 'none'}} onClick={()=>this.setState({isShow: !this.state.isShow})}> 
-              <Icon type={this.state.isShow ? 'up-circle-o' : 'down-circle-o'} /> {this.state.isShow ? '收起' : '更多筛选'}
-            </a>
-          </Col>
         </Row>
-        <Form style={{marginTop: 20, display: this.state.isShow ? 'block' : 'none'}} onSubmit={this.onSubmit}>
-          <Row>
-            <Col span={7}>
-              <FormItem label={`产品名称`} {...formItemLayout}>
-                {getFieldDecorator('materialNameOrFqun')(
-                  <Input placeholder={`请输入产品名称/产品名称首字母`} />
-                )}
-              </FormItem>
-            </Col>
-            <Col span={7}>
-              <FormItem label={`通用名称`} {...formItemLayout}>
-                {getFieldDecorator('geNameOrFqun')(
-                  <Input placeholder={`请输入通用名称/简码`} />
-                )}
-              </FormItem>
-            </Col>
-            <Col span={7}>
-              <FormItem label={`规格`} {...formItemLayout}>
-                {getFieldDecorator('spec')(
-                  <Input placeholder={`请输入规格`} />
-                )}
-              </FormItem>
-            </Col>
-          </Row>
-          <Row>
-            <Col span={7}>
-              <FormItem label={`型号`} {...formItemLayout}>
-                {getFieldDecorator('fmodel')(
-                  <Input placeholder={`请输入型号`} />
-                )}
-              </FormItem>
-            </Col>
-            <Col span={7}>
-              <FormItem label={`品牌`} {...formItemLayout}>
-                {getFieldDecorator('brandName')(
-                  <Input placeholder={`请输入品牌`} />
-                )}
-              </FormItem>
-            </Col>
-            <Col span={6}>
-              <FormItem label={`生产商`} {...formItemLayout}>
-                {getFieldDecorator('produceName')(
-                  <Input placeholder={`请输入生产商`} />
-                )}
-              </FormItem>
-            </Col>
-            <Col span={4} style={{textAlign: 'right'}}>
-              <Button type="primary" style={{ marginRight: 8 }} htmlType="submit">查询</Button>
-              <Button onClick={()=>this.props.form.resetFields()}>重置</Button>
-            </Col>
-          </Row>
-        </Form>
         <div className='detailCard'>
           <RemoteTable
+            ref='table'
+            query={query}
             style={{ marginTop: 16 }} 
             columns={modalColumns}
             bordered

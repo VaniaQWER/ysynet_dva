@@ -43,11 +43,13 @@ class MenuMgt extends PureComponent{
       {
         title: '排序',
         dataIndex: 'sort',
+        width: 80
       },
       {
         title: '可见',
         dataIndex: 'isShow',
-        render:(text,record,index)=>text==="1"?"是":"否"
+        width: 80,
+        render:(text,record,index)=>text==="1"?"是":"否",
       },
       {
         title: '部门类型',
@@ -61,6 +63,7 @@ class MenuMgt extends PureComponent{
       {
         title: '操作',
         dataIndex: 'action',
+        width: 170,
         render: (text,record,index)=>{
           return <span>
             <Link className='button-gap' to={{pathname:`/sys/menu/add/${querystring.stringify({id:record.id,parentId:record.parentId})}`}}>编辑</Link>

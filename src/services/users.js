@@ -2,7 +2,7 @@ import request from '../utils/request';
 import { _local } from '../api/local'
 
 export function EncryptPassword(options){
-  return request(`${_local}/a/his/entryptPassword`,{ //密码加密
+  return request(`${_local}/a/entryPass/entryptPassword`,{ //密码加密
     method: 'POST',
     type: 'formData',
     credentials: 'include',

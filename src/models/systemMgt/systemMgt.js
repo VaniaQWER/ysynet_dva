@@ -11,10 +11,13 @@ export default {
     //系统设置-菜单管理-新增
     *MenuSave({ payload, callback },{ put, call }){
       const data = yield call(sysSettingService.MenuSave, payload);
-      if(data.code !== 200){
-        message.error(data.msg)
+      if(data.code === 200 && data.msg === 'success'){
+        message.success('操作成功');
+      }else{
+        return message.error(data.msg)
       }
       if(callback) callback(data);
+      
     },
     //系统设置-菜单管理-列表
     *MenuList({ payload, callback },{ put, call }){

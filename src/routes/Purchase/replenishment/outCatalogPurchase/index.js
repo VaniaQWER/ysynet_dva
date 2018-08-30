@@ -2,7 +2,7 @@
  * @Author: wwb 
  * @Date: 2018-07-24 16:08:53 
  * @Last Modified by: wwb
- * @Last Modified time: 2018-08-29 19:05:29
+ * @Last Modified time: 2018-08-30 20:16:36
  */
 
 /**
@@ -46,8 +46,12 @@ class SearchForm extends PureComponent{
     e.preventDefault();
     this.props.form.validateFields((err, values) => {
       if (!err) {
-        values.startTime = values.orderTime[0].format('YYYY-MM-DD HH:mm');
-        values.endTime = values.orderTime[1].format('YYYY-MM-DD HH:mm');
+        const createDate = values.createDate === undefined ? '' : values.createDate;
+        if (createDate.length > 0) {
+          values.startTime = createDate[0].format('YYYY-MM-DD');
+          values.endTime = createDate[1].format('YYYY-MM-DD');
+        }
+        values.planType = '2';
         console.log(values, '查询条件');
         this.props.query(values);
       }
@@ -56,7 +60,7 @@ class SearchForm extends PureComponent{
   //重置
   handleReset = () => {
     this.props.form.resetFields();
-    this.props.query({});
+    this.props.query({ planType: '2' });
   }
   render(){
     console.log(this.props,'props')
@@ -68,7 +72,7 @@ class SearchForm extends PureComponent{
           <Col span={8}>
             <FormItem {...formItemLayout} label={`计划单号`}>
               {
-                getFieldDecorator(`planNo`,{
+                getFieldDecorator(`planCode`,{
                   initialValue: ''
                 })(
                   <Input placeholder='请输入' className={'ysynet-formItem-width'}/>
@@ -79,7 +83,7 @@ class SearchForm extends PureComponent{
           <Col span={8}>
             <FormItem {...formItemLayout} label={`状态`}>
               {
-                getFieldDecorator(`fstate`,{
+                getFieldDecorator(`auditStatus`,{
                   initialValue: ''
                 })(
                   <Select
@@ -160,11 +164,11 @@ class OutCatalogPurchase extends PureComponent{
     const { query } = this.state;
     const columns = [{
       title: '计划单号',
-      dataIndex: 'planNo',
+      dataIndex: 'planCode',
       width: 180,
       render: (text,record) =>{
         return <span>
-          <Link to={{pathname: `/purchase/replenishment/outCatalogPurchase/detail`}}>{text}</Link>
+          <Link to={{pathname: `/purchase/replenishment/outCatalogPurchase/detail${record.planCode}`}}>{text}</Link>
         </span>  
       }
     },{

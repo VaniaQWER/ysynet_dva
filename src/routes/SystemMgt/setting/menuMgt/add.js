@@ -5,7 +5,7 @@
  */
 
 import React, { PureComponent } from 'react';
-import { Form, Row, Col, Input, Button, Select , Radio , Affix , Modal , Tree , message} from 'antd';
+import { Form, Row, Col, Input, Button, Select , Radio , Affix , Modal , Tree } from 'antd';
 import { connect } from 'dva';
 import querystring from 'querystring';
 import { DeptSelect } from '../../../../common/dic';
@@ -73,8 +73,8 @@ class AddMenuMgt extends PureComponent{
   onSubmit = () => {
     this.props.form.validateFieldsAndScroll((err,values)=>{
       if(!err){
-        const { baseInfo } = this.state;
-        values['parent.id'] = this.state.treeSelectedKeys[0];
+        const { baseInfo,treeSelectedKeys } = this.state;
+        values['parent.id'] = treeSelectedKeys.length ? treeSelectedKeys[0]: baseInfo.parentId ;
         delete values['parent']
         delete values['parentName']
         values.depType = Number(values.depType)
@@ -86,8 +86,13 @@ class AddMenuMgt extends PureComponent{
           type: 'sysSetting/MenuSave',
           payload: values,
           callback: (data) => {
-            message.success('添加成功！')
-            this.props.history.push('/sys/setting/menuMgt')
+            // message.success('添加成功！');
+            
+            this.props.history.push('/sys/menu');
+            window.reload();
+            /* 
+              这里要重新获取菜单
+            */
           }
         })
       }
@@ -139,6 +144,7 @@ class AddMenuMgt extends PureComponent{
   render(){
     const { getFieldDecorator } = this.props.form;
     const { visible , baseInfo , treeDataSource } = this.state;
+    console.log(this.state.treeSelectedKeys,'treeSelectedKeys')
     const loop = data => data?data.map((item) => {
       if (item.children && item.children.length) {
         return <TreeNode key={item.id} title={item.name}>{loop(item.children)}</TreeNode>;

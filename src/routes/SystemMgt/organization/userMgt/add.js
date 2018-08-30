@@ -2,7 +2,7 @@
  * @Author: wwb 
  * @Date: 2018-08-21 17:46:47 
  * @Last Modified by: wwb
- * @Last Modified time: 2018-08-30 09:36:21
+ * @Last Modified time: 2018-08-31 00:57:20
  */
  /**
  * @file 系统管理--组织机构--用户管理--添加
@@ -117,7 +117,7 @@ class AddUser extends PureComponent{
           payload: { userInfo },
           callback: () =>{
             this.setState({ btnLoading: false });
-            history.push({ pathname: '/sys/organization/userMgt' })
+            history.push({ pathname: '/sys/user' })
           } 
         })
       }

@@ -2,13 +2,14 @@
  * @Author: wwb 
  * @Date: 2018-07-24 18:49:01 
  * @Last Modified by: wwb
- * @Last Modified time: 2018-08-21 20:33:53
+ * @Last Modified time: 2018-08-31 00:06:02
  */
 /**
  * @file 药库 - 补货管理--补货计划--新建计划
  */
 import React, { PureComponent } from 'react';
 import { Form, Row, Col, Button, Input, Table, Modal, Icon, Tooltip, message, Affix, Select } from 'antd';
+import RemoteTable from '../../../../components/TableGrid';
 import { formItemLayout } from '../../../../utils/commonStyles'
 
 const FormItem = Form.Item;
@@ -20,10 +21,24 @@ class NewAdd extends PureComponent {
     isShow: false,
     visible: false,
     loading: false,
+    deptModules: [],// 补货部门
+    query: {
+      medDrugType: '1'
+    },
     selected: [],
     selectedRows: [],
     modalSelected: [],
     modalSelectedRows: []
+  }
+  componentWillMount = () =>{
+    const { dispatch } = this.props;
+    dispatch({
+      type: 'base/getModule',
+      payload: { deptType : '3' },
+      callback: (data) =>{
+        this.setState({ deptModules: data })
+      }
+    })
   }
   handleOk = () => {
     this.setState({ loading: true });
@@ -36,7 +51,7 @@ class NewAdd extends PureComponent {
     console.log(record, index, 'onchange')
   }
   render() {
-    const { visible } = this.state;
+    const { visible, deptModules,query } = this.state;
     const columns = [
       {
         title: '通用名称',
@@ -147,9 +162,16 @@ class NewAdd extends PureComponent {
             <Col span={8}>
               <FormItem label={`补货部门`} {...formItemLayout}>
                 <Select
-                  style={{ width: 240 }}
+                  showSearch
+                  defaultValue={deptModules.length?deptModules[0].value:''}
+                  optionFilterProp="children"
+                  filterOption={(input, option) => option.props.children.indexOf(input) >= 0} 
+                  style={{ width: 200 }}
                 >
-                  <Option value={'00'}>药库</Option>
+                  <Option value=''>请选择</Option>
+                  {
+                    deptModules.map((item,index)=> <Option key={index} value={item.id}>{ item.deptName }</Option>)
+                  }
                 </Select>
               </FormItem>
             </Col>
@@ -180,68 +202,14 @@ class NewAdd extends PureComponent {
                 style={{ width: 248 }}
                 placeholder='通用名/商品名'
                 ref="paramName"
+                onSearch={val => this.refs.table.fetch({ ...query, paramName: val })}
               />
             </Col>
-            {/* <Col span={7} style={{ textAlign: 'left', marginTop: 4 }}>
-              <a style={{ userSelect: 'none' }} onClick={() => this.setState({ isShow: !this.state.isShow })}>
-                <Icon type={this.state.isShow ? 'up-circle-o' : 'down-circle-o'} /> {this.state.isShow ? '收起' : '更多筛选'}
-              </a>
-            </Col> */}
           </Row>
-          {/* <Form style={{ marginTop: 20, display: this.state.isShow ? 'block' : 'none' }} onSubmit={this.onSubmit}>
-            <Row>
-              <Col span={7}>
-                <FormItem label={`产品名称`} {...formItemLayout}>
-                  {getFieldDecorator('materialNameOrFqun')(
-                    <Input placeholder={`请输入产品名称/产品名称首字母`} />
-                  )}
-                </FormItem>
-              </Col>
-              <Col span={7}>
-                <FormItem label={`通用名称`} {...formItemLayout}>
-                  {getFieldDecorator('geNameOrFqun')(
-                    <Input placeholder={`请输入通用名称/简码`} />
-                  )}
-                </FormItem>
-              </Col>
-              <Col span={7}>
-                <FormItem label={`规格`} {...formItemLayout}>
-                  {getFieldDecorator('spec')(
-                    <Input placeholder={`请输入规格`} />
-                  )}
-                </FormItem>
-              </Col>
-            </Row>
-            <Row>
-              <Col span={7}>
-                <FormItem label={`型号`} {...formItemLayout}>
-                  {getFieldDecorator('fmodel')(
-                    <Input placeholder={`请输入型号`} />
-                  )}
-                </FormItem>
-              </Col>
-              <Col span={7}>
-                <FormItem label={`品牌`} {...formItemLayout}>
-                  {getFieldDecorator('brandName')(
-                    <Input placeholder={`请输入品牌`} />
-                  )}
-                </FormItem>
-              </Col>
-              <Col span={6}>
-                <FormItem label={`生产商`} {...formItemLayout}>
-                  {getFieldDecorator('produceName')(
-                    <Input placeholder={`请输入生产商`} />
-                  )}
-                </FormItem>
-              </Col>
-              <Col span={4} style={{ textAlign: 'right' }}>
-                <Button type="primary" style={{ marginRight: 8 }} htmlType="submit">查询</Button>
-                <Button onClick={() => this.props.form.resetFields()}>重置</Button>
-              </Col>
-            </Row>
-          </Form> */}
           <div className='detailCard'>
-            <Table
+            <RemoteTable
+              ref='table'
+              query={query}
               columns={modalColumns}
               scroll={{ x: '150%' }}
               rowKey='id'

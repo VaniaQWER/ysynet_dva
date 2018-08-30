@@ -21,7 +21,7 @@ export default {
         ...state,
         userInfo: payload,
         currentDept: { deptId: dept.deptId, deptName: dept.deptName },
-        deptList
+        deptList,
       }
     },
     saveCurrentMenu(state,action){
@@ -49,10 +49,11 @@ export default {
     // 用户登陆
     *userLogin({ payload, callback },{ put, call }){
       const data = yield call(usersService.userLogin, payload);
-      if(data.code !== 200){
+      if(data.code === 200 && data.msg === 'success'){
+        yield put({ type: 'userInfo', payload: data.data });
+      }else{
         message.error(data.msg ||'登陆失败')
       }
-      yield put({ type: 'userInfo',payload: data.data });
       if(callback) callback(data.data);
     },
     *setCurrentMenu({ payload },{ put }){
