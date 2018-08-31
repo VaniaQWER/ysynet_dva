@@ -39,3 +39,21 @@ export function getModule(options) {
     body: options
   })
 }
+
+/*  计划订单 */
+// 供应商下拉框
+export function supplierList(options) {
+  return request(`${_local}/a/depot/supplier/all`, {
+    method: 'POST',
+    type: 'formData',
+    body: options
+  })
+}
+// 计划订单 - 详情
+export function planOrderDetail(options) {
+  return request(`${_local}/a/purchaseorder/detail`, {
+    method: 'GET',
+    type: 'planCode',
+    body: options
+  })
+}

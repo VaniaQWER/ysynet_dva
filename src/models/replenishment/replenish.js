@@ -40,6 +40,26 @@ export default {
       }
       if(callback) callback(data.data)
     },
+
+
+
+    /* 计划订单 */
+    // 供应商列表
+    *supplierList({ payload,callback },{ call }){
+      const data = yield call(replenishment.supplierList, payload);
+      if(data.code !== 200){
+        return message.error(data.msg||'获取供应商失败')
+      }
+      if(callback) callback(data.data)
+    },
+    *planOrderDetail({ payload, callback },{ put, call }){
+      const data = yield call(replenishment.planOrderDetail, payload);
+      if (data.code === 200 && data.msg === 'success') {
+        if(callback) callback(data)
+      } else {
+        message.error(data.msg);
+      }
+    },
     subscriptions: {
       
     }

@@ -1151,13 +1151,13 @@ export const getNavData = app => [
       name: "采购结算-补货管理--计划订单",
       icon: 'setting',
       path: '/purchase/replenishment/planOrder',
-      component: dynamicWrapper(app, [], () => import('../routes/Purchase/replenishment/planOrder')),
+      component: dynamicWrapper(app, ['replenishment/replenish'], () => import('../routes/Purchase/replenishment/planOrder')),
     },
     {
       name: "采购结算-补货管理--计划订单--详情",
       icon: 'setting',
-      path: '/purchase/replenishment/planOrder/detail',
-      component: dynamicWrapper(app, [], () => import('../routes/Purchase/replenishment/planOrder/detail')),
+      path: '/purchase/replenishment/planOrder/detail:orderCode',
+      component: dynamicWrapper(app, ['replenishment/replenish'], () => import('../routes/Purchase/replenishment/planOrder/detail')),
     },
     //采购结算 - 结算管理 - 日对账单
     {
