@@ -4,7 +4,7 @@
 * @Last Modified time: 2018-07-24 10:58:49 
  */
 import React, { PureComponent } from 'react';
-import { Form , Row , Button , Col , Select , Input , Modal , Icon , Collapse , Radio } from 'antd';
+import { Form , Row , Button , Col , Select , Input , Modal , Icon , Collapse , Radio , message} from 'antd';
 import { connect } from 'dva';
 
 const supplyFormItemLayout = {
@@ -48,6 +48,8 @@ class EditDrugDirectory extends PureComponent{
   state={
     fillBackData:{},//药品目录详情信息
     replanUnitSelect:[],//补货单位下拉框
+    goodsTypeSelect:[],//补货指示货位
+    supplierSelect:[],//供应商
     keys:[]
   }
 
@@ -69,6 +71,27 @@ class EditDrugDirectory extends PureComponent{
               this.setState({replanUnitSelect:data.data})
             }
           })
+
+          //获取供应商信息
+          this.props.dispatch({
+            type:'drugStorageConfigMgt/getSupplier',
+            payload:{hisDrugCode:data.data.hisDrugCode},
+            callback:(data)=>{
+              console.log(data)
+              debugger
+              this.setState({supplierSelect:data.data})
+            }
+          })
+      }
+    })
+
+    //获取补货指示h货位
+    
+    this.props.dispatch({
+      type:'drugStorageConfigMgt/getGoodsTypeInfo',
+      payload:{positionType:'1'},
+      callback:(data)=>{
+        this.setState({goodsTypeSelect:data.data})
       }
     })
   }
@@ -81,16 +104,33 @@ class EditDrugDirectory extends PureComponent{
       onOk:()=>{
         this.props.form.validateFields((err,values)=>{
           console.log(values)
+
+          const { customUnit ,  supplier , replanUnit , replanStore , purchaseQuantity ,
+            upperQuantity , downQuantity  }  =values; 
+
+            let postData = {
+              customUnit,
+              // supplier,
+              drugInfo:{
+                replanUnit , replanStore , purchaseQuantity ,
+                upperQuantity , downQuantity ,
+                drugCode:this.state.fillBackData.drugCode||'',
+                bigDrugCode:this.state.fillBackData.bigDrugCode,
+                hisDrugCode:this.state.fillBackData.hisDrugCode,
+              }
+            }
+          console.log(JSON.stringify(postData));
           //发出请求
-          // this.props.dispatch({
-          //   type:'drugStorageConfigMgt/EditOperDeptInfo',
-          //   payload:{},
-          //   callback:(data)=>{
-          //     message.success('保存成功！')
-          //     const { history } = this.props;
-          //     history.push({pathname:"/drugStorage/configMgt/drugDirectory"})
-          //   }
-          // })
+          this.props.dispatch({
+            type:'drugStorageConfigMgt/EditOperDeptInfo',
+            payload:postData,
+            callback:(data)=>{
+              debugger
+              message.success('保存成功！')
+              // const { history } = this.props;
+              // history.push({pathname:"/drugStorage/configMgt/drugDirectory"})
+            }
+          })
         })
       },
       onCancel:()=>{}
@@ -161,17 +201,17 @@ class EditDrugDirectory extends PureComponent{
   //获取使用单位
   getMaPInfo = (List,ind)=>{
     if(List && List.length){
-      let ret =  List.filter(item=>item.sort===`${ind}`);
+      let ret =  List.filter(item=>item.sort===ind);
       return `${ret[0].bigUnit||''}  -  ${ret[0].conversionRate||''}${ret[0].smallUit||''}`
     }
   }
 
   render(){
-    const { fillBackData , replanUnitSelect } =this.state;
+    const { fillBackData , replanUnitSelect , goodsTypeSelect } =this.state;
     const { getFieldDecorator , getFieldValue } = this.props.form;
-    getFieldDecorator('keys', { initialValue: [] });
+    getFieldDecorator('keys', { initialValue: fillBackData?fillBackData.customUnit?fillBackData.customUnit:[]:[] });
     const keys = getFieldValue('keys');
-    getFieldDecorator('keySupply', { initialValue: [0] });
+    getFieldDecorator('keySupply', { initialValue: fillBackData?fillBackData.supplier?fillBackData.supplier:[]:[0] });
     const keySupply = getFieldValue('keySupply');
     const formItems = keys.map((k, index) => {
       return (
@@ -412,7 +452,7 @@ class EditDrugDirectory extends PureComponent{
                   <FormItem {...formItemLayout} label={`补货单位`}>
                     {
                       getFieldDecorator(`replanUnit`,{
-                        initialValue: '',
+                        initialValue:fillBackData?fillBackData.replanUnit:'',
                         rules:[{
                           required:true,message:"请选择补货单位！"
                         }]
@@ -443,8 +483,8 @@ class EditDrugDirectory extends PureComponent{
                 <Col span={10}>
                   <FormItem {...formItemLayout} label={`本部门上限`}>
                     {
-                      getFieldDecorator(`ctmmTradeName`,{
-                        initialValue: ''
+                      getFieldDecorator(`upperQuantity`,{
+                        initialValue:fillBackData?fillBackData.upperQuantity:''
                       })(
                         <Input placeholder='请输入' />
                       )
@@ -455,7 +495,7 @@ class EditDrugDirectory extends PureComponent{
                   <FormItem {...formItemLayout} label={`采购量`}>
                     {
                       getFieldDecorator(`purchaseQuantity`,{
-                        initialValue: '',
+                        initialValue: fillBackData?fillBackData.purchaseQuantity:'',
                         rules:[{
                           required:true,message:"请填写采购量！"
                         }]
@@ -470,8 +510,8 @@ class EditDrugDirectory extends PureComponent{
                 <Col span={10}>
                   <FormItem {...formItemLayout} label={`本部门下限`}>
                     {
-                      getFieldDecorator(`upperQuantity`,{
-                        initialValue: ''
+                      getFieldDecorator(`downQuantity`,{
+                        initialValue: fillBackData?fillBackData.downQuantity:'',
                       })(
                         <Input placeholder='请输入' />
                       )
@@ -491,7 +531,7 @@ class EditDrugDirectory extends PureComponent{
                   <FormItem {...formItemLayout} label={`补货指示货位`}>
                     {
                       getFieldDecorator(`replanStore`,{
-                        initialValue: '',
+                        initialValue:fillBackData?fillBackData.replanStore:'',
                         rules:[
                           {required:true,message:'请选择补货指示货位！'}
                         ]
@@ -499,7 +539,12 @@ class EditDrugDirectory extends PureComponent{
                         <Select
                         style={{ width: 200 }}
                       >
-                        <Option key={'-1'} value=''>请选择</Option>
+                        {
+                          goodsTypeSelect && goodsTypeSelect.length ?
+                          goodsTypeSelect.map((item,index)=>(
+                            <Option key={index} value={item.id}>{item.positionName}</Option>
+                          )):null
+                        }
                       </Select>
                       )
                     }
@@ -509,7 +554,7 @@ class EditDrugDirectory extends PureComponent{
             </Panel>
 
             <Panel header="药品信息" key="5" style={customPanelStyle}>
-              <Row>
+              {/* <Row>
                 <Col span={8}>
                   <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-6">
                     <label>一类精神药品</label>
@@ -600,7 +645,7 @@ class EditDrugDirectory extends PureComponent{
                     </div>
                   </div>
                 </Col>
-              </Row>
+              </Row> */}
             </Panel>
 
           </Collapse>

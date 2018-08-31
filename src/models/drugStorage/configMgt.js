@@ -45,7 +45,20 @@ export default {
       }
       if(callback) callback(data);
     },
-
+    *getGoodsTypeInfo({ payload, callback },{ put, call }){
+      const data = yield call(configMgt.getGoodsTypeInfo, payload);
+      if(data.code !== 200){
+        message.error(data.msg)
+      }
+      if(callback) callback(data);
+    },
+    *getSupplier({ payload, callback },{ put, call }){
+      const data = yield call(configMgt.getSupplier, payload);
+      if(data.code !== 200){
+        message.error(data.msg)
+      }
+      if(callback) callback(data);
+    },
   },
   reducers: {},
 }

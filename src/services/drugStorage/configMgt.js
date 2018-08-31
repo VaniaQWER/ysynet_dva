@@ -43,6 +43,27 @@ export function GetDrugInfo(options) {
 export function EditOperDeptInfo(options) {
   return request(`${_local}/a/depot/druginfo/operDeptInfo`,{ 
     method: 'POST',
+    type: 'json',
+    body: options
+  })
+};
+//药库药品目录 - 补货指示货位  [公用方法]
+//positionType 货位类型(1:补货指示货位、2:拆零发药货位、3:预拆零发药、4:发药机货位、5:基数药货位)
+export function getGoodsTypeInfo(options) {
+  return request(`${_local}/a/dept/getLocationInfo`,{ 
+    method: 'POST',
+    type: 'formData',
+    body: options
+  })
+};
+
+
+
+//药库药品目录 - 供应商信息
+//hisDrugCode 供应商信息
+export function getSupplier(options) {
+  return request(`${_local}/a/depot/supplier/getSupplier`,{ 
+    method: 'GET',
     type: 'formData',
     body: options
   })
