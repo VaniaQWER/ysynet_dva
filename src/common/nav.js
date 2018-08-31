@@ -197,13 +197,13 @@ export const getNavData = app => [
       name: "配置管理",//药库-配置管理
       icon: 'setting',
       path: '/drugStorage/configMgt/drugDirectory',
-      component: dynamicWrapper(app, [], () => import('../routes/DrugStorage/configMgt/drugDirectory'))
+      component: dynamicWrapper(app, ['drugStorage/configMgt'], () => import('../routes/DrugStorage/configMgt/drugDirectory'))
     },
     {
       name: "配置管理--编辑",//药库-配置管理
       icon: 'setting',
-      path: '/drugStorage/configMgt/drugDirectory/edit',
-      component: dynamicWrapper(app, [], () => import('../routes/DrugStorage/configMgt/drugDirectory/edit'))
+      path: '/drugStorage/configMgt/drugDirectory/edit/:id',
+      component: dynamicWrapper(app, ['drugStorage/configMgt'], () => import('../routes/DrugStorage/configMgt/drugDirectory/edit'))
     },
     /* {
       name: "药库管理",//药库-药库管理
@@ -677,13 +677,13 @@ export const getNavData = app => [
       name: '药品目录',//药房-药品目录
       icon: 'setting',
       path: '/pharmacy/configMgt/drugDirectory',
-      component: dynamicWrapper(app, [], () => import('../routes/Pharmacy/configMgt/drugDirectory'))
+      component: dynamicWrapper(app, ['drugStorage/configMgt'], () => import('../routes/Pharmacy/configMgt/drugDirectory'))
     },
     {
       name: '药品目录',//药房-药品目录
       icon: 'setting',
       path: '/pharmacy/configMgt/drugDirectory/edit',
-      component: dynamicWrapper(app, [], () => import('../routes/Pharmacy/configMgt/drugDirectory/edit'))
+      component: dynamicWrapper(app, ['drugStorage/configMgt'], () => import('../routes/Pharmacy/configMgt/drugDirectory/edit'))
     },
     {
       name: '药房管理',//药房-药房管理
