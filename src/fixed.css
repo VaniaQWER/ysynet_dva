@@ -424,3 +424,6 @@ td:hover .editable-cell-icon {
 .rowClassBg.ant-table-row:nth-child(even) > td{
   background-color:#ffad2757;
 }
+.leftLable .ant-form-item-label{
+    text-align: left;
+}
