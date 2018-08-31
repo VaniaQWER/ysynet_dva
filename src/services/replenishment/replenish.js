@@ -83,6 +83,15 @@ export function closeOrder(options) {
   })
 }
 
+ //订单状态更新
+export function updateStatus(options) {
+  return request(`${_local}/a/depot/depotplan/updateStatus`, {
+    method: 'POST',
+    type: 'json',
+    body: options
+  })
+}
+
 
 // 计划订单 - 详情
 export function planOrderDetail(options) {

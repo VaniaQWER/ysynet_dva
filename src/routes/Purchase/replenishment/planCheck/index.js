@@ -2,7 +2,7 @@
  * @Author: wwb 
  * @Date: 2018-07-24 16:08:53 
  * @Last Modified by: wwb
- * @Last Modified time: 2018-08-31 16:29:35
+ * @Last Modified time: 2018-08-31 18:10:57
  */
 
 /**
@@ -70,7 +70,6 @@ class SearchForm extends PureComponent{
           values.endTime = values.orderTime[1].format('YYYY-MM-DD HH:mm');
         }
         delete values.orderTime;
-        values.planType = '1';
         values.queryType = '2'; // 审核列表参数
         console.log(values, '查询条件');
         this.props.query(values);
@@ -81,7 +80,6 @@ class SearchForm extends PureComponent{
   handleReset = () => {
     this.props.form.resetFields();
     this.props.query({
-      planType: '1',
       queryType: '2'
     });
   }
@@ -135,7 +133,7 @@ class SearchForm extends PureComponent{
           <Col span={8} style={{ display: display }}>
             <FormItem {...formItemLayout} label={`类型`}>
               {
-                getFieldDecorator('orderType',{
+                getFieldDecorator('planType',{
                   initialValue: ''
                 })(
                   <Select
@@ -171,7 +169,6 @@ class PlanCheck extends PureComponent{
     selectedRows: [],
     loading: false,
     query: {
-      planType: '1',
       queryType: '2'
     },
   }
@@ -181,7 +178,7 @@ class PlanCheck extends PureComponent{
     this.setState({ query })
   }
   bitchPass = () =>{
-    let { selected, selectedRows } = this.state;
+    let { selected, selectedRows,query } = this.state;
     if(selected.length === 0){
       return message.warning('请至少选择一条数据');
     }
@@ -192,15 +189,15 @@ class PlanCheck extends PureComponent{
     this.setState({ loading: true });
     this.props.dispatch({
       type: 'replenish/updateStatus',
-      payload: { values },
+      payload: { ...values },
       callback: () =>{
-        this.setState({ loading: false });
-        this.refs.table.fetch({});
+        this.setState({ loading: false, selected: [], selectedRows: [] });
+        this.refs.table.fetch({ ...query, queryType: '2' });
       }
     })
   }
   render(){
-    const { query } = this.state;
+    const { query, loading } = this.state;
     const columns = [{
       title: '计划单号',
       dataIndex: 'planCode',
@@ -246,7 +243,7 @@ class PlanCheck extends PureComponent{
           dispatch={this.props.dispatch}
         />
          <div className='ant-row-bottom'>
-            <Button type='primary' onClick={this.bitchPass} style={{ marginLeft: 8 }}>批量通过</Button>
+            <Button type='primary' onClick={this.bitchPass} loading={loading} style={{ marginLeft: 8 }}>批量通过</Button>
          </div>
          <RemoteTable 
             ref='table'

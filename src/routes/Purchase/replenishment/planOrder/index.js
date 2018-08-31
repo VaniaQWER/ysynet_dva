@@ -2,7 +2,7 @@
  * @Author: wwb 
  * @Date: 2018-07-24 16:08:53 
  * @Last Modified by: wwb
- * @Last Modified time: 2018-08-31 15:18:42
+ * @Last Modified time: 2018-08-31 18:00:20
  */
 
 /**
@@ -205,6 +205,9 @@ class PlanOrder extends PureComponent{
   //关闭订单
   closeOrder = () =>{
     let { selectedRows,query } = this.state;
+    if(selectedRows.length === 0){
+      return message.warning('请至少选择一条数据')
+    }
     let orderCodeList = [];
     selectedRows.map(item =>{
       if(item.orderStatus === '3'){
