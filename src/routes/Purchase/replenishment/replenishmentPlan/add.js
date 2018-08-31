@@ -8,11 +8,11 @@
  * @file 药库 - 补货管理--补货计划--新建计划
  */
 import React, { PureComponent } from 'react';
-import { Row, Col, Button, Input, Table, Modal, Icon, Tooltip, message, Select, Spin } from 'antd';
-// import { formItemLayout } from '../../../../utils/commonStyles';
+import { Row, Col, Button, Input, Table, Modal, Icon, Tooltip, message, Select, Spin, InputNumber } from 'antd';
 import {replenishmentPlan} from '../../../../api/replenishment/replenishmentPlan';
 import RemoteTable from '../../../../components/TableGrid';
 import _ from 'lodash';
+import {validAmount} from '../../../../utils/utils';
 import {connect} from 'dva';
 
 const { Search } = Input;
@@ -36,7 +36,8 @@ class NewAdd extends PureComponent {
     info: {},
     isEdit: false,
     dataSource: [],
-    btnLoading: false
+    btnLoading: false,
+    saveLoading: false
   }
   componentWillMount = () =>{
     const { dispatch } = this.props;
@@ -101,13 +102,11 @@ class NewAdd extends PureComponent {
         this.setState({
           dataSource: data,
           btnLoading: false,
-          visible: false
+          visible: false,
+          modalSelected: []
         })
       }
     })
-  }
-  onChange = (record, index) => {
-    console.log(record, index, 'onchange')
   }
   showModal = () => {
     let {query} = this.state;
@@ -131,36 +130,81 @@ class NewAdd extends PureComponent {
       }
     });
   }
-  submit = () => {   //提交
-    // let {isEdit, info, dataSource} = this.state;
-    // if(dataSource.length === 0) {
-    //   message.warning('请添加产品');
-    //   return;
-    // }
-    // this.props.dispatch({
-    //   type: 'base/submit',
-    //   payload: {
-    //     auditStatus: '2',
-    //     id: isEdit? info.id : '',
-        
-    //   }
-    // })
+  submit = (auditStatus) => {   //提交  保存
+    let {isEdit, info, dataSource} = this.state;
+    let isNull = dataSource.every(item => {
+      if(!item.supplierCode) {
+        message.warning('供应商不能为空');
+        return false;
+      };
+      if(!item.demandQuantity) {
+        message.warning('需求数量不能为空');
+        return false;
+      }
+      return true
+    });
+    if(!isNull) return;
+    dataSource = dataSource.map(item => {
+      if(!item.supplierCode) {
+        message.warning('供应商不能为空');
+      };
+      if(!item.demandQuantity) {
+        message.warning('需求数量不能为空');
+      }
+      return {
+        bigDrugCode: item.bigDrugCode,
+        demandQuantity: item.demandQuantity,
+        drugCode: item.drugCode,
+        drugPrice: item.drugPrice,
+        supplierCode: item.supplierCode
+      }
+    })
+    this.setState({
+      saveLoading: true
+    })
+    this.props.dispatch({
+      type: 'base/submit',
+      payload: {
+        auditStatus: auditStatus,
+        id: isEdit? info.id : '',
+        planType: '1',
+        list: dataSource
+      },
+      callback: (data)=>{
+        message.success(`${auditStatus === 1? '保存' : '提交'}成功`);
+        this.props.history.go(-1);
+      }
+    })
   }
-  save = () => {    //保存
-
+  setRowInput = (val, record, i) => {
+    let {usableQuantity} = record;
+    let {dataSource} = this.state;
+    dataSource = JSON.parse(JSON.stringify(dataSource));
+    let validResult = validAmount(val, usableQuantity);
+    if(val === "") {
+      dataSource[i].demandQuantity = val;
+      this.setState({dataSource});
+    }
+    if(validResult) {
+      dataSource[i].demandQuantity = val;
+      dataSource[i].totalPrice = val * dataSource[i].drugPrice;
+      this.setState({dataSource});
+    }else {
+      this.setState({dataSource});
+    }
   }
   render() {
     let { 
       visible, 
       deptModules, 
-      query, 
-      // info, 
+      query,  
       isEdit, 
       dataSource, 
       loading, 
       modalLoading,
       spinLoading,
-      btnLoading
+      btnLoading,
+      saveLoading
     } = this.state;
     const columns = [
       {
@@ -189,11 +233,6 @@ class NewAdd extends PureComponent {
         width: 240,
         render: (text, record, i) => {
           let {supplierList} = record;
-          supplierList.push({
-            ctmaSupplierCode: '569151',
-            ctmaSupplierName: '你猜',
-            referencePrice: 80
-          });
           let supplier = supplierList.map(item=>{
             return <Option key={item.ctmaSupplierCode} value={item.ctmaSupplierCode}>{item.ctmaSupplierName}</Option>
           });
@@ -209,10 +248,9 @@ class NewAdd extends PureComponent {
                   };
                   return item;
                 });
-                dataSource[i].referencePrice = referencePrice;
+                dataSource[i].drugPrice = referencePrice;
                 dataSource[i].totalPrice = referencePrice * record.demandQuantity;
                 this.setState({dataSource});
-                console.log(dataSource, referencePrice, i);
                 
               }} 
               defaultValue={text} 
@@ -234,8 +272,16 @@ class NewAdd extends PureComponent {
         title: '需求数量',
         dataIndex: 'demandQuantity',
         width: 120,
-        render: (text, record, index) => {
-          return <Input defaultValue={text || 1} onChange={this.onChange.bind(this, record, index)} />
+        render: (text, record, i) => {
+          return <InputNumber
+                    defaultValue={text}
+                    max={record.usableQuantity}
+                    min={1}
+                    precision={0}
+                    onChange={(value)=>{
+                      this.setRowInput(value, record, i);
+                    }} 
+                 />
         }
       }, {
         title: '当前库存',
@@ -248,18 +294,7 @@ class NewAdd extends PureComponent {
         dataIndex: 'downQuantity'
       }, {
         title: '参考价格',
-        dataIndex: 'referencePrice',
-        render: (text, record) => {
-          let {supplierList, supplierCode} = record;
-          let referencePrice;
-          supplierList.map(item => {
-            if(item.ctmaSupplierCode === supplierCode) {
-              referencePrice = item.referencePrice
-            };
-            return item;
-          });
-          return referencePrice;
-        }
+        dataIndex: 'drugPrice',
       }, {
         title: '金额',
         dataIndex: 'totalPrice',
@@ -310,7 +345,7 @@ class NewAdd extends PureComponent {
                 <h2>{isEdit? '编辑计划' : '新建计划'}</h2>
               </Col>
               <Col span={16} style={{ textAlign: 'right' }}>
-                <span style={{ cursor: 'pointer' }} onClick={() => this.props.history.push({ pathname: `/purchase/replenishment/replenishmentPlan` })}><Icon type="close" style={{ fontSize: 26, marginTop: 8 }} /></span>
+                <span style={{ cursor: 'pointer' }} onClick={() => this.props.history.go(-1)}><Icon type="close" style={{ fontSize: 26, marginTop: 8 }} /></span>
               </Col>
             </Row>
             <Row>
@@ -357,7 +392,7 @@ class NewAdd extends PureComponent {
             visible={visible}
             width={1100}
             style={{ top: 20 }}
-            onCancel={() => this.setState({ visible: false })}
+            onCancel={() => this.setState({ visible: false, modalSelected: [] })}
             footer={[
               <Button key="submit" type="primary" loading={btnLoading} onClick={this.handleOk}>确认</Button>,
               <Button key="back" onClick={() => this.setState({ visible: false })}>取消</Button>
@@ -414,14 +449,17 @@ class NewAdd extends PureComponent {
               pagination={false}
             />
           </div>
-          <div className="detailCard" style={{margin: '-12px -8px 0px -8px'}}>
-            <Row>
-              <Col style={{ textAlign: 'right', padding: '10px' }}>
-                <Button onClick={this.submit} type='primary'>提交</Button>
-                <Button onClick={this.save} type='danger' style={{ marginLeft: 8 }} ghost>保存</Button>
-              </Col>
-            </Row>
-          </div>
+          {
+            dataSource.length === 0? null : 
+            <div className="detailCard" style={{margin: '-12px -8px 0px -8px'}}>
+              <Row>
+                <Col style={{ textAlign: 'right', padding: '10px' }}>
+                  <Button loading={saveLoading} onClick={()=>{this.submit('2')}} type='primary'>提交</Button>
+                  <Button loading={saveLoading} onClick={()=>{this.submit('1')}} type='danger' style={{ marginLeft: 8 }} ghost>保存</Button>
+                </Col>
+              </Row>
+            </div>
+          }
         </div>
       </Spin>
     )
