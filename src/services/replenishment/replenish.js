@@ -24,7 +24,7 @@ export function ReplenishDetails(options) {
 }
 // 状态
 export function typelist(options) {
-  return request(`${_local}/a/spd/dict/typelist`, {
+  return request(`${_local}/a/spd/dict/type`, {
     method: 'POST',
     type: 'formData',
     body: options

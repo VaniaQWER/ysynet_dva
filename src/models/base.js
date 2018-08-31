@@ -7,10 +7,7 @@ import { message } from 'antd';
 export default {
   namespace: 'base',
   state:{
-    
-  },
-  reducers: {
-    
+    replenishDetailsInfo: {}
   },
   effects:{
     // 采购部门
@@ -21,7 +18,28 @@ export default {
       }
       if(callback) callback(data.data)
     },
-
+    // 补货计划 - 详情
+    *ReplenishDetails({ payload, callback },{ put, call }){
+      const data = yield call(replenishment.ReplenishDetails, payload);
+      console.log(data,'详情');
+      if (data.code === 200 && data.msg === 'success') {
+          yield put({
+            type: 'setReplenishDetailsInfo',
+            payload: data.data
+          })
+          callback && callback(data.data);
+      } else {
+        message.error(data.msg);
+      }
+    },
+  },
+  reducers: {
+    setReplenishDetailsInfo(state, action){
+      return {
+        ...state,
+        replenishDetailsInfo: action.plyload
+      }
+    }
   },
   subscriptions: {
     

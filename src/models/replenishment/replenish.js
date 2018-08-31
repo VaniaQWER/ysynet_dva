@@ -18,19 +18,6 @@ export default {
         callback();
       }
     },
-    // 补货计划 - 详情
-    *ReplenishDetails({ payload, callback },{ put, call }){
-      const data = yield call(replenishment.ReplenishDetails, payload);
-      console.log(data,'详情');
-      if (data.code === 200 && data.msg === 'success') {
-        if (callback) {
-          callback(data.data);
-        }
-      } else {
-        message.error(data.msg);
-      }
-    },
-    
     /* 目录外采购 */
     // 状态
     *typelist({ payload,callback },{ call }){
