@@ -5,64 +5,14 @@
  */
 
 import React, { PureComponent } from 'react';
-import { Table , Form, Input , Row, Col, Button, Icon, Select , Modal , message , DatePicker } from 'antd';
+import {Form, Input , Row, Col, Button, Icon, Select, DatePicker } from 'antd';
 import { Link } from 'react-router-dom';
 import { formItemLayout } from '../../../../utils/commonStyles';
-import { createData } from '../../../../common/data';
+import RemoteTable from '../../../../components/TableGrid/index';
+import {pharmacy} from '../../../../api/pharmacy';
 const FormItem = Form.Item;
 const Option = Select.Option;
 const RangePicker = DatePicker.RangePicker;
-const Confirm = Modal.confirm;
-const columns = [
-  {
-   title: '申领单',
-   width:150,
-   dataIndex: 'medicinalCode',
-   render:(text)=>(<Link to={{pathname: `/pharmacy/wareHouse/drugsFor/details`}}>{text}</Link>)
-  },
-  {
-    title: '申领药房',
-    width:100,
-    dataIndex: 'assetsRecord',
-    render: (text, record, index) => '药房'
-  },
-  {
-    title: '药库',
-    width:100,
-    dataIndex: 'assetsRecord123',
-    render: (text, record, index) => '药房'
-  },
-  {
-    title: '状态',
-    width:100,
-    dataIndex: 'fstate',
-    render: (text, record, index) => text === '00' ? '已申领' : '未申领'
-  },
-  {
-    title: '制单人',
-    width:100,
-    dataIndex: 'equipmentStandardName',
-    render: (text, record, index) => '未申领'
-  },
-  {
-    title: '制单时间',
-    width:150,
-    dataIndex: 'time',
-    render: (text, record, index) => '2018-7-25 21:49'
-  },
-  {
-    title: '受理人',
-    width:100,
-    dataIndex: 'custodian',
-    render: (text, record, index) => '已申领'
-  },
-  {
-    title: '受理时间',
-    width:150,
-    dataIndex: 'bDept',
-    render: (text, record, index) => '2018-7-25 21:49'
-  }
-];
 class DrugsFor extends PureComponent{
 
   constructor(props) {
@@ -76,73 +26,76 @@ class DrugsFor extends PureComponent{
   }
 
   queryHandler = (query) => {
-    this.setState({ query:query })
+    this.refs.tab.fetch(query);
   }
 
-  delete = () => {
-    const { selectedRowKeys } = this.state;
-    if(selectedRowKeys.length>0){
-      Confirm({
-        content:'您确定执行此操作吗？',
-        onOk:()=>{
-          message.success('操作成功')
-          this.setState({selectedRowKeys:[]})
-        }
-      })
-    }else{
-      message.warn('至少选择一条数据进行操作！')
-    }
-  }
-
-  //批量编辑 - 打开弹窗
-  onSubmit = () =>{
-    const { selectedRowKeys } = this.state;
-    if(selectedRowKeys.length>0){
-      Confirm({
-        content:"您确定要执行此操作？",
-        onOk:()=>{
-          message.success('操作成功！')
-        },
-        onCancel:()=>{}
-      })
-    }else{
-      message.warn('最少选择一条数据进行操作！')
-    }
-  }
 
   render(){
-    const { selectedRowKeys } = this.state;
+    const columns = [
+      {
+      title: '申领单',
+      width:150,
+      dataIndex: 'applyCode',
+      render:(text, record)=>(<Link to={{pathname: `/pharmacy/wareHouse/drugsFor/details/${record.applyCode}`}}>{text}</Link>)
+      },
+      {
+        title: '申领部门',
+        width:100,
+        dataIndex: 'applyDeptName',
+        render: (text, record, index) => '药房'
+      },
+      {
+        title: '配货部门',
+        width:100,
+        dataIndex: 'distributeDeptName',
+        render: (text, record, index) => '药房'
+      },
+      {
+        title: '状态',
+        width:100,
+        dataIndex: 'applyStatusName',
+        render: (text, record, index) => text === '00' ? '已申领' : '未申领'
+      },
+      {
+        title: '发起人',
+        width:100,
+        dataIndex: 'createUserName',
+        render: (text, record, index) => '未申领'
+      },
+      {
+        title: '发起时间',
+        width:150,
+        dataIndex: 'createDate',
+        render: (text, record, index) => '2018-7-25 21:49'
+      },
+      {
+        title: '配货人',
+        width:100,
+        dataIndex: 'distributeUserName',
+        render: (text, record, index) => '已申领'
+      },
+      {
+        title: '配货时间',
+        width:150,
+        dataIndex: 'distributeDate',
+        render: (text, record, index) => '2018-7-25 21:49'
+      }
+    ];
     return (
       <div className='ysynet-main-content'>
         <SearchForm query={this.queryHandler} />
         <Row>
           <Button type='primary' className='button-gap'>
-            <Link to={{pathname:`/pharmacy/wareHouse/drugsFor/add`}}>新建申领</Link>
+            <Link to={{pathname:`/addDrugsFor`}}>新建申领</Link>
           </Button>
-          <Button onClick={this.delete}>删除</Button>
         </Row>
-        <Table
-          dataSource={createData()}
-          rowSelection={
-            {
-              selectedRowKeys,
-              onChange:(selectedRowKeys)=>{
-                //选中编辑的内容
-                this.setState({selectedRowKeys})
-              }
-            }
-          }
-          bordered
-          loading={ this.state.loading}
+        <RemoteTable
+          ref="tab"
+          url={pharmacy.APPLYLIST}
           scroll={{x: '100%'}}
           columns={columns}
           rowKey={'id'}
           style={{marginTop: 24}}
-          pagination={{
-            size: "small",
-            showQuickJumper: true,
-            showSizeChanger: true
-          }}
         />
       </div>
     )
@@ -163,15 +116,22 @@ class SearchFormWrapper extends PureComponent {
    })
  }
  handleSearch = (e) => {
-   e.preventDefault();
-   this.props.form.validateFields((err, values) => {
-     this.props.query(values);
-   });
+  e.preventDefault();
+  this.props.form.validateFields((err, values) => {
+    if(values.time) {
+      values.startTime = values.time[0].format('YYYY-MM-DD');
+      values.endTime = values.time[1].format('YYYY-MM-DD');
+    }else {
+      values.startTime = '';
+      values.endTime = '';
+    }
+    delete values.time;
+    this.props.query(values);
+  });
  }
  //重置
  handleReset = () => {
-   this.props.form.resetFields();
-   this.props.query({});
+   this.props.form.resetFields()
  }
 
  render() {
@@ -182,14 +142,14 @@ class SearchFormWrapper extends PureComponent {
        <Row gutter={30}>
          <Col span={8}>
            <FormItem label={`申领单`} {...formItemLayout}>
-             {getFieldDecorator('assetCode', {})(
-              <Input/>
+             {getFieldDecorator('applyCode', {})(
+              <Input placeholder="请输入"/>
              )}
            </FormItem>
          </Col>
          <Col span={8}>
            <FormItem label={`状态`} {...formItemLayout}>
-             {getFieldDecorator('assetName', {})(
+             {getFieldDecorator('applyStatus', {})(
               <Select 
                 showSearch
                 placeholder={'请选择'}
@@ -197,8 +157,8 @@ class SearchFormWrapper extends PureComponent {
                 filterOption={(input, option) => option.props.children.indexOf(input) >= 0}
                 >
                     <Option key="" value="">全部</Option>
-                    <Option key="01" value="01">待确认</Option>
-                    <Option key="02" value="02">已确认</Option>
+                    <Option key="0" value="0">草稿</Option>
+                    <Option key="1" value="1">待审核</Option>
               </Select>
              )}
            </FormItem>

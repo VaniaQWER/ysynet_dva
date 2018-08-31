@@ -5,34 +5,32 @@
  */
 import React, { PureComponent } from 'react';
 import { Table ,Row, Col , Tooltip  } from 'antd';
-import { createData } from '../../../../common/data';
+import {connect} from 'dva';
 const columns = [
   {
    title: '申领数量',
    width:150,
-   dataIndex: 'medicinalCode',
+   dataIndex: 'applyNum',
   },
   {
     title: '单位',
     width:150,
-    dataIndex: 'unit123',
-    render:(text)=>'g'
+    dataIndex: 'replanUnit'
   },
   {
     title: '通用名称',
     width:100,
-    dataIndex: 'productName1',
-    render:(text,record)=>record.productName
+    dataIndex: 'ctmmGenericName',
   },
   {
     title: '商品名称',
     width:150,
-    dataIndex: 'productName',
+    dataIndex: 'ctmmTradeName',
   },
   {
     title: '规格',
     width:150,
-    dataIndex: 'spec',
+    dataIndex: 'ctmmSpecification',
     className:'ellipsis',
     render:(text)=>(
       <Tooltip placement="topLeft" title={text}>{text}</Tooltip>
@@ -41,13 +39,12 @@ const columns = [
   {
     title: '剂型',
     width:150,
-    dataIndex: 'fmodal',
+    dataIndex: 'ctmmDosageFormDesc',
   },
   {
     title: '包装规格',
     width:150,
-    dataIndex: 'unit',
-    render:(text)=>'g'
+    dataIndex: 'packageSpecification'
   },
   {
     title: '批准文号',
@@ -57,13 +54,21 @@ const columns = [
   {
     title: '生产厂家',
     width:150,
-    dataIndex: 'productCompany',
+    dataIndex: 'ctmmManufacturerName',
   }
 ];
-
 class DetailsApplyAccept extends PureComponent{
-
+  componentDidMount() {
+    let {applyCode} = this.props.match.params;
+    this.props.dispatch({
+      type: 'pharmacy/drugsForInfo',
+      payload: { applyCode }
+    })
+  }
   render(){
+    let {drugsForInfo} = this.props.pharmacy;
+    let dataSource = drugsForInfo.list || [];
+    
     return (
       <div className='fullCol'>
         <div className='fullCol-fullChild'>
@@ -74,7 +79,7 @@ class DetailsApplyAccept extends PureComponent{
                     <label>申领单</label>
                 </div>
                 <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
-                  <div className='ant-form-item-control'>PA002211807000086U</div>
+                  <div className='ant-form-item-control'>{drugsForInfo.applyCode || ''}</div>
                 </div>
             </Col>
             <Col span={8}>
@@ -82,7 +87,7 @@ class DetailsApplyAccept extends PureComponent{
                     <label>状态</label>
                 </div>
                 <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
-                  <div className='ant-form-item-control'>待配货</div>
+                  <div className='ant-form-item-control'>{drugsForInfo.applyStatusName}</div>
                 </div>
             </Col>
             <Col span={8}>
@@ -90,7 +95,7 @@ class DetailsApplyAccept extends PureComponent{
                     <label>申领部门</label>
                 </div>
                 <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
-                  <div className='ant-form-item-control'>中心药房</div>
+                  <div className='ant-form-item-control'>{drugsForInfo.applyDeptName || ''}</div>
                 </div>
             </Col>
             <Col span={8}>
@@ -98,7 +103,7 @@ class DetailsApplyAccept extends PureComponent{
                     <label>发起人</label>
                 </div>
                 <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
-                  <div className='ant-form-item-control'>张三三</div>
+                  <div className='ant-form-item-control'>{drugsForInfo.createUserName || ''}</div>
                 </div>
             </Col>
             <Col span={8}>
@@ -106,8 +111,7 @@ class DetailsApplyAccept extends PureComponent{
                     <label>发起时间</label>
                 </div>
                 <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
-                  <div className='ant-form-item-control'>2015-09-03 15:00:02
-                  </div>
+                  <div className='ant-form-item-control'>{drugsForInfo.createDate || ''}</div>
                 </div>
             </Col>
             <Col span={8}>
@@ -131,7 +135,7 @@ class DetailsApplyAccept extends PureComponent{
                     <label>受理人</label>
                 </div>
                 <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
-                  <div className='ant-form-item-control'></div>
+                  <div className='ant-form-item-control'>{drugsForInfo.distributeUserName || ''}</div>
                 </div>
             </Col>
             <Col span={8}>
@@ -147,21 +151,15 @@ class DetailsApplyAccept extends PureComponent{
         <div className='detailCard'>
           <Table
             title={()=>'产品信息'}
-            dataSource={createData()}
+            dataSource={dataSource}
             bordered
             scroll={{x: '100%'}}
             columns={columns}
             rowKey={'id'}
-            style={{marginTop: 24}}
-            pagination={{
-              size: "small",
-              showQuickJumper: true,
-              showSizeChanger: true
-            }}
           />
         </div>
       </div>
     )
   }
 }
-export default DetailsApplyAccept;
+export default connect(state=>state)(DetailsApplyAccept);

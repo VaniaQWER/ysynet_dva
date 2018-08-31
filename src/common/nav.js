@@ -370,13 +370,13 @@ export const getNavData = app => [
       name: "受理配货",
       icon: 'setting',
       path: '/drugStorage/outStorage/acceptDistribution',
-      component: dynamicWrapper(app, ['drugStorage/outStorage'], () => import('../routes/DrugStorage/outStorage/acceptDistribution')),
+      component: dynamicWrapper(app, [], () => import('../routes/DrugStorage/outStorage/acceptDistribution')),
     },
     {
       name: "受理配货-详情",
       icon: 'setting',
-      path: '/drugStorage/outStorage/acceptDistribution/details/:applyCode/:applyStatus',
-      component: dynamicWrapper(app, ['drugStorage/outStorage'], () => import('../routes/DrugStorage/outStorage/acceptDistribution/details')),
+      path: '/drugStorage/outStorage/acceptDistribution/details',
+      component: dynamicWrapper(app, [], () => import('../routes/DrugStorage/outStorage/acceptDistribution/details')),
     },
     {
       name: "拣货下架",
@@ -819,16 +819,16 @@ export const getNavData = app => [
       component: dynamicWrapper(app, [], () => import('../routes/Pharmacy/wareHouse/drugsFor')),
     },
     {
-      name: "药品申领 -新增",//药库-申领入库-药品申领 -新增
+      name: "药品申领 -新增",//药房-申领入库-药品申领 -新增
       icon: 'setting',
       path: '/pharmacy/wareHouse/drugsFor/add',
       component: dynamicWrapper(app, [], () => import('../routes/Pharmacy/wareHouse/drugsFor/add')),
     },
     {
-      name: "药品申领 -编辑",//药库-申领入库-药品申领 -编辑
+      name: "药品申领 -详情",//药房-申领入库-药品申领 -详情
       icon: 'setting',
-      path: '/pharmacy/wareHouse/drugsFor/details',
-      component: dynamicWrapper(app, [], () => import('../routes/Pharmacy/wareHouse/drugsFor/details')),
+      path: '/pharmacy/wareHouse/drugsFor/details/:applyCode',
+      component: dynamicWrapper(app, ['pharmacy/wareHouse'], () => import('../routes/Pharmacy/wareHouse/drugsFor/details')),
     },
     {
       name: "验收",//药库-申领入库-验收

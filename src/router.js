@@ -9,7 +9,7 @@ import Login from './routes/Login';
 import SubSystem from './routes/System';
 import NewAdd from './routes/Purchase/replenishment/replenishmentPlan/add';
 import CatalogAdd from './routes/Purchase/replenishment/outCatalogPurchase/add';
-
+import AddDrugsFor from './routes/Pharmacy/wareHouse/drugsFor/add';
 import { getNavData } from './common/nav';
 import { getPlainNode } from './utils/utils';
 
@@ -50,7 +50,7 @@ function RouterConfig({ history, app }) {
   const navData = getNavData(app);
   //const WorkplaceLayout = getLayout(navData, 'WorkplaceLayout').component;
   const BasicLayout = getLayout(navData, 'BasicLayout').component;
-  
+
   const passProps = {
     app,
     navData,
@@ -58,7 +58,7 @@ function RouterConfig({ history, app }) {
       return getRouteData(navData, path);
     },
   };
-  
+
   return (
     <LocaleProvider locale={zhCN}>
       <Router history={history}>
@@ -66,7 +66,9 @@ function RouterConfig({ history, app }) {
           <Route path="/login" component={Login}/>
           <Route path="/subSystem" component={SubSystem}/>
           <Route path="/createReplenishment" component={NewAdd}/>
+          <Route path="/editReplenishment/:planCode" component={NewAdd}/>
           <Route path="/createOutCatalogPurcahsePlan" component={CatalogAdd}/>
+          <Route path="/addDrugsFor" component={AddDrugsFor}/>
           {/* <Route path="/home" component={Home}/> */}
           {/* <Route path="/app" render={props => <WorkplaceLayout {...props} {...passProps} />} /> */}
           <Route path="/" render={props => <BasicLayout {...props} {...passProps} />} />
