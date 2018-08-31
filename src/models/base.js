@@ -21,7 +21,6 @@ export default {
     // 补货计划 - 详情
     *ReplenishDetails({ payload, callback },{ put, call }){
       const data = yield call(replenishment.ReplenishDetails, payload);
-      console.log(data,'详情');
       if (data.code === 200 && data.msg === 'success') {
           callback && callback(data.data);
       } else {
@@ -30,7 +29,15 @@ export default {
     },
     *addDrug({payload, callback}, {put, call}) {
       const data = yield call(replenishment.addDrug, payload);
-      console.log(data, '添加')
+      if(data.code === 200 && data.msg === 'success') {
+        callback && callback(data.data);
+      }else {
+        message.error(data.msg);
+      }
+    },
+    *submit({payload, callback}, {put, call}) {
+      const data = yield call(replenishment.submit, payload);
+      console.log(data, '保存');
       if(data.code === 200 && data.msg === 'success') {
         callback && callback(data.data);
       }else {

@@ -30,6 +30,14 @@ export function addDrug(options) {
     body: options
   })
 }
+//补货计划 - 新建(编辑) - 保存(提交)
+export function submit(options) {
+  return request(`${_local}/a/depot/depotplan/save`, {
+    method: 'POST',
+    type: 'json',
+    body: options
+  })
+}
 // 状态
 export function typelist(options) {
   return request(`${_local}/a/spd/dict/type`, {

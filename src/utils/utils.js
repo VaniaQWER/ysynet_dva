@@ -1,5 +1,6 @@
 import querystring from 'querystring';
 import {_local} from '../api/local';
+import {message} from 'antd';
 export function getPlainNode(nodeList, parentPath = '') {
   const arr = [];
   nodeList.forEach((node) => {
@@ -135,4 +136,19 @@ export const menuFormat = (menuData,returnToggle,returnIndex) => {
     if(returnToggle){
       return tree
     }
+}
+
+export const validAmount = (value, max) => {
+  let num = Number(value);
+  if (/^\d+$/.test(num) && num !== 0) {
+    if (num > max) {
+      message.error('超过库存上限');
+      return false;
+    }else{
+      return true;
+    }
+  }else {
+    message.error('请输入非0正整数！');
+    return false;
+  }
 }
