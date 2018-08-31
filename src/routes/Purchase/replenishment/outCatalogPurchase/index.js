@@ -2,7 +2,7 @@
  * @Author: wwb 
  * @Date: 2018-07-24 16:08:53 
  * @Last Modified by: wwb
- * @Last Modified time: 2018-08-31 15:38:16
+ * @Last Modified time: 2018-08-31 20:18:36
  */
 
 /**
@@ -33,6 +33,9 @@ class SearchForm extends PureComponent{
     fstateOptions: []// 状态下拉框
   }
   componentWillMount = () =>{
+    this.genFstate();
+  }
+  genFstate = () =>{
     const { dispatch } = this.props;
     dispatch({
       type: 'replenish/orderStatusOrorderType',
@@ -60,10 +63,9 @@ class SearchForm extends PureComponent{
   //重置
   handleReset = () => {
     this.props.form.resetFields();
-    this.props.query({ planType: '2' });
+    this.props.query({ queryType: '1',planType: '2' });
   }
   render(){
-    console.log(this.props,'props')
     const { getFieldDecorator } = this.props.form;
     const { fstateOptions } = this.state;
     return (
@@ -91,7 +93,6 @@ class SearchForm extends PureComponent{
                     showSearch
                     filterOption={(input, option) => option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0}
                   >
-                    <Option key={-1} value=''>全部</Option>
                     {
                       fstateOptions.map((item,index)=> <Option key={index} value={item.value}>{ item.label }</Option>)
                     }
@@ -131,6 +132,7 @@ class OutCatalogPurchase extends PureComponent{
     selectedRows: [],
     loading: false,
     query: {
+      queryType: '1',
       planType: '2'
     },
   }

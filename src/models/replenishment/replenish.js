@@ -47,6 +47,19 @@ export default {
       }
       if(callback) callback(data.data)
     },
+
+    // 更新订单状态
+    *updateStatus({ payload,callback },{ call }){
+      const data = yield call(replenishment.updateStatus, payload);
+      if(data.code === 200 && data.msg === 'success'){
+        message.success('状态更新成功');
+      }else{
+        return message.error(data.msg || '更新状态失败')
+      }
+      if(callback) callback();
+    },
+
+    // 关闭订单
     *closeOrder({ payload,callback },{ call }){
       const data = yield call(replenishment.closeOrder, payload);
       if(data.code !== 200){
