@@ -77,8 +77,6 @@ class EditDrugDirectory extends PureComponent{
             type:'drugStorageConfigMgt/getSupplier',
             payload:{hisDrugCode:data.data.hisDrugCode},
             callback:(data)=>{
-              console.log(data)
-              debugger
               this.setState({supplierSelect:data.data})
             }
           })
@@ -125,10 +123,9 @@ class EditDrugDirectory extends PureComponent{
             type:'drugStorageConfigMgt/EditOperDeptInfo',
             payload:postData,
             callback:(data)=>{
-              debugger
               message.success('保存成功！')
-              // const { history } = this.props;
-              // history.push({pathname:"/drugStorage/configMgt/drugDirectory"})
+              const { history } = this.props;
+              history.push({pathname:"/drugStorage/configMgt/drugDirectory"})
             }
           })
         })
