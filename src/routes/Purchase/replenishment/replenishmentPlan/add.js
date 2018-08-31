@@ -9,7 +9,7 @@
  */
 import React, { PureComponent } from 'react';
 import { Row, Col, Button, Input, Table, Modal, Icon, Tooltip, message, Select, Spin } from 'antd';
-import { formItemLayout } from '../../../../utils/commonStyles';
+// import { formItemLayout } from '../../../../utils/commonStyles';
 import {replenishmentPlan} from '../../../../api/replenishment/replenishmentPlan';
 import RemoteTable from '../../../../components/TableGrid';
 import _ from 'lodash';
@@ -61,7 +61,8 @@ class NewAdd extends PureComponent {
           deptModules.map(item=>{
             if(data.deptCode === item.id) {
               deptCode = item.id
-            }
+            };
+            return item;
           });
           let existDrugCodeList = data.list.map(item => item.drugCode);
           this.setState({ 
@@ -83,7 +84,7 @@ class NewAdd extends PureComponent {
     }
   }
   handleOk = () => {
-    let {modalSelectedRows, dataSource, query} = this.state;
+    let {modalSelectedRows, query} = this.state;
     if(modalSelectedRows.length === 0) {
       message.warning('至少选择一条信息');
       return;
@@ -117,7 +118,7 @@ class NewAdd extends PureComponent {
     this.setState({ visible: true });
   }
   delete = () => {  //删除
-    let {selectedRows, dataSource, query, selected} = this.state;
+    let {selectedRows, dataSource, query} = this.state;
     dataSource = _.difference(dataSource, selectedRows);
     let existDrugCodeList = dataSource.map((item) => item.drugCode)
     this.setState({
@@ -131,11 +132,11 @@ class NewAdd extends PureComponent {
     });
   }
   submit = () => {   //提交
-    let {isEdit, info, dataSource} = this.state;
-    if(dataSource.length === 0) {
-      message.warning('请添加产品');
-      return;
-    }
+    // let {isEdit, info, dataSource} = this.state;
+    // if(dataSource.length === 0) {
+    //   message.warning('请添加产品');
+    //   return;
+    // }
     // this.props.dispatch({
     //   type: 'base/submit',
     //   payload: {
@@ -153,7 +154,7 @@ class NewAdd extends PureComponent {
       visible, 
       deptModules, 
       query, 
-      info, 
+      // info, 
       isEdit, 
       dataSource, 
       loading, 
@@ -254,7 +255,8 @@ class NewAdd extends PureComponent {
           supplierList.map(item => {
             if(item.ctmaSupplierCode === supplierCode) {
               referencePrice = item.referencePrice
-            }
+            };
+            return item;
           });
           return referencePrice;
         }
