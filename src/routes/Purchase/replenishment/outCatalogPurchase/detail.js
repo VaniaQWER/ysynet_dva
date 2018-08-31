@@ -2,7 +2,7 @@
  * @Author: wwb 
  * @Date: 2018-07-24 20:15:54 
  * @Last Modified by: wwb
- * @Last Modified time: 2018-08-30 20:17:32
+ * @Last Modified time: 2018-08-31 16:33:56
  */
 /* 
   @file 补货计划 详情
@@ -76,7 +76,7 @@ class OutCatalogPurchase extends PureComponent{
     let { planCode } = this.props.match.params;
     if (this.props.match.params) {
       this.props.dispatch({
-        type:'replenish/ReplenishDetails',
+        type:'base/ReplenishDetails',
         payload: { planCode },
         callback:(data)=>{
           this.setState({ detailsData: data });
@@ -102,7 +102,7 @@ class OutCatalogPurchase extends PureComponent{
                 <label>计划单号</label>
               </div>
               <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
-                <div className='ant-form-item-control'>{detailsData.planCode}</div>
+                <div className='ant-form-item-control'>{ detailsData.planCode }</div>
               </div>
             </Col>
             <Col span={8}>
@@ -110,7 +110,7 @@ class OutCatalogPurchase extends PureComponent{
               <label>类型</label>
             </div>
             <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
-              <div className='ant-form-item-control'>{detailsData.planTypeName}</div>
+              <div className='ant-form-item-control'>{ detailsData.planTypeName }</div>
             </div>
             </Col>
             <Col span={8}>
@@ -146,6 +146,8 @@ class OutCatalogPurchase extends PureComponent{
                 <div className='ant-form-item-control'>{detailsData.mobile}</div>
               </div>
             </Col>
+          </Row>
+          <Row>
             <Col span={8}>
               <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
                   <label>收货地址</label>

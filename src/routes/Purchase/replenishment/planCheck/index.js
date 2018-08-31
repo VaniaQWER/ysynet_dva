@@ -2,7 +2,7 @@
  * @Author: wwb 
  * @Date: 2018-07-24 16:08:53 
  * @Last Modified by: wwb
- * @Last Modified time: 2018-08-29 15:52:42
+ * @Last Modified time: 2018-08-31 16:29:35
  */
 
 /**
@@ -12,6 +12,8 @@ import React, { PureComponent } from 'react';
 import { Form, Button, message, Tooltip, DatePicker, Select, Row, Col, Input,Icon  } from 'antd';
 import { Link } from 'react-router-dom';
 import RemoteTable from '../../../../components/TableGrid';
+import { replenishmentPlan } from '../../../../api/replenishment/replenishmentPlan';
+import { connect } from 'dva';
 const FormItem = Form.Item;
 const { RangePicker } = DatePicker;
 const { Option } = Select;
@@ -28,7 +30,28 @@ const formItemLayout = {
 
 class SearchForm extends PureComponent{
   state = {
-    display: 'none'
+    display: 'none',
+    plan_type: [],// 类型
+    audit_plan_status: [] // 状态
+  }
+  componentWillMount = () =>{
+    const { dispatch } = this.props;
+    //类型
+    dispatch({
+      type: 'replenish/orderStatusOrorderType',
+      payload: { type : 'plan_type' },
+      callback: (data) =>{
+        this.setState({ plan_type: data })
+      }
+    })
+    //状态
+    dispatch({
+      type: 'replenish/orderStatusOrorderType',
+      payload: { type : 'audit_plan_status' },
+      callback: (data) =>{
+        this.setState({ audit_plan_status: data })
+      }
+    })
   }
   toggle = () => {
     const { display, expand } = this.state;
@@ -41,8 +64,14 @@ class SearchForm extends PureComponent{
     e.preventDefault();
     this.props.form.validateFields((err, values) => {
       if (!err) {
-        values.startTime = values.orderTime[0].format('YYYY-MM-DD HH:mm');
-        values.endTime = values.orderTime[1].format('YYYY-MM-DD HH:mm');
+        const orderTime = values.orderTime === undefined ? '' : values.orderTime;
+        if(orderTime.length){
+          values.startTime = values.orderTime[0].format('YYYY-MM-DD HH:mm');
+          values.endTime = values.orderTime[1].format('YYYY-MM-DD HH:mm');
+        }
+        delete values.orderTime;
+        values.planType = '1';
+        values.queryType = '2'; // 审核列表参数
         console.log(values, '查询条件');
         this.props.query(values);
       }
@@ -51,21 +80,24 @@ class SearchForm extends PureComponent{
   //重置
   handleReset = () => {
     this.props.form.resetFields();
-    this.props.query({});
+    this.props.query({
+      planType: '1',
+      queryType: '2'
+    });
   }
   render(){
     const { getFieldDecorator } = this.props.form;
-    const { display, expand } = this.state;
+    const { display, expand, plan_type, audit_plan_status } = this.state;
     return (
       <Form className="ant-advanced-search-form" onSubmit={this.handleSearch}>
         <Row gutter={30}>
           <Col span={8}>
             <FormItem {...formItemLayout} label={`计划单号`}>
               {
-                getFieldDecorator(`planNo`,{
+                getFieldDecorator(`planCode`,{
                   initialValue: ''
                 })(
-                  <Input placeholder='请输入' className={'ysynet-formItem-width'}/>
+                  <Input placeholder='请输入'/>
                 )
               }
             </FormItem>
@@ -73,11 +105,17 @@ class SearchForm extends PureComponent{
           <Col span={8} style={{ display: display }}>
             <FormItem {...formItemLayout} label={`状态`}>
               {
-                getFieldDecorator(`fstate`,{
-                  initialValue: '00'
+                getFieldDecorator(`auditStatus`,{
+                  initialValue: ''
                 })(
-                  <Select>
-                    <Option key={-1} value='00'>待审核</Option>
+                  <Select
+                    allowClear={true}
+                    showSearch
+                    filterOption={(input, option) => option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0}
+                  >
+                    {
+                      audit_plan_status.map((item,index)=> <Option key={index} value={item.value}>{ item.label }</Option>)
+                    }
                   </Select>
                 )
               }
@@ -89,7 +127,7 @@ class SearchForm extends PureComponent{
                 getFieldDecorator(`orderTime`,{
                   initialValue: ''
                 })(
-                  <RangePicker />
+                  <RangePicker format={'YYYY-MM-DD'}/>
                 )
               }
             </FormItem>
@@ -97,11 +135,17 @@ class SearchForm extends PureComponent{
           <Col span={8} style={{ display: display }}>
             <FormItem {...formItemLayout} label={`类型`}>
               {
-                getFieldDecorator('type',{
+                getFieldDecorator('orderType',{
                   initialValue: ''
                 })(
-                  <Select>
-                    <Option key={-1} value=''>全部</Option>
+                  <Select
+                    allowClear={true}
+                    showSearch
+                    filterOption={(input, option) => option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0}
+                  >
+                    {
+                      plan_type.map((item,index)=> <Option key={index} value={item.value}>{ item.label }</Option>)
+                    }
                   </Select>
                 )
               }
@@ -126,80 +170,69 @@ class PlanCheck extends PureComponent{
     selected: [],
     selectedRows: [],
     loading: false,
-    query: {},
+    query: {
+      planType: '1',
+      queryType: '2'
+    },
   }
-  delete = () =>{
-    const dataSource = this.state.dataSource;
-    const selected = this.state.selected;
-    if (selected.length === 0) {
-      message.warn('请至少选择一条数据')
-    } else {
-      this.setState({ loading: true });
-      let result = [];
-      dataSource.map( (item, index) => {
-        const a = selected.find( (value, index, arr) => {
-        return value === item.id;
-        })
-        if (typeof a === 'undefined') {
-            return result.push(item)
-        }
-        return null;
-    })
-      setTimeout(()=>{
-        this.setState({dataSource: result,loading: false,selected:[],selectedRows: []});
-      },500)
-    }
-  }
+  
   queryHandle = (query) => {
     this.refs.table.fetch(query);
     this.setState({ query })
+  }
+  bitchPass = () =>{
+    let { selected, selectedRows } = this.state;
+    if(selected.length === 0){
+      return message.warning('请至少选择一条数据');
+    }
+    let list = [],values = {};
+    selectedRows.map(item => list.push(item.planCode));
+    values.opType = '4' // 审核通过;
+    values.list = list;
+    this.setState({ loading: true });
+    this.props.dispatch({
+      type: 'replenish/updateStatus',
+      payload: { values },
+      callback: () =>{
+        this.setState({ loading: false });
+        this.refs.table.fetch({});
+      }
+    })
   }
   render(){
     const { query } = this.state;
     const columns = [{
       title: '计划单号',
-      dataIndex: 'planNo',
-      width: 180,
+      dataIndex: 'planCode',
+      width: 250,
       render: (text,record) =>{
         return <span>
-          <Link to={{pathname: `/purchase/replenishment/planCheck/detail`}}>{text}</Link>
+          <Link to={{pathname: `/purchase/replenishment/planCheck/detail/${record.planCode}/${record.auditStatus}`}}>{text}</Link>
         </span>  
       }
     },{
       title: '状态',
-      dataIndex: 'fstate',
-      render: (text,record) =>{
-        if(text === '00'){
-          return '待确认'
-        }else if( text === '01' ){
-          return '采购中'
-        }else if(text === '09'){
-          return '已驳回'
-        }else{
-          return ''
-        }
-      }
+      dataIndex: 'statusName',
+      width: 100,
     },{
       title: '类型',
-      dataIndex: 'planType'
+      dataIndex: 'planTypeName',
+      width: 100,
     },{
       title: '发起人',
-      dataIndex: 'forgName',
-      render: (text,record,index) => `发起人${index+1}`
+      dataIndex: 'createUserName',
     },{
       title: '发起时间',
-      dataIndex: 'startTime',
-      render: (text,record,index) => `2018-07-19 18: 00`
+      dataIndex: 'createDate',
     },{
       title: '审核人',
-      dataIndex: 'checkUser',
-      render: (text,record,index) => `审核人${index+1}`
+      dataIndex: 'sheveUserName',
     },{
       title: '审核时间',
-      dataIndex: 'checkTime'
+      dataIndex: 'sheveDate'
     },{
       title: '收货地址',
-      dataIndex: 'tfAddress',
+      dataIndex: 'receiveAddress',
       width: 270,
       className: 'ellipsis',
         render:(text)=>(
@@ -208,26 +241,30 @@ class PlanCheck extends PureComponent{
     }];
     return (
       <div className='ysynet-main-content'>
-         <WrapperForm query={this.queryHandle}/>
+         <WrapperForm 
+          query={this.queryHandle}
+          dispatch={this.props.dispatch}
+        />
          <div className='ant-row-bottom'>
-            <Button type='primary' onClick={this.delete} style={{ marginLeft: 8 }}>批量通过</Button>
+            <Button type='primary' onClick={this.bitchPass} style={{ marginLeft: 8 }}>批量通过</Button>
          </div>
          <RemoteTable 
-          ref='table'
-          query={query}
-          columns={columns}
-          bordered
-          scroll={{ x: '130%' }}
-          rowKey={'id'}
-          rowSelection={{
-            selectedRowKeys: this.state.selected,
-            onChange: (selectedRowKeys, selectedRows) => {
-              this.setState({selected: selectedRowKeys, selectedRows: selectedRows})
-            }
-          }}
+            ref='table'
+            query={query}
+            columns={columns}
+            url={replenishmentPlan.PLANLIST}
+            bordered
+            scroll={{ x: '130%' }}
+            rowKey={'id'}
+            rowSelection={{
+              selectedRowKeys: this.state.selected,
+              onChange: (selectedRowKeys, selectedRows) => {
+                this.setState({selected: selectedRowKeys, selectedRows: selectedRows})
+              }
+            }}
          />
       </div>
     )
   }
 }
-export default PlanCheck;
+export default connect(state => state)(PlanCheck);

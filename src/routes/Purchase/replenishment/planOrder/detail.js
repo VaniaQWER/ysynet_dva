@@ -2,7 +2,7 @@
  * @Author: wwb 
  * @Date: 2018-07-24 20:15:54 
  * @Last Modified by: wwb
- * @Last Modified time: 2018-08-31 13:24:53
+ * @Last Modified time: 2018-08-31 14:23:49
  */
 /* 
   @file 补货计划 详情
@@ -63,12 +63,18 @@ const columns = [
   {
     title: '配送数量',
     dataIndex: 'distributeQuantity', 
-    width: 100
+    width: 100,
+    render: (text,reocrd) =>{
+      return text === undefined || text === null ? '0': text
+    }
   },
   {
     title: '价格',
     width: 120,
-    dataIndex: 'price',
+    dataIndex: 'drugPrice',
+    render: (text,reocrd) =>{
+      return text === undefined || text === null ? '0': text
+    }
   },
   {
     title: '金额',
@@ -120,22 +126,24 @@ const columns = [
 
 class PlanOrderDetail extends PureComponent{
   state = {
-    detailsData: {}
+    detailsData: {},
+    loading: false
   }
   componentWillMount = () =>{
     let { orderCode } = this.props.match.params;
     if (this.props.match.params) {
+      this.setState({ loading: true })
       this.props.dispatch({
         type:'replenish/planOrderDetail',
         payload: { orderCode },
         callback:(data)=>{
-          this.setState({ detailsData: data });
+          this.setState({ detailsData: data, loading: false });
         }
       });
     }
   }
   render(){
-    const { detailsData } = this.state;
+    const { detailsData, loading } = this.state;
     return (
       <div className='fullCol fadeIn'>
         <div className='fullCol-fullChild'>
@@ -225,6 +233,7 @@ class PlanOrderDetail extends PureComponent{
             scroll={{x: '180%'}}
             columns={columns}
             rowKey={'id'}
+            loading={loading}
             dataSource={detailsData ? detailsData.list : []}
             pagination={{
               size: 'small',
@@ -239,6 +248,7 @@ class PlanOrderDetail extends PureComponent{
             title={()=>'配送单信息'}
             scroll={{x: '180%'}}
             columns={sendColumns}
+            loading={loading}
             rowKey={'id'}
             pagination={{
               size: 'small',

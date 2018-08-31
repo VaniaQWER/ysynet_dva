@@ -20,13 +20,13 @@ export default {
     },
     /* 目录外采购 */
     // 状态
-    *typelist({ payload,callback },{ call }){
+    /* *typelist({ payload,callback },{ call }){
       const data = yield call(replenishment.typelist, payload);
       if(data.code !== 200){
         return message.error(data.msg||'获取状态失败')
       }
       if(callback) callback(data.data)
-    },
+    }, */
 
 
 
@@ -39,10 +39,28 @@ export default {
       }
       if(callback) callback(data.data)
     },
+    // 订单状态orderStatusOrorderType
+    *orderStatusOrorderType({ payload,callback },{ call }){
+      const data = yield call(replenishment.orderStatus, payload);
+      if(data.code !== 200){
+        return message.error(data.msg||'获取订单状态失败')
+      }
+      if(callback) callback(data.data)
+    },
+    *closeOrder({ payload,callback },{ call }){
+      const data = yield call(replenishment.closeOrder, payload);
+      if(data.code !== 200){
+        return message.error(data.msg||'关闭订单失败')
+      }
+      if(callback) callback(data.data)
+    },
+
+
+    // 订单详情
     *planOrderDetail({ payload, callback },{ put, call }){
       const data = yield call(replenishment.planOrderDetail, payload);
       if (data.code === 200 && data.msg === 'success') {
-        if(callback) callback(data)
+        if(callback) callback(data.data)
       } else {
         message.error(data.msg);
       }

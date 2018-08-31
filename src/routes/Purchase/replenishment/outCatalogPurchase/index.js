@@ -2,7 +2,7 @@
  * @Author: wwb 
  * @Date: 2018-07-24 16:08:53 
  * @Last Modified by: wwb
- * @Last Modified time: 2018-08-30 20:16:36
+ * @Last Modified time: 2018-08-31 15:38:16
  */
 
 /**
@@ -35,7 +35,7 @@ class SearchForm extends PureComponent{
   componentWillMount = () =>{
     const { dispatch } = this.props;
     dispatch({
-      type: 'replenish/typelist',
+      type: 'replenish/orderStatusOrorderType',
       payload: { type : 'plan_status' },
       callback: (data) =>{
         this.setState({ fstateOptions: data })
@@ -87,9 +87,9 @@ class SearchForm extends PureComponent{
                   initialValue: ''
                 })(
                   <Select
-                  allowClear={true}
-                  showSearch
-                  filterOption={(input, option) => option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0}
+                    allowClear={true}
+                    showSearch
+                    filterOption={(input, option) => option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0}
                   >
                     <Option key={-1} value=''>全部</Option>
                     {
@@ -173,30 +173,21 @@ class OutCatalogPurchase extends PureComponent{
       }
     },{
       title: '状态',
-      dataIndex: 'fstate',
-      render: (text,record) =>{
-        if(text === '00'){
-          return '待确认'
-        }else if( text === '01' ){
-          return '采购中'
-        }else if(text === '09'){
-          return '已驳回'
-        }else{
-          return ''
-        }
-      }
+      dataIndex: 'statusName',
+      width: 100,
     },{
       title: '类型',
-      dataIndex: 'planType'
+      dataIndex: 'planTypeName',
+      width: 100,
     },{
       title: '发起人',
-      dataIndex: 'createUser'
+      dataIndex: 'createUserName'
     },{
       title: '发起时间',
-      dataIndex: 'planTime'
+      dataIndex: 'createDate'
     },{
       title: '收货地址',
-      dataIndex: 'tfAddress',
+      dataIndex: 'receiveAddress',
       width: 270,
       className: 'ellipsis',
         render:(text)=>(
@@ -214,18 +205,18 @@ class OutCatalogPurchase extends PureComponent{
             <Button type='default' onClick={this.delete} style={{ marginLeft: 8 }}>删除</Button>
          </div>
          <RemoteTable
-          ref='table'
-          query={query}
-          url={replenishmentPlan.PLANLIST}
-          columns={columns}
-          scroll={{ x: '130%' }}
-          rowKey={'id'}
-          rowSelection={{
-            selectedRowKeys: this.state.selected,
-            onChange: (selectedRowKeys, selectedRows) => {
-              this.setState({selected: selectedRowKeys, selectedRows: selectedRows})
-            }
-          }}
+            ref='table'
+            query={query}
+            url={replenishmentPlan.PLANLIST}
+            columns={columns}
+            scroll={{ x: '130%' }}
+            rowKey={'id'}
+            rowSelection={{
+              selectedRowKeys: this.state.selected,
+              onChange: (selectedRowKeys, selectedRows) => {
+                this.setState({selected: selectedRowKeys, selectedRows: selectedRows})
+              }
+            }}
          />
       </div>
     )

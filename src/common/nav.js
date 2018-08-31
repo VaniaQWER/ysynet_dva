@@ -1139,13 +1139,13 @@ export const getNavData = app => [
       name: "采购结算-补货管理--计划审核",
       icon: 'setting',
       path: '/purchase/replenishment/planCheck',
-      component: dynamicWrapper(app, [], () => import('../routes/Purchase/replenishment/planCheck')),
+      component: dynamicWrapper(app, ['replenishment/replenish'], () => import('../routes/Purchase/replenishment/planCheck')),
     },
     {
       name: "采购结算-补货管理--计划审核--详情",
       icon: 'setting',
-      path: '/purchase/replenishment/planCheck/detail',
-      component: dynamicWrapper(app, [], () => import('../routes/Purchase/replenishment/planCheck/detail')),
+      path: '/purchase/replenishment/planCheck/detail/:planCode/:auditStatus',
+      component: dynamicWrapper(app, ['replenishment/replenish'], () => import('../routes/Purchase/replenishment/planCheck/detail')),
     },
     {
       name: "采购结算-补货管理--计划订单",
@@ -1156,7 +1156,7 @@ export const getNavData = app => [
     {
       name: "采购结算-补货管理--计划订单--详情",
       icon: 'setting',
-      path: '/purchase/replenishment/planOrder/detail:orderCode',
+      path: '/purchase/replenishment/planOrder/detail/:orderCode',
       component: dynamicWrapper(app, ['replenishment/replenish'], () => import('../routes/Purchase/replenishment/planOrder/detail')),
     },
     //采购结算 - 结算管理 - 日对账单

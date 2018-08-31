@@ -2,7 +2,7 @@
  * @Author: wwb 
  * @Date: 2018-07-24 20:15:54 
  * @Last Modified by: wwb
- * @Last Modified time: 2018-08-31 00:16:10
+ * @Last Modified time: 2018-08-31 16:34:06
  */
 /* 
   @file 补货计划 详情
@@ -75,7 +75,7 @@ class ReplenishmentDetail extends PureComponent{
     if (this.props.match.params.planCode) {
       let { planCode } = this.props.match.params;
       this.props.dispatch({
-        type:'replenish/ReplenishDetails',
+        type:'base/ReplenishDetails',
         payload: { planCode },
         callback:(data)=>{
           console.log(data, '详情数据');
@@ -145,6 +145,8 @@ class ReplenishmentDetail extends PureComponent{
                 <div className='ant-form-item-control'>{detailsData.mobile}</div>
               </div>
             </Col>
+          </Row>
+          <Row>
             <Col span={8}>
               <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
                   <label>收货地址</label>

@@ -2,7 +2,7 @@
  * @Author: wwb 
  * @Date: 2018-07-24 18:49:01 
  * @Last Modified by: wwb
- * @Last Modified time: 2018-08-31 00:06:02
+ * @Last Modified time: 2018-08-31 09:30:01
  */
 /**
  * @file 药库 - 补货管理--补货计划--新建计划
@@ -11,7 +11,7 @@ import React, { PureComponent } from 'react';
 import { Form, Row, Col, Button, Input, Table, Modal, Icon, Tooltip, message, Affix, Select } from 'antd';
 import RemoteTable from '../../../../components/TableGrid';
 import { formItemLayout } from '../../../../utils/commonStyles'
-
+import { connect } from 'dva';
 const FormItem = Form.Item;
 const { Search } = Input;
 const { Option } = Select;
@@ -25,6 +25,8 @@ class NewAdd extends PureComponent {
     query: {
       medDrugType: '1'
     },
+    deptCode: '',// 补货部门code
+    deptCodeName: '',// 补货部门codeName
     selected: [],
     selectedRows: [],
     modalSelected: [],
@@ -46,6 +48,14 @@ class NewAdd extends PureComponent {
       message.success('添加成功')
       this.setState({ loading: false, visible: false })
     }, 500)
+  }
+  addProduct = () =>{
+    let { deptCode, query } = this.state;
+    if(deptCode){
+      this.setState({ visible: true, query: { ...query, deptCode } });
+    }else{
+      return message.warning('请选择某一个补货部门')
+    }
   }
   onChange = (record, index) => {
     console.log(record, index, 'onchange')
@@ -164,6 +174,7 @@ class NewAdd extends PureComponent {
                 <Select
                   showSearch
                   defaultValue={deptModules.length?deptModules[0].value:''}
+                  onSelect={(val,option)=>this.setState({ deptCode: val, deptCodeName: option.props.children })}
                   optionFilterProp="children"
                   filterOption={(input, option) => option.props.children.indexOf(input) >= 0} 
                   style={{ width: 200 }}
@@ -176,7 +187,7 @@ class NewAdd extends PureComponent {
               </FormItem>
             </Col>
             <Col span={8} style={{ marginTop: 3 }}>
-              <Button type='primary' icon='plus' onClick={() => this.setState({ visible: true })}>添加产品</Button>
+              <Button type='primary' icon='plus' onClick={this.addProduct}>添加产品</Button>
               <Button type='default' style={{ margin: '0 8px' }}>一键添加低库存产品</Button>
               <Button type='default'>删除</Button>
             </Col>
@@ -250,4 +261,4 @@ class NewAdd extends PureComponent {
     )
   }
 }
-export default Form.create()(NewAdd);
+export default connect(state => state)(Form.create()(NewAdd));

@@ -2,11 +2,11 @@
  * @Author: wwb 
  * @Date: 2018-07-24 16:08:53 
  * @Last Modified by: wwb
- * @Last Modified time: 2018-08-31 13:09:20
+ * @Last Modified time: 2018-08-31 15:18:42
  */
 
 /**
- * @file 药库 - 补货管理--计划计划
+ * @file 药库 - 补货管理--计划订单
  */
 import React, { PureComponent } from 'react';
 import { Form, Button, message, Tooltip, DatePicker, Select, Row, Col, Input, Icon  } from 'antd';
@@ -31,17 +31,41 @@ const formItemLayout = {
 class SearchForm extends PureComponent{
   state = {
     display: 'none',
-    supplierList: []
+    supplierList: [],
+    orderStatus: [], // 订单状态
+    orderTypeOptions: [] // 订单类型
   }
   componentWillMount = () =>{
     let { dispatch } = this.props;
+    // 供应商
     dispatch({
       type: 'replenish/supplierList',
       payload: {},
       callback: (data) =>{
         this.setState({ supplierList: data })
       }
-    })
+    });
+    //订单状态
+    dispatch({
+      type: 'replenish/orderStatusOrorderType',
+      payload: {
+        type: 'order_status'
+      },
+      callback: (data) =>{
+        this.setState({ orderStatus: data })
+      }
+    });
+    //订单类型
+    dispatch({
+      type: 'replenish/orderStatusOrorderType',
+      payload: {
+        type: 'order_type'
+      },
+      callback: (data) =>{
+        this.setState({ orderTypeOptions: data })
+      }
+    });
+
   }
   toggle = () => {
     const { display, expand } = this.state;
@@ -54,8 +78,15 @@ class SearchForm extends PureComponent{
     e.preventDefault();
     this.props.form.validateFields((err, values) => {
       if (!err) {
-        values.startTime = values.orderTime[0].format('YYYY-MM-DD');
-        values.endTime = values.orderTime[1].format('YYYY-MM-DD');
+        const orderTime = values.orderTime === undefined ? '' : values.orderTime;
+        if(orderTime.length){
+          values.startTime = values.orderTime[0].format('YYYY-MM-DD');
+          values.endTime = values.orderTime[1].format('YYYY-MM-DD');
+        }
+        delete values.orderTime;
+        if(values.supplierCodeList.length === 0){
+          delete values.supplierCodeList;
+        }
         console.log(values, '查询条件');
         this.props.query(values);
       }
@@ -67,7 +98,7 @@ class SearchForm extends PureComponent{
   }
   render(){
     const { getFieldDecorator } = this.props.form;
-    const { display, expand,supplierList } = this.state;
+    const { display, expand, supplierList, orderStatus, orderTypeOptions } = this.state;
     return (
       <Form className="ant-advanced-search-form" onSubmit={this.handleSearch}>
         <Row gutter={30}>
@@ -86,14 +117,15 @@ class SearchForm extends PureComponent{
             <FormItem {...formItemLayout} label={`供应商`}>
               {
                 getFieldDecorator(`supplierCodeList`,{
-                  initialValue: ''
+                  initialValue: []
                 })(
                   <Select
+                    mode="multiple"
                     showSearch
                     optionFilterProp="children"
                     filterOption={(input, option) => option.props.children.indexOf(input) >= 0}
                   >
-                    <Option key={-1} value=''>请选择</Option>
+                    <Option key={-1} value=''>全部</Option>
                     {
                       supplierList.map((item,index) => <Option key={index} value={item.ctmaSupplierCode}>{item.ctmaSupplierName}</Option>)
                     }
@@ -120,11 +152,10 @@ class SearchForm extends PureComponent{
                   initialValue: ''
                 })(
                   <Select>
-                    <Option key={-1} value=''>全部</Option>
-                    <Option key={1} value='1'>待确认</Option>
-                    <Option key={2} value='2'>备货中</Option>
-                    <Option key={3} value='3'>订单完成</Option>
-                    <Option key={4} value='4'>关闭订单</Option>
+
+                    {
+                      orderStatus.map((item,index) => <Option key={index} value={item.value}>{item.label}</Option>)
+                    }
                   </Select>
                 )
               }
@@ -137,9 +168,9 @@ class SearchForm extends PureComponent{
                   initialValue: ''
                 })(
                   <Select>
-                    <Option value=''>全部</Option>
-                    <Option value='1'>零库存补货</Option>
-                    <Option value='2'>报告药</Option>
+                    {
+                      orderTypeOptions.map((item,index) => <Option key={index} value={item.value}>{item.label}</Option>)
+                    }
                   </Select>
                 )
               }
@@ -171,44 +202,55 @@ class PlanOrder extends PureComponent{
     this.setState({ query });
     this.refs.table.fetch(query);
   }
-  delete = () =>{
-    const dataSource = this.state.dataSource;
-    const selected = this.state.selected;
-    if (selected.length === 0) {
-      message.warn('请至少选择一条数据')
-    } else {
+  //关闭订单
+  closeOrder = () =>{
+    let { selectedRows,query } = this.state;
+    let orderCodeList = [];
+    selectedRows.map(item =>{
+      if(item.orderStatus === '3'){
+        orderCodeList.push(item.orderCode)
+      }
+      return null
+    });
+    if(orderCodeList.length === 0){
+      return message.warning('选中的数据中暂无可关闭的订单,请重新勾选');
+    }else{
       this.setState({ loading: true });
-      let result = [];
-      dataSource.map( (item, index) => {
-        const a = selected.find( (value, index, arr) => {
-        return value === item.id;
-        })
-        if (typeof a === 'undefined') {
-            return result.push(item)
+      this.props.dispatch({
+        type: 'replenish/closeOrder',
+        payload: { orderCodeList },
+        callback: () =>{
+          this.setState({ loading: false });
+          this.refs.table.fetch(query);
         }
-        return null;
-    })
-      setTimeout(()=>{
-        this.setState({dataSource: result,loading: false,selected:[],selectedRows: []});
-      },500)
+      })
     }
   }
   sendOrder = () =>{
-    const selected = this.state.selected;
+    let { selected,selectedRows } = this.state;
     if (selected.length === 0) {
      return message.warn('请至少选择一条数据')
     }
-    this.setState({ loading: true });
+    let orderLength =  selectedRows.filter(item => item.orderStatus === '1')[0].length;
+    if(orderLength === selectedRows.length){
+      this.setState({ loading: true });
+      this.props.dispatch({
+        type: 'replenish/sendOrder',
+        payload: {}
+      })
+    }else{
+      return message.warning('选中的数据中存在状态非待审核的单据,请检查重新提交')
+    }
   }
   render(){
     const { loading, query } = this.state;
     const columns = [{
       title: '订单号',
       dataIndex: 'orderCode',
-      width: 180,
+      width: 250,
       render: (text,record) =>{
         return <span>
-          <Link to={{pathname: `/purchase/replenishment/planOrder/detail${record.orderCode}`}}>{text}</Link>
+          <Link to={{pathname: `/purchase/replenishment/planOrder/detail/${record.orderCode}`}}>{text}</Link>
         </span>  
       }
     },{
@@ -218,13 +260,14 @@ class PlanOrder extends PureComponent{
     },{
       title: '订单类型',
       dataIndex: 'orderTypeName',
-      width: 100
+      width: 120
     },{
       title: '供应商',
       dataIndex: 'supplierName'
     },{
       title: '下单人',
-      dataIndex: 'createUserName'
+      dataIndex: 'createUserName',
+      width: 140
     },{
       title: '下单时间',
       dataIndex: 'createDate'
@@ -244,8 +287,8 @@ class PlanOrder extends PureComponent{
             dispatch={this.props.dispatch}
           />
          <div className='ant-row-bottom'>
-            <Button type='primary' onClick={this.sendOrder} loading={loading}>发送订单</Button>
-            <Button type='default' onClick={this.delete} style={{ marginLeft: 8 }}>关闭订单</Button>
+            <Button type='primary' onClick={this.sendOrder} disabled >发送订单</Button>
+            <Button type='default' onClick={this.closeOrder} loading={loading} style={{ marginLeft: 8 }}>关闭订单</Button>
          </div>
          <RemoteTable 
             columns={columns}

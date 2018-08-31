@@ -23,13 +23,13 @@ export function ReplenishDetails(options) {
   })
 }
 // 状态
-export function typelist(options) {
+/* export function typelist(options) {
   return request(`${_local}/a/spd/dict/type`, {
     method: 'POST',
     type: 'formData',
     body: options
   })
-}
+} */
 
 // 目录外采购新建计划-- 采购部门
 export function getModule(options) {
@@ -49,6 +49,25 @@ export function supplierList(options) {
     body: options
   })
 }
+// 订单状态
+export function orderStatus(options) {
+  return request(`${_local}/a/spd/dict/type`, {
+    method: 'POST',
+    type: 'formData',
+    body: options
+  })
+}
+
+// 关闭订单
+export function closeOrder(options) {
+  return request(`${_local}/a/purchaseorder/closeOrder`, {
+    method: 'POST',
+    type: 'json',
+    body: options
+  })
+}
+
+
 // 计划订单 - 详情
 export function planOrderDetail(options) {
   return request(`${_local}/a/purchaseorder/detail`, {
