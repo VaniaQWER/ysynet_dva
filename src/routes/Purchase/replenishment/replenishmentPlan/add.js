@@ -2,22 +2,26 @@
  * @Author: wwb 
  * @Date: 2018-07-24 18:49:01 
  * @Last Modified by: wwb
- * @Last Modified time: 2018-08-31 09:30:01
+ * @Last Modified time: 2018-08-31 00:06:02
  */
 /**
  * @file 药库 - 补货管理--补货计划--新建计划
  */
 import React, { PureComponent } from 'react';
-import { Form, Row, Col, Button, Input, Table, Modal, Icon, Tooltip, message, Affix, Select } from 'antd';
+import { Row, Col, Button, Input, Table, Modal, Icon, Tooltip, message, Select, Spin } from 'antd';
+import { formItemLayout } from '../../../../utils/commonStyles';
+import {replenishmentPlan} from '../../../../api/replenishment/replenishmentPlan';
 import RemoteTable from '../../../../components/TableGrid';
-import { formItemLayout } from '../../../../utils/commonStyles'
-import { connect } from 'dva';
-const FormItem = Form.Item;
+import _ from 'lodash';
+import {connect} from 'dva';
+
 const { Search } = Input;
 const { Option } = Select;
 
 class NewAdd extends PureComponent {
   state = {
+    modalLoading: false,
+    spinLoading: true,
     isShow: false,
     visible: false,
     loading: false,
@@ -25,12 +29,14 @@ class NewAdd extends PureComponent {
     query: {
       medDrugType: '1'
     },
-    deptCode: '',// 补货部门code
-    deptCodeName: '',// 补货部门codeName
     selected: [],
     selectedRows: [],
     modalSelected: [],
-    modalSelectedRows: []
+    modalSelectedRows: [],
+    info: {},
+    isEdit: false,
+    dataSource: [],
+    btnLoading: false
   }
   componentWillMount = () =>{
     const { dispatch } = this.props;
@@ -40,28 +46,121 @@ class NewAdd extends PureComponent {
       callback: (data) =>{
         this.setState({ deptModules: data })
       }
-    })
+    });
+  };
+  componentDidMount = () => {
+    if(this.props.match.path === "/editReplenishment/:planCode") {
+      let { planCode } = this.props.match.params;
+      this.setState({loading: true})
+      this.props.dispatch({
+        type:'base/ReplenishDetails',
+        payload: { planCode },
+        callback:(data)=>{
+          let deptCode;
+          let {deptModules, query} = this.state;
+          deptModules.map(item=>{
+            if(data.deptCode === item.id) {
+              deptCode = item.id
+            }
+          });
+          let existDrugCodeList = data.list.map(item => item.drugCode);
+          this.setState({ 
+            info: data, 
+            isEdit: true, 
+            dataSource: data.list,
+            loading: false,
+            query: {
+              ...query,
+              deptCode,
+              existDrugCodeList
+            },
+            spinLoading: false
+          });
+        }
+      });
+    }else {
+      this.setState({spinLoading: false})
+    }
   }
   handleOk = () => {
-    this.setState({ loading: true });
-    setTimeout(() => {
-      message.success('添加成功')
-      this.setState({ loading: false, visible: false })
-    }, 500)
-  }
-  addProduct = () =>{
-    let { deptCode, query } = this.state;
-    if(deptCode){
-      this.setState({ visible: true, query: { ...query, deptCode } });
-    }else{
-      return message.warning('请选择某一个补货部门')
+    let {modalSelectedRows, dataSource, query} = this.state;
+    if(modalSelectedRows.length === 0) {
+      message.warning('至少选择一条信息');
+      return;
     }
+    this.setState({btnLoading: true});
+    modalSelectedRows = modalSelectedRows.map(item=>item.drugCode);
+    this.props.dispatch({
+      type: 'base/addDrug',
+      payload: {
+        deptCode: query.deptCode,
+        drugCodeList: modalSelectedRows
+      },
+      callback: (data) => {
+        this.setState({
+          dataSource: data,
+          btnLoading: false,
+          visible: false
+        })
+      }
+    })
   }
   onChange = (record, index) => {
     console.log(record, index, 'onchange')
   }
+  showModal = () => {
+    let {query} = this.state;
+    if(!query.deptCode) {
+      message.warning('请选择部门');
+      return;
+    };
+    this.setState({ visible: true });
+  }
+  delete = () => {  //删除
+    let {selectedRows, dataSource, query, selected} = this.state;
+    dataSource = _.difference(dataSource, selectedRows);
+    let existDrugCodeList = dataSource.map((item) => item.drugCode)
+    this.setState({
+      dataSource,
+      selected: [],
+      selectedRows: [],
+      query: {
+        ...query,
+        existDrugCodeList
+      }
+    });
+  }
+  submit = () => {   //提交
+    let {isEdit, info, dataSource} = this.state;
+    if(dataSource.length === 0) {
+      message.warning('请添加产品');
+      return;
+    }
+    // this.props.dispatch({
+    //   type: 'base/submit',
+    //   payload: {
+    //     auditStatus: '2',
+    //     id: isEdit? info.id : '',
+        
+    //   }
+    // })
+  }
+  save = () => {    //保存
+
+  }
   render() {
-    const { visible, deptModules,query } = this.state;
+    let { 
+      visible, 
+      deptModules, 
+      query, 
+      info, 
+      isEdit, 
+      dataSource, 
+      loading, 
+      modalLoading,
+      spinLoading,
+      btnLoading
+    } = this.state;
     const columns = [
       {
         title: '通用名称',
@@ -85,12 +184,40 @@ class NewAdd extends PureComponent {
         dataIndex: 'ctmmManufacturerName'
       }, {
         title: '供应商',
-        dataIndex: 'supplierName',
+        dataIndex: 'supplierCode',
         width: 240,
-        render: (text, record, index) => {
+        render: (text, record, i) => {
+          let {supplierList} = record;
+          supplierList.push({
+            ctmaSupplierCode: '569151',
+            ctmaSupplierName: '你猜',
+            referencePrice: 80
+          });
+          let supplier = supplierList.map(item=>{
+            return <Option key={item.ctmaSupplierCode} value={item.ctmaSupplierCode}>{item.ctmaSupplierName}</Option>
+          });
           return (
-            <Select style={{ width: 210 }}>
-              <Option value={''}>供应商</Option>
+            <Select 
+              onSelect={(value)=>{
+                let {dataSource} = this.state;
+                dataSource = JSON.parse(JSON.stringify(dataSource));
+                let referencePrice;
+                supplierList.map(item=>{
+                  if(item.ctmaSupplierCode === value) {
+                    referencePrice = item.referencePrice;
+                  };
+                  return item;
+                });
+                dataSource[i].referencePrice = referencePrice;
+                dataSource[i].totalPrice = referencePrice * record.demandQuantity;
+                this.setState({dataSource});
+                console.log(dataSource, referencePrice, i);
+                
+              }} 
+              defaultValue={text} 
+              style={{ width: 210 }}
+            >
+              {supplier}
             </Select>
           )
         }
@@ -111,19 +238,30 @@ class NewAdd extends PureComponent {
         }
       }, {
         title: '当前库存',
-        dataIndex: 'totalStoreNum',
+        dataIndex: 'usableQuantity',
       }, {
         title: '库存上限',
         dataIndex: 'upperQuantity'
       }, {
         title: '库存下限',
-        dataIndex: 'usableQuantity'
+        dataIndex: 'downQuantity'
       }, {
         title: '参考价格',
-        dataIndex: 'referencePrice'
+        dataIndex: 'referencePrice',
+        render: (text, record) => {
+          let {supplierList, supplierCode} = record;
+          let referencePrice;
+          supplierList.map(item => {
+            if(item.ctmaSupplierCode === supplierCode) {
+              referencePrice = item.referencePrice
+            }
+          });
+          return referencePrice;
+        }
       }, {
         title: '金额',
-        dataIndex: 'totalPrice'
+        dataIndex: 'totalPrice',
+        
       }, {
         title: '批准文号',
         dataIndex: 'approvalNo',
@@ -160,105 +298,131 @@ class NewAdd extends PureComponent {
         dataIndex: 'approvalNo',
         width: 150,
       },
-    ]
+    ];
     return (
-      <div style={{ padding: 24 }}>
-        <Affix>
-          <div>
-            <h2>新建计划</h2>
-            <hr className='hr' />
-          </div>
-          <Row>
-            <Col span={8}>
-              <FormItem label={`补货部门`} {...formItemLayout}>
-                <Select
-                  showSearch
-                  defaultValue={deptModules.length?deptModules[0].value:''}
-                  onSelect={(val,option)=>this.setState({ deptCode: val, deptCodeName: option.props.children })}
-                  optionFilterProp="children"
-                  filterOption={(input, option) => option.props.children.indexOf(input) >= 0} 
-                  style={{ width: 200 }}
-                >
-                  <Option value=''>请选择</Option>
-                  {
-                    deptModules.map((item,index)=> <Option key={index} value={item.id}>{ item.deptName }</Option>)
-                  }
-                </Select>
-              </FormItem>
-            </Col>
-            <Col span={8} style={{ marginTop: 3 }}>
-              <Button type='primary' icon='plus' onClick={this.addProduct}>添加产品</Button>
+      <Spin spinning={spinLoading} size="large">
+        <div className="fullCol" style={{ padding: 24, background: '#f0f2f5' }}>
+          <div className="fullCol-fullChild" style={{marginTop: '-9px'}}>
+            <Row style={{borderBottom: '1px solid rgba(0, 0, 0, .1)', marginBottom: 10, paddingLeft: 35}}>
+              <Col span={8}>
+                <h2>{isEdit? '编辑计划' : '新建计划'}</h2>
+              </Col>
+              <Col span={16} style={{ textAlign: 'right' }}>
+                <span style={{ cursor: 'pointer' }} onClick={() => this.props.history.push({ pathname: `/purchase/replenishment/replenishmentPlan` })}><Icon type="close" style={{ fontSize: 26, marginTop: 8 }} /></span>
+              </Col>
+            </Row>
+            <Row>
+              <Col span={8}>
+                <div className="ant-form-item-label ant-col-xs-24 ant-col-sm-5">
+                  <label>补货部门</label>
+                </div>
+                <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-19">
+                  <div className='ant-form-item-control'>
+                    <Select
+                      showSearch
+                      value={query.deptCode}
+                      onChange={(value) => {
+                        let {query} = this.state;
+                        this.setState({
+                          query: {
+                            ...query,
+                            deptCode: value
+                          }
+                        });
+                      }}
+                      optionFilterProp="children"
+                      filterOption={(input, option) => option.props.children.indexOf(input) >= 0} 
+                      style={{ width: 200 }}
+                      placeholder="请选择"
+                    >
+                      {
+                        deptModules.map((item,index)=> <Option key={index} value={item.id}>{ item.deptName }</Option>)
+                      }
+                    </Select>
+                  </div>
+                </div>
+              </Col>
+            </Row>
+            <Row style={{marginTop: '10px', paddingLeft: 35}}>
+              <Button type='primary' icon='plus' onClick={this.showModal}>添加产品</Button>
               <Button type='default' style={{ margin: '0 8px' }}>一键添加低库存产品</Button>
-              <Button type='default'>删除</Button>
-            </Col>
-            <Col span={8} style={{ textAlign: 'right' }}>
-              <span style={{ cursor: 'pointer' }} onClick={() => this.props.history.push({ pathname: `/purchase/replenishment/replenishmentPlan` })}><Icon type="close" style={{ fontSize: 26, marginTop: 8 }} /></span>
-            </Col>
-          </Row>
-        </Affix>
-        <Modal
-          title={'添加产品'}
-          visible={visible}
-          width={1100}
-          style={{ top: 20 }}
-          onCancel={() => this.setState({ visible: false })}
-          footer={[
-            <Button key="submit" type="primary" loading={this.state.loading} onClick={this.handleOk}>确认</Button>,
-            <Button key="back" onClick={() => this.setState({ visible: false })}>取消</Button>
-          ]}
-        >
-          <Row>
-            <Col span={7} style={{ marginLeft: 4 }}>
-              <Search
-                style={{ width: 248 }}
-                placeholder='通用名/商品名'
-                ref="paramName"
-                onSearch={val => this.refs.table.fetch({ ...query, paramName: val })}
-              />
-            </Col>
-          </Row>
-          <div className='detailCard'>
-            <RemoteTable
-              ref='table'
-              query={query}
-              columns={modalColumns}
-              scroll={{ x: '150%' }}
-              rowKey='id'
-              rowSelection={{
-                selectedRowKeys: this.state.modalSelected,
-                onChange: (selectedRowKeys, selectedRows) => {
-                  this.setState({ modalSelected: selectedRowKeys, modalSelectedRows: selectedRows })
-                }
-              }}
-            />
+              <Button onClick={this.delete} type='default'>删除</Button>
+            </Row>
           </div>
-        </Modal>
-        <div className='newPageBorder'>
-          <div className='ysynet-table-Content'>
+          <Modal
+            bordered
+            title={'添加产品'}
+            visible={visible}
+            width={1100}
+            style={{ top: 20 }}
+            onCancel={() => this.setState({ visible: false })}
+            footer={[
+              <Button key="submit" type="primary" loading={btnLoading} onClick={this.handleOk}>确认</Button>,
+              <Button key="back" onClick={() => this.setState({ visible: false })}>取消</Button>
+            ]}
+          >
+            <Row>
+              <Col span={7} style={{ marginLeft: 4 }}>
+                <Search
+                  style={{ width: 248 }}
+                  placeholder='通用名/商品名'
+                  ref="paramName"
+                  onSearch={val => this.refs.table.fetch({ ...query, paramName: val })}
+                />
+              </Col>
+            </Row>
+            <div className='detailCard'>
+              <RemoteTable
+                query={query}
+                url={replenishmentPlan.QUERYDRUGBYDEPT}
+                isJson={true}
+                ref="table"
+                modalLoading={modalLoading}
+                columns={modalColumns}
+                scroll={{ x: '150%' }}
+                rowKey='bigDrugCode'
+                rowSelection={{
+                  selectedRowKeys: this.state.modalSelected,
+                  onChange: (selectedRowKeys, selectedRows) => {
+                    this.setState({ modalSelected: selectedRowKeys, modalSelectedRows: selectedRows })
+                  }
+                }}
+                pagination={false}
+              />
+            </div>
+          </Modal>
+          <div className='detailCard' style={{margin: '-12px -8px 0px -8px'}}>
             <Table
-              title={() => '产品信息'}
+              title={()=>'产品信息'}
+              loading={loading}
+              bordered
               columns={columns}
-              rowKey='id'
-              scroll={{ x: '150%' }}
+              dataSource={dataSource}
+              scroll={{ x: '200%' }}
+              rowKey='drugCode'
               rowSelection={{
                 selectedRowKeys: this.state.selected,
                 onChange: (selectedRowKeys, selectedRows) => {
-                  this.setState({ selected: selectedRowKeys, selectedRows: selectedRows })
+                  this.setState({ 
+                    selected: selectedRowKeys, 
+                    selectedRows: selectedRows
+                  })
                 }
               }}
+              pagination={false}
             />
           </div>
+          <div className="detailCard" style={{margin: '-12px -8px 0px -8px'}}>
+            <Row>
+              <Col style={{ textAlign: 'right', padding: '10px' }}>
+                <Button onClick={this.submit} type='primary'>提交</Button>
+                <Button onClick={this.save} type='danger' style={{ marginLeft: 8 }} ghost>保存</Button>
+              </Col>
+            </Row>
+          </div>
         </div>
-        <Affix offsetBottom={20}>
-          <Row>
-            <Col style={{ textAlign: 'right', padding: '10px' }}>
-              <Button type='primary'>提交</Button>
-              <Button type='danger' style={{ marginLeft: 8 }} ghost>保存</Button>
-            </Col>
-          </Row>
-        </Affix>
-      </div>
+      </Spin>
     )
   }
 }
-export default connect(state => state)(Form.create()(NewAdd));
+export default connect(state=>state)(NewAdd);

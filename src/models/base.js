@@ -23,23 +23,23 @@ export default {
       const data = yield call(replenishment.ReplenishDetails, payload);
       console.log(data,'详情');
       if (data.code === 200 && data.msg === 'success') {
-          yield put({
-            type: 'setReplenishDetailsInfo',
-            payload: data.data
-          })
           callback && callback(data.data);
       } else {
         message.error(data.msg);
       }
     },
-  },
-  reducers: {
-    setReplenishDetailsInfo(state, action){
-      return {
-        ...state,
-        replenishDetailsInfo: action.plyload
+    *addDrug({payload, callback}, {put, call}) {
+      const data = yield call(replenishment.addDrug, payload);
+      console.log(data, '添加')
+      if(data.code === 200 && data.msg === 'success') {
+        callback && callback(data.data);
+      }else {
+        message.error(data.msg);
       }
     }
+  },
+  reducers: {
+
   },
   subscriptions: {
     

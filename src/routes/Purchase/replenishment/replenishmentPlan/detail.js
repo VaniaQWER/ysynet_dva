@@ -2,7 +2,7 @@
  * @Author: wwb 
  * @Date: 2018-07-24 20:15:54 
  * @Last Modified by: wwb
- * @Last Modified time: 2018-08-31 16:34:06
+ * @Last Modified time: 2018-08-31 00:16:10
  */
 /* 
   @file 补货计划 详情
@@ -10,6 +10,7 @@
 import React, { PureComponent } from 'react';
 import { Table ,Row, Col,Tooltip, Button } from 'antd';
 import { connect } from 'dva';
+import {Link} from 'react-router-dom';
 const columns = [
   {
     title: '通用名',
@@ -92,8 +93,8 @@ class ReplenishmentDetail extends PureComponent{
           <div style={{ display: 'flex',justifyContent: 'space-between' }}>
             <h3>单据信息</h3>
             <div>
-              <Button type='default'>编辑</Button>
-              <Button type='primary' style={{ marginLeft: 8 }}>发起申请</Button>
+              <Link to={{pathname: `/editReplenishment/${this.props.match.params.planCode}`}}><Button type='default'>编辑</Button></Link>
+              <Button type='primary' style={{ marginLeft: 8 }}>提交</Button>
             </div>
           </div>
           <Row>
@@ -145,8 +146,6 @@ class ReplenishmentDetail extends PureComponent{
                 <div className='ant-form-item-control'>{detailsData.mobile}</div>
               </div>
             </Col>
-          </Row>
-          <Row>
             <Col span={8}>
               <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
                   <label>收货地址</label>
@@ -188,7 +187,7 @@ class ReplenishmentDetail extends PureComponent{
             title={()=>'产品信息'}
             scroll={{x: '130%'}}
             columns={columns}
-            rowKey={'id'}
+            rowKey={'batchNo'}
             dataSource={detailsData ? detailsData.list : []}
             pagination={{
               size: 'small',

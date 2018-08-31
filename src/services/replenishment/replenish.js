@@ -10,7 +10,7 @@ import { _local } from '../../api/local';
 export function ReplenishDelete(options) {
   return request(`${_local}/a/depot/depotplan/updateStatus`, {
     methods: 'POST',
-    // type: 'formData',
+    type: 'formData',
     body: options
   })
 }
@@ -18,18 +18,26 @@ export function ReplenishDelete(options) {
 export function ReplenishDetails(options) {
   return request(`${_local}/a/depot/depotplan/detail`, {
     method: 'GET',
-    type: 'planCode',
+    type: 'formData',
+    body: options
+  })
+}
+//补货计划 - 添加产品
+export function addDrug(options) {
+  return request(`${_local}/a/depot/depotplan/addDrug`, {
+    method: 'POST',
+    type: 'json',
     body: options
   })
 }
 // 状态
-/* export function typelist(options) {
+export function typelist(options) {
   return request(`${_local}/a/spd/dict/type`, {
     method: 'POST',
     type: 'formData',
     body: options
   })
-} */
+} 
 
 // 目录外采购新建计划-- 采购部门
 export function getModule(options) {
@@ -40,7 +48,7 @@ export function getModule(options) {
   })
 }
 
-/*  计划订单 */
+/*  计划订单 */ 
 // 供应商下拉框
 export function supplierList(options) {
   return request(`${_local}/a/depot/supplier/all`, {
