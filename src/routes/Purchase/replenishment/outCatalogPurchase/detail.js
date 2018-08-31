@@ -2,7 +2,7 @@
  * @Author: wwb 
  * @Date: 2018-07-24 20:15:54 
  * @Last Modified by: wwb
- * @Last Modified time: 2018-08-31 16:33:56
+ * @Last Modified time: 2018-08-31 20:21:38
  */
 /* 
   @file 补货计划 详情
@@ -15,7 +15,6 @@ const columns = [
     title: '通用名称',
     width: 180,
     dataIndex: 'ctmmGenericName',
-    render:(text,record)=>record.productName
   },
   {
     title: '商品名称',

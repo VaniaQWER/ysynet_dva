@@ -2,7 +2,7 @@
  * @Author: wwb 
  * @Date: 2018-07-24 20:15:54 
  * @Last Modified by: wwb
- * @Last Modified time: 2018-08-31 16:33:15
+ * @Last Modified time: 2018-08-31 20:22:21
  */
 /* 
   @file 补货计划  计划审核 -- 详情
@@ -99,7 +99,6 @@ class PlanCheckDetail extends PureComponent{
       title: '通过',
       content: '是否确认通过',
       onOk(){
-        console.log(that,'this');
         let values = {}
         values.opType = '4'// 审核通过
         that.update(values);
@@ -113,7 +112,6 @@ class PlanCheckDetail extends PureComponent{
       title: '驳回',
       content: '是否确认驳回',
       onOk(){
-        console.log(that,'this');
         let values = {}
         values.opType = '3'// 审核驳回
         that.update(values);

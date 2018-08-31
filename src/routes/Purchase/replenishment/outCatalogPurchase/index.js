@@ -115,9 +115,6 @@ class SearchForm extends PureComponent{
           <Col span={24} style={{ textAlign: 'right', marginTop: 4}} >
            <Button type="primary" htmlType="submit">查询</Button>
            <Button type='default' style={{marginLeft: 8}} onClick={this.handleReset}>重置</Button>
-           {/* <a style={{marginLeft: 8, fontSize: 14}} onClick={this.toggle}>
-             {expand ? '收起' : '展开'} <Icon type={expand ? 'up' : 'down'} />
-           </a> */}
          </Col>
         </Row>
       </Form>

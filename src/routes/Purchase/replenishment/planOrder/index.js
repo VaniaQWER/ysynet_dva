@@ -2,7 +2,7 @@
  * @Author: wwb 
  * @Date: 2018-07-24 16:08:53 
  * @Last Modified by: wwb
- * @Last Modified time: 2018-08-31 18:00:20
+ * @Last Modified time: 2018-08-31 20:23:41
  */
 
 /**
@@ -12,7 +12,6 @@ import React, { PureComponent } from 'react';
 import { Form, Button, message, Tooltip, DatePicker, Select, Row, Col, Input, Icon  } from 'antd';
 import { Link } from 'react-router-dom';
 import RemoteTable from '../../../../components/TableGrid';
-import { createData } from '../../../../common/data';
 import { replenishmentPlan } from '../../../../api/replenishment/replenishmentPlan';
 import { connect } from 'dva';
 const FormItem = Form.Item;
@@ -196,7 +195,6 @@ class PlanOrder extends PureComponent{
     selectedRows: [],
     loading: false,
     query: {},
-    dataSource: createData()
   }
   queryHandler = query => {
     this.setState({ query });

@@ -2,13 +2,13 @@
  * @Author: wwb 
  * @Date: 2018-07-24 18:49:01 
  * @Last Modified by: wwb
- * @Last Modified time: 2018-08-31 20:17:54
+ * @Last Modified time: 2018-08-31 21:12:56
  */
 /**
  * @file 药库 - 补货管理--补货计划--新建计划
  */
 import React, { PureComponent } from 'react';
-import { Form, Row, Col, Button, Input, Select, Modal, Tooltip, message, Affix  } from 'antd';
+import { Form, Row, Col, Button, Input, Select, Modal, Tooltip, message, Affix, Table  } from 'antd';
 import RemoteTable from '../../../../components/TableGrid';
 import { replenishmentPlan } from '../../../../api/replenishment/replenishmentPlan';
 import _ from 'lodash';
@@ -106,6 +106,18 @@ class NewAdd extends PureComponent{
   }
   updateFstate = (auditStatus) =>{
     let { dataSource } = this.state;
+    let isNull = dataSource.every(item => {
+      if(!item.supplierCode) {
+        message.warning('供应商不能为空');
+        return false;
+      };
+      if(!item.demandQuantity) {
+        message.warning('需求数量不能为空');
+        return false;
+      }
+      return true
+    });
+    if(!isNull) return;
     let { dispatch, history } = this.props;
     let list = [], postData = {};
     dataSource.map(item => list.push({
@@ -127,7 +139,7 @@ class NewAdd extends PureComponent{
     })
   }
   render(){
-    const { visible, deptModules, query, btnLoading } = this.state;
+    const { visible, deptModules, query, btnLoading, dataSource } = this.state;
     const columns = [{
       title: '通用名称',
       dataIndex: 'ctmmGenericName'
@@ -239,11 +251,11 @@ class NewAdd extends PureComponent{
                 </Select>
               </FormItem>
             </Col>
-            <Col span={6}>
-              <Button type='primary' icon='plus' onClick={this.addProduct}>添加产品</Button>
-              <Button type='default' onClick={this.delete} style={{ marginLeft: 8 }}>删除</Button>
-            </Col>
           </Row>
+          <div style={{marginTop: '10px', paddingLeft: 35}}>
+            <Button type='primary' icon='plus' onClick={this.addProduct}>添加产品</Button>
+            <Button type='default' onClick={this.delete} style={{ marginLeft: 8 }}>删除</Button>
+          </div>
         </Affix>
         <Modal
           title={'添加产品'}
@@ -284,22 +296,22 @@ class NewAdd extends PureComponent{
           />
         </div>
         </Modal>
-        <div className='newPageBorder'>
-          <div className='ysynet-table-Content'>
-            <RemoteTable 
-              title={()=>'产品信息'}
-              columns={columns}
-              bordered
-              rowKey='id'
-              scroll={{ x: '130%' }}
-              rowSelection={{
-                selectedRowKeys: this.state.selected,
-                onChange: (selectedRowKeys, selectedRows) => {
-                  this.setState({selected: selectedRowKeys, selectedRows: selectedRows})
-                }
-              }}
-            />
-          </div>
+        <div className='detailCard' style={{margin: '-12px -8px 0px -8px'}}>
+          <Table 
+            title={()=>'产品信息'}
+            columns={columns}
+            bordered
+            rowKey='id'
+            dataSource={dataSource}
+            scroll={{ x: '130%' }}
+            pagination={false}
+            rowSelection={{
+              selectedRowKeys: this.state.selected,
+              onChange: (selectedRowKeys, selectedRows) => {
+                this.setState({selected: selectedRowKeys, selectedRows: selectedRows})
+              }
+            }}
+          />
         </div>
         <Affix offsetBottom={0}>
           <Row>
