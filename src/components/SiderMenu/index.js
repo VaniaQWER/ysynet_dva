@@ -6,6 +6,7 @@ import styles from './style.css';
 import { getMenuData } from '../../utils/utils'
 const SubMenu = Menu.SubMenu;
 // 使用递归创建菜单
+// 正式数据
 /* const createMenu = menuList => {
   return (
     Array.isArray(menuList.children) ? menuList.children.map((menu, index) => {
@@ -17,6 +18,7 @@ const SubMenu = Menu.SubMenu;
           key = hrefArr.slice(0,2).join('/');
         }
       }
+      console.log(key,'key')
       return (
         menu.children && menu.name ? (
           <SubMenu
@@ -28,7 +30,7 @@ const SubMenu = Menu.SubMenu;
           </SubMenu>
         ) : (
           menu.name ? 
-          <Menu.Item name={menu.name} key={menu.href.substring(0,menu.href.length-1)} href={menu.href} className='ysy-subMneu-Item'>
+          <Menu.Item name={menu.name} key={menu.href && menu.href[menu.href.length-1] === '/' ? menu.href.substring(0,menu.href.length-1): menu.href && menu.href[menu.href.length-1] !== '/'? menu.href :menu.id } href={menu.href} className='ysy-subMneu-Item'>
             <Icon type={menu.icon} />
             <span> { menu.name } </span>
           </Menu.Item> : null
@@ -116,20 +118,28 @@ class SiderMenu extends PureComponent{
     newOpenKeys = openKeys.length ? openKeys : [ keys.slice(0, 3).join('/') ];
     this.setState({selectedKeys, openKeys: newOpenKeys});
   }
+  // 正式数据
+  /* changeActiveKeys = () => {
+    const href = window.location.href;
+    const pathname = href.split('#')[1];
+    const { openKeys } = this.state;
+    const keys = pathname.split('/');
+    let selectedKeys = '', newOpenKeys = [];
+    selectedKeys = pathname;
+    newOpenKeys = openKeys.length ? openKeys : [ keys.slice(0, 2).join('/') ];
+    console.log(selectedKeys,'select',newOpenKeys,'newOpenKeys')
+    this.setState({selectedKeys, openKeys: newOpenKeys});
+  } */
   componentWillMount = () => {
     this.changeActiveKeys();
-    // this.setSubTitle(menu)
+    this.setSubTitle(this.props.users.currentMenuList)
   }
   onOpenChange = openKeys => {
     let changeKey = openKeys.length ? openKeys[openKeys.length - 1] : [];
     if (changeKey.length) {
       let changeKeyArr = changeKey.split('/');
       if (changeKeyArr.length > 2) {
-        if (openKeys.length === 1) {
-          changeKey = [];
-        } else {
-          changeKey = [changeKeyArr.slice(0, 2).join('/'), changeKeyArr.slice(0, 3).join('/') ];
-        }
+        changeKey = [changeKeyArr.slice(0, 2).join('/'), changeKeyArr.slice(0, 3).join('/') ];
       } else {
         changeKey = [ changeKeyArr.slice(0, 2).join('/') ]
       }
@@ -148,7 +158,8 @@ class SiderMenu extends PureComponent{
   }
   render(){
     const { history } = this.props;
-    // let menu = this.props.users.currentMenuList;
+    // let menu = this.props.users.currentMenuList; // 正式数据
+    // console.log(menu,'menu')
     const { selectedKeys, openKeys } = this.state;
     return (
     <div>
@@ -156,7 +167,7 @@ class SiderMenu extends PureComponent{
         <div className='logo'></div>
       </div>
       {
-        // menu.children && menu.children.length ?
+        // menu.children && menu.children.length ? // 正式数据
         menu && menu.length ?
         <Menu 
           className={styles.fullscreen}
@@ -167,25 +178,27 @@ class SiderMenu extends PureComponent{
           openKeys={openKeys}
           onClick={item => {
             const { pathname } = this.props.history.location;
-            if (pathname !== item.key){
-              // this.setSubTitle(this.props.users.menuList, `${item.key}`)
+           if (pathname !== item.key){
+               // this.setSubTitle(this.props.users.menuList, `${item.key}`)
               this.setSubTitle(menu, `${item.key}`)
               history.push({pathname: `${item.key}`})
-            /* }
-            let href = item.item.props.href;
-            href = href.substring(0,href.length-1)
+            }
+            /* let href = item.item.props.href;
+            console.log(href,'href')
+            href = href[href.length-1] === '/'? href.substring(0,href.length-1): href;
             if (pathname !== href){
               // this.setSubTitle(this.props.users.menuList, `${item.key}`)
               // this.setSubTitle(menu, `${item.key}`)
-              history.push({pathname: href}) */
-            }else{
+              history.push({pathname: href})
+            } */
+            else{
               message.info('您正位于该页面')
             }
           }}
         >
           {
             createMenu(getMenuData(history.location.pathname.split('/')[1], menu))
-            // createMenu(menu)
+            // createMenu(menu) // 正式数据
           }
           </Menu> :
           <Spin tip="数据加载中" style={{width: '100%', height: 200, marginTop: 200}}/>
