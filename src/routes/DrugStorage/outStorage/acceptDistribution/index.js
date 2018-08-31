@@ -198,7 +198,7 @@ class SearchFormWrapper extends PureComponent {
           <Col span={8} style={{display: display}}>
             <FormItem label={`发起时间`} {...formItemLayout}>
               {getFieldDecorator('Time')(
-               <RangePicker/>
+               <RangePicker format={'YYYY-MM-DD'}/>
               )}
             </FormItem>
           </Col>

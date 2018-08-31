@@ -5,11 +5,31 @@
  */
 import React, { PureComponent } from 'react';
 import { Table ,Row, Col, Button, Modal ,Tabs , message , Input , Tooltip , Card} from 'antd';
-import { createData } from '../../../../common/data';
+import { connect } from 'dva';
 const TabPane = Tabs.TabPane; 
 const Conform = Modal.confirm;
 class DetailsPickSoldOut extends PureComponent{
-
+  constructor(props) {
+    super(props);
+    this.state = {
+      detailsData: {},
+      loading: false
+    }
+  }
+  
+  componentWillMount = () =>{
+    /* if (this.props.match.params.pickingOrderNo) {
+      let { applyCode } = this.props.match.params;
+      this.setState({ loading: true });
+        this.props.dispatch({
+          type:'outStorage/distributeDetail',
+          payload: { applyCode },
+          callback:(data)=>{
+            this.setState({ detailsData: data, loading: false });
+          }
+        });
+      } */
+  }
   //确认
   onSubmit = () =>{
     Conform({
@@ -34,17 +54,17 @@ class DetailsPickSoldOut extends PureComponent{
   }
 
   render(){
+    const { detailsData ,loading } = this.state;
     const columns = [
       {
         title: '通用名称',
         width: 180,
-        dataIndex: 'productName1',
-        render:(text,record)=>record.productName
+        dataIndex: 'ctmmGenericName',
       },
       {
         title: '规格',
         width: 150,
-        dataIndex: 'spec',
+        dataIndex: 'ctmmSpecification',
         className:'ellipsis',
         render:(text)=>(
           <Tooltip placement="topLeft" title={text}>{text}</Tooltip>
@@ -53,43 +73,42 @@ class DetailsPickSoldOut extends PureComponent{
       {
         title: '生产厂家',
         width: 150,
-        dataIndex: 'productCompany1',
+        dataIndex: 'ctmmManufacturerName'
       },
       {
         title: '生产批号',
         width: 150,
-        dataIndex: 'productCompany2',
+        dataIndex: 'ph'
       },
       {
         title: '生产日期',
         width: 150,
-        dataIndex: 'productCompany3',
+        dataIndex: 'productDate'
       },
       {
         title: '有效期至',
         width: 150,
-        dataIndex: 'productCompany4',
+        dataIndex: 'validEndDate'
       },
       {
         title: '包装规格',
         width: 150,
-        dataIndex: 'unit',
-        render:(text)=>'g'
+        dataIndex: 'packageSpecification',
       },
       {
         title: '单位',
         width: 150,
-        dataIndex: 'unit1',
+        dataIndex: 'replanUnit'
       },
       {
         title: '指示货位',
         width: 150,
-        dataIndex: 'productCompany23',
+        dataIndex: 'locName',
       },
       {
         title: '配货数量',
         width: 150,
-        dataIndex: 'productCompany12',
+        dataIndex: 'allocationNum',
       },
       {
         title: '实际拣货数量',
@@ -98,6 +117,12 @@ class DetailsPickSoldOut extends PureComponent{
         render:(text)=>(<Input/>)
       },
     ];
+    let readyPickingColumns = columns.slice(0,columns.length-1);
+    readyPickingColumns.push({
+      title: '实际拣货数量',
+      width: 150,
+      dataIndex: 'productCompany5',
+    })
     return (
       <div className='bgf fadeIn'>
         <Card>
@@ -110,7 +135,7 @@ class DetailsPickSoldOut extends PureComponent{
                 <label>拣货单</label>
               </div>
               <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
-                <div className='ant-form-item-control'>JN00221180700005JS</div>
+                <div className='ant-form-item-control'>{ detailsData.pickingOredr }</div>
               </div>
             </Col>
             <Col span={8}>
@@ -118,7 +143,7 @@ class DetailsPickSoldOut extends PureComponent{
                 <label>申领单</label>
               </div>
               <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
-                <div className='ant-form-item-control'>PA002211807000086U</div>
+                <div className='ant-form-item-control'>{ detailsData.applyOrder }</div>
               </div>
             </Col>
             <Col span={8}>
@@ -126,7 +151,7 @@ class DetailsPickSoldOut extends PureComponent{
                 <label>申领部门</label>
               </div>
               <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
-                <div className='ant-form-item-control'>静配中心</div>
+                <div className='ant-form-item-control'>{ detailsData.applyDeptName }</div>
               </div>
             </Col>
             <Col span={8}>
@@ -134,7 +159,7 @@ class DetailsPickSoldOut extends PureComponent{
                 <label>状态</label>
               </div>
               <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
-                <div className='ant-form-item-control'>待拣货</div>
+                <div className='ant-form-item-control'>{ detailsData.status }</div>
               </div>
             </Col>
             <Col span={8}>
@@ -142,38 +167,41 @@ class DetailsPickSoldOut extends PureComponent{
                 <label>拣货时间</label>
               </div>
               <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
-                <div className='ant-form-item-control'></div>
+                <div className='ant-form-item-control'>{ detailsData.pickingTime }</div>
               </div>
             </Col>
           </Row>
           <hr className='hr'/>
           <h3>产品信息</h3>
-
           <Tabs tabBarExtraContent={<Button  type='primary'  onClick={()=>this.onSubmit()}>确认拣货</Button>}>
-            <TabPane tab="待拣货" key="1"></TabPane>
-            <TabPane tab="已拣货" key="2"></TabPane>
+            <TabPane tab="待拣货" key="1">
+              <Table
+                bordered
+                scroll={{x: '200%'}}
+                columns={columns}
+                pagination={false}
+                rowKey={'id'}
+                rowSelection={{
+                  onChange:(key,row)=>{
+                    console.log(key,row)
+                  }
+                }}
+              />
+            </TabPane>
+            <TabPane tab="已拣货" key="2">
+              <Table
+                bordered
+                scroll={{x: '200%'}}
+                columns={readyPickingColumns}
+                pagination={false}
+                rowKey={'id'}
+              />
+            </TabPane>
           </Tabs>
-
-          <Table
-            dataSource={createData()}
-            bordered
-            scroll={{x: '200%'}}
-            columns={columns}
-            rowKey={'id'}
-            rowSelection={{
-              onChange:(key,row)=>{
-                console.log(key,row)
-              }
-            }}
-            pagination={{
-              size: 'small',
-              showQuickJumper: true,
-              showSizeChanger: true
-            }}
-          />
+          
         </Card>
       </div>
     )
   }
 }
-export default DetailsPickSoldOut;
+export default connect(state => state)(DetailsPickSoldOut);

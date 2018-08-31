@@ -5,15 +5,134 @@
  */
 
 import React, { PureComponent } from 'react';
-import { Table , Form, Row, Col, Button, Icon , message , Popconfirm, Select , Input , DatePicker ,} from 'antd';
+import { Form, Row, Col, Button, Icon , message , Popconfirm, Select , Input , DatePicker ,} from 'antd';
 import { Link } from 'react-router-dom'
 import { formItemLayout } from '../../../../utils/commonStyles';
-import { createData } from '../../../../common/data';
+import RemoteTable from '../../../../components/TableGrid';
+import { connect } from 'dva';
 const RangePicker = DatePicker.RangePicker;
 const FormItem = Form.Item;
 const Option = Select.Option;
 
-
+/* 搜索 - 表单 */
+class SearchFormWrapper extends PureComponent {
+  state = {
+    display: 'none',
+  }
+  toggle = () => {
+    const { display, expand } = this.state;
+    this.setState({
+      display: display === 'none' ? 'block' : 'none',
+      expand: !expand
+    })
+  }
+  handleSearch = e => {
+    e.preventDefault();
+    this.props.form.validateFields((err, values) => {
+      if (!err) {
+        const Time = values.Time === undefined || values.Time === null ? "" : values.Time;
+        if(Time.length > 0) {
+          values.startTime = values.Time[0].format('YYYY-MM-DD');
+          values.endTime = values.Time[1].format('YYYY-MM-DD');
+        }
+        delete values.Time;
+        console.log(values, '查询条件');
+        this.props.query(values);
+      }
+    })
+  }
+  //重置
+  handleReset = () => {
+    this.props.form.resetFields();
+    this.props.query({});
+  }
+ 
+  render() {
+    const { display } = this.state;
+    const { getFieldDecorator } = this.props.form;
+    return (
+     <Form onSubmit={this.handleSearch}>
+        <Row gutter={30}>
+          <Col span={8}>
+            <FormItem label={`申领部门`} {...formItemLayout}>
+              {getFieldDecorator('deptCode', {
+                initialValue: ''
+              })(
+               <Select 
+                 showSearch
+                 placeholder={'请选择'}
+                 optionFilterProp="children"
+                 filterOption={(input, option) => option.props.children.indexOf(input) >= 0}
+                 >
+                <Option key="" value="">全部</Option>
+               </Select>
+              )}
+            </FormItem>
+          </Col>
+          <Col span={8}>
+            <FormItem label={`状态`} {...formItemLayout}>
+              {getFieldDecorator('pickingStatus', {
+                initialValue: ''
+              })(
+               <Select 
+                 showSearch
+                 placeholder={'请选择'}
+                 optionFilterProp="children"
+                 filterOption={(input, option) => option.props.children.indexOf(input) >= 0}
+                 >
+                  <Option key="" value="">全部</Option>
+                  <Option key="01" value="01">待拣货</Option>
+               </Select>
+              )}
+            </FormItem>
+          </Col>
+          <Col span={8} style={{display: display}}>
+            <FormItem label={`类型`} {...formItemLayout}>
+              {getFieldDecorator('pickingType',{
+                initialValue: ''
+              })(
+               <Select 
+                 showSearch
+                 placeholder={'请选择'}
+                 optionFilterProp="children"
+                 filterOption={(input, option) => option.props.children.indexOf(input) >= 0}
+                 >
+                 <Option key="" value="">全部</Option>
+                 <Option key="01" value="01">零库存补货</Option>
+                 <Option key="02" value="02">召回</Option>
+               </Select>
+              )}
+            </FormItem>
+          </Col>
+          <Col span={8} style={{display: display}}>
+            <FormItem label={`单据号`} {...formItemLayout}>
+              {getFieldDecorator('applyOrderNo',{
+                initialValue: ''
+              })(
+               <Input placeholder='拣货单/申领单'/>
+              )}
+            </FormItem>
+          </Col>
+          <Col span={8} style={{display: display}}>
+            <FormItem label={`发起时间`} {...formItemLayout}>
+              {getFieldDecorator('Time')(
+               <RangePicker format={'YYYY-MM-DD'}/>
+              )}
+            </FormItem>
+          </Col>
+          <Col span={8} style={{ textAlign: 'right', marginTop: 4}} >
+            <Button type="primary" htmlType="submit">查询</Button>
+            <Button style={{marginLeft: 8}} onClick={this.handleReset}>重置</Button>
+            <a style={{marginLeft: 8, fontSize: 14}} onClick={this.toggle}>
+              {this.state.expand ? '收起' : '展开'} <Icon type={this.state.expand ? 'up' : 'down'} />
+            </a>
+          </Col>
+        </Row>
+      </Form>
+    )
+  }
+ }
+const SearchForm = Form.create()(SearchFormWrapper);
 class PickSoldOut extends PureComponent{
 
   constructor(props) {
@@ -27,7 +146,8 @@ class PickSoldOut extends PureComponent{
   }
 
   queryHandler = (query) => {
-    this.setState({ query:query })
+    this.setState({ query:query });
+    this.refs.table.fetch(query);
   }
 
   //单行确认 
@@ -36,52 +156,47 @@ class PickSoldOut extends PureComponent{
   }
 
   render(){
+    const { query } = this.state;
     const columns = [
       {
         title: '拣货单',
-        dataIndex: 'medicinalCode',
+        dataIndex: 'pickingOrderNo',
         width: 180,
         render:(text)=>(
           <span>
-            <Link to={{pathname: `/drugStorage/outStorage/pickingUnderShelve/details`}}>{text}</Link>
+            <Link to={{pathname: `/drugStorage/outStorage/pickingUnderShelve/details/${text}`}}>{text}</Link>
           </span> 
         )
       },
       {
        title: '申领部门',
-       dataIndex: 'index',
+       dataIndex: 'deptName',
        width: 120,
-       render: (text, record, index) => '静配中心'
       },
       {
         title: '状态',
-        dataIndex: 'fstate',
+        dataIndex: 'statusName',
         width:120,
-        render: (text, record, index) => '待拣货'
       },
       {
         title: '类型',
         width: 120,
-        dataIndex: 'equipmfmodalentStandardName',
-        render: (text, record, index) => '零库存补货'
+        dataIndex: 'type',
       },
       {
         title: '发起人',
-        dataIndex: 'spec123',
+        dataIndex: 'createUserName',
         width:120,
-        render: (text, record, index) => '王文斌' + index
       },
       {
         title: '发起时间',
-        dataIndex: 'custodian',
+        dataIndex: 'createDate',
         width:150,
-        render: (text, record, index) => '2018-7-25 21:17'
       },
       {
         title: '拣货时间',
-        dataIndex: 'time',
+        dataIndex: 'updateDate',
         width: 180,
-        render: (text, record, index) => '2018-7-25 21:17'
       },
       {
         title: '操作',
@@ -97,17 +212,15 @@ class PickSoldOut extends PureComponent{
     ];
     return (
       <div className='ysynet-main-content'>
-        <SearchForm query={this.queryHandler} />
-        <Table
-          dataSource={createData()}
+        <SearchForm 
+          query={this.queryHandler}
+          dispatch={this.props.dispatch} 
+        />
+        <RemoteTable
           bordered
-          loading={ this.state.loading}
+          ref='table'
+          query={query}
           scroll={{x: '100%'}}
-          pagination={{
-            size: "small",
-            showQuickJumper: true,
-            showSizeChanger: true
-          }}
           columns={columns}
           rowKey={'id'}
           style={{marginTop: 20}}
@@ -116,107 +229,5 @@ class PickSoldOut extends PureComponent{
     )
   }
 }
-export default PickSoldOut;
+export default connect(state => state)(PickSoldOut);
 
-/* 搜索 - 表单 */
-class SearchFormWrapper extends PureComponent {
- state = {
-   display: 'none',
- }
- toggle = () => {
-   const { display, expand } = this.state;
-   this.setState({
-     display: display === 'none' ? 'block' : 'none',
-     expand: !expand
-   })
- }
- handleSearch = (e) => {
-   e.preventDefault();
-   this.props.form.validateFields((err, values) => {
-     this.props.query(values);
-   });
- }
- //重置
- handleReset = () => {
-   this.props.form.resetFields();
-   this.props.query({});
- }
-
- render() {
-   const { display } = this.state;
-   const { getFieldDecorator } = this.props.form;
-   return (
-    <Form onSubmit={this.handleSearch}>
-       <Row gutter={30}>
-         <Col span={8}>
-           <FormItem label={`申领部门`} {...formItemLayout}>
-             {getFieldDecorator('assetCode', {})(
-              <Select 
-                showSearch
-                placeholder={'请选择'}
-                optionFilterProp="children"
-                filterOption={(input, option) => option.props.children.indexOf(input) >= 0}
-                >
-                    <Option key="" value="">全部</Option>
-              </Select>
-             )}
-           </FormItem>
-         </Col>
-         <Col span={8}>
-           <FormItem label={`状态`} {...formItemLayout}>
-             {getFieldDecorator('fstate', {})(
-              <Select 
-                showSearch
-                placeholder={'请选择'}
-                optionFilterProp="children"
-                filterOption={(input, option) => option.props.children.indexOf(input) >= 0}
-                >
-                    <Option key="" value="">全部</Option>
-                    <Option key="01" value="01">待拣货</Option>
-              </Select>
-             )}
-           </FormItem>
-         </Col>
-         <Col span={8} style={{display: display}}>
-           <FormItem label={`类型`} {...formItemLayout}>
-             {getFieldDecorator('spec')(
-              <Select 
-                showSearch
-                placeholder={'请选择'}
-                optionFilterProp="children"
-                filterOption={(input, option) => option.props.children.indexOf(input) >= 0}
-                >
-                <Option key="" value="">全部</Option>
-                <Option key="01" value="01">零库存补货</Option>
-                <Option key="02" value="02">召回</Option>
-              </Select>
-             )}
-           </FormItem>
-         </Col>
-         <Col span={8} style={{display: display}}>
-           <FormItem label={`单据号`} {...formItemLayout}>
-             {getFieldDecorator('danjuhao')(
-              <Input placeholder='拣货单/申领单'/>
-             )}
-           </FormItem>
-         </Col>
-         <Col span={8} style={{display: display}}>
-           <FormItem label={`发起时间`} {...formItemLayout}>
-             {getFieldDecorator('time')(
-              <RangePicker/>
-             )}
-           </FormItem>
-         </Col>
-         <Col span={8} style={{ textAlign: 'right', marginTop: 4}} >
-           <Button type="primary" htmlType="submit">查询</Button>
-           <Button style={{marginLeft: 8}} onClick={this.handleReset}>重置</Button>
-           <a style={{marginLeft: 8, fontSize: 14}} onClick={this.toggle}>
-             {this.state.expand ? '收起' : '展开'} <Icon type={this.state.expand ? 'up' : 'down'} />
-           </a>
-         </Col>
-       </Row>
-     </Form>
-   )
- }
-}
-const SearchForm = Form.create()(SearchFormWrapper);
