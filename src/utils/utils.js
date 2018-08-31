@@ -127,7 +127,7 @@ export const menuFormat = (menuData,returnToggle,returnIndex) => {
       }
     }
     let min = 1;
-    while (min < max) {
+    while (min < max + 1) {
       genTree(min);
       min++;
     }
