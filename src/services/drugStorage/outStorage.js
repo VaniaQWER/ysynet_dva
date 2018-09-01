@@ -37,3 +37,14 @@ export function distributeEvent(options) { // 配货单据详情
     body: options
   })
 };
+
+/* 拣货 */
+
+// 
+export function finishPicking(options) { // 确认拣货
+  return request(`${_local}/a/common/pickingorder/finishPicking`,{ 
+    method: 'POST',
+    type: 'json',
+    body: options
+  })
+};

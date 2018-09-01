@@ -1,8 +1,8 @@
 /*
  * @Author: wwb 
  * @Date: 2018-08-31 23:18:25 
- * @Last Modified by:   wwb 
- * @Last Modified time: 2018-08-31 23:18:25 
+ * @Last Modified by: wwb
+ * @Last Modified time: 2018-09-01 09:33:01
  */
 
 import * as outStorageService from '../../services/drugStorage/outStorage';
@@ -44,6 +44,14 @@ export default {
       if(callback) callback(data.data)
     },
 
+    /*  出库确认拣货  */
+    *finishPicking({ payload,callback },{ call }){
+      const data = yield call(outStorageService.finishPicking, payload);
+      if(data.code !== 200){
+        return message.error(data.msg||'拣货失败')
+      }
+      if(callback) callback(data.data)
+    },
     subscriptions: {
       
     }
