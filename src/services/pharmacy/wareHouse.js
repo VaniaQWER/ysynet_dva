@@ -9,3 +9,19 @@ export function drugsForInfo(options) {
     body: options
   })
 };
+
+export function selectApplyDept(options) {
+  return request(`${_local}/a/apply/selectApplyDept`, {
+    method: 'POST',
+    type: 'formData',
+    body: options
+  })
+};
+
+export function applySubmit(options) {
+  return request(`${_local}/a/apply/save`, {
+    method: 'POST',
+    type: 'json',
+    body: options
+  })
+};

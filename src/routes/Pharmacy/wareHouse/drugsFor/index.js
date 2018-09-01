@@ -9,7 +9,7 @@ import {Form, Input , Row, Col, Button, Icon, Select, DatePicker } from 'antd';
 import { Link } from 'react-router-dom';
 import { formItemLayout } from '../../../../utils/commonStyles';
 import RemoteTable from '../../../../components/TableGrid/index';
-import {pharmacy} from '../../../../api/pharmacy';
+import {wareHouse} from '../../../../api/pharmacy/wareHouse';
 const FormItem = Form.Item;
 const Option = Select.Option;
 const RangePicker = DatePicker.RangePicker;
@@ -91,7 +91,7 @@ class DrugsFor extends PureComponent{
         </Row>
         <RemoteTable
           ref="tab"
-          url={pharmacy.APPLYLIST}
+          url={wareHouse.APPLYLIST}
           scroll={{x: '100%'}}
           columns={columns}
           rowKey={'id'}

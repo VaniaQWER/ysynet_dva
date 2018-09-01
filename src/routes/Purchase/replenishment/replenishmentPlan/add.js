@@ -2,7 +2,7 @@
  * @Author: wwb 
  * @Date: 2018-07-24 18:49:01 
  * @Last Modified by: wwb
- * @Last Modified time: 2018-09-01 11:17:56
+ * @Last Modified time: 2018-08-31 00:06:02
  */
 /**
  * @file 药库 - 补货管理--补货计划--新建计划
@@ -339,8 +339,8 @@ class NewAdd extends PureComponent {
     return (
       <Spin spinning={spinLoading} size="large">
         <div className="fullCol" style={{ padding: 24, background: '#f0f2f5' }}>
-          <div className="fullCol-fullChild" style={{marginTop: '-9px'}}>
-            <Row style={{borderBottom: '1px solid rgba(0, 0, 0, .1)', marginBottom: 10, paddingLeft: 35}}>
+          <div className="fullCol-fullChild" style={{margin: '-9px -24px 0'}}>
+            <Row style={{borderBottom: '1px solid rgba(0, 0, 0, .1)', marginBottom: 10}}>
               <Col span={8}>
                 <h2>{isEdit? '编辑计划' : '新建计划'}</h2>
               </Col>
@@ -349,13 +349,14 @@ class NewAdd extends PureComponent {
               </Col>
             </Row>
             <Row>
-              <Col span={8}>
-                <div className="ant-form-item-label ant-col-xs-24 ant-col-sm-5">
+              <Col span={6}>
+                <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
                   <label>补货部门</label>
                 </div>
                 <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-19">
                   <div className='ant-form-item-control'>
                     <Select
+                      disabled={dataSource.length === 0? false : true}
                       showSearch
                       value={query.deptCode}
                       onChange={(value) => {
@@ -369,7 +370,7 @@ class NewAdd extends PureComponent {
                       }}
                       optionFilterProp="children"
                       filterOption={(input, option) => option.props.children.indexOf(input) >= 0} 
-                      style={{ width: 200 }}
+                      style={{ width: '100%' }}
                       placeholder="请选择"
                     >
                       {
@@ -380,7 +381,7 @@ class NewAdd extends PureComponent {
                 </div>
               </Col>
             </Row>
-            <Row style={{marginTop: '10px', paddingLeft: 35}}>
+            <Row style={{marginTop: '10px'}}>
               <Button type='primary' icon='plus' onClick={this.showModal}>添加产品</Button>
               <Button type='default' style={{ margin: '0 8px' }}>一键添加低库存产品</Button>
               <Button onClick={this.delete} type='default'>删除</Button>
@@ -450,7 +451,7 @@ class NewAdd extends PureComponent {
             />
           </div>
           {
-            dataSource.length === 0? null : 
+            dataSource.length === 0 ? null : 
             <div className="detailCard" style={{margin: '-12px -8px 0px -8px'}}>
               <Row>
                 <Col style={{ textAlign: 'right', padding: '10px' }}>
