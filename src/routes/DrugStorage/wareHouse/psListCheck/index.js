@@ -12,8 +12,6 @@ import { Form, Input, Row, Col, Select, Button, Tooltip, Icon } from 'antd';
 import { Link } from 'react-router-dom';
 import wareHouse from '../../../../api/drugStorage/wareHouse';
 import RemoteTable from '../../../../components/TableGrid';
-import request from '../../../../utils/request';
-import {_local} from '../../../../api/local';
 import {connect} from 'dva';
 import _ from 'loadsh';
 
@@ -80,30 +78,24 @@ class SearchForm extends PureComponent{
     this.ChangeSupplier = _.debounce(this.ChangeSupplier, 300);
   }
   componentDidMount = () => {
-    let status = request(`${_local}/a/spd/dict/type`, {
-      methods: 'POST',
-      type: 'formData',
-      body: {
-        type: "audit_status"
+    this.props.dispatch({
+      type: 'base/orderStatusOrorderType',
+      payload: {
+        type: 'audit_status'
+      },
+      callback: (data)=>{
+        this.setState({status: data})
       }
-    });
-    status.then(({data}) => {
-      this.setState({
-        status: data
-      })
     });
 
-    let type = request(`${_local}/a/spd/dict/type`, {
-      methods: 'POST',
-      type: 'formData',
-      body: {
-        type: "in_store_type"
+    this.props.dispatch({
+      type: 'base/orderStatusOrorderType',
+      payload: {
+        type: 'plan_type'
+      },
+      callback: (data)=>{
+        this.setState({type: data})
       }
-    });
-    type.then(({data}) => {
-      this.setState({
-        type: data
-      })
     });
   }
   handleSearch = (e) => {

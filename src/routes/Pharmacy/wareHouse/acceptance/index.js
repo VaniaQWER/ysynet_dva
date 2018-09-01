@@ -5,60 +5,51 @@
  */
 
 import React, { PureComponent } from 'react';
-import { Table , Form, Row, Col, Button, Icon, Select , Input , DatePicker } from 'antd';
+import {Form, Row, Col, Button, Icon, Select , Input , DatePicker } from 'antd';
+import RemoteTable from '../../../../components/TableGrid/index';
+import {wareHouse} from '../../../../api/pharmacy/wareHouse';
 import { Link } from 'react-router-dom';
+import {connect} from 'dva';
 import { formItemLayout } from '../../../../utils/commonStyles';
-import { createData } from '../../../../common/data';
 const RangePicker = DatePicker.RangePicker;
 const FormItem = Form.Item;
 const Option = Select.Option;
 const columns = [
   {
    title: '出库单',
-   dataIndex: 'medicinalCode',
+   dataIndex: 'acceptanceCode',
    width:150,
    render:(text)=>(<Link to={{pathname: `/pharmacy/wareHouse/acceptance/details`}}>{text}</Link>)
   },
   {
     title: '申领单',
     width:150,
-    dataIndex: 'productName',
+    dataIndex: 'applyCode',
   },
   {
     title: '配货部门',
     width:100,
-    dataIndex: 'productName1',
-    render:()=>`药库`
+    dataIndex: 'department'
   },
   {
     title: '状态',
     width:150,
-    dataIndex: 'productName123',
-    render:()=>`待验收`
+    dataIndex: 'acceptanceStatusName',
   },
   {
     title: '发起人',
     width:100,
-    dataIndex: 'fmodal2',
-    render: () => '墨瞳'
+    dataIndex: 'sponsorName'
   },
   {
     title: '发起时间',
-    dataIndex: 'spec1',
-    width:120,
-    render: () => '2018-7-25 21:42'
-  },
-  {
-    title: '验收人',
-    width:100,
-    dataIndex: 'custodian',
-    render: () => '墨瞳'
+    dataIndex: 'createDate',
+    width:120
   },
   {
    title: '验收时间',
    width:120,
-   dataIndex: 'useDept',
-   render: () => '2018-7-25 21:42'
+   dataIndex: 'receptionTime'
   }
 ];
 
@@ -71,9 +62,14 @@ class Acceptance extends PureComponent{
     }
   }
   queryHandler = (query) => {
-    this.setState({ query:query })
+    for (const key in query) {
+      query[key] = query[key] === undefined? '' : query[key]
+    };
+    this.refs.tab.fetch(query);
   }
   render(){
+    let {query} = this.state;
+    
     return (
       <div  className='ysynet-main-content'>
         <SearchForm query={this.queryHandler} />
@@ -82,10 +78,10 @@ class Acceptance extends PureComponent{
             <Link to={{pathname:`/pharmacy/wareHouse/acceptance/add`}}>新建验收</Link>
           </Button>
         </Row>
-        <Table
-          dataSource={createData()}
-          bordered
-          loading={ this.state.loading}
+        <RemoteTable
+          query={query}
+          ref="tab"
+          url={wareHouse.ROOMCHECK}
           scroll={{x: '100%'}}
           columns={columns}
           rowKey={'id'}
@@ -95,12 +91,24 @@ class Acceptance extends PureComponent{
     )
   }
 }
-export default Acceptance;
+export default connect(state=>state)(Acceptance);
 /* 搜索 - 表单 */
 class SearchFormWrapper extends PureComponent {
  state = {
    display: 'none',
+   statusList: []
  }
+ componentDidMount() {
+    this.props.dispatch({
+      type: 'base/orderStatusOrorderType',
+      payload: {
+        type: 'acceptance_status'
+      },
+      callback: (data) => {
+        this.setState({statusList: data});
+      }
+    })
+  }
  toggle = () => {
    const { display, expand } = this.state;
    this.setState({
@@ -111,6 +119,23 @@ class SearchFormWrapper extends PureComponent {
  handleSearch = (e) => {
    e.preventDefault();
    this.props.form.validateFields((err, values) => {
+    let {initTime, checkTime} = values;
+    if(initTime && initTime.length !== 0){
+      values.startCreateTime = initTime[0].format('YYYY-MM-DD');
+      values.endCreateTime = initTime[1].format('YYYY-MM-DD');
+    }else {
+      values.startCreateTime = '';
+      values.endCreateTime = '';
+    };
+    if(checkTime && checkTime.length !== 0){
+      values.receptionStartTime = checkTime[0].format('YYYY-MM-DD');
+      values.receptionEndTime = checkTime[1].format('YYYY-MM-DD');
+    }else {
+      values.receptionStartTime = '';
+      values.receptionEndTime = '';
+    };
+    delete values.initTime;
+    delete values.checkTime;
      this.props.query(values);
    });
  }
@@ -121,43 +146,47 @@ class SearchFormWrapper extends PureComponent {
  }
 
  render() {
-   const { display } = this.state;
+   let {display, statusList} = this.state;
    const { getFieldDecorator } = this.props.form;
+   console.log(statusList);
+   
+   statusList = statusList.map(item=>{
+      return <Option key={item.value} value={item.value}>{item.label}</Option>
+    })
    return (
      <Form onSubmit={this.handleSearch}>
        <Row gutter={30}>
          <Col span={8}>
            <FormItem label={`单据`} {...formItemLayout}>
-             {getFieldDecorator('assetCode', {})(
+             {getFieldDecorator('acceptanceCode', {})(
               <Input placeholder='入库单/配送单/订单号'/>
              )}
            </FormItem>
          </Col>
          <Col span={8} >
            <FormItem label={`状态`} {...formItemLayout}>
-             {getFieldDecorator('useDeptGuid123')(
+             {getFieldDecorator('acceptanceStatus')(
               <Select 
                 showSearch
                 placeholder={'请选择'}
                 optionFilterProp="children"
                 filterOption={(input, option) => option.props.children.indexOf(input) >= 0}
                 >
-                <Option key="" value="">全部</Option>
-                <Option key="01" value="01">待验收</Option>
+                {statusList}
               </Select>
              )}
            </FormItem>
          </Col>
          <Col span={8} style={{display: display}}>
            <FormItem label={`发起时间`} {...formItemLayout}>
-             {getFieldDecorator('assetName', {})(
+             {getFieldDecorator('initTime', {})(
               <RangePicker/>
              )}
            </FormItem>
          </Col>
          <Col span={8} style={{display: display}}>
            <FormItem label={`验收时间`} {...formItemLayout}>
-             {getFieldDecorator('assetName123', {})(
+             {getFieldDecorator('checkTime', {})(
               <RangePicker/>
              )}
            </FormItem>
@@ -174,4 +203,4 @@ class SearchFormWrapper extends PureComponent {
    )
  }
 }
-const SearchForm = Form.create()(SearchFormWrapper);
+const SearchForm = connect(state=>state)(Form.create()(SearchFormWrapper));
