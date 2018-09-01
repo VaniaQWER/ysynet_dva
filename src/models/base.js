@@ -43,7 +43,15 @@ export default {
       }else {
         message.error(data.msg);
       }
-    }
+    },
+    // 状态 类型 字典
+    *orderStatusOrorderType({ payload,callback },{ call }){
+      const data = yield call(replenishment.orderStatus, payload);
+      if(data.code !== 200){
+        return message.error(data.msg||'获取订单状态失败')
+      }
+      if(callback) callback(data.data)
+    },
   },
   reducers: {
 

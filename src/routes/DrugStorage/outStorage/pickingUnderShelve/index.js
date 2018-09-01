@@ -9,6 +9,7 @@ import { Form, Row, Col, Button, Icon , message , Popconfirm, Select , Input , D
 import { Link } from 'react-router-dom'
 import { formItemLayout } from '../../../../utils/commonStyles';
 import RemoteTable from '../../../../components/TableGrid';
+import { outStorage } from '../../../../api/drugStorage/outStorage';
 import { connect } from 'dva';
 const RangePicker = DatePicker.RangePicker;
 const FormItem = Form.Item;
@@ -18,6 +19,27 @@ const Option = Select.Option;
 class SearchFormWrapper extends PureComponent {
   state = {
     display: 'none',
+    picking_status: [], //拣货状态
+    picking_type: []// 拣货类型
+  }
+  componentWillMount = () =>{
+    const { dispatch } = this.props;
+    // 拣货状态
+    dispatch({
+      type: 'base/orderStatusOrorderType',
+      payload: { type : 'picking_status' },
+      callback: (data) =>{
+        this.setState({ picking_status: data })
+      }
+    });
+    //拣货类型
+    dispatch({
+      type: 'base/orderStatusOrorderType',
+      payload: { type : 'picking_type' },
+      callback: (data) =>{
+        this.setState({ picking_type: data })
+      }
+    })
   }
   toggle = () => {
     const { display, expand } = this.state;
@@ -48,7 +70,7 @@ class SearchFormWrapper extends PureComponent {
   }
  
   render() {
-    const { display } = this.state;
+    const { display, picking_status, picking_type } = this.state;
     const { getFieldDecorator } = this.props.form;
     return (
      <Form onSubmit={this.handleSearch}>
@@ -80,8 +102,9 @@ class SearchFormWrapper extends PureComponent {
                  optionFilterProp="children"
                  filterOption={(input, option) => option.props.children.indexOf(input) >= 0}
                  >
-                  <Option key="" value="">全部</Option>
-                  <Option key="01" value="01">待拣货</Option>
+                  {
+                    picking_status.map((item,index)=> <Option key={index} value={item.value}>{item.label}</Option>)
+                  }
                </Select>
               )}
             </FormItem>
@@ -97,9 +120,9 @@ class SearchFormWrapper extends PureComponent {
                  optionFilterProp="children"
                  filterOption={(input, option) => option.props.children.indexOf(input) >= 0}
                  >
-                 <Option key="" value="">全部</Option>
-                 <Option key="01" value="01">零库存补货</Option>
-                 <Option key="02" value="02">召回</Option>
+                {
+                  picking_type.map((item,index)=> <Option key={index} value={item.value}>{item.label}</Option>)
+                }
                </Select>
               )}
             </FormItem>
@@ -162,9 +185,9 @@ class PickSoldOut extends PureComponent{
         title: '拣货单',
         dataIndex: 'pickingOrderNo',
         width: 180,
-        render:(text)=>(
+        render:(text,record)=>(
           <span>
-            <Link to={{pathname: `/drugStorage/outStorage/pickingUnderShelve/details/${text}`}}>{text}</Link>
+            <Link to={{pathname: `/drugStorage/outStorage/pickingUnderShelve/details/${text}/${record.pickingStatus}`}}>{text}</Link>
           </span> 
         )
       },
@@ -204,7 +227,7 @@ class PickSoldOut extends PureComponent{
         dataIndex: 'RN',
         render: (text, record) => 
           <span>
-            <Popconfirm title="确定打印吗？" okText="是" cancelText="否"  onConfirm={()=>this.confirmOk(record)}>
+            <Popconfirm title="确定打印吗？" okText="是" cancelText="否"  onConfirm={()=>message.warning('此功能暂未开放')}>
               <a>打印</a>
             </Popconfirm>
           </span>  
@@ -220,6 +243,7 @@ class PickSoldOut extends PureComponent{
           bordered
           ref='table'
           query={query}
+          url={outStorage.FINDPICKINGORDER_LIT}
           scroll={{x: '100%'}}
           columns={columns}
           rowKey={'id'}

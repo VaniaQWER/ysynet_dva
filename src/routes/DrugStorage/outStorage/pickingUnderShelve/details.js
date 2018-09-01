@@ -14,25 +14,30 @@ class DetailsPickSoldOut extends PureComponent{
     this.state = {
       detailsData: {},
       loading: false,
-      activeKey: '1',
+      activeKey: null,
+      pickingStatus: null, // 拣货状态 显示tabs
       leftDataSource: [], // 待拣货
-      rightDataSource: [] // 已拣货
+      rightDataSource: [], // 已拣货
+      selected: [],
+      selectedRows: []
     }
   }
   
   componentWillMount = () =>{
     if (this.props.match.params.pickingOrderNo) {
-      let { applyCode } = this.props.match.params;
+      let { pickingOrderNo, pickingStatus } = this.props.match.params;
       this.setState({ loading: true });
       this.props.dispatch({
         type:'outStorage/distributeDetail',
-        payload: { applyCode },
+        payload: { pickingOrderNo },
         callback:(data)=>{
           this.setState({ 
             detailsData: data, 
             loading: false,
             leftDataSource: data.notDetail,
-            rightDataSource: data.existDetail 
+            rightDataSource: data.existDetail,
+            pickingStatus,
+            activeKey: pickingStatus === '1'? '1': '2'
           });
         }
       });
@@ -64,8 +69,8 @@ class DetailsPickSoldOut extends PureComponent{
         message.success('操作成功！')
         const { history, dispatch } = this.props;
         let postData = {}, pickingDetail = [];
-        let { leftDataSource, detailsData } = this.state;
-        leftDataSource.map(item => pickingDetail.push({
+        let { selectedRows, detailsData } = this.state;
+        selectedRows.map(item => pickingDetail.push({
           drugCode: item.drugCode,
           id: item.id,
           pickingNum: item.pickingNum,
@@ -81,16 +86,6 @@ class DetailsPickSoldOut extends PureComponent{
             history.push({pathname:"/drugStorage/outStorage/pickingUnderShelve"})
           }
         })
-      },
-      onCancel:()=>{}
-    })
-  }
-
-  onPrint = () => {
-    Conform({
-      content:"您确定要打印？",
-      onOk:()=>{
-        message.success('打印成功！')
       },
       onCancel:()=>{}
     })
@@ -156,10 +151,10 @@ class DetailsPickSoldOut extends PureComponent{
       {
         title: '实际拣货数量',
         width: 150,
-        dataIndex: 'productCompany5',
+        dataIndex: 'amount',
         render:(text,record,index)=>{
           return <Input
-                    defaultValue={1} 
+                    defaultValue={record.allocationNum ? record.allocationNum: 1} 
                     onInput={this.onChange.bind(this, record, index)}
                   />
         }
@@ -169,7 +164,10 @@ class DetailsPickSoldOut extends PureComponent{
     readyPickingColumns.push({
       title: '实际拣货数量',
       width: 150,
-      dataIndex: 'productCompany5',
+      dataIndex: 'amount',
+      render: (text,record)=> {
+        return record.allocationNum ? record.allocationNum: 1
+      }
     })
     return (
       <div className='bgf fadeIn'>
@@ -235,8 +233,9 @@ class DetailsPickSoldOut extends PureComponent{
                 pagination={false}
                 rowKey={'id'}
                 rowSelection={{
-                  onChange:(key,row)=>{
-                    console.log(key,row)
+                  selectedRowKeys: this.state.selected,
+                  onChange: (selectedRowKeys, selectedRows) => {
+                    this.setState({selected: selectedRowKeys, selectedRows: selectedRows})
                   }
                 }}
               />

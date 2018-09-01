@@ -46,7 +46,7 @@ class SearchForm extends PureComponent{
     });
     //订单状态
     dispatch({
-      type: 'replenish/orderStatusOrorderType',
+      type: 'base/orderStatusOrorderType',
       payload: {
         type: 'order_status'
       },
@@ -56,7 +56,7 @@ class SearchForm extends PureComponent{
     });
     //订单类型
     dispatch({
-      type: 'replenish/orderStatusOrorderType',
+      type: 'base/orderStatusOrorderType',
       payload: {
         type: 'order_type'
       },

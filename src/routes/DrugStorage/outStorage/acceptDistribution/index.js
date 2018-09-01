@@ -83,7 +83,7 @@ class SearchFormWrapper extends PureComponent {
 
     // 配货类别
     dispatch({
-      type: 'replenish/orderStatusOrorderType',
+      type: 'base/orderStatusOrorderType',
       payload: { type : 'apply_type' },
       callback: (data) =>{
         this.setState({ apply_type_options: data })
@@ -91,7 +91,7 @@ class SearchFormWrapper extends PureComponent {
     });
     // 配货状态
     dispatch({
-      type: 'replenish/orderStatusOrorderType',
+      type: 'base/orderStatusOrorderType',
       payload: { type : 'common_distribute_status' },
       callback: (data) =>{
         this.setState({ common_distribute_status: data })

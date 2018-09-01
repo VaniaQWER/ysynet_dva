@@ -38,7 +38,7 @@ class SearchForm extends PureComponent{
     const { dispatch } = this.props;
     //类型
     dispatch({
-      type: 'replenish/orderStatusOrorderType',
+      type: 'base/orderStatusOrorderType',
       payload: { type : 'plan_type' },
       callback: (data) =>{
         this.setState({ plan_type: data })
@@ -46,7 +46,7 @@ class SearchForm extends PureComponent{
     })
     //状态
     dispatch({
-      type: 'replenish/orderStatusOrorderType',
+      type: 'base/orderStatusOrorderType',
       payload: { type : 'audit_plan_status' },
       callback: (data) =>{
         this.setState({ audit_plan_status: data })

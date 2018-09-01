@@ -38,7 +38,7 @@ class SearchForm extends PureComponent{
   genFstate = () =>{
     const { dispatch } = this.props;
     dispatch({
-      type: 'replenish/orderStatusOrorderType',
+      type: 'base/orderStatusOrorderType',
       payload: { type : 'plan_status' },
       callback: (data) =>{
         this.setState({ fstateOptions: data })

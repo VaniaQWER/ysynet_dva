@@ -2,15 +2,16 @@
  * @Author: wwb 
  * @Date: 2018-07-24 18:49:01 
  * @Last Modified by: wwb
- * @Last Modified time: 2018-08-31 21:12:56
+ * @Last Modified time: 2018-09-01 13:09:02
  */
 /**
  * @file 药库 - 补货管理--补货计划--新建计划
  */
 import React, { PureComponent } from 'react';
-import { Form, Row, Col, Button, Input, Select, Modal, Tooltip, message, Affix, Table  } from 'antd';
+import { Form, Row, Col, Button, Input, Select, Modal, Tooltip, message, Affix, Table, InputNumber  } from 'antd';
 import RemoteTable from '../../../../components/TableGrid';
 import { replenishmentPlan } from '../../../../api/replenishment/replenishmentPlan';
+import {validAmount} from '../../../../utils/utils';
 import _ from 'lodash';
 import { connect } from 'dva';
 const FormItem = Form.Item;
@@ -47,30 +48,49 @@ class NewAdd extends PureComponent{
       return message.warning('至少选择一条信息');
     }
     this.setState({ btnLoading: true });
-    modalSelectedRows = modalSelectedRows.map(item => item.drugCode);
+    let drugCodeList = [];
+    modalSelectedRows.map(item => drugCodeList.push(item.drugCode))
     this.props.dispatch({
       type: 'base/addDrug',
       payload: {
         deptCode: query.deptCode,
-        drugCodeList: modalSelectedRows
+        drugCodeList
       },
       callback: (data) => {
         this.setState({
           dataSource: data,
           btnLoading: false,
-          visible: false
+          visible: false,
+          modalSelectedRows: []
         })
       }
     })
   }
-  onChange = (record,index) =>{
-    console.log(record,index,'onChange')
+  setRowInput = (val, record, i) => {
+    let {usableQuantity} = record;
+    let {dataSource} = this.state;
+    dataSource = JSON.parse(JSON.stringify(dataSource));
+    let validResult = validAmount(val, usableQuantity);
+    if(val === "") {
+      dataSource[i].demandQuantity = val;
+      this.setState({dataSource});
+    }
+    if(validResult) {
+      dataSource[i].demandQuantity = val;
+      // dataSource[i].totalPrice = val * dataSource[i].drugPrice;
+      this.setState({dataSource});
+    }else {
+      this.setState({dataSource});
+    }
   }
   addProduct = () =>{
     if(!this.state.query.deptCode){
       return message.warning('请选择部门');
     }
-    this.setState({ visible: true });
+    let { dataSource, query } = this.state;
+    let existDrugCodeList = [];
+    dataSource.map(item => existDrugCodeList.push(item.drugCode));
+    this.setState({ visible: true,query: { ...query, existDrugCodeList } });
   }
   delete = () => {  //删除
     let {selectedRows, dataSource, query} = this.state;
@@ -162,21 +182,43 @@ class NewAdd extends PureComponent{
       dataIndex: 'ctmmManufacturerName'
     },{
       title: '供应商',
-      dataIndex: 'fOrgName',
-      render: (text,record) =>{
+      dataIndex: 'supplierCode',
+      render: (text, record, i) => {
+        let {supplierList} = record;
+        let supplier = supplierList.map(item=>{
+          return <Option key={item.ctmaSupplierCode} value={item.ctmaSupplierCode}>{item.ctmaSupplierName}</Option>
+        });
         return (
-          <Select defaultValue=''>
-            <Option key={-1} value=''>xxxxxxxx</Option>
+          <Select 
+            onSelect={(value)=>{
+              let {dataSource} = this.state;
+              dataSource = JSON.parse(JSON.stringify(dataSource));
+              let referencePrice;
+              supplierList.map(item=>{
+                if(item.ctmaSupplierCode === value) {
+                  referencePrice = item.referencePrice;
+                };
+                return item;
+              });
+              dataSource[i].drugPrice = referencePrice;
+              dataSource[i].totalPrice = referencePrice * record.demandQuantity;
+              this.setState({dataSource});
+              
+            }} 
+            defaultValue={text} 
+            style={{ width: 180 }}
+          >
+            {supplier}
           </Select>
         )
       }
     },{
       title: '包装规格',
       dataIndex: 'packageSpecification',
-      width: 100,
     }, {
       title: '报告药申请单号',
       dataIndex: 'planNo',
+      width: 120,
       render: (text,record) =>{
         return (
           <Input />
@@ -187,18 +229,31 @@ class NewAdd extends PureComponent{
       dataIndex: 'demandQuantity',
       width: 120,
       render: (text,record,index)=>{
-        return <Input defaultValue={ text || 1} onChange={this.onChange.bind(this, record, index)}/>
+        return <InputNumber
+                  defaultValue={text || 1}
+                  max={record.usableQuantity}
+                  min={1}
+                  precision={0}
+                  onChange={(value)=>{
+                    this.setRowInput(value, record, index);
+                  }} 
+              />
       }
     },{
       title: '单价',
       dataIndex: 'drugPrice',
+      width: 120,
     },{
       title: '金额',
       dataIndex: 'totalPrice',
+      width: 120,
+      render: (text,record)=>{
+        let amount = record.demandQuantity ? record.demandQuantity: 1;
+        return amount * record.drugPrice
+      }
     },{
       title: '批准文号',
       dataIndex: 'approvalNo',
-      width: 150,
     }];
     const modalColumns = [
       {
@@ -227,8 +282,8 @@ class NewAdd extends PureComponent{
       },
     ]
     return (
-      <div style={{ padding: 24 }}>
-        <Affix>
+      <div className='ysynet_newPage' style={{ padding: 24 }}>
+        <Affix offsetTop={0}>
           <div>
             <h2>新建计划</h2>
             <hr className='hr'/>
@@ -240,6 +295,7 @@ class NewAdd extends PureComponent{
                   showSearch
                   defaultValue={deptModules.length?deptModules[0].value:''}
                   optionFilterProp="children"
+                  disabled={dataSource.length ? true: false}
                   filterOption={(input, option) => option.props.children.indexOf(input) >= 0}
                   onSelect={(value) => this.setState({ query: {...query, deptCode: value} })}
                   style={{ width: 200 }}
@@ -251,11 +307,11 @@ class NewAdd extends PureComponent{
                 </Select>
               </FormItem>
             </Col>
+            <Col span={8}>
+              <Button type='primary' icon='plus' onClick={this.addProduct}>添加产品</Button>
+              <Button type='default' onClick={this.delete} style={{ marginLeft: 8 }}>删除</Button>
+            </Col>
           </Row>
-          <div style={{marginTop: '10px', paddingLeft: 35}}>
-            <Button type='primary' icon='plus' onClick={this.addProduct}>添加产品</Button>
-            <Button type='default' onClick={this.delete} style={{ marginLeft: 8 }}>删除</Button>
-          </div>
         </Affix>
         <Modal
           title={'添加产品'}
@@ -296,14 +352,14 @@ class NewAdd extends PureComponent{
           />
         </div>
         </Modal>
-        <div className='detailCard' style={{margin: '-12px -8px 0px -8px'}}>
+        <div className='detailCard' style={{ background: '#f0f2f5',marginTop: '-10px' }}>
           <Table 
             title={()=>'产品信息'}
             columns={columns}
             bordered
-            rowKey='id'
+            rowKey='drugCode'
             dataSource={dataSource}
-            scroll={{ x: '130%' }}
+            scroll={{ x: '180%' }}
             pagination={false}
             rowSelection={{
               selectedRowKeys: this.state.selected,
