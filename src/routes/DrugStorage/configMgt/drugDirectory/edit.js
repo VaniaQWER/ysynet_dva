@@ -103,14 +103,14 @@ class EditDrugDirectory extends PureComponent{
         this.props.form.validateFields((err,values)=>{
           console.log(values)
 
-          const { customUnit ,  supplier , replanUnit , replanStore , purchaseQuantity ,
+          const { customUnit ,  supplier , replanUnitCode , replanStore , purchaseQuantity ,
             upperQuantity , downQuantity  }  =values; 
 
             let postData = {
               customUnit,
               // supplier,
               drugInfo:{
-                replanUnit , replanStore , purchaseQuantity ,
+                replanUnitCode , replanStore , purchaseQuantity ,
                 upperQuantity , downQuantity ,
                 drugCode:this.state.fillBackData.drugCode||'',
                 bigDrugCode:this.state.fillBackData.bigDrugCode,
@@ -137,12 +137,9 @@ class EditDrugDirectory extends PureComponent{
   //新增自定义单位
   addUnit = ()=>{
     const { form } = this.props;
-    // can use data-binding to get
     const keys = form.getFieldValue('keys');
     const nextKeys = keys.concat(uuid);
     uuid++;
-    // can use data-binding to set
-    // important! notify form to detect changes
     form.setFieldsValue({
       keys: nextKeys,
     });
@@ -154,12 +151,12 @@ class EditDrugDirectory extends PureComponent{
     uuid--;
     let ret = []
     keys.filter((key,index) =>{
-      if(key !== k){
-        ret.push(index)
+      if(index !== k){
+        ret.push(key)
       }
       return key
     })
-    ret = ret.map((item,index)=>{item=index;return item})
+    // ret = ret.map((item,index)=>{item=index;return item})
     form.setFieldsValue({
       keys: ret
     });
@@ -202,6 +199,25 @@ class EditDrugDirectory extends PureComponent{
       return `${ret[0].bigUnit||''}  -  ${ret[0].conversionRate||''}${ret[0].smallUit||''}`
     }
   }
+  //使用互斥radio
+  onChangeRadio = (e,ind)=>{
+    const { getFieldValue } = this.props.form; 
+    console.log('radio checked', e.target.value);
+  
+    const keySupply = getFieldValue('keySupply');
+
+    debugger
+    console.log(keySupply,'keySupply')
+    keySupply.filter((item,index)=>{
+      if(index===ind){
+        return  item.whetherDefault='1'
+      }else{
+        return  item.whetherDefault=null
+      }
+    })
+    console.log(keySupply)
+    this.props.setFieldsValue({keySupply})
+  }
 
   render(){
     const { fillBackData , replanUnitSelect , goodsTypeSelect } =this.state;
@@ -213,10 +229,10 @@ class EditDrugDirectory extends PureComponent{
     const formItems = keys.map((k, index) => {
       return (
         <Col span={10} key={index}>
-          <FormItem {...formItemLayout} label={`自定义包装${k+1}`}  key={k}>
+          <FormItem {...formItemLayout} label={`自定义包装${index+1}`}  key={index}>
             {
-              getFieldDecorator(`customUnit[${k}].unitName`,{
-                initialValue: '',
+              getFieldDecorator(`customUnit[${index}].unitName`,{
+                initialValue:k.unitName||'',
                 rules:[{
                   required:true,message:"必填！"
                 }]
@@ -227,8 +243,8 @@ class EditDrugDirectory extends PureComponent{
             = 
             <FormItem style={{display: 'inline-block'}}>
               {
-                getFieldDecorator(`customUnit[${k}].unitCoefficient`,{
-                  initialValue: '',
+                getFieldDecorator(`customUnit[${index}].unitCoefficient`,{
+                  initialValue:k.unitCoefficient||'',
                   rules:[{
                     required:true,message:"必填！"
                   }]
@@ -239,8 +255,8 @@ class EditDrugDirectory extends PureComponent{
             </FormItem>
             <FormItem style={{display: 'inline-block',marginRight:8}}>
               {
-                getFieldDecorator(`customUnit[${k}].unit`,{
-                  initialValue: '',
+                getFieldDecorator(`customUnit[${index}].unit`,{
+                  initialValue: k.unit||'',
                   rules:[{
                     required:true,message:"必填！"
                   }]
@@ -262,14 +278,14 @@ class EditDrugDirectory extends PureComponent{
                   style={{marginRight:8}}
                   className="dynamic-delete-button"
                   type="minus-circle-o"
-                  onClick={() => this.removeUnit(k)}
+                  onClick={() => this.removeUnit(index)}
                 />
             ) : null}
-            {keys.length-1 === k ? (
+            {keys.length-1 === index ? (
                 <Icon
                   className="dynamic-delete-button"
                   type="plus-circle-o"
-                  onClick={() => this.addUnit(k)}
+                  onClick={() => this.addUnit(index)}
                 />
             ) : null}
           </FormItem>
@@ -307,8 +323,8 @@ class EditDrugDirectory extends PureComponent{
                   rules:[{
                     required:true,message:"必填！"
                   }]
-                })(//onChange={this.onChange}
-                  <RadioGroup >
+                })(//
+                  <RadioGroup onChange={(e)=>this.onChangeRadio(e,k)}>
                     <Radio value={1}>设为默认</Radio>
                   </RadioGroup>
                 )
@@ -333,7 +349,6 @@ class EditDrugDirectory extends PureComponent{
         </Col>
       )
     });
-    console.log(fillBackData)
     return (
       <div className='fullCol fadeIn'>
         <div className='fullCol-fullChild'>
@@ -448,8 +463,8 @@ class EditDrugDirectory extends PureComponent{
                 <Col span={10}>
                   <FormItem {...formItemLayout} label={`补货单位`}>
                     {
-                      getFieldDecorator(`replanUnit`,{
-                        initialValue:fillBackData?fillBackData.replanUnit:'',
+                      getFieldDecorator(`replanUnitCode`,{
+                        initialValue:fillBackData?fillBackData.replanUnitCode:'',
                         rules:[{
                           required:true,message:"请选择补货单位！"
                         }]

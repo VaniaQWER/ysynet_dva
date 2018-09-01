@@ -1,11 +1,18 @@
+/*
+ * @Author: yuwei 药房- 药品目录 - 列表
+ * @Date: 2018-09-01 09:40:52 
+* @Last Modified time: 2018-09-01 09:40:52 
+ */
+
 import React , {PureComponent} from 'react';
-import { Form, Row, Col, Button, Input, Select, Icon, Table, Tooltip, message, Modal  } from 'antd';
-import { createData } from '../../../../common/data';
+import { Form, Row, Col, Button, Input, Select, Icon, Tooltip, message, Modal  } from 'antd';
+import { configMgt } from '../../../../api/drugStorage/configMgt';
 import { Link } from 'react-router-dom';
+import RemoteTable from '../../../../components/TableGrid';
+import { connect } from 'dva';
 const FormItem = Form.Item;
 const { Option } = Select;
 const { Search } = Input;
-
 const formItemLayout = {
   labelCol: {
     xs: { span: 24 },
@@ -28,6 +35,16 @@ class SearchForm extends PureComponent{
       expand: !expand
     })
   }
+  handleSearch = () => {
+    this.props.form.validateFields((err,values)=>{
+      this.props.query(values)
+    })
+  } 
+  handleReset = ()=>{
+    this.props.form.resetFields();
+    this.props.query()
+  }
+
   render(){
     const { getFieldDecorator } = this.props.form;
     const { display, expand } = this.state;
@@ -37,7 +54,7 @@ class SearchForm extends PureComponent{
           <Col span={8}>
             <FormItem {...formItemLayout} label={`名称`}>
               {
-                getFieldDecorator(`planNo`,{
+                getFieldDecorator(`ctmmTradeName`,{
                   initialValue: ''
                 })(
                   <Input placeholder='请输入' />
@@ -48,7 +65,7 @@ class SearchForm extends PureComponent{
           <Col span={8}>
             <FormItem {...formItemLayout} label={`剂型`}>
               {
-                getFieldDecorator(`jx`,{
+                getFieldDecorator(`ctmmDosageFormDesc`,{
                   initialValue: ''
                 })(
                   <Input placeholder='请输入' />
@@ -59,7 +76,7 @@ class SearchForm extends PureComponent{
           <Col span={8}>
             <FormItem {...formItemLayout} label={`规格`}>
               {
-                getFieldDecorator(`fmodel`,{
+                getFieldDecorator(`ctmmSpecification`,{
                   initialValue: ''
                 })(
                   <Input placeholder='请输入' />
@@ -70,10 +87,14 @@ class SearchForm extends PureComponent{
           <Col span={8} style={{ display: display }}>
             <FormItem {...formItemLayout} label={`状态`}>
               {
-                getFieldDecorator(`fstate`,{
+                getFieldDecorator(`ctmmStatusCode`,{
                   initialValue: ''
                 })(
-                  <Input placeholder='请输入' />
+                  <Select>
+                    <Option key='' value=''>全部</Option>
+                    <Option key='0' value='0'>启用</Option>
+                    <Option key='1' value='1'>停用</Option>
+                  </Select>
                 )
               }
             </FormItem>
@@ -81,12 +102,13 @@ class SearchForm extends PureComponent{
           <Col span={8} style={{ display: display }}>
             <FormItem {...formItemLayout} label={`是否报告药`}>
               {
-                getFieldDecorator('type',{
+                getFieldDecorator('medDrugType',{
                   initialValue: ''
                 })(
                   <Select>
-                    <Option key={-1} value='01'>是</Option>
-                    <Option key={-1} value='00'>否</Option>
+                    <Option key='' value=''>全部</Option>
+                    <Option key='2' value='2'>是</Option>
+                    <Option key='1' value='1'>否</Option>
                   </Select>
                 )
               }
@@ -106,43 +128,52 @@ class SearchForm extends PureComponent{
 }
 const WrappSearchForm = Form.create()(SearchForm);
 
-const columns = [{
-  title: '通用名称',
-  dataIndex: 'productName1',
-  render:(text,record)=>record.productName
-},
-{
-  title: '商品名',
-  dataIndex: 'productName'
-},
-{
-  title: '规格',
-  dataIndex: 'spec',
-  className: 'ellipsis',
-  render:(text)=>(
-    <Tooltip placement="topLeft" title={text}>{text}</Tooltip>
-  )
-},
-{
-  title: '剂型',
-  dataIndex: 'fmodal'
-},
-{
-  title: '包装规格',
-  dataIndex: 'fmodel'
-},
-{
-  title: '单位',
-  dataIndex: 'unit',
-  render:(text)=>'g'
-},
-{
-  title: '批准文号',
-  dataIndex: 'approvalNo'
-}]
+const columns = [
+  {
+    title: '通用名称',
+    dataIndex: 'ctmmGenericName',
+    width: 120
+  },
+  {
+    title: '商品名称',
+    dataIndex: 'ctmmTradeName',
+    width: 120
+    
+  },
+  {
+    title: '规格',
+    dataIndex: 'ctmmSpecification',
+    className: 'ellipsis',
+    width: 120,
+    render:(text)=>(
+      <Tooltip placement="topLeft" title={text}>{text}</Tooltip>
+    )
+  },
+  {
+    title: '剂型',
+    dataIndex: 'ctmmDosageFormDesc',
+    width: 120
+  },
+  {
+    title: '包装规格',
+    dataIndex: 'packageSpecification',
+    width: 120
+  },
+  {
+    title: '单位',
+    dataIndex: 'ctmmDosUom',
+    width: 120
+  },
+  {
+    title: '批准文号',
+    dataIndex: 'approvalNo',
+    width: 120
+  }
+]
 
 class DrugDirectory extends PureComponent{
   state = {
+    query:{},
     selected: [],
     selectedRows: [],
     modalSelected: [],
@@ -152,6 +183,11 @@ class DrugDirectory extends PureComponent{
     loading: false,
     addLoading: false
   }
+  //新增弹窗搜索
+  searchModalInsert = (val) =>{
+    this.refs.modalTableInsert.fetch({ctmmGenericName:val})
+  }
+
   // 批量设置上下限
   bitchEdit = () =>{
     const { selected } = this.state;
@@ -163,12 +199,30 @@ class DrugDirectory extends PureComponent{
   bitchEditConfirm = () =>{
     this.props.form.validateFields( (err,values) =>{
       if(!err){
+        const { selectedRows } = this.state;
+        let postData=[]
+        selectedRows.map(item=>{
+          postData.push({
+            bigDrugCode:item.bigDrugCode||'',
+            medDrugTypes:item.medDrugType||'',
+            hisDrugCode:item.hisDrugCode||'',
+            upperQuantity:values.upperQuantity||'',
+            downQuantity:values.downQuantity||'',
+            purchaseQuantity:values.purchaseQuantity||'',
+          })
+          return item 
+        })
         this.setState({ loading: true });
-        console.log(values,'values');
-        setTimeout(()=>{
-          message.success('编辑成功');
+        console.log(postData,'postData');
+        this.props.dispatch({
+          type:'drugStorageConfigMgt/OperDeptDrug',
+          payload:{"info":postData},
+          callback:(data)=>{
           this.setState({ loading: false, visible: false, selected:[],selectedRows: [] })
-        },500)
+            message.success('操作成功');
+            this.props.table.fetch();
+          }
+        })
       }
     })
   }
@@ -179,9 +233,16 @@ class DrugDirectory extends PureComponent{
     }
     Modal.confirm({
       title: '确认',
-      content: '是否确认删除该产品',
-      onOk(){
-        console.log('OK 删除')
+      content: '是否确认执行此操作',
+      onOk:()=>{
+        this.props.dispatch({
+          type:'drugStorageConfigMgt/DeleteDeptDrug',
+          payload:{drugCode:selected.join(",")},
+          callback:(data)=>{
+            message.success('操作成功');
+            this.props.table.fetch();
+          }
+        })
       },
       onCancel(){}
     })
@@ -190,33 +251,49 @@ class DrugDirectory extends PureComponent{
     this.setState({ addVisible: true })
   }
   addDrug = () =>{
-    let { modalSelected } = this.state;
+    let { modalSelected , modalSelectedRows } = this.state;
     if(modalSelected.length === 0){
       return message.warning('请至少勾选一项')
     }
-    this.setState({ addLoading: true });
-    setTimeout(()=>{
-      message.success('添加成功');
-      this.setState({ addLoading: false, addVisible: false, modalSelected:[],modalSelectedRows: [] })
+    let postData=[]
+    modalSelectedRows.map(item=>{
+      postData.push({
+        bigDrugCode:item.bigDrugCode||'',
+        medDrugTypes:item.medDrugType||'',
+        hisDrugCode:item.hisDrugCode||'',
+      })
+      return item 
+    })
+    console.log(postData)
+    this.props.dispatch({
+      type:'drugStorageConfigMgt/OperDeptDrug',
+      payload:{"info":postData},
+      callback:(data)=>{
+        console.log(data)
+        message.success('添加成功');
+        this.refs.table.fetch();
+        this.setState({ addLoading: false, addVisible: false, modalSelected:[],modalSelectedRows: [] })
+      }
     })
   }
   render(){
-    const { visible, loading, addVisible, addLoading } = this.state;
+    const { visible, loading, addVisible, addLoading , query} = this.state;
     const { getFieldDecorator } = this.props.form;
     const IndexColumns = [
       ...columns,
       {
         title: '生产厂家',
-        dataIndex: 'productCompany'
+        dataIndex: 'ctmmManufacturerName',
+        width: 120
       },
       {
         title: '库存上限',
-        dataIndex: 'upperkcsl',
+        dataIndex: 'downQuantity',
         width: 100
       },
       {
        title: '库存下限',
-       dataIndex: 'lowerkcsl',
+       dataIndex: 'upperQuantity',
        width: 100
       },
       {
@@ -226,14 +303,14 @@ class DrugDirectory extends PureComponent{
         width: 100,
         render: (text,record)=>{
           return  <span>
-            <Link to={{pathname: `/pharmacy/configMgt/drugDirectory/edit`}}>{'编辑'}</Link>
+            <Link to={{pathname: `/pharmacy/configMgt/drugDirectory/edit/${record.detailId}`}}>{'编辑'}</Link>
           </span>
         }
       },
     ];
     return (
     <div className='ysynet-main-content'>
-      <WrappSearchForm />
+      <WrappSearchForm  query={(data)=>this.refs.table.fetch(data)}/>
       <Row className='ant-row-bottom'>
         <Col>
           <Button type='primary' onClick={this.bitchEdit}>批量设置上下限</Button>
@@ -256,9 +333,11 @@ class DrugDirectory extends PureComponent{
         <Form>
           <FormItem {...formItemLayout} label={`库存上限`}>
             {
-              getFieldDecorator(`upper`,{
+              getFieldDecorator(`upperQuantity`,{
                 initialValue: '',
-                rules: [{  }]
+                rules:[{
+                  required:true,message:"请输入库存上限！"
+                }]
               })(
                 <Input placeholder='请输入'/>
               )
@@ -266,7 +345,19 @@ class DrugDirectory extends PureComponent{
           </FormItem>
           <FormItem {...formItemLayout} label={`库存下限`}>
             {
-              getFieldDecorator(`lower`,{
+              getFieldDecorator(`downQuantity`,{
+                initialValue: '',
+                rules:[{
+                  required:true,message:"请输入库存下限！"
+                }]
+              })(
+                <Input placeholder='请输入'/>
+              )
+            }
+          </FormItem>
+          <FormItem {...formItemLayout} label={`采购量`}>
+            {
+              getFieldDecorator(`purchaseQuantity`,{
                 initialValue: '',
               })(
                 <Input placeholder='请输入'/>
@@ -287,47 +378,41 @@ class DrugDirectory extends PureComponent{
           <Button key="back"  type='default' onClick={()=>this.setState({ addVisible: false })}>取消</Button>
         ]}
       >
-        <Search placeholder='通用名/商品名/生产厂家' style={{ width: 256 }}/>
-        <Table 
-          dataSource={createData()}
-          bordered
-          scroll={{x: '100%'}}
+        <Search placeholder='通用名/商品名/生产厂家' style={{ width: 256 }}
+          onSearch={(e)=>this.searchModalInsert(e)}/>
+        <RemoteTable 
+          ref='modalTableInsert'
+          query={{}}
+          style={{marginTop: 20}}
           columns={columns}
-          rowKey={'id'}
-          pagination={{
-            size: 'small',
-            showQuickJumper: true,
-            showSizeChanger: true
-          }}
+          scroll={{ x: '100%' }}
+          url={configMgt.findDepotFilterList}
           rowSelection={{
             selectedRowKeys: this.state.modalSelected,
             onChange: (selectedRowKeys, selectedRows) => {
               this.setState({modalSelected: selectedRowKeys, modalSelectedRows: selectedRows})
             }
           }}
+          rowKey='bigDrugCode'
         />
       </Modal>
-      <Table 
-        dataSource={createData()}
-        bordered
-        scroll={{x: '160%'}}
+      <RemoteTable 
+        ref='table'
+        query={query}
+        style={{marginTop: 20}}
         columns={IndexColumns}
-        rowKey={'id'}
-        pagination={{
-          size: 'small',
-          showQuickJumper: true,
-          showSizeChanger: true
-        }}
+        scroll={{ x: '100%' }}
+        url={configMgt.findDepotlist}
         rowSelection={{
           selectedRowKeys: this.state.selected,
           onChange: (selectedRowKeys, selectedRows) => {
             this.setState({selected: selectedRowKeys, selectedRows: selectedRows})
           }
         }}
-      
+        rowKey='detailId'
       />
     </div>
     )
   }
 }
-export default Form.create()(DrugDirectory);
+export default connect (state=>state)( Form.create()(DrugDirectory) );
