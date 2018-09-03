@@ -405,8 +405,8 @@ export const getNavData = app => [
     {
       name: "出库单管理-详情",
       icon: 'setting',
-      path: '/drugStorage/outStorage/outReceiptMgt/details',
-      component: dynamicWrapper(app, [], () => import('../routes/DrugStorage/outStorage/outReceiptMgt/details')),
+      path: '/drugStorage/outStorage/outReceiptMgt/details/:id',
+      component: dynamicWrapper(app, ['drugStorage/outStorage'], () => import('../routes/DrugStorage/outStorage/outReceiptMgt/details')),
     },
     {
       name: "退货",
@@ -845,8 +845,8 @@ export const getNavData = app => [
     {
       name: "验收-编辑",//药库-申领入库-验收-编辑
       icon: 'setting',
-      path: '/pharmacy/wareHouse/acceptance/details',
-      component: dynamicWrapper(app, [], () => import('../routes/Pharmacy/wareHouse/acceptance/details')),
+      path: '/pharmacy/wareHouse/acceptance/details/:id',
+      component: dynamicWrapper(app, ['pharmacy/wareHouse'], () => import('../routes/Pharmacy/wareHouse/acceptance/details')),
     },
     {
       name: "上架",//药库-申领入库-上架
