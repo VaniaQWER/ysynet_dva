@@ -682,7 +682,7 @@ export const getNavData = app => [
     {
       name: '药品目录',//药房-药品目录
       icon: 'setting',
-      path: '/pharmacy/configMgt/drugDirectory/edit',
+      path: '/pharmacy/configMgt/drugDirectory/edit/:id',
       component: dynamicWrapper(app, ['drugStorage/configMgt'], () => import('../routes/Pharmacy/configMgt/drugDirectory/edit'))
     },
     {
