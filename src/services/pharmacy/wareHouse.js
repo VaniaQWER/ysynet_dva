@@ -25,3 +25,19 @@ export function applySubmit(options) {
     body: options
   })
 };
+
+export function checkDetail(options) {
+  return request(`${_local}/a/room/roomacceptance/roomCheckDetail`, {
+    method: 'GET',
+    type: 'formData',
+    body: options
+  })
+}
+
+export function saveCheck(options) {
+  return request(`${_local}/a/room/roomacceptancedetail/cheak`, {
+    method: 'POST',
+    type: 'json',
+    body: options
+  })
+}

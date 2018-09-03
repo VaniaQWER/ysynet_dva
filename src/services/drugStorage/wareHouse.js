@@ -32,7 +32,7 @@ export function getsupplierList(options) {     //供应商下拉框
 }
 
 export function getPutStorageInfo(options) {    //入库单详情
-  return request(`${_local}/depot/depotinstore/info`, {
+  return request(`${_local}/a/depot/depotinstore/info`, {
     method: 'POST',
     type: 'formData',
     body: options
@@ -51,6 +51,25 @@ export function putSaveCheck(options) {   //上架完成
   return request(`${_local}/a/depot/shelfList/finish`, {
     method: 'POST',
     type: 'json',
+    body: options
+  })
+}
+
+/*出库单管理*/
+//出库单详情
+export function outStoreDetailInfo(options) {
+  return request(`${_local}/a/common/outstoredetail/outStoreDetailInfo`, {
+    method: 'GET',
+    type: 'formData',
+    body: options
+  })
+}
+
+//出库单复核通过
+export function checkOutStore(options) {
+  return request(`${_local}/a/common/outstoredetail/checkOutStore`, {
+    method: 'POST',
+    type: 'formData',
     body: options
   })
 }
