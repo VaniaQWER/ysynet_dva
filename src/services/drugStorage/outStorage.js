@@ -2,7 +2,7 @@
  * @Author: wwb 
  * @Date: 2018-08-31 21:28:10 
  * @Last Modified by: wwb
- * @Last Modified time: 2018-09-03 14:27:54
+ * @Last Modified time: 2018-08-31 23:17:44
  */
 
 import request from '../../utils/request';
@@ -58,3 +58,23 @@ export function finishPicking(options) { // 确认拣货
     body: options
   })
 };
+
+
+/*出库单管理*/
+//出库单详情
+export function outStoreDetailInfo(options) {
+  return request(`${_local}/a/common/outstoredetail/outStoreDetailInfo`, {
+    method: 'GET',
+    type: 'formData',
+    body: options
+  })
+}
+
+//出库单复核通过
+export function checkOutStore(options) {
+  return request(`${_local}/a/common/outstoredetail/checkOutStore`, {
+    method: 'POST',
+    type: 'formData',
+    body: options
+  })
+}
