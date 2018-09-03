@@ -15,6 +15,8 @@ class DetailsPicking extends PureComponent{
     super (props)
     this.state = {
       detailsData: {},
+      leftDataSource: [],
+      selectedRow: {}, // 选中行
       visible: true,
       loading: false,
       selectedRowKey: [],
@@ -31,7 +33,7 @@ class DetailsPicking extends PureComponent{
         type:'outStorage/distributeDetail',
         payload: { applyCode },
         callback:(data)=>{
-          this.setState({ detailsData: data, applyStatus, loading: false });
+          this.setState({ detailsData: data, applyStatus, loading: false, leftDataSource: data.detailList });
         }
       });
     }
@@ -76,9 +78,19 @@ class DetailsPicking extends PureComponent{
       onCancel:()=>{}
     })
   }
-
+  // 查询配货明细的单条配货记录
+  getDistributeDetail = (id) =>{
+    this.setState({ rightLoading: true });
+    this.props.dispatch({
+      type: 'outStorage/getDistributeDetail',
+      payload: { id },
+      callback: (data) =>{
+        this.setState({ rightDataSource: data, rightLoading: false })
+      }
+    })
+  }
   render(){
-    const { detailsData, visible , hidden, applyStatus, loading, hasStyle } = this.state;
+    const { detailsData, leftDataSource, rightDataSource,visible , hidden, applyStatus, loading, rightLoading, hasStyle } = this.state;
     const leftColumns = [
       {
         title: '通用名称',
@@ -146,32 +158,30 @@ class DetailsPicking extends PureComponent{
       {
         title: '生产批号',
         width:150,
-        dataIndex: 'medicinalCode',
+        dataIndex: 'lot',
       },
       {
         title: '生产日期',
         width:100,
-        dataIndex: 'planTime'
+        dataIndex: 'productDate'
       },
       {
         title: '有效期至',
         width:150,
-        dataIndex: 'planTime1',
-        render:(text,record)=>`${record.planTime}`
+        dataIndex: 'validEndDate',
       },
       {
         title: '可分配数',
-        width:150,
-        dataIndex: 'fmodal',
-        render:(text,record)=>`20`
+        width: 90,
+        dataIndex: 'allocationNum',
       },
       {
         title: '分配数',
         width:150,
-        dataIndex: 'spec',
-        render:(text)=>(
-          <Input />
-        )
+        dataIndex: 'allocationNum',
+        render:(text,record,index)=>{
+          return record.detailDistributeStatus === '0'? text: <Input defaultValue={text}/>
+        }
       }
     ];
     return (
@@ -281,12 +291,19 @@ class DetailsPicking extends PureComponent{
                 loading={loading}
                 scroll={{x: '100%'}}
                 columns={leftColumns}
+                dataSource={leftDataSource}
                 rowKey={'id'}
                 rowClassName={ (record, index) => index === hasStyle ? 'rowClassBg' : ''}
                 onRow={ (record, index) => {
                   return {
                     onClick: () => {
-                      this.setState({ hasStyle: index , subModalSelectRow:record })
+                      let { id } = record;
+                      if(this.state.selectedRow.id === id){
+                        return ;
+                      }else{
+                        this.setState({ hasStyle: index , selectedRow: record });
+                        this.getDistributeDetail(id);
+                      }
                     }
                   };
                 }}
@@ -297,13 +314,11 @@ class DetailsPicking extends PureComponent{
               <Table
                 bordered
                 scroll={{x: '100%'}}
+                dataSource={rightDataSource}
                 columns={rightColumns}
+                loading={rightLoading}
                 rowKey={'id'}
-                pagination={{
-                  size: 'small',
-                  showQuickJumper: true,
-                  showSizeChanger: true
-                }}
+                pagination={false}
               />
             </Col>
           </Row>

@@ -35,6 +35,16 @@ export default {
       }
       if(callback) callback(data.data)
     },
+
+    // 查询配货明细的单条配货记录
+    *getDistributeDetail({ payload,callback },{ call }){
+      const data = yield call(outStorageService.getSingleDetail, payload);
+      if(data.code !== 200){
+        return message.error(data.msg||'获取明细配货记录失败')
+      }
+      if(callback) callback(data.data)
+    },
+
     // 配货单配货一系列操作
     *distributeEvent({ payload,callback },{ call }){
       const data = yield call(outStorageService.distributeEvent, payload);

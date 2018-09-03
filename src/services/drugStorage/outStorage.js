@@ -2,7 +2,7 @@
  * @Author: wwb 
  * @Date: 2018-08-31 21:28:10 
  * @Last Modified by: wwb
- * @Last Modified time: 2018-08-31 23:17:44
+ * @Last Modified time: 2018-09-03 14:27:54
  */
 
 import request from '../../utils/request';
@@ -28,6 +28,16 @@ export function distributeDetail(options) { // 配货单据详情
     body: options
   })
 };
+
+// 受理配货 单条配货详情
+export function getSingleDetail(options) { // 配货单据详情
+  return request(`${_local}/a/commondistribute/singleQuery`,{ 
+    method: 'GET',
+    type: 'formData',
+    body: options
+  })
+};
+
 
 // 受理配货 配货状体变更事件
 export function distributeEvent(options) { // 配货单据详情

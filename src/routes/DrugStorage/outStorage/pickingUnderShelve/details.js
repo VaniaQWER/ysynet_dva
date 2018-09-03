@@ -48,10 +48,10 @@ class DetailsPickSoldOut extends PureComponent{
     let { leftDataSource } = this.state;
     let newDataSource = [ ...leftDataSource ];
       if (/^\d+$/.test(value)) {
-        if (value > 9999999) {
-          e.target.value  = 9999999;
-          newDataSource[index].amount = 9999999;
-          return message.warn('输入数值过大, 不能超过10000000')
+        if (value > record.allocationNum) {
+          e.target.value  = record.allocationNum;
+          newDataSource[index].amount = record.allocationNum;
+          return message.warn(`输入数值过大, 不能超过${record.allocationNum}`)
         }
         else{
           newDataSource[index].amount = value;

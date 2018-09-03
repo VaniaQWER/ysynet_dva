@@ -370,13 +370,13 @@ export const getNavData = app => [
       name: "受理配货",
       icon: 'setting',
       path: '/drugStorage/outStorage/acceptDistribution',
-      component: dynamicWrapper(app, [], () => import('../routes/DrugStorage/outStorage/acceptDistribution')),
+      component: dynamicWrapper(app, ['drugStorage/outStorage'], () => import('../routes/DrugStorage/outStorage/acceptDistribution')),
     },
     {
       name: "受理配货-详情",
       icon: 'setting',
       path: '/drugStorage/outStorage/acceptDistribution/details',
-      component: dynamicWrapper(app, [], () => import('../routes/DrugStorage/outStorage/acceptDistribution/details')),
+      component: dynamicWrapper(app, ['drugStorage/outStorage'], () => import('../routes/DrugStorage/outStorage/acceptDistribution/details')),
     },
     {
       name: "拣货下架",

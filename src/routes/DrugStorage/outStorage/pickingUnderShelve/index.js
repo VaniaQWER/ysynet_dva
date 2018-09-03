@@ -19,11 +19,20 @@ const Option = Select.Option;
 class SearchFormWrapper extends PureComponent {
   state = {
     display: 'none',
+    deptOptions: [], // 申领部门
     picking_status: [], //拣货状态
     picking_type: []// 拣货类型
   }
   componentWillMount = () =>{
     const { dispatch } = this.props;
+    dispatch({
+      type: 'outStorage/findApplyDepts',
+      payload: {},
+      callback: (data) => {
+        this.setState({ deptOptions: data })
+      }
+    })
+
     // 拣货状态
     dispatch({
       type: 'base/orderStatusOrorderType',
@@ -70,7 +79,7 @@ class SearchFormWrapper extends PureComponent {
   }
  
   render() {
-    const { display, picking_status, picking_type } = this.state;
+    const { display, deptOptions, picking_status, picking_type } = this.state;
     const { getFieldDecorator } = this.props.form;
     return (
      <Form onSubmit={this.handleSearch}>
@@ -87,6 +96,9 @@ class SearchFormWrapper extends PureComponent {
                  filterOption={(input, option) => option.props.children.indexOf(input) >= 0}
                  >
                 <Option key="" value="">全部</Option>
+                {
+                  deptOptions.map((item,index)=> <Option key={index} value={ item.id } deptType={item.deptType}>{ item.deptName }</Option>)
+                }
                </Select>
               )}
             </FormItem>
