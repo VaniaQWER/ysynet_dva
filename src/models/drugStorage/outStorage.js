@@ -2,7 +2,7 @@
  * @Author: wwb 
  * @Date: 2018-08-31 23:18:25 
  * @Last Modified by: wwb
- * @Last Modified time: 2018-09-01 09:33:01
+ * @Last Modified time: 2018-09-03 15:39:10
  */
 
 import * as outStorageService from '../../services/drugStorage/outStorage';
@@ -53,6 +53,17 @@ export default {
       }
       if(callback) callback(data.data)
     },
+
+    // 查询配货明细的单条配货记录
+    *getDistributeDetail({ payload,callback },{ call }){
+      const data = yield call(outStorageService.getSingleDetail, payload);
+      if(data.code !== 200){
+        return message.error(data.msg||'获取明细配货记录失败')
+      }
+      if(callback) callback(data.data)
+    },
+
+
     // 配货单配货一系列操作
     *distributeEvent({ payload,callback },{ call }){
       const data = yield call(outStorageService.distributeEvent, payload);

@@ -908,14 +908,14 @@ export const getNavData = app => [
       name: "受理配货",
       icon: 'setting',
       path: '/pharmacy/outStorage/acceptDistribution',
-      component: dynamicWrapper(app, [], () => import('../routes/Pharmacy/outStorage/acceptDistribution')),
+      component: dynamicWrapper(app, ['drugStorage/outStorage'], () => import('../routes/Pharmacy/outStorage/acceptDistribution')),
     },
     // 药房-出库-受理配货-详情
     {
       name: "受理配货-详情",
       icon: 'setting',
       path: '/pharmacy/outStorage/acceptDistribution/details',
-      component: dynamicWrapper(app, [], () => import('../routes/Pharmacy/outStorage/acceptDistribution/details')),
+      component: dynamicWrapper(app, ['drugStorage/outStorage'], () => import('../routes/Pharmacy/outStorage/acceptDistribution/details')),
     },
     // 药房-出库-拣货下架
     {
