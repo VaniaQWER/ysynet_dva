@@ -10,6 +10,9 @@ import SubSystem from './routes/System';
 import NewAdd from './routes/Purchase/replenishment/replenishmentPlan/add';
 import CatalogAdd from './routes/Purchase/replenishment/outCatalogPurchase/add';
 import AddDrugsFor from './routes/Pharmacy/wareHouse/drugsFor/add';
+import AddNewAcceptance from './routes/Pharmacy/wareHouse/acceptance/add';
+import AddOutput from './routes/DrugStorage/outStorage/outReceiptMgt/add';
+import PharmacyAddNewOutput from './routes/Pharmacy/outStorage/newOut/add';
 import { getNavData } from './common/nav';
 import { getPlainNode } from './utils/utils';
 
@@ -69,6 +72,9 @@ function RouterConfig({ history, app }) {
           <Route path="/editReplenishment/:planCode" component={NewAdd}/>
           <Route path="/createOutCatalogPurcahsePlan" component={CatalogAdd}/>
           <Route path="/addDrugsFor" component={AddDrugsFor}/>
+          <Route path="/addNewAcceptance" component={AddNewAcceptance}/>
+          <Route path="/addNewOutput" component={AddOutput}/>
+          <Route path="/pharmacyAddNewOutput" component={PharmacyAddNewOutput}/>
           {/* <Route path="/home" component={Home}/> */}
           {/* <Route path="/app" render={props => <WorkplaceLayout {...props} {...passProps} />} /> */}
           <Route path="/" render={props => <BasicLayout {...props} {...passProps} />} />

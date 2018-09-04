@@ -1,211 +1,234 @@
+/*
+ * @Author: yuwei  新建出库详情 /output/details
+ * @Date: 2018-07-24 13:13:55 
+* @Last Modified time: 2018-07-24 13:13:55 
+ */
 import React, { PureComponent } from 'react';
-import { Table, Row, Col, Button, Tooltip, Modal, message } from 'antd';
-import { createData } from '../../../../common/data';
-
-class Details extends PureComponent {
-    // 确认
-  confirm = () => {
-    Modal.confirm({
-      content:"您确定要执行此操作？",
-      onOk: () => {
-        message.success('复核通过！');
-        const { history } = this.props;
-        history.push({pathname:"/pharmacy/outStorage/newOut"});
-      },
-      onCancel: () => {}
-    })
+import { Table, Row, Col, Button, Tooltip} from 'antd';
+import {connect} from 'dva';
+const columns = [
+  {
+    title: '通用名',
+    width:100,
+    dataIndex: 'ctmmGenericName'
+  },
+  {
+    title: '商品名',
+    width:150,
+    dataIndex: 'ctmmTradeName',
+  },
+  {
+    title: '规格',
+    width:150,
+    dataIndex: 'ctmmSpecification',
+    className:'ellipsis',
+    render:(text)=>(
+      <Tooltip placement="topLeft" title={text}>{text}</Tooltip>
+    )
+  },
+  {
+    title: '剂型',
+    width:150,
+    dataIndex: 'ctmmDosageFormDesc',
+  },
+  {
+    title: '包装规格',
+    width:150,
+    dataIndex: 'packageSpecification'
+  },
+  {
+    title: '单位',
+    width:100,
+    dataIndex: 'replanUnit'
+  },
+  {
+    title: '出库数量',
+    width:100,
+    dataIndex: 'backNum'
+  },
+  {
+    title: '生产批号',
+    width:150,
+    dataIndex: 'lot',
+  },
+  {
+    title: '生产日期',
+    width:150,
+    dataIndex: 'productDate',
+  },
+  {
+    title: '有效期至',
+    width:150,
+    dataIndex: 'validEndDate'
+    
+  },
+  {
+    title: '批准文号',
+    width:150,
+    dataIndex: 'approvalNo',
+  },
+  {
+    title: '生产厂家',
+    width:150,
+    dataIndex: 'ctmmManufacturerName',
+  },
+  {
+    title: '供应商',
+    width:150,
+    dataIndex: 'supplierName',
   }
+];
 
-  // 保存
-  save = () => {
-    Modal.confirm({
-      content:"您确定要执行此操作？",
-      onOk: () => {
-        message.error('复核不通过');
-      },
-      onCancel: () => {}
-    })
-  }
-    render() {
-        const columns = [
-            {
-                title: '通用名称',
-                dataIndex: 'productName1',
-                render: (text, record) => record.productName
-            },
-            {
-                title: '商品名',
-                dataIndex: 'productName'
-            },
-            {
-                title: '规格',
-                dataIndex: 'spec',
-                className: 'ellipsis',
-                render: (text) => (
-                    <Tooltip placement="topLeft" title={text}>{text}</Tooltip>
-                )
-            },
-            {
-                title: '剂型',
-                dataIndex: 'fmodal'
-            },
-            {
-                title: '包装规格',
-                dataIndex: 'gzgz',
-                render: (text) => '0.25gX12片'
-            },
-            {
-                title: '单位',
-                dataIndex: 'unit',
-                render: (text) => 'g'
-            },
-            {
-                title: '库存数量',
-                dataIndex: 'assetsRecord',
-                render: (text) => '120'
-            },
-            {
-                title: '货位类型',
-                dataIndex: 'huow',
-                render: (text) => '补货货位'
-            },
-            {
-                title: '生产批号',
-                dataIndex: 'shengcNumber',
-                render: (text) => 'PH1231'
-            },
-            {
-                title: '生产日期',
-                dataIndex: 'shengcDate',
-                render: (text) => '2018-04-04'
-            },
-            {
-                title: '有效期至',
-                dataIndex: 'yxqz',
-                render: (text) => '2020-04-04'
-            },
-            {
-                title: '批准文号',
-                dataIndex: 'approvalNo',
-                render: (text, record, index) => '86900234000039'+index
-            },
-            {
-                title: '生产厂家',
-                dataIndex: 'productCompany',
-                render: (text) => '浙江安宝药业有限公司'
-            },
-            {
-                title: '供应商',
-                dataIndex: 'supplier'
-            }
-        ];
-        return (
-            <div className='fullCol'>
-                <div className='fullCol-fullChild'>
-                    <Row>
-                        <Col span={12}>
-                            <h2>单据信息</h2>
-                        </Col>
-                        <Col span={12} style={{ textAlign: 'right' }}>
-                            <Button type='primary' style={{ marginRight: 10 }} onClick={this.confirm}>复核通过</Button>
-                            <Button className='button-gap' onClick={this.save}>不通过</Button>
+class DetailsOutput extends PureComponent{
 
-                        </Col>
-                    </Row>
-                    <Row>
-                        <Col span={8}>
-                            <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-4">
-                                <label>出库单</label>
-                            </div>
-                            <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
-                                <div className='ant-form-item-control'>PA002211807000086U</div>
-                            </div>
-                        </Col>
-                        <Col span={8}>
-                            <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-4">
-                                <label>状态</label>
-                            </div>
-                            <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
-                                <div className='ant-form-item-control'>待复核</div>
-                            </div>
-                        </Col>
-                        <Col span={8}>
-                            <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-4">
-                                <label>申调部门</label>
-                            </div>
-                            <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
-                                <div className='ant-form-item-control'>静配中心</div>
-                            </div>
-                        </Col>
-                        <Col span={8}>
-                            <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-4">
-                                <label>发起人</label>
-                            </div>
-                            <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
-                                <div className='ant-form-item-control'>李四四</div>
-                            </div>
-                        </Col>
-                        <Col span={8}>
-                            <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-4">
-                                <label>发起时间</label>
-                            </div>
-                            <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
-                                <div className='ant-form-item-control'>2018-07-12 17:09:15</div>
-                            </div>
-                        </Col>
-                        <Col span={8}>
-                            <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-4">
-                                <label>联系电话</label>
-                            </div>
-                            <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
-                                <div className='ant-form-item-control'>13809099090</div>
-                            </div>
-                        </Col>
-                        <Col span={8}>
-                            <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-4">
-                                <label>药房地址</label>
-                            </div>
-                            <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
-                                <div className='ant-form-item-control'>科室地址科室地址地址挺长的</div>
-                            </div>
-                        </Col>
-                        <Col span={8}>
-                            <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-4">
-                                <label>复核人</label>
-                            </div>
-                            <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
-                                <div className='ant-form-item-control'>王文斌</div>
-                            </div>
-                        </Col>
-                        <Col span={8}>
-                            <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-4">
-                                <label>复核时间</label>
-                            </div>
-                            <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
-                                <div className='ant-form-item-control'>2018-08-06 17:09:15</div>
-                            </div>
-                        </Col>
-                    </Row>
-                    <div style={{ borderBottom: '1px solid #d9d9d9', marginBottom: 20, marginTop: 20 }}></div>
-                </div>
-                <div className='detailCard'>
-                    <Table
-                        title={() => '产品信息'}
-                        dataSource={createData()}
-                        bordered
-                        scroll={{ x: '220%' }}
-                        columns={columns}
-                        rowKey={'id'}
-                        style={{ marginTop: 24 }}
-                        pagination={{
-                            size: 'small',
-                            showQuickJumper: true,
-                            showSizeChanger: true
-                        }}
-                    />
-                </div>
-            </div>
-        )
+  constructor(props){
+    super(props)
+    this.state={
+      info: {},
+      loading: false
     }
+  }
+  componentDidMount() {
+    this.setState({loading: true});
+    this.props.dispatch({
+      type: 'outStorage/outStoreDetailInfo',
+      payload: {
+        backNo: this.props.match.params.id
+      },
+      callback: (data) => {
+        this.setState({info: data, loading: false});
+      }
+    })
+  }
+  //不通过
+  onBan = () =>{
+    
+  }
+  //确认
+  onSubmit = () =>{
+    let {info} = this.state
+    let {backNo, deptCode, detailVo} = info;
+    let outStoreDetail = detailVo.map(item => {
+      return {
+        backSumNum: item.backNum,
+        batch: item.lot,
+        drugCode: item.drugCode
+      }
+    });
+    this.props.dispatch({
+      type: 'outStorage/checkOutStore',
+      payload: {
+        backNo,
+        deptCode,
+        outStoreDetail
+      },
+      callback: (data) => {
+        this.props.history.go(-1);
+      }
+    })
+  }
+
+  render(){
+    let {info, loading} = this.state;
+    let {detailVo} = info;
+    return (
+      <div className='fullCol fadeIn'>
+        <div className="fullCol-fullChild">
+          <h3>单据信息 
+            <Button style={{float:'right'}} onClick={()=>this.onBan()} >不通过</Button>
+            <Button type='primary' className='button-gap' style={{float:'right'}} onClick={()=>this.onSubmit()}>复核通过</Button>
+          </h3>
+          <Row>
+            <Col span={8}>
+              <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
+                  <label>出库单</label>
+              </div>
+              <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
+                <div className='ant-form-item-control'>{info.backNo || ''}</div>
+              </div>
+            </Col>
+            <Col span={8}>
+              <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
+                  <label>状态</label>
+              </div>
+              <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
+                <div className='ant-form-item-control'>{info.status || ''}</div>
+              </div>
+            </Col>
+            <Col span={8}>
+              <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
+                  <label>申领药房</label>
+              </div>
+              <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
+                <div className='ant-form-item-control'>{info.deptName || ''}</div>
+              </div>
+            </Col>
+          </Row>
+          <Row>
+            <Col span={8}>
+              <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
+                  <label>发起人</label>
+              </div>
+              <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
+                <div className='ant-form-item-control'>{info.createUserName || ''}</div>
+              </div>
+            </Col>
+            <Col span={8}>
+              <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
+                  <label>发起时间</label>
+              </div>
+              <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
+                <div className='ant-form-item-control'>{info.createDate || ''}</div>
+              </div>
+            </Col>
+            <Col span={8}>
+              <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
+                  <label>联系电话</label>
+              </div>
+              <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
+                <div className='ant-form-item-control'>{info.phone || ''}</div>
+              </div>
+            </Col>
+          </Row>
+          <Row>
+            <Col span={8}>
+              <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
+                  <label>药房地址</label>
+              </div>
+              <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
+                <div className='ant-form-item-control'>{info.deptAddress || ''}</div>
+              </div>
+            </Col>
+            <Col span={8}>
+              <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
+                  <label>复核人</label>
+              </div>
+              <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
+                <div className='ant-form-item-control'>{info.checkUserName || ''}</div>
+              </div>
+            </Col>
+            <Col span={8}>
+              <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
+                  <label>复核时间</label>
+              </div>
+              <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
+                <div className='ant-form-item-control'>{info.checkDate || ''}</div>
+              </div>
+            </Col>
+          </Row>
+        </div>
+        <div className="detailCard">
+          <Table
+            bordered
+            loading={loading}
+            dataSource={detailVo || []}
+            scroll={{x: '250%'}}
+            columns={columns}
+            rowKey={'lot'}
+          />
+        </div>
+      </div>
+    )
+  }
 }
-export default Details;
+export default connect(state=>state)(DetailsOutput);

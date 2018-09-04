@@ -394,7 +394,7 @@ export const getNavData = app => [
       name: "出库单管理",
       icon: 'setting',
       path: '/drugStorage/outStorage/outReceiptMgt',
-      component: dynamicWrapper(app, [], () => import('../routes/DrugStorage/outStorage/outReceiptMgt')),
+      component: dynamicWrapper(app, ['drugStorage/outStorage'], () => import('../routes/DrugStorage/outStorage/outReceiptMgt')),
     },
     {
       name: "出库单管理-新增",
@@ -931,12 +931,6 @@ export const getNavData = app => [
       path: '/pharmacy/outStorage/pickingUnderShelve/details',
       component: dynamicWrapper(app, [], () => import('../routes/Pharmacy/outStorage/pickingUnderShelve/details')),
     },
-    {
-      name: "新建出库",
-      icon: 'setting',
-      path: '/pharmacy/outStorage/newOut',
-      component: dynamicWrapper(app, [], () => import('../routes/Pharmacy/outStorage/newOut')),
-    },
     // 药房-出库-新建出库
     {
       name: "新建出库",
@@ -955,8 +949,8 @@ export const getNavData = app => [
     {
       name: "新建出库-详情",
       icon: 'setting',
-      path: '/pharmacy/outStorage/newOut/details',
-      component: dynamicWrapper(app, [], () => import('../routes/Pharmacy/outStorage/newOut/details')),
+      path: '/pharmacy/outStorage/newOut/details/:id',
+      component: dynamicWrapper(app, ['drugStorage/outStorage'], () => import('../routes/Pharmacy/outStorage/newOut/details')),
     },
     /* ********************      货位调整      ************************** */
     {

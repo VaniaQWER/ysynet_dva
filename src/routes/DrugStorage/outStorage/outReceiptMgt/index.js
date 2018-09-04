@@ -5,10 +5,12 @@
  */
 
 import React, { PureComponent } from 'react';
-import { Table , Form, Row, Col, Button, Icon, Select , Input , DatePicker , Modal , message} from 'antd';
+import {Form, Row, Col, Button, Icon, Select, Input, DatePicker, Modal, message} from 'antd';
 import { Link } from 'react-router-dom';
 import { formItemLayout } from '../../../../utils/commonStyles';
-import { createData } from '../../../../common/data';
+import RemoteTable from '../../../../components/TableGrid/index';
+import {outStorage} from '../../../../api/drugStorage/outStorage';
+import {connect} from 'dva';
 const RangePicker = DatePicker.RangePicker;
 const FormItem = Form.Item;
 const Option = Select.Option;
@@ -16,59 +18,52 @@ const Confirm = Modal.confirm;
 const columns = [
   {
    title: '出库单',
-   dataIndex: 'medicinalCode',
+   dataIndex: 'backNo',
    width:150,
-   render:(text)=>
+   render:(text, record)=>
    <span>
-      <Link to={{pathname: `/drugStorage/outStorage/outReceiptMgt/details`}}>{text}</Link>
+      <Link to={{pathname: `/drugStorage/outStorage/outReceiptMgt/details/${record.backNo}`}}>{text}</Link>
     </span>
   },
   {
     title: '拣货单',
     width:180,
-    dataIndex: 'planNo',
+    dataIndex: 'pickingNo',
   },
   {
     title: '出库分类',
     width:100,
-    dataIndex: 'fmodal2',
-    render:(text)=>'领用出库'
+    dataIndex: 'backType',
   },
   {
     title: '状态',
     width:100,
-    dataIndex: 'spec21',
-    render:(text)=>'待复核'
+    dataIndex: 'status',
   },
   {
     title: '申领部门',
     width:100,
-    dataIndex: 'custodian',
-    render: (text, record, index) => '静配中心'
+    dataIndex: 'deptName'
   },
   {
     title: '发起人',
     width:100,
-    dataIndex: 'bDept',
-    render: (text, record, index) => '王文斌'
+    dataIndex: 'createUserName'
   },
   {
    title: '发起时间',
-   dataIndex: 'useDept',
-   width:120,
-   render: (text, record, index) => '2018-7-25 21:17'
+   dataIndex: 'createDate',
+   width:120
   },
  {
   title: '复核人',
   width:100,
-  dataIndex: 'useDept1',
-  render: (text, record, index) => '张冰冰'
+  dataIndex: 'checkUserName'
  },
  {
   title: '复核时间',
   width:160,
-  dataIndex: 'useDept21',
-  render: (text, record, index) => '2018-7-25 21:17'
+  dataIndex: 'checkDate'
  }
 ];
 
@@ -78,46 +73,62 @@ class Output extends PureComponent{
     super(props);
     this.state = {
       query:{},
+      selected: []
     }
   }
   queryHandler = (query) => {
-    this.setState({ query:query })
+    this.setState({query: query})
   }
 
   //删除
   delete = () => {
+    let {selected} = this.state;
+    if(selected.length === 0) {
+      message.warning('请选择一条数据');
+      return;
+    }
+    let ids = selected;
     Confirm({
       content:'您确定要删除吗？',
       onOk:()=>{
-        message.success('删除成功！')
+        this.props.dispatch({
+          type: 'outStorage/deleteOutStore',
+          payload: {
+            ids
+          },
+          callback: (data) => {
+            message.success('删除成功');
+            let {query} = this.state;
+            this.refs.tab.fetch(query);
+          }
+        })
       }
     })
   }
   render(){
+    let {query} = this.state;
     return (
       <div className='ysynet-main-content'>
-        <SearchForm query={this.queryHandler} />
+        <SearchForm dispatch={this.props.dispatch} query={this.queryHandler} />
         <Row>
           <Button type='primary' className='button-gap'>
-            <Link to={{pathname:`/drugStorage/outStorage/outReceiptMgt/add`}}>新建出库</Link>
+            <Link to={{pathname:`/addNewOutput`}}>新建出库</Link>
           </Button>
           <Button onClick={this.delete}>删除</Button>
         </Row>
-        <Table
+        <RemoteTable
+          query={query}
+          url={outStorage.OUTSTORELIST}
           rowSelection={{
             onChange:(selectedRowKeys,selectedRows)=>{
-              console.log(selectedRowKeys,selectedRows)
-            }
+              this.setState({selected: selectedRowKeys})
+            },
+            getCheckboxProps: (record) => ({
+              disabled: record.outStoreStatus !== 3
+            })
           }}
-          dataSource={createData()}
-          bordered
-          loading={ this.state.loading}
-          scroll={{x: '100%'}}
-          pagination={{
-            size: "small",
-            showQuickJumper: true,
-            showSizeChanger: true
-          }}
+          ref="tab"
+          scroll={{x: '150%'}}
           columns={columns}
           rowKey={'id'}
           style={{marginTop: 20}}
@@ -126,11 +137,42 @@ class Output extends PureComponent{
     )
   }
 }
-export default Output;
+export default connect(state=>state)(Output);
 /* 搜索 - 表单 */
 class SearchFormWrapper extends PureComponent {
  state = {
    display: 'none',
+   status: [],
+   type: [],
+   dept: []
+ }
+ componentDidMount() {
+  this.props.dispatch({
+    type: 'base/orderStatusOrorderType',
+    payload: {
+      type: 'out_store_status'
+    },
+    callback: (data) => {
+      this.setState({status: data});
+    }
+  });
+  this.props.dispatch({
+    type: 'base/orderStatusOrorderType',
+    payload: {
+      type: 'out_store_type'
+    },
+    callback: (data) => {
+      this.setState({type: data});
+    }
+  });
+  this.props.dispatch({
+    type: 'base/findAllDepts',
+    callback: (data) => {
+      this.setState({
+        dept: data
+      });
+    }
+  })
  }
  toggle = () => {
    const { display, expand } = this.state;
@@ -140,10 +182,19 @@ class SearchFormWrapper extends PureComponent {
    })
  }
  handleSearch = (e) => {
-   e.preventDefault();
-   this.props.form.validateFields((err, values) => {
-     this.props.query(values);
-   });
+  e.preventDefault();
+  this.props.form.validateFields((err, values) => {
+    let {time} = values;
+    if(time.length > 0) {
+      values.startTime = time[0].format('YYYY-MM-DD');
+      values.endTime = time[1].format('YYYY-MM-DD');
+    }else {
+      values.startTime = '';
+      values.endTime = '';
+    };
+    delete values.time;
+    this.props.query(values);
+  });
  }
  //重置
  handleReset = () => {
@@ -151,67 +202,76 @@ class SearchFormWrapper extends PureComponent {
    this.props.query({});
  }
 
+ dataRender = (data) => {
+   return data.map((item, i)=>{
+     return <Option key={i} value={item.value}>{item.label}</Option>
+   })
+ }
+
  render() {
-   const { display } = this.state;
+   let {display, status, type, dept} = this.state;
    const { getFieldDecorator } = this.props.form;
+   status = this.dataRender(status);
+   type = this.dataRender(type);
+   dept = dept.map((item, i) => {
+     return <Option key={i} value={item.id}>{item.deptName}</Option>
+   });
+
    return (
      <Form onSubmit={this.handleSearch}>
        <Row gutter={30}>
          <Col span={8}>
            <FormItem label={`申领部门`} {...formItemLayout}>
-             {getFieldDecorator('assetCode', {})(
+             {getFieldDecorator('deptCode', {})(
               <Select 
                 showSearch
                 placeholder={'请选择'}
                 optionFilterProp="children"
                 filterOption={(input, option) => option.props.children.indexOf(input) >= 0}
                 >
-                    <Option key="" value="">全部</Option>
+                {dept}
               </Select>
              )}
            </FormItem>
          </Col>
          <Col span={8}>
            <FormItem label={`出库时间`} {...formItemLayout}>
-             {getFieldDecorator('assetName', {})(
+             {getFieldDecorator('time', {})(
               <RangePicker/>
              )}
            </FormItem>
          </Col>
          <Col span={8} style={{display: display}}>
            <FormItem label={`出库分类`} {...formItemLayout}>
-             {getFieldDecorator('spec')(
+             {getFieldDecorator('backType')(
               <Select 
                 showSearch
                 placeholder={'请选择'}
                 optionFilterProp="children"
                 filterOption={(input, option) => option.props.children.indexOf(input) >= 0}
                 >
-                <Option key="" value="">全部</Option>
-                <Option key="01" value="01">领用出库</Option>
-                <Option key="02" value="02">召回</Option>
+                {type}
               </Select>
              )}
            </FormItem>
          </Col>
          <Col span={8} style={{display: display}}>
            <FormItem label={`单据号`} {...formItemLayout}>
-             {getFieldDecorator('manageDeptGuid')(
+             {getFieldDecorator('orderNo')(
               <Input placeholder='出库单/拣货单'/>
              )}
            </FormItem>
          </Col>
          <Col span={8} style={{display: display}}>
            <FormItem label={`状态`} {...formItemLayout}>
-             {getFieldDecorator('useDeptGuid')(
+             {getFieldDecorator('backStatus')(
               <Select 
                 showSearch
                 placeholder={'请选择'}
                 optionFilterProp="children"
                 filterOption={(input, option) => option.props.children.indexOf(input) >= 0}
                 >
-                <Option key="" value="">全部</Option>
-                <Option key="01" value="01">待复核</Option>
+                {status}
               </Select>
              )}
            </FormItem>

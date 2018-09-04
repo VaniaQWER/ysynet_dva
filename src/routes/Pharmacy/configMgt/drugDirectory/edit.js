@@ -16,6 +16,16 @@ const formItemLayout ={
     sm: { span: 14 }
   },
 }
+const inlineFormItemLayout = {
+  labelCol: {
+    xs: { span: 24 },
+    sm: { span: 10 },
+  },
+  wrapperCol: {
+    xs: { span: 24 },
+    sm: { span: 14 }
+  },
+}
 const customPanelStyle = {
   background: '#fff',
   borderRadius: 4,
@@ -34,7 +44,12 @@ class EditDrugDirectory extends PureComponent{
     fillBackData:{},//药品目录详情信息
     replanUnitSelect:[],//补货单位下拉框
     goodsTypeSelect:[],//补货指示货位
-    keys:[]
+    keys:[],
+    replanSelect:[],//补货指示货位
+    dispensingSelect:[],//发药机货位
+    scatteredSelect:[],//预拆零货位
+    advanceSelect:[],//拆零发药货位
+    replanUnitZN:'',//存储补货单位的中文。然后赋值给指示货位的补货指示货位的存储单位
   }
 
   componentDidMount(){
@@ -58,12 +73,20 @@ class EditDrugDirectory extends PureComponent{
       }
     })
 
-    //获取补货指示  h货位
+    //获取指示货位各种下拉框
     this.props.dispatch({
-      type:'drugStorageConfigMgt/getGoodsTypeInfo',
-      payload:{positionType:'1'},
+      type:'drugStorageConfigMgt/GetAllGoodsTypeInfo',
+      payload:null,
       callback:(data)=>{
-        this.setState({goodsTypeSelect:data.data})
+        if(data && data.data[0]){
+          let obj = data.data[0];
+          this.setState({
+            replanSelect:obj.replan,//补货指示货位
+            dispensingSelect:obj.dispensing,//发药机货位
+            scatteredSelect:obj.scattered,//预拆零货位
+            advanceSelect:obj.advance,//拆零发药货位
+          })
+        }
       }
     })
   }
@@ -75,17 +98,22 @@ class EditDrugDirectory extends PureComponent{
         this.props.form.validateFields((err,values)=>{
           console.log(values)
           const { customUnit , replanUnitCode , replanStore , purchaseQuantity ,
-            upperQuantity , downQuantity  }  =values; 
+            upperQuantity , downQuantity ,...otherInfo }  =values; 
             let postData = {
               customUnit,
               drugInfo:{
-                replanUnitCode , replanStore , purchaseQuantity ,
+                replanUnitCode , purchaseQuantity ,
                 upperQuantity , downQuantity ,
+                replanStore,
+                id:this.props.match.params.id,
                 drugCode:this.state.fillBackData.drugCode||'',
                 bigDrugCode:this.state.fillBackData.bigDrugCode,
                 hisDrugCode:this.state.fillBackData.hisDrugCode,
+                ...otherInfo
               }
             }
+            delete postData['drugInfo']['keys'];
+            
           console.log(JSON.stringify(postData));
           //发出请求
           this.props.dispatch({
@@ -137,14 +165,14 @@ class EditDrugDirectory extends PureComponent{
   getMaPInfo = (List,ind)=>{
     if(List && List.length){
       let ret =  List.filter(item=>item.sort===ind);
-      return `${ret[0].bigUnit||''}  -  ${ret[0].conversionRate||''}${ret[0].smallUit||''}`
+      return `${ret[0].bigUnit||''}  =  ${ret[0].conversionRate||''}${ret[0].smallUit||''}`
     }
   }
 
 
   render(){
 
-    const { fillBackData , replanUnitSelect , goodsTypeSelect } =this.state;
+    const { fillBackData , replanUnitSelect ,replanUnitZN , replanSelect ,dispensingSelect , scatteredSelect,advanceSelect  } =this.state;
     const { getFieldDecorator , getFieldValue } = this.props.form;
     getFieldDecorator('keys', { initialValue: fillBackData?fillBackData.customUnit?fillBackData.customUnit:[]:[] });
     const keys = getFieldValue('keys');
@@ -335,7 +363,14 @@ class EditDrugDirectory extends PureComponent{
                         }]
                       })(
                         <Select
-                          style={{ width: 200 }}>
+                          style={{ width: 200 }}
+                          onChange={(value,option)=>{
+                            console.log(option.props.children)
+                            this.setState({
+                              replanUnitZN:option.props.children
+                            })
+                          }}
+                          >
                             {
                               replanUnitSelect && replanUnitSelect.length?
                               replanUnitSelect.map((item,index)=>(
@@ -400,27 +435,177 @@ class EditDrugDirectory extends PureComponent{
             <Panel header="指示货位" key="3" style={customPanelStyle}>
               <Row>
                 <Col span={10}>
-                  <FormItem {...formItemLayout} label={`补货指示货位`}>
-                    {
-                      getFieldDecorator(`replanStore`,{
-                        initialValue:fillBackData?fillBackData.replanStore:'',
-                        rules:[
-                          {required:true,message:'请选择补货指示货位！'}
-                        ]
-                      })(
-                        <Select
-                        style={{ width: 200 }}
-                      >
+                    <Row gutter={8}>
+                      <Col span={12}>
+                        <FormItem {...inlineFormItemLayout} label={`补货指示货位`}>
+                          {
+                            getFieldDecorator(`replanStore`,{
+                              initialValue:fillBackData?fillBackData.replanStore:'',
+                              rules:[
+                                {required:true,message:'请选择补货指示货位！'}
+                              ]
+                            })(
+                              <Select>
+                                {
+                                  replanSelect && replanSelect.length ?
+                                  replanSelect.map((item,index)=>(
+                                    <Option key={index} value={item.id}>{item.positionName}</Option>
+                                  )):null
+                                }
+                              </Select>
+                            )
+                          }
+                        </FormItem>
+                      </Col>
+                      <Col span={12} style={{    marginTop: 10}}>
+                        {/*   replanUnit / replanUnitCode */}
+                        存储单位:{replanUnitZN!==''? `${replanUnitZN}` : fillBackData?fillBackData.replanUnit:''}
+                      </Col>
+                    </Row>
+                </Col>
+                <Col span={10}>
+                  <Row gutter={8}>
+                      <Col span={12}>
+                        <FormItem {...inlineFormItemLayout} label={`发药机货位`}>
+                          {
+                            getFieldDecorator(`dispensingMachineLoc`,{
+                              initialValue:fillBackData?fillBackData.dispensingMachineLoc:'',
+                              rules:[
+                                {required:true,message:'请选择发药机货位！'}
+                              ]
+                            })(
+                              <Select>
+                              {
+                                dispensingSelect && dispensingSelect.length ?
+                                dispensingSelect.map((item,index)=>(
+                                  <Option key={index} value={item.id}>{item.positionName}</Option>
+                                )):null
+                              }
+                            </Select>
+                            )
+                          }
+                        </FormItem>
+                      </Col>
+                      <Col span={12}>
+                        <FormItem {...inlineFormItemLayout} label={`存储单位`}>
+                          {
+                            getFieldDecorator(`dispensingMachineUnitCode`,{//dispensingMachineUnitCode
+                              initialValue:fillBackData?fillBackData.dispensingMachineUnitCode:'',
+                              rules:[
+                                {required:true,message:'请选择发药机货位！'}
+                              ]
+                            })(
+                              <Select
+                              style={{ width: 100 }}
+                            >
+                              {
+                                replanUnitSelect && replanUnitSelect.length ?
+                                replanUnitSelect.map((item,index)=>(
+                                  <Option key={index} value={item.unitCode}>{item.unit}</Option>
+                                )):null
+                              }
+                            </Select>
+                            )
+                          }
+                        </FormItem>
+                      </Col>
+                  </Row>
+                </Col>
+                <Col span={10}>
+                  <Row gutter={8}>
+                    <Col span={12}>
+                      <FormItem {...inlineFormItemLayout} label={`预拆零货位`}>
                         {
-                          goodsTypeSelect && goodsTypeSelect.length ?
-                          goodsTypeSelect.map((item,index)=>(
-                            <Option key={index} value={item.id}>{item.positionName}</Option>
-                          )):null
+                          getFieldDecorator(`advanceScatteredLoc`,{
+                            initialValue:fillBackData?fillBackData.advanceScatteredLoc:'',
+                            rules:[
+                              {required:true,message:'请选择预拆零货位！'}
+                            ]
+                          })(
+                            <Select>
+                            {
+                              advanceSelect && advanceSelect.length ?
+                              advanceSelect.map((item,index)=>(
+                                <Option key={index} value={item.id}>{item.positionName}</Option>
+                              )):null
+                            }
+                          </Select>
+                          )
                         }
-                      </Select>
-                      )
-                    }
-                  </FormItem>
+                      </FormItem>
+                    </Col>
+                    <Col span={12}>
+                      <FormItem {...inlineFormItemLayout} label={`存储单位`}>
+                        {
+                          getFieldDecorator(`advanceScatteredUnitCode`,{//advanceScatteredUnitCode
+                            initialValue:fillBackData?fillBackData.advanceScatteredUnitCode:'',
+                            rules:[
+                              {required:true,message:'请选择预拆零货位的存储单位！'}
+                            ]
+                          })(
+                            <Select
+                            style={{ width: 100 }}
+                          >
+                            {
+                              replanUnitSelect && replanUnitSelect.length ?
+                              replanUnitSelect.map((item,index)=>(
+                                <Option key={index} value={item.unitCode}>{item.unit}</Option>
+                              )):null
+                            }
+                          </Select>
+                          )
+                        }
+                      </FormItem>
+                    </Col>
+                  </Row>
+                </Col>
+                <Col span={10}>
+                  <Row gutter={8}>
+                    <Col span={12}>
+                      <FormItem {...inlineFormItemLayout} label={`拆零发药货位`}>
+                        {
+                          getFieldDecorator(`scatteredLoc`,{
+                            initialValue:fillBackData?fillBackData.scatteredLoc:'',
+                            rules:[
+                              {required:true,message:'请选择拆零发药货位！'}
+                            ]
+                          })(
+                            <Select>
+                            {
+                              scatteredSelect && scatteredSelect.length ?
+                              scatteredSelect.map((item,index)=>(
+                                <Option key={index} value={item.id}>{item.positionName}</Option>
+                              )):null
+                            }
+                          </Select>
+                          )
+                        }
+                      </FormItem>
+                    </Col>
+                    <Col span={12}>
+                      <FormItem {...inlineFormItemLayout} label={`存储单位`}>
+                        {
+                          getFieldDecorator(`scatteredLocUnitCode`,{
+                            initialValue:fillBackData?fillBackData.scatteredLocUnitCode:'',
+                            rules:[
+                              {required:true,message:'请选择拆零发药货位的存储单位！'}
+                            ]
+                          })(
+                            <Select
+                            style={{ width: 100 }}
+                          >
+                            {
+                              replanUnitSelect && replanUnitSelect.length ?
+                              replanUnitSelect.map((item,index)=>(
+                                <Option key={index} value={item.unitCode}>{item.unit}</Option>
+                              )):null
+                            }
+                          </Select>
+                          )
+                        }
+                      </FormItem>
+                    </Col>
+                  </Row>
                 </Col>
               </Row>
             </Panel>

@@ -91,7 +91,7 @@ class SearchForm extends PureComponent{
     this.props.dispatch({
       type: 'base/orderStatusOrorderType',
       payload: {
-        type: 'plan_type'
+        type: 'depot_type'
       },
       callback: (data)=>{
         this.setState({type: data})
@@ -239,7 +239,7 @@ class DistributionCheck extends PureComponent{
           url={wareHouse.depotdistributeList}
           columns={columns}
           scroll={{ x: '100%' }}
-          rowKey={'createUserId'}
+          rowKey={'id'}
          />
       </div>
     )

@@ -36,6 +36,16 @@ export default {
         message.error(data.msg);
       }
     },
+    //删除出库单
+    *deleteOutStore({payload, callback}, {call}) {
+      const data = yield call(outStorageService.deleteOutStore, payload);
+      console.log(data, '删除');
+      if(data.code === 200 && data.msg === 'success') {
+        callback && callback(data);
+      }else {
+        message.error(data.msg);
+      }
+    },
     // 已申领部门
     *genDeptList({ payload,callback },{ call }){
       const data = yield call(outStorageService.genDeptList, payload);

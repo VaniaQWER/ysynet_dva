@@ -58,16 +58,28 @@ const columns = [
   }
 ];
 class DetailsApplyAccept extends PureComponent{
+  state = {
+    drugsForInfo: {},
+    loading: true
+  }
   componentDidMount() {
     let {applyCode} = this.props.match.params;
     this.props.dispatch({
       type: 'pharmacy/drugsForInfo',
-      payload: { applyCode }
+      payload: { applyCode },
+      callback: (data) => {
+        console.log(data);
+        this.setState({
+          drugsForInfo: data,
+          loading: false
+        })
+      }
     })
   }
   render(){
-    let {drugsForInfo} = this.props.pharmacy;
-    let dataSource = drugsForInfo.list || [];
+    let {drugsForInfo, loading} = this.state;
+    let dataSource = drugsForInfo.detailList || [];
+    
     
     return (
       <div className='fullCol'>
@@ -143,19 +155,21 @@ class DetailsApplyAccept extends PureComponent{
                     <label>受理时间</label>
                 </div>
                 <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
-                  <div className='ant-form-item-control'></div>
+                  <div className='ant-form-item-control'>{drugsForInfo.distributeDate || ''}</div>
                 </div>
             </Col>
           </Row>
         </div>
         <div className='detailCard'>
           <Table
+            loading={loading}
             title={()=>'产品信息'}
             dataSource={dataSource}
             bordered
-            scroll={{x: '100%'}}
+            pagination={false}
+            scroll={{x: '150%'}}
             columns={columns}
-            rowKey={'id'}
+            rowKey={'drugCode'}
           />
         </div>
       </div>
