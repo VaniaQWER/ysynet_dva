@@ -237,6 +237,19 @@ class EditDrugDirectory extends PureComponent{
     this.props.form.setFieldsValue({supplier:s})
   }
 
+  getLayoutInfo = (label,val)=>(
+    <Col span={8}>
+      <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-8">
+        <label>{label}</label>
+      </div>
+      <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-16">
+        <div className='ant-form-item-control'>
+          {val}
+        </div>
+      </div>
+    </Col>
+  )
+
   render(){
     const {supplierList , fillBackData , replanUnitSelect , goodsTypeSelect , supplierSelect , medDrugType} =this.state;
     const { getFieldDecorator , getFieldValue } = this.props.form;
@@ -557,11 +570,7 @@ class EditDrugDirectory extends PureComponent{
             </Panel>
 
             <Panel header="供应商" key="3" style={customPanelStyle}>
-
-             
              {formItemSupply}
-            
-              
             </Panel>
 
             <Panel header="指示货位" key="4" style={customPanelStyle}>
@@ -593,98 +602,30 @@ class EditDrugDirectory extends PureComponent{
             </Panel>
 
             <Panel header="药品信息" key="5" style={customPanelStyle}>
-              {/* <Row>
-                <Col span={8}>
-                  <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-6">
-                    <label>一类精神药品</label>
-                  </div>
-                  <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
-                    <div className='ant-form-item-control'>
-                      非一类精神药品
-                    </div>
-                  </div>
-                </Col>
-                <Col span={8}>
-                  <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-6">
-                    <label>二类精神药品</label>
-                  </div>
-                  <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
-                    <div className='ant-form-item-control'>
-                      非二类精神药品
-                    </div>
-                  </div>
-                </Col>
-                <Col span={8}>
-                  <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-6">
-                    <label>基药标识</label>
-                  </div>
-                  <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
-                    <div className='ant-form-item-control'>
-                      非基药
-                    </div>
-                  </div>
-                </Col>
-                <Col span={8}>
-                  <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-6">
-                    <label>是否胰岛素</label>
-                  </div>
-                  <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
-                    <div className='ant-form-item-control'>
-                      否
-                    </div>
-                  </div>
-                </Col>
-                <Col span={8}>
-                  <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-6">
-                    <label>报告药</label>
-                  </div>
-                  <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
-                    <div className='ant-form-item-control'>
-                      非报告药
-                    </div>
-                  </div>
-                </Col>
-                <Col span={8}>
-                  <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-6">
-                    <label>活动中标识</label>
-                  </div>
-                  <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
-                    <div className='ant-form-item-control'>
-                      活动中
-                    </div>
-                  </div>
-                </Col>
-                <Col span={8}>
-                  <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-6">
-                    <label>皮试用药</label>
-                  </div>
-                  <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
-                    <div className='ant-form-item-control'>
-                      不需要皮试
-                    </div>
-                  </div>
-                </Col>
-                <Col span={8}>
-                  <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-6">
-                    <label>抗生素级别</label>
-                  </div>
-                  <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
-                    <div className='ant-form-item-control'>
-                      0
-                    </div>
-                  </div>
-                </Col>
-                <Col span={8}>
-                  <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-6">
-                    <label>毒麻药品</label>
-                  </div>
-                  <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
-                    <div className='ant-form-item-control'>
-                      非毒麻药品
-                    </div>
-                  </div>
-                </Col>
-              </Row> */}
+              <Row className='fixHeight'>
+                {this.getLayoutInfo('药品名称',fillBackData?fillBackData.ctmmDesc:'')}
+                {this.getLayoutInfo('药品剂量',fillBackData?fillBackData.ctphdmiDosageUnitDesc:'')}
+                {this.getLayoutInfo('药学分类描述',fillBackData?fillBackData.ctphdmiCategoryDesc:'')}
+                {this.getLayoutInfo('管制分类描述',fillBackData?fillBackData.ctphdmiRegulatoryClassDesc:'')}
+                {this.getLayoutInfo('危重药物标志',fillBackData?fillBackData.ctmmCriticalCareMedicine:'')}
+                {this.getLayoutInfo('抗菌药物标志',fillBackData?fillBackData.ctmmAntibacterialsign:'')}
+                {this.getLayoutInfo('国家基本药物标记',fillBackData?fillBackData.ctmmEssentialMedicine:'')}
+                {this.getLayoutInfo('贵重标记',fillBackData?fillBackData.ctmmValuableSign:'')}
+                {this.getLayoutInfo('皮试标志',fillBackData?fillBackData.ctmmSkintestSign:'')}
+                {this.getLayoutInfo('冷藏标识',fillBackData?fillBackData.refrigerateType:'')}
+                {this.getLayoutInfo('停用标记',fillBackData?fillBackData.ctmmStatusCode:'')}
+               
+               {/* 
+                {this.getLayoutInfo('适应症',12)}
+                {this.getLayoutInfo('禁忌症',12)}
+                {this.getLayoutInfo('不良反应',12)}
+                {this.getLayoutInfo('相互作用',12)}
+                {this.getLayoutInfo('年龄限制',12)}
+                {this.getLayoutInfo('疗程描述',12)}
+                {this.getLayoutInfo('频次描述',12)}
+                {this.getLayoutInfo('注意事项',12)}
+                {this.getLayoutInfo('原描述',12)} */}
+              </Row>
             </Panel>
 
           </Collapse>

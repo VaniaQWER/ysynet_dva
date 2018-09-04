@@ -430,3 +430,6 @@ td:hover .editable-cell-icon {
 .leftLable .ant-form-item-label{
     text-align: left;
 }
+.fixHeight .ant-col-8{
+  height:35px
+}
