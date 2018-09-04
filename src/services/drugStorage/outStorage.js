@@ -2,7 +2,7 @@
  * @Author: wwb 
  * @Date: 2018-08-31 21:28:10 
  * @Last Modified by: wwb
- * @Last Modified time: 2018-08-31 23:17:44
+ * @Last Modified time: 2018-09-04 16:02:58
  */
 
 import request from '../../utils/request';
@@ -38,6 +38,15 @@ export function getSingleDetail(options) { // 配货单据详情
   })
 };
 
+// 受理配货 配货信息变更
+export function singUpdate(options) { //
+  return request(`${_local}/a/commondistribute/singleUpdate`,{ 
+    method: 'POST',
+    type: 'json',
+    body: options
+  })
+};
+
 
 // 受理配货 配货状体变更事件
 export function distributeEvent(options) { // 配货单据详情
@@ -50,7 +59,23 @@ export function distributeEvent(options) { // 配货单据详情
 
 /* 拣货 */
 
+export function findApplyDepts(options) { // 拣货申请部门
+  return request(`${_local}/a/sys/sysdept/findAllDepts`,{ 
+    method: 'GET',
+    type: 'formData',
+    body: options
+  })
+};
+
 // 
+export function getPickingDetail(options) { // 拣货详情
+  return request(`${_local}/a/common/pickingorderdetail/getPickingDetail`,{ 
+    method: 'GET',
+    type: 'json',
+    body: options
+  })
+};
+
 export function finishPicking(options) { // 确认拣货
   return request(`${_local}/a/common/pickingorder/finishPicking`,{ 
     method: 'POST',
