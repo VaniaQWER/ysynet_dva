@@ -3,6 +3,8 @@
 */
 import * as replenishment from '../services/replenishment/replenish';
 import * as pharmacy from '../services/pharmacy/wareHouse';
+import * as wareHouse from '../services/pharmacy/wareHouse';
+import * as outStorageService from '../services/drugStorage/outStorage';
 import { message } from 'antd';
 
 export default {
@@ -11,6 +13,25 @@ export default {
     replenishDetailsInfo: {}
   },
   effects:{
+    //药品验收详情
+    *checkDetail({payload, callback}, {put, call}) {
+      const data = yield call(wareHouse.checkDetail, payload);
+      if(data.code === 200 && data.msg === 'success') {
+        callback && callback(data.data)
+      }else {
+        message.error(data.msg);
+      }
+    },
+    //药品确认验收
+    *saveCheck({payload, callback}, {call}) {
+      const data = yield call(wareHouse.saveCheck, payload);
+      console.log(data, '验收');
+      if(data.code === 200 && data.msg === 'success') {
+        callback && callback(data.data);
+      }else {
+        message.error(data.msg);
+      }
+    },
     // 采购部门
     *getModule({ payload,callback },{ call }){
       const data = yield call(replenishment.getModule, payload);
@@ -37,6 +58,16 @@ export default {
       };
       callback && callback();
     },
+    //药品申领 - 新建申领 - 添加产品
+    *applyAddDrug({payload, callback}, {call}) {
+      const data = yield call(pharmacy.applyAddDrug, payload);
+      console.log(data, '添加产品');
+      if(data.code === 200 && data.msg === 'success') {
+        callback && callback(data.data);
+      }else {
+        message.error(data.msg);
+      }
+    },
     // 补货计划 - 详情
     *ReplenishDetails({ payload, callback },{ put, call }){
       const data = yield call(replenishment.ReplenishDetails, payload);
@@ -61,6 +92,25 @@ export default {
       console.log(data, '保存');
       if(data.code === 200 && data.msg === 'success') {
         callback && callback(data.data);
+      }else {
+        message.error(data.msg);
+      }
+    },
+    //出库单管理申领部门
+    *findAllDepts({callback}, {call}) {
+      const data = yield call(outStorageService.findAllDepts);
+      if(data.code === 200 && data.msg === 'success') {
+        callback && callback(data.data);
+      }else {
+        message.error(data.msg);
+      }
+    },
+    //药品申领出库 - 新建出库保存
+    *confirmOutStore({payload, callback}, {call}) {
+      const data = yield call(outStorageService.confirmOutStore, payload);
+      console.log(data, '保存');
+      if(data.code === 200 && data.msg === 'success') {
+        callback && callback(data);
       }else {
         message.error(data.msg);
       }

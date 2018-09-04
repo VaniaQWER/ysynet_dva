@@ -23,7 +23,7 @@ class PslistCheck extends PureComponent{
       selected: [],
       selectedRows: [],
       loading: true,
-      btnShow: info.state === 1,
+      btnShow: info.state === '3'? true : false,
       defaultActiveKey: info.state,
       id: info.id,
     }

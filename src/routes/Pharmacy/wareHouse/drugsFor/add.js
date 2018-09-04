@@ -62,8 +62,6 @@ class NewAdd extends PureComponent {
   }
   handleOk = () => {
     let {modalSelectedRows, query} = this.state;
-    console.log(modalSelectedRows);
-    // return;
     if(modalSelectedRows.length === 0) {
       message.warning('至少选择一条信息');
       return;
@@ -71,7 +69,7 @@ class NewAdd extends PureComponent {
     this.setState({btnLoading: true});
     modalSelectedRows = modalSelectedRows.map(item=>item.drugCode);
     this.props.dispatch({
-      type: 'base/addDrug',
+      type: 'base/applyAddDrug',
       payload: {
         deptCode: query.deptCode,
         drugCodeList: modalSelectedRows
@@ -92,8 +90,7 @@ class NewAdd extends PureComponent {
       message.warning('请选择部门');
       return;
     };
-    this.setState({ visible: true });
-    
+    this.setState({visible: true});
   }
   delete = () => {  //删除
     let {selectedRows, dataSource, query} = this.state;
@@ -129,11 +126,12 @@ class NewAdd extends PureComponent {
       saveLoading: true
     });
     let body = {
-      auditStatus: auditStatus,
+      auditStatus,
       applyType,
-      distributeDeptCode: query.distributeDeptCode,
+      distributeDeptCode: query.deptCode,
       detaiList: dataSource
     };
+    
     this.props.dispatch({
       type: 'base/applySubmit',
       payload: body,

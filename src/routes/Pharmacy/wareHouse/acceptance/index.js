@@ -19,7 +19,7 @@ const columns = [
    title: '出库单',
    dataIndex: 'acceptanceCode',
    width:150,
-   render:(text)=>(<Link to={{pathname: `/pharmacy/wareHouse/acceptance/details`}}>{text}</Link>)
+   render:(text, record)=>(<Link to={{pathname: `/pharmacy/wareHouse/acceptance/details/id=${record.acceptanceCode}&state=${record.acceptanceStatus}`}}>{text}</Link>)
   },
   {
     title: '申领单',
@@ -75,7 +75,7 @@ class Acceptance extends PureComponent{
         <SearchForm query={this.queryHandler} />
         <Row>
           <Button type='primary' className='button-gap'>
-            <Link to={{pathname:`/pharmacy/wareHouse/acceptance/add`}}>新建验收</Link>
+            <Link to={{pathname:`/addNewAcceptance`}}>新建验收</Link>
           </Button>
         </Row>
         <RemoteTable
@@ -102,7 +102,7 @@ class SearchFormWrapper extends PureComponent {
     this.props.dispatch({
       type: 'base/orderStatusOrorderType',
       payload: {
-        type: 'acceptance_status'
+        type: 'acceptance_check'
       },
       callback: (data) => {
         this.setState({statusList: data});
@@ -148,8 +148,6 @@ class SearchFormWrapper extends PureComponent {
  render() {
    let {display, statusList} = this.state;
    const { getFieldDecorator } = this.props.form;
-   console.log(statusList);
-   
    statusList = statusList.map(item=>{
       return <Option key={item.value} value={item.value}>{item.label}</Option>
     })

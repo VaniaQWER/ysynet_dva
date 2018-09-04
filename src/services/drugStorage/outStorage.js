@@ -70,11 +70,38 @@ export function outStoreDetailInfo(options) {
   })
 }
 
+//出库单删除 
+export function deleteOutStore(options) {
+  return request(`${_local}/a//common/outstore/deleteOutStore`, {
+    method: 'POST',
+    type: 'json',
+    body: options
+  })
+}
+
 //出库单复核通过
 export function checkOutStore(options) {
   return request(`${_local}/a/common/outstoredetail/checkOutStore`, {
     method: 'POST',
+    type: 'json',
+    body: options
+  })
+};
+
+//出库单申领下拉框
+export function findAllDepts(options) {
+  return request(`${_local}/a/sys/sysdept/findAllDepts`, {
+    method: 'GET',
     type: 'formData',
+    body: options
+  })
+}
+
+//出库单新建出库单保存
+export function confirmOutStore(options) {
+  return request(`${_local}/a/common/outstore/confirmOutStore`,{
+    method: 'POST',
+    type: 'json',
     body: options
   })
 }

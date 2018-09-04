@@ -41,3 +41,11 @@ export function saveCheck(options) {
     body: options
   })
 }
+
+export function applyAddDrug(options) {
+  return request(`${_local}/a/apply/addDrug`, {
+    method: 'POST',
+    type: 'json',
+    body: options
+  })
+}

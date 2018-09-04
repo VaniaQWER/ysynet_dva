@@ -4,44 +4,29 @@
 * @Last Modified time: 2018-07-24 13:13:55 
  */
 import React, { PureComponent } from 'react';
-import { Table , Col, Button, Modal , Card , message, Input , Select , Affix , Row , Tooltip} from 'antd';
-import { createData } from '../../../../common/data';
-const Conform = Modal.confirm;
+import {Table, Col, Button, Modal, Icon, message, Input, InputNumber, Select, Row, Tooltip} from 'antd';
+import {connect} from 'dva';
+import RemoteTable from '../../../../components/TableGrid/index';
+import {outStorage} from '../../../../api/drugStorage/outStorage';
+import _ from 'lodash';
 const Option = Select.Option;
-const columns = [
+const {Search} = Input;
+
+const modalColumns = [
   {
-   title: '数量',
-   width:150,
-   dataIndex: 'medicinalCode',
-   render:()=>(<Input/>)
-  },
-  {
-    title: '当前库存',
-    width:120,
-    dataIndex: 'assetsRecord',
-    render:()=>`1000`
-  },
-  {
-    title: '单位',
-    width:150,
-    dataIndex: 'unit1',
-    render:(text)=>'g'
-  },
-  {
-    title: '通用名称',
+    title: '通用名',
     width:100,
-    dataIndex: 'productName1',
-    render:(text,record)=>record.productName
+    dataIndex: 'ctmmGenericName'
   },
   {
-    title: '商品名称',
+    title: '商品名',
     width:150,
-    dataIndex: 'productName',
+    dataIndex: 'ctmmTradeName',
   },
   {
     title: '规格',
     width:150,
-    dataIndex: 'spec',
+    dataIndex: 'ctmmSpecification',
     className:'ellipsis',
     render:(text)=>(
       <Tooltip placement="topLeft" title={text}>{text}</Tooltip>
@@ -50,40 +35,17 @@ const columns = [
   {
     title: '剂型',
     width:150,
-    dataIndex: 'fmodal',
+    dataIndex: 'ctmmDosageFormDesc',
   },
   {
     title: '包装规格',
     width:150,
-    dataIndex: 'unit',
-  },
-  {
-    title: '生产批号',
-    width:150,
-    dataIndex: 'applyNo',
-  },
-  {
-    title: '生产日期',
-    width:150,
-    dataIndex: 'productCompany3',
-    render:(text,record)=>`${record.planTime}`
-  },
-  {
-    title: '有效期至',
-    width:150,
-    dataIndex: 'productCompany4',
-    render:(text,record)=>`${record.planTime}`
+    dataIndex: 'packageSpecification',
   },
   {
     title: '生产厂家',
     width:150,
-    dataIndex: 'productCompany',
-  },
-  {
-    title: '供应商',
-    width:150,
-    dataIndex: 'gongyingshang',
-    render:(text,record)=>`${record.createUser}`
+    dataIndex: 'ctmmManufacturerName',
   },
   {
     title: '批准文号',
@@ -91,177 +53,360 @@ const columns = [
     dataIndex: 'approvalNo',
   }
 ];
-const modalColumns = [
-  {
-    title: '通用名称',
-    width:100,
-    dataIndex: 'productName1',
-    render:(text,record)=>record.productName
-  },
-  {
-    title: '商品名称',
-    width:150,
-    dataIndex: 'productName',
-  },
-  {
-    title: '规格',
-    width:150,
-    dataIndex: 'spec',
-    className:'ellipsis',
-    render:(text)=>(
-      <Tooltip placement="topLeft" title={text}>{text}</Tooltip>
-    )
-  },
-  {
-    title: '剂型',
-    width:150,
-    dataIndex: 'fmodal',
-  },
-  {
-    title: '包装规格',
-    width:150,
-    dataIndex: 'unit',
-  },
-  {
-    title: '生产厂家',
-    width:150,
-    dataIndex: 'productCompany',
-  },
-  {
-    title: '批准文号',
-    width:150,
-    dataIndex: 'approvalNo',
-  }
-]
 class AddOutput extends PureComponent{
 
   constructor(props){
     super(props)
     this.state={
-      selectedRowKey:[],
-      visible:false
+      selectedRowKeyModal: [],
+      selectedRowModal: [],
+      selectedRow: [],
+      visible: false,
+      dataSource: [],
+      type: [],
+      dept: [],
+      query: {},
+      submitLoading: false
     }
+  }
+
+  componentDidMount() {
+    this.props.dispatch({
+      type: 'base/orderStatusOrorderType',
+      payload: {
+        type: 'new_out_store_type'
+      },
+      callback: (data) => {
+        this.setState({type: data});
+      }
+    });
+    this.props.dispatch({
+      type: 'base/findAllDepts',
+      callback: (data) => {
+        this.setState({
+          dept: data
+        });
+      }
+    })
   }
 
   //移除
   delete = () =>{
-    Conform({
-      content:"您确定要执行此操作？",
-      onOk:()=>{
-        message.success('删除成功！')
-      },
-      onCancel:()=>{}
-    })
+    let {selectedRow, dataSource} = this.state;
+    if(selectedRow.length === 0) {
+      message.warning('请选择产品');
+      return;
+    };
+    dataSource = _.difference(dataSource, selectedRow);
+    this.setState({dataSource});
   }
 
   //提交该出库单
   onSubmit = () =>{
-    Conform({
-      content:"您确定要执行此操作？",
-      onOk:()=>{
-        message.success('操作成功！')
-        const { history } = this.props;
-        history.push({pathname:"/drugStorage/drugStorageManage/output"})
-      },
-      onCancel:()=>{}
+    let {outStoreType, dataSource, deptCode} = this.state;
+    if(outStoreType === undefined || deptCode === undefined) {
+      message.warning('请选择部门和类型');
+      return;
+    };
+    let isNull = dataSource.every(item => {
+      if(!item.outStoreNum) {
+        message.warning('请输入数量');
+        return false;
+      }
+      return true;
+    });
+    if(!isNull) return;
+    this.setState({submitLoading: true});
+    let listDetail = dataSource.map(item=>{
+      return {
+        batch: item.lot,
+        drugCode: item.drugCode,
+        outStoreNum: item.outStoreNum
+      }
     })
+    this.props.dispatch({
+      type: 'base/confirmOutStore',
+      payload: {
+        detail: {
+          deptCode,
+          outStoreType,
+          listDetail
+        }
+      },
+      callback: () => {
+        this.setState({
+          submitLoading: false
+        });
+        this.props.history.push('/drugStorage/outStorage/outReceiptMgt');
+      }
+    })
+  }
+
+  showModal = () => {
+    let {dataSource} = this.state;
+    let listDetail = dataSource.map(item=>{
+      return {
+        batch: item.lot,
+        drugCode: item.drugCode
+      }
+    });
+    this.setState({
+      visible: true, 
+      query: {
+        detail: {
+          listDetail,
+          paramName: ''
+        }
+      }
+    });
   }
 
   //添加产品 到 主表
   addToMain = () => {
-    const { selectedRowKey } =this.state;
-    if(selectedRowKey.length>0){
-      this.setState({visible:false,selectedRowKey:[]})
-      
-    }else{
+    let { selectedRowModal, dataSource } =this.state;
+    console.log(selectedRowModal);
+    
+    if(selectedRowModal.length === 0){
       message.warn('最少选择一个产品添加！')
+      return;      
     }
+    selectedRowModal = selectedRowModal.map((item)=>{
+      return {
+        ...item,
+        outStoreNum: item.usableQuantity,
+      };
+    })
+    dataSource = [...dataSource, ...selectedRowModal];
+    this.setState({
+      visible:false, 
+      selectedRowModal:[],
+      dataSource,
+      selectedRowKeyModal:[]
+    })
   }
-
+  
   render(){
-    const { visible , selectedRowKey } = this.state; 
+    const columns = [
+      {
+        title: '数量',
+        width:150,
+        dataIndex: 'outStoreNum',
+        render:(text, record, i)=>(
+          <InputNumber 
+            defaultValue={text}
+            min={1}
+            max={record.usableQuantity}
+            precision={0}
+            onChange={(value)=>{
+              let {dataSource} = this.state;
+              dataSource = JSON.parse(JSON.stringify(dataSource));
+              dataSource[i].outStoreNum = value;
+              this.setState({dataSource});
+            }}
+          />
+        )
+      },
+      {
+        title: '当前库存',
+        width:120,
+        dataIndex: 'usableQuantity',
+      },
+      {
+        title: '单位',
+        width:150,
+        dataIndex: 'replanUnit',
+      },
+      {
+        title: '通用名',
+        width:100,
+        dataIndex: 'ctmmGenericName'
+      },
+      {
+        title: '商品名',
+        width:150,
+        dataIndex: 'ctmmTradeName',
+      },
+      {
+        title: '规格',
+        width:150,
+        dataIndex: 'ctmmSpecification',
+        className:'ellipsis',
+        render:(text)=>(
+          <Tooltip placement="topLeft" title={text}>{text}</Tooltip>
+        )
+      },
+      {
+        title: '剂型',
+        width:150,
+        dataIndex: 'ctmmDosageFormDesc',
+      },
+      {
+        title: '包装规格',
+        width:150,
+        dataIndex: 'packageSpecification',
+      },
+      {
+        title: '生产批号',
+        width:150,
+        dataIndex: 'approvalNo',
+      },
+      {
+        title: '生产日期',
+        width:150,
+        dataIndex: 'productDate'
+      },
+      {
+        title: '有效期至',
+        width:150,
+        dataIndex: 'validEndDate'
+      },
+      {
+        title: '生产厂家',
+        width:150,
+        dataIndex: 'ctmmManufacturerName',
+      },
+      {
+        title: '供应商',
+        width:150,
+        dataIndex: 'supplierName'
+      },
+      {
+        title: '批准文号',
+        width:150,
+        dataIndex: 'lot',
+      }
+    ];
+    let {visible, selectedRowKeyModal, dataSource, type, dept, query, submitLoading} = this.state; 
+    dept = dept.map((item, i) => {
+      return <Option key={i} value={item.id}>{item.deptName}</Option>
+    });
+    type = type.filter(item => item.label !== '全部').map((item, i) => {
+      return <Option key={i} value={item.value}>{item.label}</Option>
+    })
     return (
-      <div className='fullCol'>
-        <div className='fullCol-fullChild' style={{height:70}}>
-          <Col  span={4}>
-            <Button type='primary' className='button-gap' onClick={()=>this.setState({visible:true})}>添加产品</Button>
-            <Button onClick={()=>this.delete()} >移除</Button>
-          </Col>
-          <Col span={6}>
-              目的部门：
-              <Select 
-                style={{width:'70%'}}
-                showSearch
-                placeholder={'请选择'}
-                optionFilterProp="children"
-                filterOption={(input, option) => option.props.children.indexOf(input) >= 0}
+      <div className='fullCol' style={{padding: '0 24px 24px', background: 'rgb(240, 242, 245)'}}>
+        <div className='fullCol-fullChild' style={{marginLeft: '-24px', marginRight: '-24px'}}>
+          <Row style={{margin: '0 -32px', borderBottom: '1px solid rgba(0, 0, 0, .2)'}}>
+            <Col span={8}>
+              <h3 style={{padding: '0 0 15px 32px', fontSize: '20px'}}>
+                新建出库单
+              </h3>
+            </Col>
+            <Col span={16} style={{textAlign: 'right', paddingRight: 32}}>
+              <Icon 
+                onClick={()=>{
+                  this.props.history.go(-1);
+                }} 
+                style={{cursor: 'pointer', transform: 'scale(2)'}} 
+                type="close" 
+                theme="outlined" 
+              />
+            </Col>
+          </Row>
+          <Row style={{margin: '10px -32px 0', paddingBottom: 10}}>
+            <Col span={4} style={{paddingLeft: 32}}>
+              <Button type='primary' className='button-gap' onClick={this.showModal}><Icon type="plus" theme="outlined" />添加产品</Button>
+              <Button onClick={()=>this.delete()} >移除</Button>
+            </Col>
+            <Col span={6}>
+                接收部门：
+                <Select
+                  onChange={(value) => {
+                    this.setState({
+                      deptCode: value
+                    });
+                  }}
+                  style={{width:'70%'}}
+                  showSearch
+                  placeholder={'请选择'}
+                  optionFilterProp="children"
+                  filterOption={(input, option) => option.props.children.indexOf(input) >= 0}
                 >
-                <Option key="" value="">全部</Option>
-              </Select>
-          </Col>
-          <Col span={6}>
-            出库类型：
-              <Select 
-                style={{width:'70%'}}
-                showSearch
-                placeholder={'请选择'}
-                optionFilterProp="children"
-                filterOption={(input, option) => option.props.children.indexOf(input) >= 0}
-                >
-                <Option key="00" value="00">调拨出库</Option>
-                <Option key="01" value="01">损益补录</Option>
-              </Select>
-          </Col>
+                  {dept}
+                </Select>
+            </Col>
+            <Col span={6}>
+              出库类型：
+                <Select
+                  onChange={(value) => {
+                    this.setState({
+                      outStoreType: value
+                    });
+                  }}
+                  style={{width:'70%'}}
+                  showSearch
+                  placeholder={'请选择'}
+                  optionFilterProp="children"
+                  filterOption={(input, option) => option.props.children.indexOf(input) >= 0}
+                  >
+                  {type}
+                </Select>
+            </Col>
+          </Row>
         </div>
-        <Card>
+        <div className='detailCard' style={{margin: '-10px -6px'}}>
+          <h3 style={{paddingBottom: 10, borderBottom: '1px solid rgba(0, 0, 0, .1)'}}>产品信息</h3>
           <Table
             rowSelection={{
-              onChange:(selectedRowKey)=>{
-                this.setState({selectedRowKey})
+              onChange:(selectedRowKey, selectedRow)=>{
+                this.setState({selectedRow})
               }
             }}
-            title={()=>`产品信息`}
-            dataSource={createData()}
             bordered
+            dataSource={dataSource}
             scroll={{x: '200%'}}
             columns={columns}
-            rowKey={'id'}
+            rowKey={'lot'}
             style={{marginTop: 24}}
           />
-        </Card>
-        <Affix offsetBottom={0} className='affix'>共10种产品
-         <Button  style={{float:'right'}}  onClick={() => this.onSubmit()}>
+        </div>
+        {
+          dataSource.length > 0? 
+          <div className='detailCard' style={{margin: '-10px -6px'}}>
+          共{dataSource.length}种产品
+          <Button loading={submitLoading} style={{float:'right'}} onClick={() => {
+            this.props.history.go(-1);
+          }}>
             取消
           </Button>
-          <Button  type="primary" className='button-gap' style={{float:'right'}} onClick={() => this.onSubmit()}>
+          <Button loading={submitLoading} type="primary" className='button-gap' style={{float:'right'}} onClick={() => this.onSubmit()}>
             确定
           </Button>
-        </Affix>
-
+        </div> : null
+        }
         {/*选择产品-弹窗*/}
         <Modal title='选择页面' visible={visible} width={980}
           onOk={()=>this.addToMain()}
-          onCancel={()=>this.setState({visible:false,selectedRowKey:[]})}>
-          <Row>
-            <Input placeholder='通用名/商品名' style={{width:200}}/>
+          onCancel={()=>this.setState({visible:false, selectedRowKeyModal:[], selectedRowModal: []})}>
+          <Row style={{marginBottom: 10}}>
+            <Search 
+              onSearch={(value) => {
+                let {query} = this.state;
+                query = JSON.parse(JSON.stringify(query));
+                query.detail.paramName = value;
+                this.setState({query});
+              }}  
+              placeholder='通用名/商品名' 
+              style={{width:200}}
+            />
           </Row>
-          <Table
+          <RemoteTable
+            isJson={true}
+            query={query}
+            url={outStorage.GETFILTERDRUGINFO}
             rowSelection={{
-              selectedRowKeys:selectedRowKey,
-              onChange:(selectedRowKey)=>{
-                this.setState({selectedRowKey})
+              selectedRowKeys: selectedRowKeyModal,
+              onChange:(selectedRowKeyModal, selectedRowModal)=>{
+                this.setState({selectedRowKeyModal, selectedRowModal});
               }
             }}
-            dataSource={createData()}
-            bordered
             scroll={{x: '200%'}}
             columns={modalColumns}
-            rowKey={'id'}
+            rowKey={'lot'}
           />
         </Modal>
-
       </div>
     )
   }
 }
-export default AddOutput;
+export default connect(state=>state)(AddOutput);
