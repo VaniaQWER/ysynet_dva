@@ -34,12 +34,20 @@ export default {
       const data = yield call(configMgt.EditOperDeptInfo, payload);
       if(data.code !== 200){
         message.error(data.msg)
+      }else{
+        if(callback) callback(data);
       }
-      if(callback) callback(data);
     },
     //补货单位下拉框
     *GetUnitInfo({ payload, callback },{ put, call }){
       const data = yield call(configMgt.GetUnitInfo, payload);
+      if(data.code !== 200){
+        message.error(data.msg)
+      }
+      if(callback) callback(data);
+    },
+    *GetAllGoodsTypeInfo({ payload, callback },{ put, call }){
+      const data = yield call(configMgt.getAllGoodsTypeInfo, payload);
       if(data.code !== 200){
         message.error(data.msg)
       }

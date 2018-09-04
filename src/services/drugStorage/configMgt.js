@@ -57,6 +57,23 @@ export function getGoodsTypeInfo(options) {
   })
 };
 
+//药房药品目录 - 指示货位 *4 [公用方法]
+/* 货位类型(
+  1:补货指示货位、replan
+  2:拆零发药货位、  advance
+  3:预拆零发药、   scattered
+  4:发药机货位、 dispensing
+  5:基数药货位) 
+*/
+export function getAllGoodsTypeInfo(options) {
+  return request(`${_local}/a/dept/getRoomLocation`,{ 
+    method: 'GET',
+    type: 'formData',
+    body: options
+  })
+};
+
+
 
 
 //药库药品目录 - 供应商信息

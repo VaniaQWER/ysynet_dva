@@ -33,7 +33,6 @@ const Option = Select.Option;
 const Comfirm = Modal.confirm;
 const RadioGroup = Radio.Group;
 let uuid = 0;
-let uuidSupply = 1;
 
 const customPanelStyle = {
   background: '#fff',
@@ -50,7 +49,14 @@ class EditDrugDirectory extends PureComponent{
     replanUnitSelect:[],//补货单位下拉框
     goodsTypeSelect:[],//补货指示货位
     supplierSelect:[],//供应商
-    keys:[]
+    medDrugType:null,//1 目录内 2 目录外 
+    keys:[],
+    supplierList:[{
+      supplierCode:null,
+      supplierName:null,
+      supplierPrice:null,
+      whetherDefault:null,
+    }],//供应商循环数据
   }
 
   componentDidMount(){
@@ -61,8 +67,17 @@ class EditDrugDirectory extends PureComponent{
       payload:{id:this.props.match.params.id},
       callback:(data)=>{
         console.log(data)
-        this.setState({fillBackData:data.data})
-         //获取补货单位下拉框
+        this.setState({
+          fillBackData:data.data,
+          medDrugType:data.data.medDrugType,
+        })
+
+        if(data.data.supplier && data.data.supplier.length){
+          this.setState({
+            supplierList:data.data.supplier
+          })
+        }
+          //获取补货单位下拉框
           this.props.dispatch({
             type:'drugStorageConfigMgt/GetUnitInfo',
             payload:{bigDrugCode:data.data.bigDrugCode},
@@ -71,20 +86,19 @@ class EditDrugDirectory extends PureComponent{
               this.setState({replanUnitSelect:data.data})
             }
           })
+      }
+    })
 
-          //获取供应商信息
-          this.props.dispatch({
-            type:'drugStorageConfigMgt/getSupplier',
-            payload:{hisDrugCode:data.data.hisDrugCode},
-            callback:(data)=>{
-              this.setState({supplierSelect:data.data})
-            }
-          })
+    //获取供应商下拉框
+    this.props.dispatch({
+      type:'drugStorageConfigMgt/getSupplier',
+      payload:null,//{hisDrugCode:data.data.hisDrugCode}
+      callback:(data)=>{
+        this.setState({supplierSelect:data.data})
       }
     })
 
     //获取补货指示h货位
-    
     this.props.dispatch({
       type:'drugStorageConfigMgt/getGoodsTypeInfo',
       payload:{positionType:'1'},
@@ -108,10 +122,11 @@ class EditDrugDirectory extends PureComponent{
 
             let postData = {
               customUnit,
-              // supplier,
+              supplier,
               drugInfo:{
                 replanUnitCode , replanStore , purchaseQuantity ,
                 upperQuantity , downQuantity ,
+                id:this.props.match.params.id,
                 drugCode:this.state.fillBackData.drugCode||'',
                 bigDrugCode:this.state.fillBackData.bigDrugCode,
                 hisDrugCode:this.state.fillBackData.hisDrugCode,
@@ -123,9 +138,14 @@ class EditDrugDirectory extends PureComponent{
             type:'drugStorageConfigMgt/EditOperDeptInfo',
             payload:postData,
             callback:(data)=>{
-              message.success('保存成功！')
-              const { history } = this.props;
-              history.push({pathname:"/drugStorage/configMgt/drugDirectory"})
+              if(data.code!==200){
+                message.success(data.msg)
+              }else{
+                message.success('保存成功！')
+                const { history } = this.props;
+                history.push({pathname:"/drugStorage/configMgt/drugDirectory"})
+              }
+              
             }
           })
         })
@@ -156,76 +176,64 @@ class EditDrugDirectory extends PureComponent{
       }
       return key
     })
-    // ret = ret.map((item,index)=>{item=index;return item})
     form.setFieldsValue({
       keys: ret
     });
   }
 
   addSupply = ()=>{
-    const { form } = this.props;
-    // can use data-binding to get
-    const keys = form.getFieldValue('keySupply');
-    const nextKeys = keys.concat(uuidSupply);
-    uuidSupply++;
-    // can use data-binding to set
-    // important! notify form to detect changes
-    form.setFieldsValue({
-      keySupply: nextKeys,
+    const { supplierList } = this.state;
+    let keys =supplierList.slice();
+    const nextKeys = keys.concat({
+      supplierCode:null,
+      supplierName:null,
+      supplierPrice:null,
+      whetherDefault:null,
     });
+    this.setState({
+      supplierList:nextKeys
+    })
   }
 
-  removeSupply = (k) => {
-    const { form } = this.props;
-    const keys = form.getFieldValue('keySupply');
-    uuidSupply--;
-    let ret = []
-    keys.filter((key,index) =>{
-      if(key !== k){
-        ret.push(index)
-      }
-      return key 
+  removeSupply = (ind) => {
+    const { supplierList } = this.state;
+    let keys =supplierList.slice();
+    let ret = keys.filter((key,index) =>index !== ind)
+    this.setState({
+      supplierList:ret
     })
-    ret = ret.map((item,index)=>{item=index;return item})
-    form.setFieldsValue({
-      keySupply: ret
-    });
+
+    let s = this.props.form.getFieldValue('supplier')
+    s = s.filter((key,index) =>index !== ind)
+    this.props.form.setFieldsValue({supplier:s})
   }
 
   //获取使用单位
   getMaPInfo = (List,ind)=>{
     if(List && List.length){
       let ret =  List.filter(item=>item.sort===ind);
-      return `${ret[0].bigUnit||''}  -  ${ret[0].conversionRate||''}${ret[0].smallUit||''}`
+      return `${ret[0].bigUnit||''}  =  ${ret[0].conversionRate||''}${ret[0].smallUit||''}`
     }
   }
   //使用互斥radio
   onChangeRadio = (e,ind)=>{
-    const { getFieldValue } = this.props.form; 
-    console.log('radio checked', e.target.value);
-  
-    const keySupply = getFieldValue('keySupply');
-
-    debugger
-    console.log(keySupply,'keySupply')
-    keySupply.filter((item,index)=>{
-      if(index===ind){
-        return  item.whetherDefault='1'
+    let s = this.props.form.getFieldValue('supplier')
+    s.map((item,index)=>{
+      if(index===ind){//选中 并且为index
+        item.whetherDefault=1
       }else{
-        return  item.whetherDefault=null
+        item.whetherDefault=null
       }
+      return  item
     })
-    console.log(keySupply)
-    this.props.setFieldsValue({keySupply})
+    this.props.form.setFieldsValue({supplier:s})
   }
 
   render(){
-    const { fillBackData , replanUnitSelect , goodsTypeSelect } =this.state;
+    const {supplierList , fillBackData , replanUnitSelect , goodsTypeSelect , supplierSelect , medDrugType} =this.state;
     const { getFieldDecorator , getFieldValue } = this.props.form;
     getFieldDecorator('keys', { initialValue: fillBackData?fillBackData.customUnit?fillBackData.customUnit:[]:[] });
     const keys = getFieldValue('keys');
-    getFieldDecorator('keySupply', { initialValue: fillBackData?fillBackData.supplier?fillBackData.supplier:[]:[0] });
-    const keySupply = getFieldValue('keySupply');
     const formItems = keys.map((k, index) => {
       return (
         <Col span={10} key={index}>
@@ -292,53 +300,62 @@ class EditDrugDirectory extends PureComponent{
         </Col>
       )
     });
-    const formItemSupply = keySupply.map((k, index) => {
+    console.log(medDrugType)
+    console.log(supplierList)
+    const formItemSupply = supplierList.map((k, index) => {
       return (
         <Col span={12} key={index}>
-          <FormItem {...supplyFormItemLayout} label={`供应商${k+1}`}  key={k}>
+          <FormItem {...supplyFormItemLayout} label={`供应商`}  key={k}>
             {
-              getFieldDecorator(`supplier[${k}].supplierName`,{
-                initialValue: '',
+              medDrugType===1?
+              <span style={{marginRight: 24}}>{k.supplierName}</span>
+              :
+              getFieldDecorator(`supplier[${index}].supplierCode`,{
+                initialValue:k.supplierCode,
               })(
-                <Input  style={{ width: 150 }} disabled={true}/>
+                
+                <Select style={{width: 150}}>
+                  {
+                    supplierSelect && supplierSelect.length?supplierSelect.map((item)=>(
+                      <Option key={item.ctmaSupplierCode} value={item.ctmaSupplierCode}>{item.ctmaSupplierName}</Option>
+                    )):null
+                  }
+                </Select>
               )
             }
-            价格  :  
+            价格&nbsp;:&nbsp;&nbsp;
             <FormItem style={{display: 'inline-block'}} >
               {
-                getFieldDecorator(`supplier[${k}].supplierPrice`,{
-                  initialValue: '',
+                getFieldDecorator(`supplier[${index}].supplierPrice`,{
+                  initialValue: k.supplierPrice,
                   rules:[{
                     required:true,message:"必填！"
                   }]
                 })(
-                  <Input type='number' style={{ width: 80 ,marginRight: 8}} addonAfter='元'/>
+                  <Input type='number' style={{ width:120 ,marginRight: 8}} addonAfter='元'/>
                 )
               }
             </FormItem>
             <FormItem style={{display: 'inline-block',marginRight:8}}>
               {
-                getFieldDecorator(`supplier[${k}].whetherDefault`,{
-                  initialValue: '',
-                  rules:[{
-                    required:true,message:"必填！"
-                  }]
-                })(//
-                  <RadioGroup onChange={(e)=>this.onChangeRadio(e,k)}>
-                    <Radio value={1}>设为默认</Radio>
+                getFieldDecorator(`supplier[${index}].whetherDefault`,{
+                  initialValue:k.whetherDefault
+                })(
+                  <RadioGroup onChange={(e)=>this.onChangeRadio(e,index)}>
+                    <Radio value={1} >设为默认</Radio>
                   </RadioGroup>
                 )
               }
             </FormItem>
-            {keySupply.length > 1 ? (
+            {supplierList.length > 1 && medDrugType===2 ? (
                 <Icon
                   style={{marginRight:8}}
                   className="dynamic-delete-button"
                   type="minus-circle-o"
-                  onClick={() => this.removeSupply(k)}
+                  onClick={() => this.removeSupply(index)}
                 />
             ) : null}
-            {keySupply.length-1 === k ? (
+            { (supplierList.length-1 === index )  && medDrugType===2 ? (
                 <Icon
                   className="dynamic-delete-button"
                   type="plus-circle-o"
@@ -441,7 +458,7 @@ class EditDrugDirectory extends PureComponent{
                     <label>最小发药单位</label>
                   </div>
                   <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
-                    <div className='ant-form-item-control'>片  =  1  片  {fillBackData?this.getMaPInfo(fillBackData.listTransforsVo,3) :''}</div>
+                    <div className='ant-form-item-control'> {fillBackData?this.getMaPInfo(fillBackData.listTransforsVo,3) :''}</div>
                   </div>
                 </Col>
                 <Col span={10}>
@@ -449,7 +466,7 @@ class EditDrugDirectory extends PureComponent{
                   <label>包装规格</label>
                 </div>
                 <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
-                  <div className='ant-form-item-control'>盒  =  12  片  {fillBackData?this.getMaPInfo(fillBackData.listTransforsVo,2) :''}</div>
+                  <div className='ant-form-item-control'>{fillBackData?this.getMaPInfo(fillBackData.listTransforsVo,2) :''}</div>
                 </div>
                 </Col>
                 <Col span={10}>
@@ -457,7 +474,7 @@ class EditDrugDirectory extends PureComponent{
                     <label>整包装单位</label>
                   </div>
                   <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
-                    <div className='ant-form-item-control'>箱  =  24  盒 {fillBackData?this.getMaPInfo(fillBackData.listTransforsVo,1) :''}</div>
+                    <div className='ant-form-item-control'>{fillBackData?this.getMaPInfo(fillBackData.listTransforsVo,1) :''}</div>
                   </div>
                 </Col>
                 <Col span={10}>
@@ -534,7 +551,11 @@ class EditDrugDirectory extends PureComponent{
             </Panel>
 
             <Panel header="供应商" key="3" style={customPanelStyle}>
-              {formItemSupply}
+
+             
+             {formItemSupply}
+            
+              
             </Panel>
 
             <Panel header="指示货位" key="4" style={customPanelStyle}>

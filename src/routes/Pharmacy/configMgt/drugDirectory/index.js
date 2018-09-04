@@ -240,7 +240,7 @@ class DrugDirectory extends PureComponent{
           payload:{drugCode:selected.join(",")},
           callback:(data)=>{
             message.success('操作成功');
-            this.props.table.fetch();
+            this.refs.table.fetch();
           }
         })
       },
