@@ -4,7 +4,7 @@
 * @Last Modified time: 2018-07-24 13:13:55 
  */
 import React, { PureComponent } from 'react';
-import { Table ,Row, Col, Tabs, Button, message } from 'antd';
+import { Table ,Row, Col, Tabs, Tooltip, Button, message } from 'antd';
 import querystring from 'querystring';
 import {connect} from 'dva';
 const columns = [
