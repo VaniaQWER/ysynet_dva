@@ -25,6 +25,7 @@ class SearchFormWrapper extends PureComponent {
   }
   componentWillMount = () =>{
     const { dispatch } = this.props;
+    // 申领部门
     dispatch({
       type: 'outStorage/findApplyDepts',
       payload: {},
@@ -97,7 +98,7 @@ class SearchFormWrapper extends PureComponent {
                  >
                 <Option key="" value="">全部</Option>
                 {
-                  deptOptions.map((item,index)=> <Option key={index} value={ item.id } deptType={item.deptType}>{ item.deptName }</Option>)
+                  deptOptions.map((item,index)=> <Option key={index} value={ item.id } depttype={item.deptType}>{ item.deptName }</Option>)
                 }
                </Select>
               )}

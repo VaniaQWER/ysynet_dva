@@ -4,7 +4,7 @@
 * @Last Modified time: 2018-07-24 13:16:33 
  */
 import React, { PureComponent } from 'react';
-import { Table ,Row, Col, Card , Button, Modal , Input , Tooltip} from 'antd';
+import { Table ,Row, Col, Card , Button, Modal , Input , Tooltip, message } from 'antd';
 import { connect } from 'dva';
 const Conform = Modal.confirm;
 
@@ -15,10 +15,13 @@ class DetailsPicking extends PureComponent{
     super (props)
     this.state = {
       detailsData: {},
+      rigthDistribut: {},// 配货明细
       leftDataSource: [],
+      rightDataSource: [], // 配货明细表格列表
       selectedRow: {}, // 选中行
       visible: true,
       loading: false,
+      distribite_btn_disable: false,// 配货按钮禁用状态
       selectedRowKey: [],
       applyStatus: null, // 单据状态
       hasStyle: null, // 表格选中某行index
@@ -50,18 +53,35 @@ class DetailsPicking extends PureComponent{
       type: 'outStorage/distributeEvent',
       payload: { ...values },
       callback: (data) =>{
-        
+        this.setState({ distribite_btn_disable: true });
+        let msg;
+        switch(editType){
+          case 'allocate':
+            msg = '配货';
+            break;
+          case 'cancel':
+            msg = '取消';
+            break;
+          case 'addPick':
+            msg = '拣货';
+            break;
+          default: 
+            break;
+        }
+        return message.success(`${msg}成功`);
       }
     })
+    
   }
   //生成拣货单
   onCreate = () =>{
     Conform({
       content:"您确定要执行此操作？",
       onOk:()=>{
-        this.setState({
+        /* this.setState({
           hidden:false
-        })
+        }) */
+        this.distributeEvent('addPick')
       },
       onCancel:()=>{}
     })
@@ -85,12 +105,47 @@ class DetailsPicking extends PureComponent{
       type: 'outStorage/getDistributeDetail',
       payload: { id },
       callback: (data) =>{
-        this.setState({ rightDataSource: data, rightLoading: false })
+        this.setState({ rightDataSource: data.detailList, rightLoading: false, rigthDistribut: data })
       }
     })
   }
+  onChange = (record,index, e) =>{
+    let value = e.target.value;
+    let newRightDataSource = [...this.state.rightDataSource];
+      if (/^\d+$/.test(value)) {
+        if (value > 99999999) {
+          e.target.value  = 99999999;
+          newRightDataSource[index].amount = 99999999;
+          return message.warn('输入数值过大, 不能超过100000000')
+        }
+        else{
+          newRightDataSource[index].amount = value;
+        }
+      } else {
+          return message.warn('请输入非0正整数')
+      }
+    this.setState({  rightDataSource: newRightDataSource })
+  }
+  // 修改配货明细
+  singleUpdateDetail = (id) =>{
+    let { rightDataSource } = this.state;
+    let detailList = [], postData = {};
+    rightDataSource.map(item => detailList.push({ id: item.id, usableQuantity: item.amount }));
+    postData.detailList = detailList;
+    postData.id = id;
+    this.props.dispatch({
+      type: 'outStorage/singUpdate',
+      payload: { ...postData },
+      callback: () =>{
+        
+      }
+    })
+  }
+
   render(){
-    const { detailsData, leftDataSource, rightDataSource,visible , hidden, applyStatus, loading, rightLoading, hasStyle } = this.state;
+    const { detailsData, leftDataSource, rightDataSource, visible , 
+      hidden, applyStatus, loading, rightLoading, hasStyle ,distribite_btn_disable
+    } = this.state;
     const leftColumns = [
       {
         title: '通用名称',
@@ -118,27 +173,27 @@ class DetailsPicking extends PureComponent{
       },
       {
         title: '单位',
-        width:150,
+        width:80,
         dataIndex: 'replanUnit',
       },
       {
         title: '申领数量',
-        width:150,
+        width:80,
         dataIndex: 'applyNum',
       },
       {
         title: '当前库存',
-        width:150,
+        width:80,
         dataIndex: 'totalStoreNum',
       },
       {
         title: '已分配',
-        width:150,
+        width:80,
         dataIndex: 'finishNum',
       },
       {
         title: '欠品数',
-        width:150,
+        width:80,
         dataIndex: 'lackNum',
       },
       {
@@ -150,24 +205,18 @@ class DetailsPicking extends PureComponent{
     ];
     const rightColumns =  [
       {
-       title: '序号',
-       width:80,
-       dataIndex: 'index',
-       render:(text,record,index)=>`${index+1}`
-      },
-      {
         title: '生产批号',
         width:150,
         dataIndex: 'lot',
       },
       {
         title: '生产日期',
-        width:100,
+        width: 100,
         dataIndex: 'productDate'
       },
       {
         title: '有效期至',
-        width:150,
+        width: 100,
         dataIndex: 'validEndDate',
       },
       {
@@ -177,10 +226,13 @@ class DetailsPicking extends PureComponent{
       },
       {
         title: '分配数',
-        width:150,
-        dataIndex: 'allocationNum',
+        width: 110,
+        dataIndex: 'amount',
         render:(text,record,index)=>{
-          return record.detailDistributeStatus === '0'? text: <Input defaultValue={text}/>
+          return record.detailDistributeStatus === '0'? 
+          <span>{record.allocationNum}</span>
+          : 
+          <Input onInput={this.onChange.bind(this,record,index)} defaultValue={record.allocationNum}/>
         }
       }
     ];
@@ -197,9 +249,18 @@ class DetailsPicking extends PureComponent{
                   {
                     hidden?
                     <div style={{ textAlign: 'right' }}>
-                      <Button type='primary' className='button-gap' onClick={()=>this.distribite(false)}>配货</Button>
-                      <Button className='button-gap'  onClick={()=>this.onSubmit(true)} disabled={visible}>取消</Button>
-                      <Button onClick={()=>this.onCreate()} disabled={visible}>生成拣货单</Button>
+                      <Button type='primary' disabled={ applyStatus === '2' || applyStatus === '4'? true : distribite_btn_disable} className='button-gap' onClick={()=>this.distribite(false)}>配货</Button>
+                      <Button className='button-gap'  
+                        onClick={()=>this.onSubmit(true)} 
+                        disabled={applyStatus === '2' ? false: true}
+                      >
+                        取消
+                      </Button>
+                      <Button onClick={()=>this.onCreate()} 
+                        disabled={applyStatus === '2' ? false: true}
+                      >
+                        生成拣货单
+                      </Button>
                     </div>
                     :null
                   }
@@ -257,6 +318,8 @@ class DetailsPicking extends PureComponent{
                 <div className='ant-form-item-control'>{ detailsData.mobile }</div>
               </div>
             </Col>
+          </Row>
+          <Row>
             <Col span={8}>
               <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
                 <label>药房地址</label>
@@ -285,7 +348,7 @@ class DetailsPicking extends PureComponent{
           <hr className='hr'/>
           <h3>产品信息</h3>
           <Row>
-            <Col span={12} >
+            <Col span={13} >
               <Table
                 bordered
                 loading={loading}
@@ -293,24 +356,26 @@ class DetailsPicking extends PureComponent{
                 columns={leftColumns}
                 dataSource={leftDataSource}
                 rowKey={'id'}
+                pagination={false}
                 rowClassName={ (record, index) => index === hasStyle ? 'rowClassBg' : ''}
                 onRow={ (record, index) => {
                   return {
                     onClick: () => {
                       let { id } = record;
-                      if(this.state.selectedRow.id === id){
-                        return ;
-                      }else{
+                      if(this.state.selectedRow.id !== id){
                         this.setState({ hasStyle: index , selectedRow: record });
                         this.getDistributeDetail(id);
                       }
+                      /* if(applyStatus !== '5'){
+                        this.singleUpdateDetail(id)
+                      } */
                     }
                   };
                 }}
 
               />
             </Col>
-            <Col span={10} offset={2}>
+            <Col span={10} offset={1}>
               <Table
                 bordered
                 scroll={{x: '100%'}}

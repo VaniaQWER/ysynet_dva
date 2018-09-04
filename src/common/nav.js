@@ -375,7 +375,7 @@ export const getNavData = app => [
     {
       name: "受理配货-详情",
       icon: 'setting',
-      path: '/drugStorage/outStorage/acceptDistribution/details',
+      path: '/drugStorage/outStorage/acceptDistribution/details/:applyCode/:applyStatus',
       component: dynamicWrapper(app, ['drugStorage/outStorage'], () => import('../routes/DrugStorage/outStorage/acceptDistribution/details')),
     },
     {

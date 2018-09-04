@@ -9,6 +9,7 @@ import { Form, Row, Col, Button, Icon, Select , Input , DatePicker} from 'antd';
 import { Link } from 'react-router-dom'
 import { formItemLayout } from '../../../../utils/commonStyles';
 import RemoteTable from '../../../../components/TableGrid';
+import { outStorage } from '../../../../api/drugStorage/outStorage';
 import { connect } from 'dva';
 const RangePicker = DatePicker.RangePicker;
 const FormItem = Form.Item;
@@ -17,7 +18,7 @@ const columns = [
   {
     title: '申领号',
     dataIndex: 'applyCode',
-    width:120,
+    width:180,
     render:(text,record)=>
     <span>
       <Link to={{pathname: `/drugStorage/outStorage/acceptDistribution/details/${record.applyCode}/${record.applyStatus}`}}>{text}</Link>
@@ -116,6 +117,7 @@ class SearchFormWrapper extends PureComponent {
           values.endTime = values.Time[1].format('YYYY-MM-DD');
         }
         delete values.Time;
+        values.queryType = '2';
         console.log(values, '查询条件');
         this.props.query(values);
       }
@@ -124,7 +126,7 @@ class SearchFormWrapper extends PureComponent {
   //重置
   handleReset = () => {
     this.props.form.resetFields();
-    this.props.query({});
+    this.props.query({ queryType: '2' });
   }
  
   render() {
@@ -135,7 +137,7 @@ class SearchFormWrapper extends PureComponent {
         <Row gutter={30}>
           <Col span={8}>
             <FormItem label={`申领部门`} {...formItemLayout}>
-              {getFieldDecorator('assetCode', {})(
+              {getFieldDecorator('applyDeptCode', {})(
                <Select 
                  showSearch
                  placeholder={'请选择'}
@@ -144,7 +146,7 @@ class SearchFormWrapper extends PureComponent {
                  >
                   <Option key="" value="">全部</Option>
                   {
-                    deptOption.map((item,index)=> <Option key={index} value={item.id} deptType={item.deptType}>{ item.deptName }</Option>)
+                    deptOption.map((item,index)=> <Option key={index} value={item.id} depttype={item.deptType}>{ item.deptName }</Option>)
                   }
                </Select>
               )}
@@ -152,7 +154,7 @@ class SearchFormWrapper extends PureComponent {
           </Col>
           <Col span={8}>
             <FormItem label={`状态`} {...formItemLayout}>
-              {getFieldDecorator('fstate', {
+              {getFieldDecorator('applyStatus', {
                 initialValue: ''
               })(
                <Select 
@@ -170,7 +172,7 @@ class SearchFormWrapper extends PureComponent {
           </Col>
           <Col span={8} style={{display: display}}>
             <FormItem label={`类型`} {...formItemLayout}>
-              {getFieldDecorator('spec',{
+              {getFieldDecorator('applyType',{
                 initialValue: ''
               })(
                <Select 
@@ -188,7 +190,7 @@ class SearchFormWrapper extends PureComponent {
           </Col>
           <Col span={8} style={{display: display}}>
             <FormItem label={`单据号`} {...formItemLayout}>
-              {getFieldDecorator('danjuhao',{
+              {getFieldDecorator('applyCode',{
                 initialValue: ''
               })(
                <Input placeholder='申领单'/>
@@ -219,7 +221,9 @@ class Picking extends PureComponent{
   constructor(props) {
     super(props);
     this.state = {
-      query:{},
+      query:{
+        queryType: '2'
+      },
     }
   }
 
@@ -240,7 +244,8 @@ class Picking extends PureComponent{
           bordered
           ref='table'
           query={query}
-          scroll={{x: '100%'}}
+          url={outStorage.FINDDISTRIBUTE_LIST}
+          scroll={{x: '130%'}}
           columns={columns}
           rowKey={'id'}
           style={{marginTop: 20}}

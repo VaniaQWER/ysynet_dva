@@ -28,7 +28,7 @@ class DetailsPickSoldOut extends PureComponent{
       let { pickingOrderNo, pickingStatus } = this.props.match.params;
       this.setState({ loading: true });
       this.props.dispatch({
-        type:'outStorage/distributeDetail',
+        type:'outStorage/getpickingDetail',
         payload: { pickingOrderNo },
         callback:(data)=>{
           this.setState({ 

@@ -2,7 +2,7 @@
  * @Author: wwb 
  * @Date: 2018-08-31 23:18:25 
  * @Last Modified by: wwb
- * @Last Modified time: 2018-09-04 16:49:27
+ * @Last Modified time: 2018-09-04 16:53:54
  */
 
 import * as outStorageService from '../../services/drugStorage/outStorage';
@@ -60,6 +60,34 @@ export default {
       const data = yield call(outStorageService.distributeDetail, payload);
       if(data.code !== 200){
         return message.error(data.msg||'获取配货单详情失败')
+      }
+      if(callback) callback(data.data)
+    },
+    
+    // 单条数据更新
+    *singUpdate({ payload,callback },{ call }){
+      const data = yield call(outStorageService.singUpdate, payload);
+      if(data.code !== 200){
+        return message.error(data.msg||'配货明细记录更新失败')
+      }
+      if(callback) callback(data.data)
+    },
+
+
+    /*  出库拣货 申请部门  */
+    *findApplyDepts({ payload,callback },{ call }){
+      const data = yield call(outStorageService.findApplyDepts, payload);
+      if(data.code !== 200){
+        return message.error(data.msg||'获取申请科室失败')
+      }
+      if(callback) callback(data.data)
+    },
+
+    /*  出库拣货 详情  */
+    *getpickingDetail({ payload,callback },{ call }){
+      const data = yield call(outStorageService.getPickingDetail, payload);
+      if(data.code !== 200){
+        return message.error(data.msg||'获取拣货闲情失败')
       }
       if(callback) callback(data.data)
     },
