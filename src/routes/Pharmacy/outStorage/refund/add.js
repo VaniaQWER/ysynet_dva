@@ -1,5 +1,5 @@
 /*
- * @Author: yuwei  退货新建 /refund/add
+ * @Author: yuwei  退库新建 /refund/add
  * @Date: 2018-07-24 13:13:55 
 * @Last Modified time: 2018-07-24 13:13:55 
  */
@@ -25,7 +25,7 @@ const formItemLayout = {
 }
 const columns = [
   {
-   title: '退货数量',
+   title: '退库数量',
    width: 120,
    dataIndex: 'backNum',
   render:(text) =>{
@@ -235,7 +235,7 @@ class AddRefund extends PureComponent{
       return message.warning('请至少勾选有一条数据');
     }
     Conform({
-      content:"是否确认退货",
+      content:"是否确认退库",
       onOk:()=>{
         const { dispatch, history } = this.props;
         let postData = {}, backDrugList = [];
@@ -247,7 +247,7 @@ class AddRefund extends PureComponent{
           type: 'base/submitBackStorage',
           payload: { ...postData },
           callback: () => {
-            message.success('退货成功');
+            message.success('退库成功');
             history.push({pathname:"/drugStorage/outStorage/backStorage"})
           }
         })
@@ -313,7 +313,7 @@ class AddRefund extends PureComponent{
               <Button onClick={this.delete} >移除</Button>
             </Col>
             <Col span={24}>
-              <Input placeholder='请输入退货原因' 
+              <Input placeholder='请输入退库原因' 
                 defaultValue={detailsData.backCause? detailsData.backCause: ''}
                 onInput={e => this.setState({ backCause: e.target.value })} 
                 style={{width:250, marginTop:12}}

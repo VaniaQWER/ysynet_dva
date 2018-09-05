@@ -1,8 +1,10 @@
 import React, { PureComponent } from 'react';
-import { Form, Row, Col, DatePicker, Input, Select, Button, Icon, Table, message } from 'antd';
+import { Form, Row, Col, DatePicker, Input, Select, Button, Icon, message } from 'antd';
 import { Link } from 'react-router-dom';
 import { formItemLayout } from '../../../../utils/commonStyles';
-import { createData } from '../../../../common/data';
+import RemoteTable from '../../../../components/TableGrid';
+import { outStorage } from '../../../../api/drugStorage/outStorage';
+import { connect } from 'dva';
 const FormItem = Form.Item;
 const { RangePicker } = DatePicker;
 const { Option } = Select;
@@ -10,6 +12,7 @@ const { Option } = Select;
 class SearchForm extends PureComponent {
   state = {
     display: 'none',
+    recall_status_options: []
   }
   toggle = () => {
     const { display, expand } = this.state;
@@ -18,15 +21,26 @@ class SearchForm extends PureComponent {
       expand: !expand
     })
   }
+  componentWillMount = () =>{
+    const { dispatch } = this.props;
+    dispatch({
+      type: 'base/orderStatusOrorderType',
+      payload: { type: 'recall_status' },
+      callback: (data) =>{
+        this.setState({ recall_status_options: data });
+      }
+    });
+  }
   handleSearch = e => {
     e.preventDefault();
     this.props.form.validateFields((err, values) => {
       if (!err) {
         const makingTime = values.makingTime === undefined || values.makingTime === null ? "" : values.makingTime;
         if (makingTime.length > 0) {
-          values.startMakingTime = makingTime[0].format('YYYY-MM-DD HH:mm');
-          values.endMakingTime = makingTime[1].format('YYYY-MM-DD HH:mm');
+          values.startTime = makingTime[0].format('YYYY-MM-DD HH:mm');
+          values.endTime = makingTime[1].format('YYYY-MM-DD HH:mm');
         }
+        delete values.makingTime;
         console.log(values, '查询条件');
         this.props.query(values);
       }
@@ -37,34 +51,43 @@ class SearchForm extends PureComponent {
     this.props.query({});
   }
   render() {
+    const { recall_status_options } = this.state;
     const { getFieldDecorator } = this.props.form;
     return (
       <Form onSubmit={this.handleSearch}>
         <Row gutter={30}>
           <Col span={8}>
             <FormItem label={'单据号'} {...formItemLayout}>
-              {getFieldDecorator('odd')(
+              {getFieldDecorator('recallNo',{
+                initialValue: ''
+              })(
                 <Input placeholder={'请输入'} />
               )}
             </FormItem>
           </Col>
           <Col span={8}>
             <FormItem label={'原因'} {...formItemLayout}>
-              {getFieldDecorator('remark')(
+              {getFieldDecorator('remarks',{
+                initialValue: ''
+              })(
                 <Input placeholder={'请输入'} />
               )}
             </FormItem>
           </Col>
           <Col span={8}>
             <FormItem label={'状态'} {...formItemLayout} style={{ display: this.state.display }}>
-              {getFieldDecorator('status', {
+              {getFieldDecorator('recallStatus', {
                 initialValue: ''
               })(
-                <Select>
-                  <Option value={''}>全部</Option>
-                  <Option value={'00'}>待审核</Option>
-                  <Option value={'01'}>待召回</Option>
-                  <Option value={'02'}>已完成</Option>
+                <Select
+                  showSearch
+                  placeholder={'请选择'}
+                  optionFilterProp="children"
+                  filterOption={(input, option) => option.props.children.indexOf(input) >= 0}
+                >
+                  {
+                     recall_status_options.map((item,index)=> <Option key={index} value={item.value}>{item.label}</Option>)
+                  }
                 </Select>
               )}
             </FormItem>
@@ -76,11 +99,9 @@ class SearchForm extends PureComponent {
               )}
             </FormItem>
           </Col>
-
-
           <Col span={8}>
             <FormItem label={'供应商'} {...formItemLayout} style={{ display: this.state.display }}>
-              {getFieldDecorator('types', {
+              {getFieldDecorator('supplierName', {
                 initialValue: ''
               })(
                 <Input placeholder={'请输入'} />
@@ -109,108 +130,104 @@ class RecallAndLocked extends PureComponent {
     loading: false,
     visible: false,
     selected: [],
-    types2: '1',
+    selectedRows: [],
     display: 'none'
   }
   queryHandler = query => {
     this.setState({ query });
   }
   delete = () =>{
-    const selected = this.state.selected;
-    if (selected.length === 0) {
-      message.warn('请至少选择一条数据')
-    } else {
-      this.setState({ loading: true });
-      message.warn('删除成功！');
-      setTimeout(()=>{this.setState({loading: false, selected: []});}, 500);
+    const { selectedRows, query } = this.state;
+    if (selectedRows.length === 0) {
+      return message.warn('请选择一条数据')
     }
-  }
-  locked = () =>{
-    const selected = this.state.selected;
-    if (selected.length === 0) {
-      message.warn('请至少选择一条数据')
-    } else {
-      this.setState({ loading: true });
-      message.warn('锁定成功！');
-      setTimeout(()=>{this.setState({loading: false, selected: []});}, 500);
+    if(selectedRows.length > 1){
+      return message.warning('只能选择一条数据');
     }
+    let { recallStatus } = selectedRows[0]
+    if(recallStatus !== 3) {
+      return message.warning('只能删除已驳回状态的单据，请重新选择');
+    }
+    this.setState({ loading: true });
+    this.props.dispatch({
+      type: 'outStorage/deleteRecallPlan',
+      payload: { recallNo: selectedRows[0].recallNo },
+      callback: () =>{
+        message.success('删除成功');
+        this.setState({ loading: false });
+        this.refs.table.fetch({ ...query });
+      }
+    })
+    
   }
   render() {
+    const { query, loading } = this.state;
     const columns = [
       {
         title: '召回及锁定单号',
-        dataIndex: 'medicinalCode',
-        width:150,
+        dataIndex: 'recallNo',
+        width: 180,
         render: (text, record) => 
         <span>
-          <Link to={{pathname: `/drugStorage/outStorage/recallAndLocked/details`}}>{text}</Link>
+          <Link to={{pathname: `/drugStorage/outStorage/recallAndLocked/details/${text}`}}>{text}</Link>
         </span>
        },
       {
         title: '状态',
         width:100,
-        dataIndex: 'spec21',
-        render:(text)=>{
-          if (text === '00') {
-            return '待审核'
-          } else if (text === '01') {
-            return '待召回'
-          } else {
-            return '已完成'
-          }
-        }
-       },
+        dataIndex: 'recallStatusName',
+      },
       {
         title: '供应商',
         width:100,
-        dataIndex: 'custodian',
-        render: (text, record, index) => '国药控股集团'
+        dataIndex: 'supplierName',
       },
       {
         title: '发起人',
         width:100,
-        dataIndex: 'bDept',
-        render: (text, record, index) => 'wang' + index
+        dataIndex: 'createUserName',
       },
       {
        title: '发起时间',
        width:150,
-       dataIndex: 'useDept',
-       render: (text, record, index) => '2018-7-25 21:47'
+       dataIndex: 'createDate',
       },
       {
         title: '审核人',
         width:100,
-        dataIndex: 'bDepts',
-        render: (text, record, index) => 'li' + index
+        dataIndex: 'updateUserName',
       },
       {
        title: '审核时间',
        width:150,
-       dataIndex: 'useDepts',
-       render: (text, record, index) => '2018-7-25 21:47'
+       dataIndex: 'updateDate',
       },
       {
         title: '原因',
         width:150,
-        dataIndex: 'remark',
-        render: (text, record, index) => '2018-7-25 21:47'
+        dataIndex: 'remarks',
        }
     ];
     return (
       <div className='ysynet-main-content'>
-        <SearchFormWarp query={this.queryHandler} />
+        <SearchFormWarp 
+          query={this.queryHandler} 
+          dispatch={this.props.dispatch}
+        />
         <div>
-          <Button type='primary'><Link to={{pathname:`/drugStorage/outStorage/recallAndLocked/add`}}>新建召回</Link></Button>
-          <Button style={{ marginLeft: 10 }} onClick={this.locked}>新建锁定</Button>
-          <Button style={{ marginLeft: 10 }} onClick={this.delete}>删除</Button>
+          <Button type='primary'><Link to={{pathname:`/AddNewReCallOrLocked/recall`}}>新建召回</Link></Button>
+          <Button style={{ marginLeft: 10 }}><Link to={{pathname:`/AddNewReCallOrLocked/locked`}}>新建锁定</Link></Button>
+          <Button style={{ marginLeft: 10 }} onClick={this.delete} loading={loading}>删除</Button>
         </div>
-        <Table
-          loading={ this.state.loading}
-          columns={columns}
-          dataSource={createData()}
-          style={{marginTop: 20}}
+        <RemoteTable
+          ref='table'
+          query={query}
           bordered
+          url={outStorage.ROOMRECALL_LIST}
+          columns={columns}
+          rowKey={'id'}
+          scroll={{ x: '130%' }}
+          style={{marginTop: 20}}
           rowSelection={{
             selectedRowKeys: this.state.selected,
             onChange: (selectedRowKeys, selectedRows) => {
@@ -222,4 +239,4 @@ class RecallAndLocked extends PureComponent {
     )
   }
 }
-export default RecallAndLocked;
+export default connect(state => state)(RecallAndLocked);

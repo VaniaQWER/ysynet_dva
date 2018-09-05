@@ -130,6 +130,25 @@ export default {
       }
       if(callback) callback(data.data)
     },
+
+    /* 召回及锁定 */
+    // 删除某一单据
+    *deleteRecallPlan({ payload,callback },{ call }){
+      const data = yield call(outStorageService.deleteRecall, payload);
+      if(data.code !== 200){
+        return message.error(data.msg||'删除失败')
+      }
+      if(callback) callback(data.data)
+    },
+    // 召回 及锁定详情
+    *recallDetail({ payload,callback },{ call }){
+      const data = yield call(outStorageService.genDetail, payload);
+      if(data.code !== 200){
+        return message.error(data.msg||'删除失败')
+      }
+      if(callback) callback(data.data)
+    },
+
     subscriptions: {
       
     }

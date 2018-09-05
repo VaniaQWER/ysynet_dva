@@ -25,7 +25,7 @@ const formItemLayout = {
 }
 const columns = [
   {
-   title: '退货数量',
+   title: '部门',
    width: 120,
    dataIndex: 'backNum',
   render:(text) =>{
@@ -33,7 +33,7 @@ const columns = [
     }
   },
   {
-    title: '当前库存',
+    title: '库存数量',
     width:120,
     dataIndex: 'usableQuantity',
   },
@@ -41,15 +41,6 @@ const columns = [
     title: '单位',
     width: 100,
     dataIndex: 'replanUnit',
-  },
-  {
-    title: '包装规格',
-    width:150,
-    dataIndex: 'packageSpecification',
-    className:'ellipsis',
-    render:(text)=>(
-      <Tooltip placement="topLeft" title={text}>{text}</Tooltip>
-    )
   },
   {
     title: '通用名称',
@@ -70,6 +61,15 @@ const columns = [
     title: '剂型',
     width: 180,
     dataIndex: 'ctmmDosageFormDesc',
+  },
+  {
+    title: '包装规格',
+    width:150,
+    dataIndex: 'packageSpecification',
+    className:'ellipsis',
+    render:(text)=>(
+      <Tooltip placement="topLeft" title={text}>{text}</Tooltip>
+    )
   },
   {
     title: '生产批号',
@@ -116,11 +116,6 @@ const modalColumns = [
     render:(text)=>(
       <Tooltip placement="topLeft" title={text}>{text}</Tooltip>
     )
-  },
-  {
-    title: '入库单号',
-    width: 260,
-    dataIndex: 'inStoreCode',
   },
   {
     title: '生产批号',
@@ -385,7 +380,7 @@ class AddRefund extends PureComponent{
                 </Col>
                 <Col span={8} style={{display: display}}>
                   <FormItem label={`供应商`} {...formItemLayout}>
-                    {getFieldDecorator('supplierCode',{
+                    {getFieldDecorator('supplierName',{
                       initialValue: ''
                     })(
                       <Input placeholder='供应商'/>

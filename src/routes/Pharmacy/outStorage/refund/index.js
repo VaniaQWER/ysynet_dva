@@ -1,5 +1,5 @@
 /*
- * @Author: yuwei  退货 /refund
+ * @Author: yuwei  退库 /refund
  * @Date: 2018-07-24 13:12:15 
 * @Last Modified time: 2018-07-24 13:12:15 
  */
@@ -25,15 +25,10 @@ const columns = [
     </span>
    },
   {
-    title: '部门',
+    title: '受理部门',
     dataIndex: 'backDpetName',
     width: 130,
   },
-  /* {
-    title: '配货部门',
-    dataIndex: 'backDpetName',
-    width: 130,
-  }, */
   {
     title: '退库原因  ',
     dataIndex: 'backCause',
@@ -45,12 +40,12 @@ const columns = [
     dataIndex: 'backStatusName',
   },
   {
-    title: '退货人',
+    title: '退库人',
     width:100,
     dataIndex: 'createUserName',
   },
   {
-   title: '退货时间',
+   title: '退库时间',
    width:150,
    dataIndex: 'createDate',
   },
