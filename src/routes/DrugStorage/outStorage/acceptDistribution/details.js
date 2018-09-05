@@ -237,7 +237,7 @@ class DetailsPicking extends PureComponent{
       }
     ];
     return (
-      <div className='fadeIn'>
+      <div className='fadeIn' style={{ marginLeft: -16 }}>
         <Card>
           <div style={{ display: 'flex', justifyContent: 'space-between' }}>
             <h3>单据信息</h3>

@@ -145,12 +145,14 @@ class DetailsPickSoldOut extends PureComponent{
       },
       {
         title: '配货数量',
-        width: 150,
+        width: 120,
+        fixed: 'right',
         dataIndex: 'allocationNum',
       },
       {
         title: '实际拣货数量',
         width: 150,
+        fixed: 'right',
         dataIndex: 'amount',
         render:(text,record,index)=>{
           return <Input
@@ -163,14 +165,12 @@ class DetailsPickSoldOut extends PureComponent{
     let readyPickingColumns = columns.slice(0,columns.length-1);
     readyPickingColumns.push({
       title: '实际拣货数量',
-      width: 150,
-      dataIndex: 'amount',
-      render: (text,record)=> {
-        return record.allocationNum ? record.allocationNum: 1
-      }
+      width: 120,
+      fixed: 'right',
+      dataIndex: 'pickingNum'
     })
     return (
-      <div className='bgf fadeIn'>
+      <div className='bgf fadeIn' style={{ marginLeft: -16 }}>
         <Card>
           <h3>单据信息 
             <Button style={{float:'right'}} icon='printer' onClick={()=> message.warning('敬请期待下个版本迭代内容')}>打印</Button>

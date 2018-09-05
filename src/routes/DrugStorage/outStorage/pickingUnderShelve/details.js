@@ -14,7 +14,7 @@ class DetailsPickSoldOut extends PureComponent{
     this.state = {
       detailsData: {},
       loading: false,
-      activeKey: null,
+      activeKey: this.props.match.params.pickingStatus === '1'? '1': '2',
       pickingStatus: null, // 拣货状态 显示tabs
       leftDataSource: [], // 待拣货
       rightDataSource: [], // 已拣货
@@ -66,19 +66,21 @@ class DetailsPickSoldOut extends PureComponent{
     Conform({
       content:"您确定要执行此操作？",
       onOk:()=>{
-        message.success('操作成功！')
         const { history, dispatch } = this.props;
         let postData = {}, pickingDetail = [];
         let { selectedRows, detailsData } = this.state;
+        if(selectedRows.length === 0){
+          return message.warning('请至少选中一条数据')
+        }
         selectedRows.map(item => pickingDetail.push({
           drugCode: item.drugCode,
           id: item.id,
-          pickingNum: item.pickingNum,
-          pickingOrderNo: item.pickingOrderNo
+          pickingNum: item.amount,
         }));
         postData.pickingDetail = pickingDetail;
-        postData.applyNo = detailsData.applyNo;
-        postData.pickingOrderNo = detailsData.pickingOrderNo;
+        postData.applyNo = detailsData.applyOrder;
+        postData.pickingOrderNo = detailsData.pickingOredr;
+        console.log(postData,'postData')
         dispatch({
           type: 'outStorage/finishPicking',
           payload: { ...postData },
@@ -92,16 +94,14 @@ class DetailsPickSoldOut extends PureComponent{
   }
 
   render(){
-    const { detailsData ,loading, activeKey, leftDataSource, rightDataSource } = this.state;
+    const { detailsData ,loading, pickingStatus, activeKey, leftDataSource, rightDataSource } = this.state;
     const columns = [
       {
         title: '通用名称',
-        width: 180,
         dataIndex: 'ctmmGenericName',
       },
       {
         title: '规格',
-        width: 150,
         dataIndex: 'ctmmSpecification',
         className:'ellipsis',
         render:(text)=>(
@@ -120,37 +120,37 @@ class DetailsPickSoldOut extends PureComponent{
       },
       {
         title: '生产日期',
-        width: 150,
+        width: 160,
         dataIndex: 'productDate'
       },
       {
         title: '有效期至',
-        width: 150,
+        width: 160,
         dataIndex: 'validEndDate'
       },
       {
         title: '包装规格',
-        width: 150,
         dataIndex: 'packageSpecification',
       },
       {
         title: '单位',
-        width: 150,
+        width: 80,
         dataIndex: 'replanUnit'
       },
       {
         title: '指示货位',
-        width: 150,
         dataIndex: 'locName',
       },
       {
         title: '配货数量',
-        width: 150,
+        width: 90,
+        fixed: 'right',
         dataIndex: 'allocationNum',
       },
       {
         title: '实际拣货数量',
-        width: 150,
+        width: 120,
+        fixed: 'right',
         dataIndex: 'amount',
         render:(text,record,index)=>{
           return <Input
@@ -164,13 +164,11 @@ class DetailsPickSoldOut extends PureComponent{
     readyPickingColumns.push({
       title: '实际拣货数量',
       width: 150,
-      dataIndex: 'amount',
-      render: (text,record)=> {
-        return record.allocationNum ? record.allocationNum: 1
-      }
+      fixed: 'right',
+      dataIndex: 'pickingNum',
     })
     return (
-      <div className='bgf fadeIn'>
+      <div className='bgf fadeIn' style={{ marginLeft: -16 }}>
         <Card>
           <h3>单据信息 
             <Button style={{float:'right'}} icon='printer' onClick={()=> message.warning('敬请期待下个版本迭代内容')}>打印</Button>
@@ -220,18 +218,17 @@ class DetailsPickSoldOut extends PureComponent{
           <hr className='hr'/>
           <h3>产品信息</h3>
           <Tabs  
-            defaultActiveKey={activeKey} 
-            onChange={(activeKey)=>this.setState({ activeKey })} 
-            tabBarExtraContent={ activeKey  === '2' ? null: <Button  type='primary'  onClick={()=>this.onSubmit()}>确认拣货</Button>}>
+            defaultActiveKey={activeKey}
+            tabBarExtraContent={ activeKey  === '2' && pickingStatus === '2' ? null: <Button  type='primary'  onClick={()=>this.onSubmit()}>确认拣货</Button>}>
             <TabPane tab="待拣货" key="1">
               <Table
                 bordered
                 dataSource={leftDataSource}
-                scroll={{x: '200%'}}
+                scroll={{x: '160%'}}
                 columns={columns}
                 loading={loading}
                 pagination={false}
-                rowKey={'id'}
+                rowKey={'bigDrugCode'}
                 rowSelection={{
                   selectedRowKeys: this.state.selected,
                   onChange: (selectedRowKeys, selectedRows) => {
@@ -244,11 +241,11 @@ class DetailsPickSoldOut extends PureComponent{
               <Table
                 bordered
                 dataSource={rightDataSource}
-                scroll={{x: '200%'}}
+                scroll={{x: '160%'}}
                 loading={loading}
                 columns={readyPickingColumns}
                 pagination={false}
-                rowKey={'id'}
+                rowKey={'bigDrugCode'}
               />
             </TabPane>
           </Tabs>
