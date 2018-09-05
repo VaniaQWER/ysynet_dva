@@ -900,7 +900,7 @@ export const getNavData = app => [
     {
       name: "退库-详情",//药库-出库-退库-详情
       icon: 'setting',
-      path: '/pharmacy/outStorage/refund/details',
+      path: '/pharmacy/outStorage/refund/details/:backNo',
       component: dynamicWrapper(app, [], () => import('../routes/Pharmacy/outStorage/refund/details')),
     },
     //药房-出库-受理配货

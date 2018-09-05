@@ -8,6 +8,7 @@ import { Table , Col, Button, Icon, Modal , message, Input , Affix , Row , Toolt
 import { outStorage } from '../../../../api/drugStorage/outStorage';
 import { Link } from 'react-router-dom';
 import RemoteTable from '../../../../components/TableGrid';
+import _ from 'lodash';
 import { connect } from 'dva';
 const FormItem = Form.Item;
 const Conform = Modal.confirm;
@@ -165,7 +166,7 @@ class AddRefund extends PureComponent{
     this.state={
       display: 'none',
       selectedRowKey: [],
-      spinLoading: true,
+      spinLoading: false,
       visible: false,
       isEdit: false,
       btnLoading: false, // 添加产品modal 确认
@@ -187,7 +188,7 @@ class AddRefund extends PureComponent{
   componentWillMount = () =>{
     if(this.props.match.path === "/editBackStoragePlan/:backNo") {
       let { backNo } = this.props.match.params;
-      this.setState({loading: true});
+      this.setState({spinLoading: true});
       this.props.dispatch({
         type:'base/getBackStorageDetail',
         payload: { backNo },
@@ -198,12 +199,11 @@ class AddRefund extends PureComponent{
             detailsData: data, 
             isEdit: true, 
             dataSource: data.list,
-            loading: false,
+            spinLoading: false,
             query: {
               ...query,
               existDrugCodeList
             },
-            spinLoading: false
           });
         }
       });
@@ -227,17 +227,7 @@ class AddRefund extends PureComponent{
     let { query } = this.state;
     this.refs.table.fetch({ ...query, ...values });
   }
-  //移除
-  delete = () =>{
-    Conform({
-      content:"您确定要执行此操作？",
-      onOk:()=>{
-        message.success('删除成功！')
-      },
-      onCancel:()=>{}
-    })
-  }
-
+  
   //提交该出库单
   backStroage = () =>{
     const {  selectedRows, detailsData } = this.state;
@@ -279,7 +269,20 @@ class AddRefund extends PureComponent{
     newDataSource = [ ...dataSource, ...modalSelectedRows ];
     this.setState({ dataSource: newDataSource, visible: false, modalSelected: [], modalSelectedRows: [] }) 
   }
-
+  delete = () => {  //删除
+    let { selectedRows, dataSource, query } = this.state;
+    dataSource = _.difference(dataSource, selectedRows);
+    let existDrugCodeList = dataSource.map((item) => item.drugCode)
+    this.setState({
+      dataSource,
+      selected: [],
+      selectedRows: [],
+      query: {
+        ...query,
+        existDrugCodeList
+      }
+    });
+  }
   render(){
     const { visible, isEdit, dataSource, query, spinLoading, display } = this.state; 
     const { getFieldDecorator } = this.props.form;
@@ -289,7 +292,7 @@ class AddRefund extends PureComponent{
         <div className="fullCol-fullChild" style={{margin: '-9px -24px 0'}}>
           <Row style={{borderBottom: '1px solid rgba(0, 0, 0, .1)', marginBottom: 10}}>
             <Col span={8}>
-              <h2>{isEdit? '编辑退货计划' : '新建退货计划'}</h2>
+              <h2>{isEdit? '编辑退货' : '新建退货'}</h2>
             </Col>
             <Col span={16} style={{ textAlign: 'right' }}>
               <span style={{ cursor: 'pointer' }} onClick={() => this.props.history.go(-1)}><Icon type="close" style={{ fontSize: 26, marginTop: 8 }} /></span>
@@ -307,7 +310,7 @@ class AddRefund extends PureComponent{
               }}>
                 添加产品
                 </Button>
-              <Button onClick={()=>this.delete()} >移除</Button>
+              <Button onClick={this.delete} >移除</Button>
             </Col>
             <Col span={24}>
               <Input placeholder='请输入退货原因' style={{width:250, marginTop:12}}/>

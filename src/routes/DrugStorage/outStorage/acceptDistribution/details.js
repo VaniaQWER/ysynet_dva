@@ -143,7 +143,7 @@ class DetailsPicking extends PureComponent{
   }
 
   render(){
-    const { detailsData, leftDataSource, rightDataSource, visible , 
+    const { detailsData, leftDataSource, rightDataSource,
       hidden, applyStatus, loading, rightLoading, hasStyle ,distribite_btn_disable
     } = this.state;
     const leftColumns = [
