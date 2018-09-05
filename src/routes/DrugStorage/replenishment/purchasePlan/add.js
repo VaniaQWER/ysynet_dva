@@ -101,7 +101,7 @@ class NewAdd extends PureComponent{
       }
     ]
     return (
-      <div className='fadeIn'>
+      <div className='fadeIn ysynet-content'>
         <div className='ant-row-bottom'> 
           <Button type='primary' icon='plus' onClick={()=>this.setState({ visible: true })}>添加产品</Button>
           <Button type='default' style={{ marginLeft: 8 }}>删除</Button>

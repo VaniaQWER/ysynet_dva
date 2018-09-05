@@ -72,6 +72,9 @@
 .ant-layout-content{
   padding: 0 16px;
 }
+.ysynet-content{
+  margin: 0 -16px;
+}
 .ant-layout-content .ant-table.ant-table-bordered .ant-table-title{
   border: none;
   border-bottom: 1px solid #e8e8e8;
@@ -79,6 +82,10 @@
 }
 .ysynet_newPage .ant-table-wrapper{
   background: #fff;
+}
+.ysynet-details-flex-header{
+  display: flex;
+  justify-content: space-between;
 }
 /* .ant-layout-content .ant-table-wrapper{
   margin-top: -16px !important;

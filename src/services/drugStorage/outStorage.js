@@ -2,7 +2,7 @@
  * @Author: wwb 
  * @Date: 2018-08-31 21:28:10 
  * @Last Modified by: wwb
- * @Last Modified time: 2018-09-04 16:56:11
+ * @Last Modified time: 2018-09-05 15:52:46
  */
 
 import request from '../../utils/request';
@@ -125,6 +125,33 @@ export function findAllDepts(options) {
 //出库单新建出库单保存
 export function confirmOutStore(options) {
   return request(`${_local}/a/common/outstore/confirmOutStore`,{
+    method: 'POST',
+    type: 'json',
+    body: options
+  })
+}
+ //  出库 -- 退货
+ // 供应商
+ export function genSupplierList(options) {
+  return request(`${_local}/a/depot/supplier/all`,{
+    method: 'POST',
+    type: 'formData',
+    body: options
+  })
+}
+
+// 退货详情
+export function genBackDetail(options) {
+  return request(`${_local}/a/commonback/back/info`,{
+    method: 'POST',
+    type: 'formData',
+    body: options
+  })
+}
+
+// 退货 确认操作
+export function backStorage(options) {
+  return request(`${_local}/a/commonback/backdetail/backSubmit`,{
     method: 'POST',
     type: 'json',
     body: options

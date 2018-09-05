@@ -107,7 +107,7 @@ class DetailsRefund extends PureComponent{
 
   render(){
     return (
-      <div className='fadeIn'>
+      <div className='fadeIn ysynet-content'>
         <Card>
           <h3>单据信息 
             <Button style={{float:'right'}} onClick={()=>this.onBan()} >不通过</Button>

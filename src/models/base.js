@@ -115,6 +115,25 @@ export default {
         message.error(data.msg);
       }
     },
+
+    // 退货 详情
+    *getBackStorageDetail({ payload,callback },{ call }){
+      const data = yield call(outStorageService.genBackDetail, payload);
+      if(data.code !== 200){
+        return message.error(data.msg||'获取退货单详情失败')
+      }
+      if(callback) callback(data.data)
+    },
+
+    // 确认退货
+    *submitBackStorage({ payload,callback },{ call }){
+      const data = yield call(outStorageService.backStorage, payload);
+      if(data.code !== 200){
+        return message.error(data.msg||'退货操作失败')
+      }
+      if(callback) callback(data.data)
+    },
+
     // 状态 类型 字典
     *orderStatusOrorderType({ payload,callback },{ call }){
       const data = yield call(replenishment.orderStatus, payload);

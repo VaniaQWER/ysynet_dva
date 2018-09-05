@@ -128,7 +128,7 @@ class DetailsPutaway extends PureComponent{
 
   render(){
     return (
-      <div className='fadeIn'>
+      <div className='fadeIn ysynet-content'>
         <Card>
           <h3>单据信息 
             <Button style={{float:'right'}} onClick={()=>this.onPrint()} >打印</Button>

@@ -2,7 +2,7 @@
  * @Author: wwb 
  * @Date: 2018-08-31 23:18:25 
  * @Last Modified by: wwb
- * @Last Modified time: 2018-09-04 16:53:54
+ * @Last Modified time: 2018-09-05 18:53:33
  */
 
 import * as outStorageService from '../../services/drugStorage/outStorage';
@@ -116,6 +116,17 @@ export default {
       const data = yield call(outStorageService.finishPicking, payload);
       if(data.code !== 200){
         return message.error(data.msg||'拣货失败')
+      }
+      if(callback) callback(data.data)
+    },
+    /* 
+      退库
+    */
+    // 供应商下拉框
+    *genSupplier({ payload,callback },{ call }){
+      const data = yield call(outStorageService.genSupplierList, payload);
+      if(data.code !== 200){
+        return message.error(data.msg||'获取供应商失败')
       }
       if(callback) callback(data.data)
     },
