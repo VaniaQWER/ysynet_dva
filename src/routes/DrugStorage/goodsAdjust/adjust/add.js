@@ -1,253 +1,394 @@
 /*
  * @Author: gaofengjiao 
  * @Date: 2018-08-06 16:37:22 
- * @Last Modified by: wwb
- * @Last Modified time: 2018-09-05 11:57:38
+ * @Last Modified by: gaofengjiao
+ * @Last Modified time: 2018-08-06 16:37:22 
  */
 /**
  * @file 药库 - 货位调整--新建货位
  */
 import React, { PureComponent } from 'react';
-import { Form, Row, Col, Button, Input, Table, Modal, Icon, Tooltip  } from 'antd';
-import { formItemLayout } from '../../../../utils/commonStyles'
-import { createData } from '../../../../common/data';
-const FormItem = Form.Item;
+import {Row, message, InputNumber, Col, Button, Input, Table, Modal, Select, Icon, Tooltip} from 'antd';
+import RemoteTable from '../../../../components/TableGrid/index';
+import goodsAdjust from '../../../../api/drugStorage/goodsAdjust';
+import {connect} from 'dva';
+import _ from 'lodash';
 const { Search } = Input;
-const modalData = createData().splice(5,16);
-
-class NewAdd extends PureComponent{
+const {Option} = Select;
+class NewAddGoodsAdjust extends PureComponent{
   state = {
     isShow: false,
     visible: false,
-    loading: false,
+    okLoading: false,
     selected: [],
     selectedRows: [],
     modalSelected: [],
-    modalSelectedRows: []
+    modalSelectedRows: [],
+    query: {
+      existDrugCodeList: [],
+      paramName: {}
+    },
+    dataSource: [],
+    submitLoading: false
   }
+
+  addProduct = () => {
+    let {modalSelected, dataSource} = this.state;
+    
+    if(modalSelected.length === 0) {
+      message.warning('请选择一条数据');
+      return;
+    };
+    modalSelected = modalSelected.map(item=>{
+      return {
+        drugCode: item.drugCode
+      }
+    });
+    this.setState({okLoading: true})
+    let payload = {
+      drugCodeList: modalSelected
+    };
+    this.props.dispatch({
+      type: 'base/drugInformation',
+      payload,
+      callback: (data) => {
+        this.setState({
+          dataSource: [
+            ...dataSource,
+            ...data
+          ],
+          okLoading: false,
+          visible: false,
+          modalSelected: []
+        });
+      }
+    })
+  }
+
+  showModal = () => {
+    let {dataSource, query} = this.state;
+    dataSource = dataSource.map(item=>item.drugCode);
+    this.setState({
+      query: {
+        ...query,
+        existDrugCodeList: dataSource
+      }, 
+      visible: true,
+    });
+  }
+
+  delete = () => {
+    let {dataSource, selectedRows} = this.state;
+    if(selectedRows.length === 0) {
+      message.warning('请至少选择一条数据进行删除');
+      return;
+    };
+    dataSource = _.difference(dataSource, selectedRows);
+    this.setState({
+      dataSource,
+      selectedRows: [],
+      selected: []
+    });
+  }
+
+  search = (value) => {
+    let {query} = this.state;
+    this.setState({
+      query: {
+        ...query,
+        paramName: value
+      }
+    });
+  }
+
+  submit = () => {
+    let {dataSource} = this.state;
+    let isNull = dataSource.every(item=>{
+      if(!item.adjustNum) {
+        message.warning('移动数量不能为空');
+        return false;
+      };
+      if(!item.goalLocCode) {
+        message.warning('目的货位不能为空');
+        return false;
+      };
+      return true;
+    });
+    if(!isNull) return;
+    this.setState({submitLoading: true});
+    let goodsLocationDetailDtoList = dataSource.map(item=>{
+      return {
+        adjustNum: item.adjustNum,
+        batchNo: item.batchNo,
+        conversionRate: item.conversionRate,
+        drugCode: item.drugCode,
+        goalBigDrugCode: item.goalBigDrugCode,
+        goalDrugCode: item.goalDrugCode,
+        goalLocCode: item.goalLocCode,
+        goalUnit: item.targetUnit,
+        lot: item.lot,
+        originalBigDrugCode: item.bigDrugCode,
+        originalLocCode: item.goodsCode,
+        originalStore: item.usableQuantity,
+        productDate: item.productDate,
+        supplierCode: item.supplierCode,
+        validEndDate: item.validEndDate
+      }
+    });
+    
+    this.props.dispatch({
+      type: 'base/confirmAdjust',
+      payload: {
+        goodsLocationDetailDtoList
+      },
+      callback: (data) => {
+        message.success('移库成功！');
+        this.props.history.go(-1);
+        this.setState({
+          submitLoading: false
+        });
+      }
+    })
+  }
+
+  cancel = () => {
+    this.setState({ 
+      visible: false, 
+      modalSelected: [] 
+    });
+  }
+
+  changeGoalLoc = (value, i, record) => {
+    let {dataSource} = this.state;
+    let index;
+    record.targetLocInfoVoList.map((item, n)=>{
+      if(item.id === value) {
+        index = n;
+      };
+      return item;
+    })
+    dataSource[i].goalLocCode = value;
+    dataSource[i].goalBigDrugCode = record.targetLocInfoVoList[index].goalBigDrugCode;
+    dataSource[i].goalDrugCode = record.targetLocInfoVoList[index].goalDrugCode;
+    dataSource[i].targetUnit = record.targetLocInfoVoList[index].targetUnit;
+    dataSource[i].targetTypeName = record.targetLocInfoVoList[index].targetTypeName;
+    dataSource[i].conversionRate = record.targetLocInfoVoList[index].conversionRate;
+    this.setState({
+      dataSource: [...dataSource]
+    });
+  }
+  
   render(){
-    const { getFieldDecorator } = this.props.form;
-    const { visible } = this.state;
+    const {visible, query, dataSource, okLoading, submitLoading} = this.state;
     const columns = [
-    {
-      title: '数量',
-      width: 100,
-      dataIndex: 'num',
-      render: (text,record,index)=>{
-        return <Input defaultValue={text || '24'}/>
+      {
+        title: '通用名',
+        dataIndex: 'ctmmGenericName'
+      },
+      {
+        title: '规格',
+        dataIndex: 'ctmmSpecification',
+        className:'ellipsis',
+        render:(text)=>(
+          <Tooltip placement="topLeft" title={text}>{text}</Tooltip>
+        )
+      },
+      {
+        title: '生产厂家',
+        dataIndex: 'ctmmManufacturerName'
+      },
+      {
+        title: '移动数量',
+        dataIndex: 'adjustNum',
+        render: (text, record, i) => {
+          return <InputNumber
+                  min={1}
+                  max={record.usableQuantity}
+                  precision={0}
+                  onChange={(value) => {
+                    record.adjustNum = value;
+                  }}
+                 />
+        }
+      },
+      {
+        title: '移动单位',
+        dataIndex: 'replanUnit'
+      },
+      {
+        title: '原库存',
+        dataIndex: 'usableQuantity'
+      },
+      {
+        title: '原货位',
+        dataIndex: 'goodsName'
+      },
+      {
+        title: '原货位类型',
+        dataIndex: 'positionTypeName',
+      },
+      {
+        title: '目的货位',
+        dataIndex: 'goalLocCode',
+        render: (text, record, i) => {
+          return <Select
+                  style={{width: '100%'}}
+                  placeholder="请选择目的货位"
+                  onChange={(value)=>{this.changeGoalLoc(value, i, record)}}
+                  showSearch
+                  optionFilterProp="children"
+                  filterOption={(input, option) => option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0}
+                 >
+                  {
+                    record.targetLocInfoVoList.map(item=>{
+                      return <Option key={item.id} value={item.id}>{item.targetLocName}</Option>
+                    })
+                  }
+                 </Select>
+        }
+      },
+      {
+        title: '目的货位单位',
+        dataIndex: 'targetUnit',
+      },
+      {
+        title: '目的货位类型',
+        dataIndex: 'targetTypeName'
+      },
+      {
+        title: '转换系数',
+        dataIndex: 'conversionRate'
+      },
+      {
+        title: '包装规格',
+        dataIndex: 'packageSpecification'
       }
-    },
-    {
-      title: '单位',
-      dataIndex: 'unit',
-      width: 100,
-    },
-    {
-      title: '原货位',
-      width: 100,
-      dataIndex: 'spec',
-      render:(text)=>'B121'
-    },
-    {
-      title: '目的货位',
-      width: 100,
-      dataIndex: 'spec',
-      render: (text,record,index)=>{
-        return <Input defaultValue={text || 'A1231'}/>
-      }
-    },
-    {
-      title: '原货位类型',
-      width: 120,
-      dataIndex: 'spec',
-      render:(text)=>'补货货位'
-    },
-    {
-      title: '目的货位类型',
-      width: 120,
-      dataIndex: 'unit',
-      render:(text)=>'补货货位'
-    },
-    {
-      title: '通用名称',
-      dataIndex: 'geName'
-    },
-    {
-      title: '规格',
-      dataIndex: 'spec',
-      className:'ellipsis',
-      render:(text)=>(
-        <Tooltip placement="topLeft" title={text}>{text}</Tooltip>
-      )
-    },{
-      title: '包装规格',
-      dataIndex: 'fmodal',
-      width: 150
-    },{
-      title: '生产厂家',
-      dataIndex: 'productCompany'
-    },{
-      title: '生产批号',
-      width: 180,
-      dataIndex: 'flot',
-    }, {
-      title: '生产日期',
-      width: 200,
-      dataIndex: 'produceTime',
-      render: (text,record,index) => '2018-07-10' 
-    },
-    {
-      title: '有效期至',
-      width: 200,
-      dataIndex: 'UserfulDate',
-      render: (text,record,index) => '2022-07-09' 
-    }
     ];
     const modalColumns = [
       {
-        title: '通用名称',
-        dataIndex: 'geName'
+        title: '货位',
+        dataIndex: 'locName'
       },{
-        title: '产品名称',
-        dataIndex: 'productName'
+        title: '货位类型',
+        dataIndex: 'positionTypeName'
+      },{
+        title: '通用名',
+        dataIndex: 'ctmmGenericName'
+      },{
+        title: '商品名',
+        dataIndex: 'ctmmTradeName',
       },{
         title: '规格',
-        dataIndex: 'spec'
+        dataIndex: 'ctmmSpecification',
       },{
         title: '剂型',
-        dataIndex: 'fmodal',
-        width: 150
+        dataIndex: 'ctmmDosageFormDesc',
       },{
         title: '包装规格',
-        dataIndex: 'unit',
-        width: 100,
-      },{
-        title: '批准文号',
-        dataIndex: 'medicinalCode',
-        width: 150,
+        dataIndex: 'packageSpecification'
       },{
         title: '生产厂家',
-        dataIndex: 'productCompany'
+        dataIndex: 'ctmmManufacturerName',
+        width: 300
+      },{
+        title: '批准文号',
+        dataIndex: 'approvalNo'
       }
-    ]
+    ];
     return (
-      <div className='fadeIn ysynet-content'>
-        <div className='ant-row-bottom'> 
-          <Button type='primary' icon='plus' onClick={()=>this.setState({ visible: true })}>添加产品</Button>
-          <Button type='default' style={{ marginLeft: 8 }}>删除</Button>
+      <div className='fullCol fadeIn' style={{padding: '0 24px 24px', background: 'rgb(240, 242, 245)'}}>
+        <div className='fullCol-fullChild' style={{marginLeft: -24, marginRight: -24}}> 
+          <Row style={{margin: '0 -32px', borderBottom: '1px solid rgba(0, 0, 0, .2)'}}>
+            <Col span={8}>
+              <h3 style={{padding: '0 0 15px 32px', fontSize: '20px'}}>
+                新建移库
+              </h3>
+            </Col>
+            <Col span={16} style={{textAlign: 'right', paddingRight: 32}}>
+              <Icon 
+                onClick={()=>{
+                  this.props.history.go(-1);
+                }} 
+                style={{cursor: 'pointer', transform: 'scale(2)'}} 
+                type="close" 
+                theme="outlined" 
+              />
+            </Col>
+          </Row>
+          <Row style={{marginTop: 10}}>
+            <Button type='primary' icon='plus' onClick={this.showModal}>添加产品</Button>
+            <Button type='default' onClick={this.delete} style={{ marginLeft: 8 }}>删除</Button>
+          </Row>
+        </div>
+        <div className='detailCard' style={{margin: '-10px -6px'}}>
+          <h3>产品信息</h3>
+          <Table 
+            columns={columns}
+            bordered
+            rowKey='drugCode'
+            dataSource={dataSource}
+            scroll={{ x: '210%' }}
+            pagination={false}
+            rowSelection={{
+              selectedRowKeys: this.state.selected,
+              onChange: (selectedRowKeys, selectedRows) => {
+                this.setState({selected: selectedRowKeys, selectedRows: selectedRows})
+              }
+            }}
+          />
+        </div>
+        <div className="detailCard" style={{margin: '-10px -6px'}}>
+          {
+            dataSource.length > 0?
+            <Row gutter={30}>
+              <Col style={{lineHeight: '32px'}} span={8}>
+                共<span style={{color: 'red'}}>{dataSource.length}</span>种产品
+              </Col>
+              <Col style={{textAlign: 'right'}} span={16}>
+                <Button loading={submitLoading} onClick={this.submit} type="primary" style={{marginRight: 8}}>确认移库</Button>
+                <Button onClick={()=>{this.props.history.go(-1)}}>取消</Button>
+              </Col>
+            </Row> : null
+          }
         </div>
         <Modal
           title={'添加产品'}
           visible={visible}
           width={1100}
           style={{ top: 20 }}
-          onCancel={()=>this.setState({ visible: false })}
+          onCancel={this.cancel}
           footer={[
-            <Button key="submit" type="primary" loading={this.state.loading} onClick={this.handleOk}>确认</Button>,
-            <Button key="back" onClick={() => this.setState({ visible: false })}>取消</Button>
+            <Button key="submit" type="primary" loading={okLoading} onClick={this.addProduct}>确认</Button>,
+            <Button key="back" onClick={this.cancel}>取消</Button>
           ]}
         >
-        <Row>
-          <Col span={8} style={{marginLeft: 4}}>
-            <Search 
-              style={{ width: 248 }}
-              placeholder='通用名/商品名'
-            />
-          </Col>
-          <Col span={8} style={{textAlign: 'left', marginTop: 4}}>
-            <a style={{userSelect: 'none'}} onClick={()=>this.setState({isShow: !this.state.isShow})}> 
-              <Icon type={this.state.isShow ? 'up-circle-o' : 'down-circle-o'} /> {this.state.isShow ? '收起' : '更多筛选'}
-            </a>
-          </Col>
-        </Row>
-        <Form style={{marginTop: 20, display: this.state.isShow ? 'block' : 'none'}} onSubmit={this.onSubmit}>
           <Row>
-            <Col span={8}>
-              <FormItem label={`产品名称`} {...formItemLayout}>
-                {getFieldDecorator('materialNameOrFqun')(
-                  <Input placeholder={`请输入产品名称/产品名称首字母`} />
-                )}
-              </FormItem>
-            </Col>
-            <Col span={8}>
-              <FormItem label={`通用名称`} {...formItemLayout}>
-                {getFieldDecorator('geNameOrFqun')(
-                  <Input placeholder={`请输入通用名称/简码`} />
-                )}
-              </FormItem>
-            </Col>
-            <Col span={8}>
-              <FormItem label={`规格`} {...formItemLayout}>
-                {getFieldDecorator('spec')(
-                  <Input placeholder={`请输入规格`} />
-                )}
-              </FormItem>
+            <Col span={8} style={{marginLeft: 4}}>
+              <Search
+                onSearch={this.search}
+                style={{ width: 248 }}
+                placeholder='通用名/商品名'
+              />
             </Col>
           </Row>
-          <Row>
-            <Col span={8}>
-              <FormItem label={`型号`} {...formItemLayout}>
-                {getFieldDecorator('fmodel')(
-                  <Input placeholder={`请输入型号`} />
-                )}
-              </FormItem>
-            </Col>
-            <Col span={8}>
-              <FormItem label={`品牌`} {...formItemLayout}>
-                {getFieldDecorator('brandName')(
-                  <Input placeholder={`请输入品牌`} />
-                )}
-              </FormItem>
-            </Col>
-            <Col span={8}>
-              <FormItem label={`生产商`} {...formItemLayout}>
-                {getFieldDecorator('produceName')(
-                  <Input placeholder={`请输入生产商`} />
-                )}
-              </FormItem>
-            </Col>
-            <Col span={24} style={{textAlign: 'right'}}>
-              <Button type="primary" style={{ marginRight: 8 }} htmlType="submit">查询</Button>
-              <Button onClick={()=>this.props.form.resetFields()}>重置</Button>
-            </Col>
-          </Row>
-        </Form>
-        <Table
-          style={{ marginTop: 16 }} 
-          columns={modalColumns}
-          dataSource={modalData}
-          bordered
-          scroll={{ x: '150%' }}
-          rowKey='id'
-          pagination={{
-            size: "small",
-            showQuickJumper: true,
-            showSizeChanger: true
-          }}
-          rowSelection={{
-            selectedRowKeys: this.state.modalSelected,
-            onChange: (selectedRowKeys, selectedRows) => {
-              this.setState({modalSelected: selectedRowKeys, modalSelectedRows: selectedRows})
-            }
-          }}
-        />
+          <RemoteTable
+            query={query}
+            isJson={true}
+            url={goodsAdjust.roomDrugList}
+            style={{ marginTop: 16 }} 
+            columns={modalColumns}
+            scroll={{ x: '180%' }}
+            rowKey='drugCode'
+            rowSelection={{
+              selectedRowKeys: this.state.modalSelected,
+              onChange: (selectedRowKeys, selectedRows) => {
+                this.setState({modalSelected: selectedRowKeys, modalSelectedRows: selectedRows})
+              }
+            }}
+          />
         </Modal>
-        <Table 
-          title={()=>'产品信息'}
-          columns={columns}
-          bordered
-          rowKey='id'
-          scroll={{ x: '150%' }}
-          pagination={false}
-          rowSelection={{
-            selectedRowKeys: this.state.selected,
-            onChange: (selectedRowKeys, selectedRows) => {
-              this.setState({selected: selectedRowKeys, selectedRows: selectedRows})
-            }
-          }}
-        />
       </div>
     )
   }
 }
-export default Form.create()(NewAdd);
+export default connect(state=>state)(NewAddGoodsAdjust);

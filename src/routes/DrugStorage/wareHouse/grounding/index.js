@@ -194,7 +194,6 @@ class SearchFormWrapper extends PureComponent {
                 optionFilterProp="children"
                 filterOption={(input, option) => option.props.children.indexOf(input) >= 0}
                 >
-                  <Option key="0" value="0">全部</Option>
                   {status}
               </Select>
              )}
@@ -208,8 +207,7 @@ class SearchFormWrapper extends PureComponent {
                 placeholder={'请选择'}
                 optionFilterProp="children"
                 filterOption={(input, option) => option.props.children.indexOf(input) >= 0}
-                > 
-                  <Option key="0" value="0">全部</Option>  
+                >
                   {type}
               </Select>
              )}

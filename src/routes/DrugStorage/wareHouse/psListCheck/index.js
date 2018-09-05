@@ -231,7 +231,7 @@ class DistributionCheck extends PureComponent{
       <div className='ysynet-main-content'>
          <WrapperForm query={this.queryHandler} />
          <div className='ant-row-bottom'>
-            <Button type='primary' onClick={()=>this.props.history.push({ pathname: `/drugStorage/wareHouse/psListCheck/add` })}>新建验收</Button>
+            <Button type='primary' onClick={()=>this.props.history.push({ pathname: `/AddNewCheck` })}>新建验收</Button>
          </div>
          <RemoteTable
           query={query}

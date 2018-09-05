@@ -17,18 +17,6 @@ export default {
     putStorageInfo: {}
   },
   effects: {
-    *deliverRequest({ payload, callback },{ put, call }) {
-      const data = yield call(wareHouse.detailsInfo, payload);
-      if(data.code === 200) {
-        yield put({
-          type: "setdetailInfo",
-          payload: data.data
-        });
-        callback && callback();
-      }else {
-        message.error(data.msg);
-      };
-    },
     *putawayRequest({ payload, callback }, {put, call}) {
       const data = yield call(wareHouse.putawayInfo, payload);
       if(data.code === 200) {
@@ -65,13 +53,6 @@ export default {
         message.error(data.msg);
       }
     },
-    *saveCheck({ payload, callback }, {put, call}) {
-      
-      const data = yield call(wareHouse.saveCheck, payload);
-      if(data.code === 200) {
-        callback && callback(data);
-      }
-    },
     *putSaveCheck({ payload, callback }, {put, call}) {
       const data = yield call(wareHouse.putSaveCheck, payload);
       if(data.code === 200) {
@@ -80,32 +61,6 @@ export default {
     }
   },
   reducers: {
-    addBatch(state, action) {
-      let {detailInfo} = state;
-      let {record} = action.payload;
-      let index;
-      detailInfo.unVerfiyList.map((item, i)=> {
-        if(item.upUserDate === record.upUserDate) {
-          index = i + 1;
-        };
-        return item;
-      })
-      record = JSON.parse(JSON.stringify(record));
-      if(record.id === null) {
-        record.parentId = record.parentId;
-      }else {
-        record.parentId = record.id;
-      }
-      record.id = null;
-      record.upUserDate = new Date().getTime();
-      record.realReceiveQuantity = '';
-      
-      detailInfo.unVerfiyList.splice(index, 0, record);
-      return {
-        ...state,
-        detailInfo
-      }
-    },
     setPutStorageInfo(state, action) {
       return {
         ...state,
@@ -116,12 +71,6 @@ export default {
       return {
         ...state,
         supplierList: action.payload
-      }
-    },
-    setdetailInfo(state, action) {
-      return {
-        ...state,
-        detailInfo: action.payload
       }
     },
     putawayInfo(state, action) {

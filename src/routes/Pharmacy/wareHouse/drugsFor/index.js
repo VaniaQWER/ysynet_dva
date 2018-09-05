@@ -20,7 +20,9 @@ class DrugsFor extends PureComponent{
     super(props);
     this.state = {
       loading: false,
-      query:{},
+      query:{
+        queryType: 1
+      },
       messageError:"",
       selectedRowKeys:[]
     }
@@ -75,6 +77,7 @@ class DrugsFor extends PureComponent{
         dataIndex: 'distributeDate'
       }
     ];
+    let {query} = this.state;
     return (
       <div className='ysynet-main-content'>
         <SearchForm query={this.queryHandler} />
@@ -85,6 +88,7 @@ class DrugsFor extends PureComponent{
         </Row>
         <RemoteTable
           ref="tab"
+          query={query}
           url={wareHouse.APPLYLIST}
           scroll={{x: '120%'}}
           columns={columns}

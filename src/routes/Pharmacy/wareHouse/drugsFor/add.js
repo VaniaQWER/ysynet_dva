@@ -8,13 +8,14 @@
  * @file 药房 - 申领 - 新建
  */
 import React, { PureComponent } from 'react';
-import { Row, Col, Button, Input, Table, Modal, Icon, Tooltip, message, Select, InputNumber } from 'antd';
+import { Row, Spin, Col, Button, Table, Modal, Icon, Tooltip, message, Select, InputNumber } from 'antd';
 import {wareHouse} from '../../../../api/pharmacy/wareHouse';
 import RemoteTable from '../../../../components/TableGrid';
+import FetchSelect from '../../../../components/FetchSelect/index';
+import {_local} from '../../../../api/local';
 import _ from 'lodash';
 import {connect} from 'dva';
 
-const { Search } = Input;
 const { Option } = Select;
 
 class NewAdd extends PureComponent {
@@ -26,8 +27,11 @@ class NewAdd extends PureComponent {
     loading: false,
     deptModules: [],// 补货部门
     query: {
-      deptCode: ''
+      deptCode: undefined,
+      existDrugCodeList: [],
+      hisDrugCodeList: []
     },
+    fetching: false,
     selected: [],
     selectedRows: [],
     modalSelected: [],
@@ -38,7 +42,7 @@ class NewAdd extends PureComponent {
     saveLoading: false,
     applyType: '1'        //补货方式
   }
-  componentWillMount = () =>{
+  componentDidMount = () =>{
     this.getReplenishList('1');
   };
   getReplenishList = (type) => {
@@ -47,14 +51,17 @@ class NewAdd extends PureComponent {
     this.setState({
       query: {
         ...query,
-        deptCode: ''
-      }
+        deptCode: undefined
+      },
+      fetching: true,
+      deptModules: []
     })
     dispatch({
       type: 'base/selectApplyDept',
       payload: { applyType : type },
       callback: (data) =>{
         this.setState({ 
+          fetching: true,
           deptModules: data
         })
       }
@@ -85,12 +92,16 @@ class NewAdd extends PureComponent {
     })
   }
   showModal = () => {
-    let {query} = this.state;
+    let {query, dataSource} = this.state;
     if(!query.deptCode) {
       message.warning('请选择部门');
       return;
     };
-    this.setState({visible: true});
+    query = {
+      ...query,
+      existDrugCodeList: dataSource.map(item=>item.drugCode)
+    };
+    this.setState({visible: true, query: {...query}});
   }
   delete = () => {  //删除
     let {selectedRows, dataSource, query} = this.state;
@@ -106,7 +117,7 @@ class NewAdd extends PureComponent {
       }
     });
   }
-  submit = (auditStatus) => {   //提交  保存
+  submit = (applyStatus) => {   //提交  保存
     let {dataSource, applyType, query} = this.state;
     let isNull = dataSource.every(item => {
       if(!item.applyNum) {
@@ -126,7 +137,7 @@ class NewAdd extends PureComponent {
       saveLoading: true
     });
     let body = {
-      auditStatus,
+      applyStatus,
       applyType,
       distributeDeptCode: query.deptCode,
       detaiList: dataSource
@@ -136,7 +147,7 @@ class NewAdd extends PureComponent {
       type: 'base/applySubmit',
       payload: body,
       callback: ()=>{
-        message.success(`${auditStatus === 1? '保存' : '提交'}成功`);
+        message.success(`${applyStatus === '0'? '保存' : '提交'}成功`);
         this.props.history.go(-1);
       }
     });
@@ -150,7 +161,8 @@ class NewAdd extends PureComponent {
       loading, 
       modalLoading,
       btnLoading,
-      saveLoading
+      saveLoading,
+      fetching
     } = this.state;
     const columns = [
       {
@@ -292,18 +304,17 @@ class NewAdd extends PureComponent {
                     value={query.deptCode}
                     onChange={(value) => {
                       let {query} = this.state;
-                      this.setState({
-                        query: {
-                          ...query,
-                          deptCode: value
-                        }
-                      });
+                      query = {
+                        ...query,
+                        deptCode: value
+                      };
+                      this.setState({query});
                     }}
+                    notFoundContent={fetching ? <Spin size="small" /> : null}
                     optionFilterProp="children"
                     filterOption={(input, option) => option.props.children.indexOf(input) >= 0} 
                     placeholder="请选择"
                   >
-                    <Option key="" value="">请选择</Option>
                     {
                       deptModules.map((item,index)=> <Option key={index} value={item.id}>{ item.deptName }</Option>)
                     }
@@ -327,16 +338,23 @@ class NewAdd extends PureComponent {
           onCancel={() => this.setState({ visible: false, modalSelected: [] })}
           footer={[
             <Button key="submit" type="primary" loading={btnLoading} onClick={this.handleOk}>确认</Button>,
-            <Button key="back" onClick={() => this.setState({ visible: false })}>取消</Button>
+            <Button key="back" onClick={() => this.setState({visible: false, modalSelected: []})}>取消</Button>
           ]}
         >
           <Row>
             <Col span={7} style={{ marginLeft: 4 }}>
-              <Search
+              <FetchSelect
                 style={{ width: 248 }}
                 placeholder='通用名/商品名'
-                ref="paramName"
-                onSearch={val => this.refs.table.fetch({ ...query, paramName: val })}
+                url={`${_local}/a/common/queryDrugByList`}
+                cb={(value, option) => {
+                  let {query} = this.state;
+                  query = {
+                    ...query,
+                    hisDrugCodeList: [value]
+                  };
+                  this.setState({query});
+                }}
               />
             </Col>
           </Row>
@@ -348,8 +366,8 @@ class NewAdd extends PureComponent {
               ref="table"
               modalLoading={modalLoading}
               columns={modalColumns}
-              scroll={{ x: '150%' }}
-              rowKey='bigDrugCode'
+              scroll={{ x: '180%' }}
+              rowKey='drugCode'
               rowSelection={{
                 selectedRowKeys: this.state.modalSelected,
                 onChange: (selectedRowKeys, selectedRows) => {
@@ -386,8 +404,8 @@ class NewAdd extends PureComponent {
           <div className="detailCard" style={{margin: '-12px -8px 0px -8px'}}>
             <Row>
               <Col style={{ textAlign: 'right', padding: '10px' }}>
-                <Button loading={saveLoading} onClick={()=>{this.submit('2')}} type='primary'>提交</Button>
-                <Button loading={saveLoading} onClick={()=>{this.submit('1')}} type='danger' style={{ marginLeft: 8 }} ghost>保存</Button>
+                <Button loading={saveLoading} onClick={()=>{this.submit('1')}} type='primary'>提交</Button>
+                <Button loading={saveLoading} onClick={()=>{this.submit('0')}} type='danger' style={{ marginLeft: 8 }} ghost>保存</Button>
               </Col>
             </Row>
           </div>

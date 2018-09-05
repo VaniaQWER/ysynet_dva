@@ -3,8 +3,9 @@
 */
 import * as replenishment from '../services/replenishment/replenish';
 import * as pharmacy from '../services/pharmacy/wareHouse';
-import * as wareHouse from '../services/pharmacy/wareHouse';
+import * as wareHouse from '../services/drugStorage/wareHouse';
 import * as outStorageService from '../services/drugStorage/outStorage';
+import * as goodsAdjust from '../services/drugStorage/goodsAdjust';
 import { message } from 'antd';
 
 export default {
@@ -13,9 +14,44 @@ export default {
     replenishDetailsInfo: {}
   },
   effects:{
+    //货位移动 - 添加产品弹窗确认
+    *drugInformation({payload, callback}, {call}) {
+      const data = yield call(goodsAdjust.drugInformation, payload);
+      console.log(data, '确认');
+      if(data.code === 200 && data.msg === 'success') {
+        callback && callback(data.data);
+      }else {
+        message.error(data.msg);
+      }
+    },
+    *confirmAdjust({payload, callback}, {call}) {
+      const data = yield call(goodsAdjust.confirmAdjust, payload);
+      console.log(data, '提交');
+      if(data.code === 200 && data.msg === 'success') {
+        callback && callback()
+      }else {
+        message.error(data.msg);
+      }
+    },
+    //药库 - 入库 - 配送单详情
+    *deliverRequest({ payload, callback },{ put, call }) {
+      const data = yield call(wareHouse.detailsInfo, payload);
+      if(data.code === 200) {
+        callback && callback(data.data);
+      }else {
+        message.error(data.msg);
+      };
+    },
+    //药库 - 入库 - 配送单详情 - 确认验收
+    *drugStorageSaveCheck({ payload, callback }, {put, call}) {
+      const data = yield call(wareHouse.saveCheck, payload);
+      if(data.code === 200) {
+        callback && callback(data);
+      }
+    },
     //药品验收详情
     *checkDetail({payload, callback}, {put, call}) {
-      const data = yield call(wareHouse.checkDetail, payload);
+      const data = yield call(pharmacy.checkDetail, payload);
       if(data.code === 200 && data.msg === 'success') {
         callback && callback(data.data)
       }else {
@@ -24,7 +60,7 @@ export default {
     },
     //药品确认验收
     *saveCheck({payload, callback}, {call}) {
-      const data = yield call(wareHouse.saveCheck, payload);
+      const data = yield call(pharmacy.saveCheck, payload);
       console.log(data, '验收');
       if(data.code === 200 && data.msg === 'success') {
         callback && callback(data.data);

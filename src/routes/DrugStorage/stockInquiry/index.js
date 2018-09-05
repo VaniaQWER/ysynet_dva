@@ -2,9 +2,14 @@ import React , {PureComponent} from 'react';
 
 import { Link } from 'react-router-dom'
 
-import { Form, Row, Col, Input, Button, Select, Table,Tooltip } from 'antd';
+import { Form, Row, Col, Input, Button, Select, Tooltip } from 'antd';
 
-import {createData} from '../../../common/data.js';
+// import {connect} from 'dva';
+
+import RemoteTable from '../../../components/TableGrid';
+
+import drugStorage from '../../../api/drugStorage/stockInquiry';
+
 
 const FormItem = Form.Item;
 const {Option} = Select;
@@ -20,41 +25,25 @@ const formItemLayout = {
   },
  };
 
-let dataSource  = createData();
-
-dataSource = dataSource.map((item) => {
-  return {
-    ...item,
-    key: item.id,
-    name: item.productName,
-    packingUnit: '瓶',
-    pharmacyInventory: 111,
-    floorInventory: 222,
-    dateOfManu: '2017-8-23',
-    validUntil: '2018-8-23',
-    supplier: '国药药业集团'
-  }
-})
-
 const columns = [
 {
   title: '通用名',
-  dataIndex: 'name',
+  dataIndex: 'ctmmGenericName',
   width: 200,
   render: (text, record) => {
     return (
       <span>
-        <Link to={{pathname: `/drugStorage/stockInquiry/details`}}>{text}</Link>
+        <Link to={{pathname: `/drugStorage/stockInquiry/details/${record.drugCode}`}}>{text}</Link>
       </span>  
     )
   }
 }, {
   title: '商品名',
-  dataIndex: 'productName',
+  dataIndex: 'ctmmTradeName',
   width: 200,
 }, {
   title: '规格',
-  dataIndex: 'spec',
+  dataIndex: 'ctmmSpecification',
   width: 200,
   className: 'ellipsis',
   render:(text)=>(
@@ -62,23 +51,23 @@ const columns = [
   )
 }, {
   title: '生产厂家',
-  dataIndex: 'productCompany',
+  dataIndex: 'ctmmManufacturerName',
   width: 200,
 }, {
   title: '包装规格',
-  dataIndex: 'packingSpec',
+  dataIndex: 'packageSpecification',
   width: 200,
 }, {
   title: '单位',
-  dataIndex: 'unit',
+  dataIndex: 'replanUnit',
   width: 200,
 }, {
   title: '数量',
-  dataIndex: 'num',
+  dataIndex: 'currentStoreNum',
   width: 200,
 }, {
   title: '剂型',
-  dataIndex: 'fmodal',
+  dataIndex: 'ctmmDosageFormDesc',
   width: 200,
 }, {
   title: '批准文号',
@@ -88,10 +77,22 @@ const columns = [
 
 
 class StockInquiry extends PureComponent {
+  state = {
+    query: {
+      paramName: "",
+      deptCode: ""
+    }
+  }
   handleSearch = (e) => {
     e.preventDefault();
     this.props.form.validateFields((err, values) => {
-      this.props.query(values);
+      values.paramName = values.paramName === undefined? "" : values.paramName;
+      values.deptCode = values.deptCode === undefined? "" : values.deptCode;
+      let {query} = this.state;
+      query = {...query};
+      query.paramName = values.paramName;
+      query.deptCode = values.deptCode;
+      this.setState({query});
     });
   }
   //重置
@@ -101,23 +102,22 @@ class StockInquiry extends PureComponent {
 
   render() {
     const { getFieldDecorator } = this.props.form;
+    const {query} = this.state;
     return (
       <div className='ysynet-main-content'>
         <Form onSubmit={this.handleSearch}>
           <Row gutter={30}>
             <Col span={8}>
               <FormItem label={`关键字`} {...formItemLayout}>
-                {getFieldDecorator('keyword')(
+                {getFieldDecorator('paramName')(
                   <Input placeholder="通用名/商品名/规格/厂家"/>
                 )}
               </FormItem>
             </Col>
             <Col span={8}>
               <FormItem label={`药品类型`} {...formItemLayout}>
-                {getFieldDecorator('drugType', {
-                  initialValue: "全部"
-                })(
-                  <Select>
+                {getFieldDecorator('deptCode')(
+                  <Select placeholder="请选择">
                     <Option value="全部">全部</Option>
                     <Option value="抗生素">抗生素</Option>
                     <Option value="营养类">营养类</Option>
@@ -131,19 +131,16 @@ class StockInquiry extends PureComponent {
             </Col>
           </Row>
         </Form>
-        <Table
+        <RemoteTable
+          url={drugStorage.queryDrugByDept}
+          isJson={true}
+          showHeader={true}
+          query={query}
+          ref="tab"
           bordered={true}
           scroll={{x: '200%'}}
           columns={columns}
-          dataSource={dataSource}
-          pagination={{
-            size: 'small',
-            showQuickJumper: true,
-            showSizeChanger : true,
-            showTotal: (total) => {
-              return `总共${total}个项目`;
-            }
-          }}
+          rowKey="drugCode"
         />
       </div>
     )

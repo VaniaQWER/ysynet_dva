@@ -19,6 +19,7 @@ class PslistAdd extends PureComponent{
     selected: [],
     selectedRows: [],
     loading: false,
+    detailInfo: {}
   }
   tabsChange = (key) =>{
     if(key === '2') {
@@ -27,6 +28,27 @@ class PslistAdd extends PureComponent{
     if(key === '1') {
       this.setState({btnShow: true});
     };
+  }
+  addBatch = (record) => {
+    let {detailInfo} = this.state;
+    detailInfo = JSON.parse(JSON.stringify(detailInfo));
+    let index;
+    detailInfo.unVerfiyList.map((item, i)=> {
+      if(item.upUserDate === record.upUserDate) {
+        index = i + 1;
+      };
+      return item;
+    });
+    if(record.id === null) {
+      record.parentId = record.parentId;
+    }else {
+      record.parentId = record.id;
+    }
+    record.id = null;
+    record.upUserDate = new Date().getTime();
+    record.realReceiveQuantity = '';
+    detailInfo.unVerfiyList.splice(index, 0, record);
+    this.setState({detailInfo})
   }
   rowChange = (selectedRowKeys, selectedRows) => {
     this.setState({selected: selectedRowKeys, selectedRows: selectedRows})
@@ -63,7 +85,7 @@ class PslistAdd extends PureComponent{
     if(!isNull) return;
     let detailList = selectedRows;
     this.props.dispatch({
-      type: 'wareHouse/saveCheck',
+      type: 'base/drugStorageSaveCheck',
       payload: {
         detailList,
         distributeCode: this.props.match.params.id
@@ -72,12 +94,15 @@ class PslistAdd extends PureComponent{
         if(data.code === 200) {
           this.setState({loading: true});
           this.props.dispatch({
-            type: 'wareHouse/deliverRequest',
+            type: 'base/deliverRequest',
             payload: {
               distributeCode: this.props.match.params.id
             },
-            callback: () => {
-              this.setState({loading: false});
+            callback: (data) => {
+              this.setState({
+                loading: false,
+                detailInfo: data,
+              });
             }
           })
         }
@@ -87,19 +112,21 @@ class PslistAdd extends PureComponent{
   search = (value) => {
     this.setState({loading: true})
     this.props.dispatch({
-      type: 'wareHouse/deliverRequest',
+      type: 'base/deliverRequest',
       payload: {
         distributeCode: value
       },
-      callback: () => {
-        this.setState({loading: false});
+      callback: (data) => {
+        this.setState({
+          loading: false,
+          detailInfo: data,
+        });
       }
     })
   }
   render(){
-    let {detailInfo} = this.props;
+    let {detailInfo, loading} = this.state;
     let {unVerfiyList, verifyList} = detailInfo;
-    let {loading} = this.state;
     const columnsUnVerfiy = [
       {
         title: '通用名称',
@@ -219,12 +246,7 @@ class PslistAdd extends PureComponent{
         dataIndex: 'RN',
         render: (text, record)=>{
           return <a onClick={() => {
-            this.props.dispatch({
-              type: 'wareHouse/addBatch',
-              payload: {
-                record
-              }
-            })
+            this.addBatch(record);
           }}>增加验收批号</a>
         }
       }
@@ -297,9 +319,26 @@ class PslistAdd extends PureComponent{
     ];
     
     return (
-      <div className='fullCol fadeIn'>
-        <div className="fullCol-fullChild">
-          <Row>
+      <div className='fullCol fadeIn' style={{padding: '0 24px 24px', background: 'rgb(240, 242, 245)'}}>
+        <div className="fullCol-fullChild" style={{marginLeft: -24, marginRight: -24}}>
+          <Row style={{margin: '0 -32px', borderBottom: '1px solid rgba(0, 0, 0, .2)'}}>
+            <Col span={8}>
+              <h3 style={{padding: '0 0 15px 32px', fontSize: '20px'}}>
+                新建验收
+              </h3>
+            </Col>
+            <Col span={16} style={{textAlign: 'right', paddingRight: 32}}>
+              <Icon 
+                onClick={()=>{
+                  this.props.history.go(-1);
+                }} 
+                style={{cursor: 'pointer', transform: 'scale(2)'}} 
+                type="close" 
+                theme="outlined" 
+              />
+            </Col>
+          </Row>
+          <Row style={{marginTop: 10}}>
             <Col span={8}>
               <div style={{lineHeight: '32px'}} className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-3">
                   <Icon style={{transform: 'scale(1.5,1.5)', paddingRight: 10}} type="barcode" />
@@ -310,7 +349,7 @@ class PslistAdd extends PureComponent{
             </Col>
           </Row>
         </div>
-        <div className='detailCard'>
+        <div className='detailCard' style={{margin: '-10px -6px'}}>
           <h3>单据信息</h3>
           <Row>
             <Col span={8}>
@@ -363,7 +402,7 @@ class PslistAdd extends PureComponent{
             </Col>
           </Row>
         </div>
-        <div className='detailCard'>
+        <div className='detailCard' style={{margin: '30px -6px'}}>
           <Tabs defaultActiveKey="1" onChange={this.tabsChange}>
             <TabPane tab="待验收" key="1">
               <Table
@@ -371,7 +410,7 @@ class PslistAdd extends PureComponent{
                 loading={loading}
                 scroll={{x: '200%'}}
                 columns={columnsUnVerfiy}
-                dataSource={unVerfiyList}
+                dataSource={unVerfiyList || []}
                 pagination={false}
                 rowKey={'upUserDate'}
                 rowSelection={{
@@ -386,7 +425,7 @@ class PslistAdd extends PureComponent{
                 bordered
                 scroll={{x: '250%'}}
                 columns={columnsVerify}
-                dataSource={verifyList}
+                dataSource={verifyList || []}
                 rowKey={'upUserDate'}
                 pagination={false}
               />
@@ -395,7 +434,7 @@ class PslistAdd extends PureComponent{
          
         </div>
         {
-          unVerfiyList.length > 0? 
+          unVerfiyList && unVerfiyList.length > 0? 
           <div className="detailCard">
             <Row>
               <Col span={12}>共<span style={{color: 'red', lineHeight: '32px'}}>{unVerfiyList.length}</span>种产品</Col>
@@ -407,4 +446,4 @@ class PslistAdd extends PureComponent{
     )
   }
 }
-export default connect(state=>state.wareHouse)(PslistAdd);
+export default connect(state=>state)(PslistAdd);

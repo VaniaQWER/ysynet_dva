@@ -472,8 +472,8 @@ export const getNavData = app => [
     {
       name: "货位调整-详情",
       icon: 'setting',
-      path: '/drugStorage/goodsAdjust/adjust/detail',
-      component: dynamicWrapper(app, [], () => import('../routes/DrugStorage/goodsAdjust/adjust/detail')),
+      path: '/drugStorage/goodsAdjust/adjust/detail/:id',
+      component: dynamicWrapper(app, ['drugStorage/goodsAdjust'], () => import('../routes/DrugStorage/goodsAdjust/adjust/detail')),
     },
     // 药库 - 盘点损益
     {
@@ -564,8 +564,8 @@ export const getNavData = app => [
     {
       name: '详情',
       icon: "setting",
-      path: '/drugStorage/stockInquiry/details',
-      component: dynamicWrapper(app, [], () => import('../routes/DrugStorage/stockInquiry/details'))
+      path: '/drugStorage/stockInquiry/details/:id',
+      component: dynamicWrapper(app, ['drugStorage/stockInquiry'], () => import('../routes/DrugStorage/stockInquiry/details'))
     },
     //药库 - 结算管理
     // {
@@ -806,8 +806,8 @@ export const getNavData = app => [
     {
       name: "详情",
       icon: 'setting',
-      path: '/pharmacy/stockInquiry/details',
-      component: dynamicWrapper(app, [], () => import('../routes/Pharmacy/stockInquiry/details')),
+      path: '/pharmacy/stockInquiry/details/:id',
+      component: dynamicWrapper(app, ['drugStorage/stockInquiry'], () => import('../routes/Pharmacy/stockInquiry/details')),
     }, 
       
     /*------药房------*/
@@ -968,8 +968,8 @@ export const getNavData = app => [
     {
       name: "货位调整-详情",
       icon: 'setting',
-      path: '/pharmacy/goodsAdjust/adjust/detail',
-      component: dynamicWrapper(app, [], () => import('../routes/Pharmacy/goodsAdjust/adjust/detail')),
+      path: '/pharmacy/goodsAdjust/adjust/detail/:id',
+      component: dynamicWrapper(app, ['drugStorage/goodsAdjust'], () => import('../routes/Pharmacy/goodsAdjust/adjust/detail')),
     },
     /* ********************      补登单据      ************************** */
     {

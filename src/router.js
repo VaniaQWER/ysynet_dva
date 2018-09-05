@@ -15,6 +15,9 @@ import AddOutput from './routes/DrugStorage/outStorage/outReceiptMgt/add';
 import AddNewBackStorage from './routes/DrugStorage/outStorage/backStorage/add' // 药库退货
 import AddNewBackStoragePlan from './routes/Pharmacy/outStorage/refund/add' // 药房退库
 import PharmacyAddNewOutput from './routes/Pharmacy/outStorage/newOut/add';
+import PslistAdd from './routes/DrugStorage/wareHouse/psListCheck/add';
+import NewAddGoodsAdjust  from './routes/DrugStorage/goodsAdjust/adjust/add';
+import PharmacyAddGoodsAdjust from './routes/Pharmacy/goodsAdjust/adjust/add';
 import { getNavData } from './common/nav';
 import { getPlainNode } from './utils/utils';
 
@@ -81,6 +84,9 @@ function RouterConfig({ history, app }) {
           <Route path="/AddNewBackStoragePlan" component={AddNewBackStoragePlan}/>
           <Route path="/editPharmacyBackStoragePlan/:backNo" component={AddNewBackStoragePlan}/>
           <Route path="/pharmacyAddNewOutput" component={PharmacyAddNewOutput}/>
+          <Route path="/AddNewCheck" component={PslistAdd}/>
+          <Route path="/addGoodsAdjust" component={NewAddGoodsAdjust}/>
+          <Route path="/pharmacyAddGoodsAdjust" component={PharmacyAddGoodsAdjust}/>
           {/* <Route path="/home" component={Home}/> */}
           {/* <Route path="/app" render={props => <WorkplaceLayout {...props} {...passProps} />} /> */}
           <Route path="/" render={props => <BasicLayout {...props} {...passProps} />} />

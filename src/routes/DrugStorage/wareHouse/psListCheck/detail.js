@@ -23,10 +23,33 @@ class PslistCheck extends PureComponent{
       selected: [],
       selectedRows: [],
       loading: true,
-      btnShow: info.state === '3'? true : false,
-      defaultActiveKey: info.state,
+      btnShow: info.state === '1'? true : false,
+      defaultActiveKey: info.state === '1'? '1' : '2',
       id: info.id,
+      detailInfo: {}
     }
+  }
+  addBatch = (record) => {
+    let {detailInfo} = this.state;
+    detailInfo = JSON.parse(JSON.stringify(detailInfo));
+    let index;
+    detailInfo.unVerfiyList.map((item, i)=> {
+      if(item.id === record.id) {
+        index = i + 1;
+      };
+      return item;
+    });
+    
+    if(record.id === null) {
+      record.parentId = record.parentId;
+    }else {
+      record.parentId = record.id;
+    }
+    record.id = null;
+    record.upUserDate = new Date().getTime();
+    record.realReceiveQuantity = '';
+    detailInfo.unVerfiyList.splice(index, 0, record);
+    this.setState({detailInfo})
   }
   tabsChange = (key) =>{
     if(key === '2') {
@@ -43,7 +66,7 @@ class PslistCheck extends PureComponent{
     this.queryDetail();
   }
   saveCheck = () => {
-    let {selectedRows} = this.state;
+    let {selectedRows, detailInfo} = this.state;
     if(selectedRows.length === 0) {
       message.error('至少选择一条数据');
       return;
@@ -65,23 +88,39 @@ class PslistCheck extends PureComponent{
         message.error('生产批号不能为空');
         return false;
       };
-      if(!item.realAcceptanceTemperature){
-        message.error('验收温度不能为空');
-        return false;
-      };
+      if(detailInfo.isShowTemprature === 1) {
+        if(!item.realAcceptanceTemperature){
+          message.error('验收温度不能为空');
+          return false;
+        };
+      }
       return true;
     });
     if(!isNull) return;
-    let detailList = selectedRows;
+    let detailList = selectedRows.map(item=>{
+      let i = {
+        realReceiveQuantity: item.realReceiveQuantity,
+        productBatchNo: item.productBatchNo,
+        realValidEndDate: item.realValidEndDate,
+        realProductTime: item.realProductTime,
+        drugCode: item.drugCode,
+        id: item.id,
+        parentId: item.parentId
+      };
+      if(detailInfo.isShowTemprature === 1) {
+        i.realAcceptanceTemperature = item.realAcceptanceTemperature;
+      }
+      return i;
+    });
     this.props.dispatch({
-      type: 'wareHouse/saveCheck',
+      type: 'base/drugStorageSaveCheck',
       payload: {
         detailList,
         distributeCode: this.state.id
       },
       callback: (data) => {
         if(data.code === 200) {
-          message.succese('确认上架成功');
+          message.success('确认验收成功');
           this.queryDetail();
         }
       }
@@ -90,21 +129,23 @@ class PslistCheck extends PureComponent{
   queryDetail = () => {
     this.setState({loading: true});
     this.props.dispatch({ 
-      type: 'wareHouse/deliverRequest',
+      type: 'base/deliverRequest',
       payload: {
         distributeCode: this.state.id
       },
-      callback: () => {
-        this.setState({loading: false});
+      callback: (data) => {
+        this.setState({
+          detailInfo: data,
+          loading: false
+        });
       }
     })
   }
   render(){
-    let {detailInfo} = this.props;
+    let {loading, defaultActiveKey, btnShow, detailInfo} = this.state;
     let {unVerfiyList, verifyList} = detailInfo;
-    let {loading, defaultActiveKey, btnShow} = this.state;
     
-    const columnsUnVerfiy = [
+    let columnsUnVerfiy = [
       {
         title: '通用名称',
         dataIndex: 'ctmmGenericName',
@@ -187,20 +228,6 @@ class PslistCheck extends PureComponent{
         }
       },
       {
-        title: '验收温度',
-        dataIndex: 'realAcceptanceTemperature',
-        render: (text,record,index)=> {
-          return <Input 
-                  type="number"
-                  onChange={(e)=>{
-                    record.realAcceptanceTemperature = e.target.value;
-                  }}
-                  defaultValue={text || '' } 
-                  addonAfter={`℃`}
-                />
-        }
-      },
-      {
         title: '包装规格',
         dataIndex: 'packageSpecification',
       },
@@ -221,24 +248,19 @@ class PslistCheck extends PureComponent{
         dataIndex: 'RN',
         render: (text, record)=>{
           return <a onClick={() => {
-            this.props.dispatch({
-              type: 'wareHouse/addBatch',
-              payload: {
-                record
-              }
-            })
+            this.addBatch(record);
           }}>增加验收批号</a>
         }
       }
     ];
-    const columnsVerify = [
+    let columnsVerify = [
       {
         title: '通用名称',
         dataIndex: 'ctmmGenericName',
       },
       {
         title: '商品名',
-        dataIndex: 'ctmmTradeName'
+        dataIndex: 'ctmmTradeName',
       },
       {
         title: '规格',
@@ -277,10 +299,6 @@ class PslistCheck extends PureComponent{
         dataIndex: 'realValidEndDate'
       },
       {
-        title: '验收温度',
-        dataIndex: 'realAcceptanceTemperature'
-      },
-      {
         title: '包装规格',
         dataIndex: 'packageSpecification',
       },
@@ -297,6 +315,26 @@ class PslistCheck extends PureComponent{
         dataIndex: 'approvalNo'
       }
     ];
+    if(detailInfo.isShowTemprature === 1) {
+      columnsVerify.splice(10, 0, {
+        title: '验收温度',
+        dataIndex: 'realAcceptanceTemperature'
+      });
+      columnsUnVerfiy.splice(10, 0, {
+        title: '验收温度',
+        dataIndex: 'realAcceptanceTemperature',
+        render: (text,record,index)=> {
+          return <Input 
+                  type="number"
+                  onChange={(e)=>{
+                    record.realAcceptanceTemperature = e.target.value;
+                  }}
+                  defaultValue={text || '' } 
+                  addonAfter={`℃`}
+                />
+        }
+      });
+    };
     
     return (
       <div className='fullCol fadeIn'>
@@ -359,11 +397,11 @@ class PslistCheck extends PureComponent{
               <Table
                 bordered
                 loading={loading}
-                scroll={{x: '200%'}}
+                scroll={{x: '250%'}}
                 columns={columnsUnVerfiy}
-                dataSource={unVerfiyList}
+                dataSource={unVerfiyList || []}
                 pagination={false}
-                rowKey={'upUserDate'}
+                rowKey={'id'}
                 rowSelection={{
                   selectedRowKeys: this.state.selected,
                   onChange: this.rowChange
@@ -375,7 +413,7 @@ class PslistCheck extends PureComponent{
                 loading={loading}
                 bordered
                 scroll={{x: '250%'}}
-                columns={columnsVerify}
+                columns={columnsVerify || []}
                 dataSource={verifyList}
                 rowKey={'upUserDate'}
                 pagination={false}
