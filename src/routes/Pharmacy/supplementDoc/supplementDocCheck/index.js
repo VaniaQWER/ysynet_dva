@@ -4,145 +4,183 @@
 * @Last Modified time: 17:40:15 
  */
 import React, { PureComponent } from 'react';
-import { Table , DatePicker , Form, Input ,Select , Row, Col, Button  , message   } from 'antd';
+import { DatePicker , Form, Input ,Select , Row, Col, Button  , message  ,Modal } from 'antd';
 import { formItemLayout } from '../../../../utils/commonStyles';
-import { createData } from '../../../../common/data';
 import { Link } from 'react-router-dom';
+import { supplementDoc } from '../../../../api/pharmacy/wareHouse';
+import RemoteTable from '../../../../components/TableGrid';
+import moment from 'moment';
+import { connect } from 'dva';
 const FormItem = Form.Item;
 const { Option } = Select;
 const { RangePicker } = DatePicker;
+const  Confirm = Modal.confirm;
 class Putaway extends PureComponent{
 
   state = {
     selected: [],
     selectedRows: [],
     loading: false,
-    dataSource: createData()
+    query:{makeupStatus:2}
   }
 
   queryHandler = (query) => {
     this.setState({ query:query })
   }
-  pass = () => {
-    const selected = this.state.selected;
-    if (selected.length === 0) {
-      message.warn('请至少选择一条数据')
-    } else {
-      message.info("批量审核通过!")
-    }
-  }
-  noPass = () =>{
-    const selected = this.state.selected;
-    if (selected.length === 0) {
-      message.warn('请至少选择一条数据')
-    } else {
-      message.warn("驳回")
-    }
-  }
 
-  //单行确认 
-  confirmOk = () => {
-    message.success('操作成功')
-  }
+  onCheck = (state)=>{
+    const selected = this.state.selected;
+    if (selected.length === 0) {
+      message.warn('请至少选择一条数据')
+    } else {
+      Confirm({
+        title:"确定执行此操作？",
+        onOk:()=>{
+          let postData = {
+            makeuplist:selected.map(item=>{ return {makeupCode:item}}),
+            type:state
+          }
+          console.log(JSON.stringify(postData))
+          this.props.dispatch({
+            type:'pharmacy/CheckMakeupDetail',
+            payload:postData,
+            callback:(data)=>{
+              message.success('审核状态变更成功！');
+              this.refs.table.fetch(this.refs.searchForm.getFieldsValue())
+            }
+          })
+        }
+      })
+    }
+   
+  } 
 
   render(){
+    const { query } = this.state;
     const columns = [
       {
        title: '补登单号',
        width:170,
-       dataIndex: 'applyNo',
+       dataIndex: 'makeupCode',
        render: (text,record) =>{
         return <span>
-           <Link to={{pathname: `/pharmacy/supplementDoc/supplementDocCheck/detail`}}>{text}</Link>
+           <Link to={{pathname: `/pharmacy/supplementDoc/supplementDocuments/detail/${record.makeupCode}`}}>{text}</Link>
          </span>
         }
       },
       {
         title: '入库/出库单',
         width:140,
-        dataIndex: 'planNo',
+        dataIndex: 'storeCode',
       },
       {
         title: '状态',
         width:100,
-        dataIndex: 'fstate',
-        render:()=>`待上架`
+        dataIndex: 'makeupStatusName',
       },
       {
         title: '部门',
         width:150,
-        dataIndex: 'createUser',
-        render:()=>`静配中心`
+        dataIndex: 'deptName',
       },
       {
         title: '类型',
         width:150,
-        dataIndex: 'leixing',
-        render:()=>`补登入库`
+        dataIndex: 'makeupTypeName',
       },
       {
         title: '补登人',
         width:150,
-        dataIndex: 'createUser',
-        render:()=>`赵立春`
+        dataIndex: 'createUserName',
       },
       {
         title: '补登时间',
         width:180,
-        dataIndex: 'planTime1',
-        render:(text,record)=>`${record.planTime}`
+        dataIndex: 'createDate',
+        render:(text,record)=>text?text.substr(0,11):''
       },
       {
         title: '审核人',
         width:150,
-        dataIndex: 'createUser',
-        render:()=>`赵立春`
+        dataIndex: 'reviewUserName',
       },
       {
         title: '审核时间',
         width:180,
-        dataIndex: 'planTime1',
-        render:(text,record)=>`${record.planTime}`
+        dataIndex: 'reviewDate',
+        render:(text,record)=>text?text.substr(0,11):''
       }
     ];
     return (
       <div className='ysynet-main-content'>
-        <SearchForm query={this.queryHandler} />
+        <SearchForm query={this.queryHandler} refs='searchForm'/>
         <div className='ant-row-bottom'>
-          <Button type='primary' onClick={this.pass} >审核通过</Button>
-          <Button type='default' onClick={this.noPass} style={{ marginLeft: 8 }}>不通过</Button>
+          <Button type='primary' onClick={()=>this.onCheck(1)} >批量通过</Button>
+          <Button type='default' onClick={()=>this.onCheck(2)} style={{ marginLeft: 8 }}>批量驳回</Button>
         </div>
-        <Table 
+        <RemoteTable 
+          ref='table'
+          query={query}
+          style={{marginTop: 20}}
           columns={columns}
-          bordered
           loading={this.state.loading}
-          dataSource={this.state.dataSource}
-          scroll={{ x: '130%' }}
-          rowKey={'id'}
-          pagination={{
-            size: "small",
-            showQuickJumper: true,
-            showSizeChanger: true
-          }}
+          scroll={{ x: '100%' }}
+          url={supplementDoc.list}
           rowSelection={{
             selectedRowKeys: this.state.selected, 
             onChange: (selectedRowKeys, selectedRows) => {
               this.setState({selected: selectedRowKeys, selectedRows: selectedRows})
             }
           }}
-         />
+          rowKey='makeupCode'
+        />
       </div>
     )
   }
 }
-export default Putaway;
+export default connect(state=>state)(Putaway);
 
 /* 搜索 - 表单 */
 class SearchFormWrapper extends PureComponent {
 
+  state={
+    state:[],
+    type:[]
+  }
+
+ componentDidMount = () =>{
+  this.props.dispatch({
+    type:'base/orderStatusOrorderType',
+    payload: { type : 'makeup_status' },
+    callback:(data)=>{
+      this.setState({
+        fstate:data
+      })
+    }
+  })
+  this.props.dispatch({
+    type:'base/orderStatusOrorderType',
+    payload: { type : 'makeup_type' },
+    callback:(data)=>{
+      this.setState({
+        type:data
+      })
+    }
+  })
+ } 
  handleSearch = (e) => {
    e.preventDefault();
    this.props.form.validateFields((err, values) => {
+     if(values.Time){
+      values.startTime = moment(values.Time[0]).format('YYYY-MM-DD');
+      values.endTime = moment(values.Time[1]).format('YYYY-MM-DD');
+      delete values['Time']
+     }
+     if(values.reviewTime){
+      values.reviewstartTime = moment(values.reviewTime[0]).format('YYYY-MM-DD');
+      values.reviewendTime = moment(values.reviewTime[1]).format('YYYY-MM-DD');
+      delete values['reviewTime']
+     }
      this.props.query(values);
    });
  }
@@ -154,27 +192,28 @@ class SearchFormWrapper extends PureComponent {
 
  render() {
    const { getFieldDecorator } = this.props.form;
+   const { type , fstate } = this.state;
    return (
      <Form onSubmit={this.handleSearch}>
        <Row gutter={30}>
          <Col span={8}>
            <FormItem label={`单据号`} {...formItemLayout}>
-             {getFieldDecorator('assetCode', {})(
-              <Input placeholder='请输入'/>
+             {getFieldDecorator('makeupCode', {})(
+              <Input placeholder='补登单据/入库/出库单号'/>
              )}
            </FormItem>
          </Col>
        
         <Col span={8}>
            <FormItem label={`补登时间`} {...formItemLayout}>
-             {getFieldDecorator('shijian1', {})(
+             {getFieldDecorator('Time', {})(
               <RangePicker/>
              )}
            </FormItem>
          </Col>
          <Col span={8}>
            <FormItem label={`审核时间`} {...formItemLayout}>
-             {getFieldDecorator('shijian2', {})(
+             {getFieldDecorator('reviewTime', {})(
               <RangePicker/>
              )}
            </FormItem>
@@ -182,11 +221,16 @@ class SearchFormWrapper extends PureComponent {
          <Col span={8}>
             <FormItem {...formItemLayout} label={`状态`}>
               {
-                getFieldDecorator(`fstate`,{
-                  initialValue: ''
+                getFieldDecorator(`makeupStatus`,{
+                  initialValue:fstate && fstate.length?`2`:''
                 })(
                   <Select >
-                    <Option key={-1} value=''>请选择</Option>
+                    {
+                      fstate && fstate.length ?
+                      fstate.map(item=>(
+                        <Option key={item.value} value={item.value}>{item.label}</Option>
+                      )):null
+                    }
                   </Select>
                 )
               }
@@ -195,11 +239,16 @@ class SearchFormWrapper extends PureComponent {
           <Col span={8}>
             <FormItem {...formItemLayout} label={`类型`}>
               {
-                getFieldDecorator('type',{
+                getFieldDecorator('makeupType',{
                   initialValue: ''
                 })(
                   <Select >
-                    <Option key={-1} value=''>全部</Option>
+                    {
+                      type && type.length ?
+                      type.map(item=>(
+                        <Option key={item.value} value={item.value}>{item.label}</Option>
+                      )):null
+                    }
                   </Select>
                 )
               }
@@ -214,4 +263,4 @@ class SearchFormWrapper extends PureComponent {
    )
  }
 }
-const SearchForm = Form.create()(SearchFormWrapper); 
+const SearchForm = connect(state=>state)(Form.create()(SearchFormWrapper)); 

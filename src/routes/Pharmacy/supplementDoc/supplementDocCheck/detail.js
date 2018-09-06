@@ -1,15 +1,16 @@
 /*
  * @Author: gaofengjiao 
  * @Date: 2018-08-06
- * @Last Modified by: gaofengjiao
- * @Last Modified time: 2018-08-06
+ * @Last Modified by: mikey.zhaopeng
+ * @Last Modified time: 2018-09-06 17:36:01
  */
-/* 
-  @file 货位调整 详情
-*/
 import React, { PureComponent } from 'react';
-import { Table ,Row, Col,Tooltip,Button,message } from 'antd';
+import { Table ,Row, Col,Tooltip ,message , Button , Modal} from 'antd';
 import { createData } from '../../../../common/data';
+import { connect } from 'dva';
+import RemoteTable from '../../../../components/TableGrid';
+import { supplementDoc } from '../../../../api/pharmacy/wareHouse';
+const Comfirm = Modal.confirm;
 const columns = [
   {
     title: '数量',
@@ -20,28 +21,32 @@ const columns = [
   {
     title: '单位',
     width: 100,
-    dataIndex: 'unit',
+    dataIndex: 'unit1',
     render:(text)=>'箱'
   },
   {
     title: '包装规格',
     width: 270,
-    dataIndex: 'spec',
+    dataIndex: 'replanUnit',
     className:'ellipsis',
     render:(text)=>(
       <Tooltip placement="topLeft" title={text}>{text}</Tooltip>
     )
   },
   {
+    title: '目的货位类型',
+    width: 120,
+    dataIndex: 'positionTypeName',
+  },
+  {
     title: '通用名',
     width: 180,
-    dataIndex: 'productName1',
-    render:(text,record)=>record.productName
+    dataIndex: 'ctmmGenericName',
   },
   {
     title: '规格',
     width: 270,
-    dataIndex: 'fmodal',
+    dataIndex: 'ctmmSpecification',
   },
   {
     title: '生产厂家',
@@ -51,51 +56,85 @@ const columns = [
   {
     title: '生产批号',
     width: 180,
-    dataIndex: 'flot',
+    dataIndex: 'lot',
   },
   {
     title: '生产日期',
     width: 200,
-    dataIndex: 'produceTime',
-    render: (text,record,index) => '2018-07-10' 
+    dataIndex: 'productDate',
   },
   {
     title: '有效期至',
     width: 200,
-    dataIndex: 'UserfulDate',
-    render: (text,record,index) => '2022-07-09' 
+    dataIndex: 'validEndDate',
   }
 ];
 
 class ReplenishmentDetail extends PureComponent{
-  pass = () => {
-   
-    message.info("审核通过!")
+
+  state ={
+    query:{},
+    baseInfo:{}
+  }
+  componentDidMount(){
+    console.log(this.props.match.params.id)
+    this.props.dispatch({
+      type:'pharmacy/GETMakeupDetail',
+      payload:{makeupCode:this.props.match.params.id},
+      callback:(data)=>{
+        console.log(data)
+        this.setState({
+          baseInfo:data
+        })
+      }
+    })
     
   }
-  noPass = () =>{
-    
-      message.warn("不通过")
-    
-  }
+  onCheck = (state)=>{
+    Comfirm({
+      title:"确定执行此操作？",
+      onOk:()=>{
+        let postData = {
+          makeuplist:{
+            makeupCode:[this.props.match.params.id]
+          },
+          type:state
+        }
+        this.props.dispatch({
+          type:'pharmacy/CheckMakeupDetail',
+          payload:postData,
+          callback:(data)=>{
+            message.success('审核状态变更成功！');
+            this.props.history.push({pathname:"/pharmacy/supplementDoc/supplementDocCheck"})
+          }
+        })
+      }
+    })
+  } 
+
   render(){
-    return (
+    const { query , baseInfo} = this.state;
+    return ( 
       <div className='fullCol fadeIn'>
         <div className='fullCol-fullChild'>
-          <Row>
-            <Col span={8}><h3>单据信息1</h3></Col>
-            <Col span={16} style={{textAlign:'right'}}>
-              <Button type='primary' onClick={this.pass} >批量通过</Button>
-              <Button type='default' onClick={this.noPass} style={{ marginLeft: 8 }}>批量驳回</Button>
-            </Col>
-          </Row>
+          {
+            baseInfo.makeupStatus===2?
+            <Row>
+              <Col span={8}><h3>单据信息</h3></Col>
+              <Col span={16} style={{textAlign:'right'}}>
+                <Button type='primary' onClick={()=>this.onCheck(1)} >审核通过</Button>
+                <Button type='default' onClick={()=>this.onCheck(2)} style={{ marginLeft: 8 }}>不通过</Button>
+              </Col>
+            </Row>: <h3>单据信息</h3>
+          }
+         
           <Row>
             <Col span={8}>
               <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
                 <label>补登单</label>
               </div>
               <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
-                <div className='ant-form-item-control'>PA002211807000086U</div>
+                <div className='ant-form-item-control'>{baseInfo?baseInfo.makeupCode:''}</div>
               </div>
             </Col>
             <Col span={8}>
@@ -103,7 +142,7 @@ class ReplenishmentDetail extends PureComponent{
               <label>入库单</label>
             </div>
             <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
-              <div className='ant-form-item-control'>RK00221180700005QU</div>
+              <div className='ant-form-item-control'>{baseInfo?baseInfo.storeCode:''}</div>
             </div>
             </Col>
             <Col span={8}>
@@ -111,7 +150,7 @@ class ReplenishmentDetail extends PureComponent{
                 <label>类型</label>
               </div>
               <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
-                <div className='ant-form-item-control'>补登入库</div>
+                <div className='ant-form-item-control'>{baseInfo?baseInfo.makeupTypeName:''}</div>
               </div>
             </Col>
             <Col span={8}>
@@ -119,7 +158,7 @@ class ReplenishmentDetail extends PureComponent{
                   <label>状态</label>
               </div>
               <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
-                <div className='ant-form-item-control'>待审核</div>
+                <div className='ant-form-item-control'>{baseInfo?baseInfo.makeupStatusName:''}</div>
               </div>
             </Col>
             <Col span={8}>
@@ -127,7 +166,7 @@ class ReplenishmentDetail extends PureComponent{
                   <label>补登人</label>
               </div>
               <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
-                <div className='ant-form-item-control'>李四四
+                <div className='ant-form-item-control'>{baseInfo?baseInfo.createUserName:''}
                 </div>
               </div>
             </Col>
@@ -136,7 +175,7 @@ class ReplenishmentDetail extends PureComponent{
                   <label>补登时间</label>
               </div>
               <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
-                <div className='ant-form-item-control'>2018-07-12 17:09:15</div>
+                <div className='ant-form-item-control'>{baseInfo?baseInfo.createDate:''}</div>
               </div>
             </Col>
             <Col span={8}>
@@ -144,7 +183,7 @@ class ReplenishmentDetail extends PureComponent{
                   <label>审核人</label>
               </div>
               <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
-                <div className='ant-form-item-control'>李四四</div>
+                <div className='ant-form-item-control'>{baseInfo?baseInfo.reviewUserName:''}</div>
               </div>
             </Col>
             <Col span={8}>
@@ -152,28 +191,23 @@ class ReplenishmentDetail extends PureComponent{
                   <label>审核时间</label>
               </div>
               <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
-                <div className='ant-form-item-control'>2018-07-12 17:09:15</div>
+                <div className='ant-form-item-control'>{baseInfo?baseInfo.reviewDate:''}</div>
               </div>
             </Col>
           </Row>
         </div>
         <div className='detailCard'>
           <Table
-            dataSource={createData()}
-            bordered
             title={()=>'产品信息'}
-            scroll={{x: '130%'}}
+            style={{marginTop: 20}}
             columns={columns}
-            rowKey={'id'}
-            pagination={{
-              size: 'small',
-              showQuickJumper: true,
-              showSizeChanger: true
-            }}
+            scroll={{ x: '100%' }}
+            rowKey='drugCode'
+            dataSource={baseInfo?baseInfo.list:[]}
           />
         </div>
       </div>
     )
   }
 }
-export default ReplenishmentDetail;
+export default connect(state=>state)(ReplenishmentDetail);

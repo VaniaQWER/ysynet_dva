@@ -68,6 +68,22 @@ export function GETMakeupDetail(options){
   })
 }
 
+//补货单据-审核
+export function CheckMakeupDetail(options){
+  return request(`${_local}/a/roommakeup/makeup/makeupSumit`,{ 
+    method: 'POST',
+    type: 'json',
+    body: options
+  })
+}
+//补货单据-再次提交
+export function SubmitAgainMakeupDetail(options){
+  return request(`${_local}/a/roommakeupdetail/makeupdetail/submitAgain`,{ 
+    method: 'POST',
+    type: 'json',
+    body: options
+  })
+}
 export function findStorePage(options) {
   return request(`${_local}/a/roomstore/findStoreDetail`, {
     method: 'GET',

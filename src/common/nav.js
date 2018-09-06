@@ -999,7 +999,7 @@ export const getNavData = app => [
     {
       name: "补登单审核-详情",
       icon: 'setting',
-      path: '/pharmacy/supplementDoc/supplementDocCheck/detail',
+      path: '/pharmacy/supplementDoc/supplementDocCheck/detail/:id',
       component: dynamicWrapper(app, ['pharmacy/wareHouse'], () => import('../routes/Pharmacy/supplementDoc/supplementDocCheck/detail')),
     },
     /* ***************  系统管理  ******************* */

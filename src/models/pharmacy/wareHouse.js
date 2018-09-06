@@ -35,6 +35,22 @@ export default {
         message.error(data.msg);
       }
     },
+    *CheckMakeupDetail({payload, callback}, {put, call}) {
+      const data = yield call(wareHouse.CheckMakeupDetail, payload);
+      if(data.code === 200 && data.msg === "success") {
+        callback && callback(data.data);
+      }else {
+        message.error(data.msg);
+      }
+    },
+    *SubmitAgainMakeupDetail({payload, callback}, {put, call}) {
+      const data = yield call(wareHouse.SubmitAgainMakeupDetail, payload);
+      if(data.code === 200 && data.msg === "success") {
+        callback && callback(data.data);
+      }else {
+        message.error(data.msg);
+      }
+    },
     //入库单管理详情
     *findStorePage({payload, callback}, {put, call}) {
       const data = yield call(wareHouse.GETMakeupDetail, payload);

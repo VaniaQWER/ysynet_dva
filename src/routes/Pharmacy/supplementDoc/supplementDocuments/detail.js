@@ -2,18 +2,15 @@
  * @Author: gaofengjiao 
  * @Date: 2018-08-06
  * @Last Modified by: mikey.zhaopeng
- * @Last Modified time: 2018-09-06 16:57:35
+ * @Last Modified time: 2018-09-06 17:34:57
  */
-/* 
-  @file 货位调整 详情
-*/
 import React, { PureComponent } from 'react';
-import { Table ,Row, Col,Tooltip } from 'antd';
+import { Table ,Row, Col,Tooltip ,message , Button , Modal} from 'antd';
 import { createData } from '../../../../common/data';
 import { connect } from 'dva';
 import RemoteTable from '../../../../components/TableGrid';
 import { supplementDoc } from '../../../../api/pharmacy/wareHouse';
-
+const Comfirm = Modal.confirm;
 const columns = [
   {
     title: '数量',
@@ -93,13 +90,40 @@ class ReplenishmentDetail extends PureComponent{
     })
     
   }
+  onCheck = ()=>{
+    Comfirm({
+      title:"确定执行此操作？",
+      onOk:()=>{
+        let postData = {
+          makeupCode:this.props.match.params.id
+        }
+        this.props.dispatch({
+          type:'pharmacy/SubmitAgainMakeupDetail',
+          payload:postData,
+          callback:(data)=>{
+            message.success('状态变更成功！');
+            this.props.history.push({pathname:"/pharmacy/supplementDoc/supplementDocuments"})
+          }
+        })
+      }
+    })
+  } 
 
   render(){
     const { query , baseInfo} = this.state;
     return ( 
       <div className='fullCol fadeIn'>
         <div className='fullCol-fullChild'>
-          <h3>单据信息</h3>
+          {
+            baseInfo.makeupStatus===1?
+            <Row>
+              <Col span={8}><h3>单据信息</h3></Col>
+              <Col span={16} style={{textAlign:'right'}}>
+                <Button type='primary' onClick={this.onCheck} >再次提交</Button>
+              </Col>
+            </Row>:
+            <h3>单据信息</h3>
+          }
           <Row>
             <Col span={8}>
               <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
