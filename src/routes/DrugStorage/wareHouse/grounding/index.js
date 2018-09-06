@@ -20,7 +20,9 @@ class Putaway extends PureComponent{
     super(props);
     this.state = {
       loading: false,
-      query:{},
+      query:{
+        shelfStatus: 2
+      },
       messageError:"",
       selectedRowKeys:[],
     }
@@ -87,7 +89,6 @@ class Putaway extends PureComponent{
         <SearchForm query={this.queryHandler} />
         <RemoteTable
           query={query}
-          isJson={true}
           ref="tab"
           url={wareHouse.shelfList}
           scroll={{x: '100%'}}
