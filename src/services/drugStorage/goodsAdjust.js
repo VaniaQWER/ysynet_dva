@@ -3,7 +3,7 @@ import { _local } from '../../api/local';
 
 
 export function goodsDetail(options) {
-  return request(`${_local}/a/goodslocation/goodslocation/detail`, {
+  return request(`${_local}/a/goodslocation/detail`, {
     method: 'GET',
     type: 'formData',
     body: options

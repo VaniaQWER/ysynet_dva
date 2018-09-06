@@ -99,3 +99,11 @@ export function roomacceptanceInfo(options) {
     body: options
   })
 }
+
+export function finish(options) {
+  return request(`${_local}/a/room/roomacceptance/finish`, {
+    method: 'POST',
+    type: 'json',
+    body: options
+  })
+}

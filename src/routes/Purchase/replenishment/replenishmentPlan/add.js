@@ -2,7 +2,7 @@
  * @Author: wwb 
  * @Date: 2018-07-24 18:49:01 
  * @Last Modified by: wwb
- * @Last Modified time: 2018-08-31 00:06:02
+ * @Last Modified time: 2018-09-06 23:47:54
  */
 /**
  * @file 药库 - 补货管理--补货计划--新建计划
@@ -159,19 +159,27 @@ class NewAdd extends PureComponent {
         supplierCode: item.supplierCode
       }
     })
-    this.setState({
-      saveLoading: true
-    })
+    if(auditStatus === 1){
+      this.setState({ submitLoading: true  })
+    }else{
+      this.setState({ saveLoading: true });
+    }
     this.props.dispatch({
       type: 'base/submit',
       payload: {
         auditStatus: auditStatus,
         id: isEdit? info.id : '',
         planType: '1',
-        list: dataSource
+        list: dataSource,
+        deptCode: this.state.query.deptCode
       },
       callback: (data)=>{
         message.success(`${auditStatus === 1? '保存' : '提交'}成功`);
+        if(auditStatus === 1){
+          this.setState({ submitLoading: false  })
+        }else{
+          this.setState({ saveLoading: false });
+        }
         this.props.history.go(-1);
       }
     })
@@ -204,6 +212,7 @@ class NewAdd extends PureComponent {
       modalLoading,
       spinLoading,
       btnLoading,
+      submitLoading,
       saveLoading
     } = this.state;
     const columns = [
@@ -455,7 +464,7 @@ class NewAdd extends PureComponent {
             <div className="detailCard" style={{margin: '-12px -8px 0px -8px'}}>
               <Row>
                 <Col style={{ textAlign: 'right', padding: '10px' }}>
-                  <Button loading={saveLoading} onClick={()=>{this.submit('2')}} type='primary'>提交</Button>
+                  <Button loading={submitLoading} onClick={()=>{this.submit('2')}} type='primary'>提交</Button>
                   <Button loading={saveLoading} onClick={()=>{this.submit('1')}} type='danger' style={{ marginLeft: 8 }} ghost>保存</Button>
                 </Col>
               </Row>

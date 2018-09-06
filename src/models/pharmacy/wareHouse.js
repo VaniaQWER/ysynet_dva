@@ -68,6 +68,14 @@ export default {
       }else {
         message.error(data.msg);
       };
+    },
+    *finish({payload, callback}, {call}) {
+      const data = yield call(wareHouse.finish, payload);
+      if(data.code === 200 && data.msg === 'success') {
+        callback && callback(data);
+      }else {
+        message.error(data.msg);
+      }
     }
   },
   subscriptions: {
