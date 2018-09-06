@@ -453,7 +453,7 @@ export const getNavData = app => [
     {
       name: "召回及锁定审核详情",
       icon: 'setting',
-      path: '/drugStorage/outStorage/recallAndLockedCheck/details',
+      path: '/drugStorage/outStorage/recallAndLockedCheck/details/:recallNo/:recallStatus',
       component: dynamicWrapper(app, ['drugStorage/outStorage'], () => import('../routes/DrugStorage/outStorage/recallAndLockedCheck/details')),
     },
     /* ********************      货位调整      ************************** */

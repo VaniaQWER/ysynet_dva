@@ -135,6 +135,7 @@ class RecallAndLocked extends PureComponent {
   }
   queryHandler = query => {
     this.setState({ query });
+    // this.refs.table.fetch(query);
   }
   delete = () =>{
     const { selectedRows, query } = this.state;

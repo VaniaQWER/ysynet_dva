@@ -6,6 +6,7 @@ import dynamic from 'dva/dynamic';
 import cloneDeep from 'lodash/cloneDeep';
 
 import Login from './routes/Login';
+import PageNotFound from './routes/Error/error';
 import SubSystem from './routes/System';
 import NewAdd from './routes/Purchase/replenishment/replenishmentPlan/add';
 import CatalogAdd from './routes/Purchase/replenishment/outCatalogPurchase/add';
@@ -74,6 +75,7 @@ function RouterConfig({ history, app }) {
       <Router history={history}>
         <Switch>
           <Route path="/login" component={Login}/>
+          <Route path="/error" component={PageNotFound}/>
           <Route path="/subSystem" component={SubSystem}/>
           <Route path="/createReplenishment" component={NewAdd}/>
           <Route path="/editReplenishment/:planCode" component={NewAdd}/>

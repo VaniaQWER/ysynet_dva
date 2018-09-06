@@ -2,7 +2,7 @@
  * @Author: wwb 
  * @Date: 2018-08-31 23:18:25 
  * @Last Modified by: wwb
- * @Last Modified time: 2018-09-05 18:53:33
+ * @Last Modified time: 2018-09-06 12:02:41
  */
 
 import * as outStorageService from '../../services/drugStorage/outStorage';
@@ -154,6 +154,25 @@ export default {
       const data = yield call(outStorageService.cancelLocked, payload);
       if(data.code !== 200){
         return message.error(data.msg||'锁定失败')
+      }
+      if(callback) callback(data.data)
+    },
+
+
+    /* 召回审核 */ 
+    // 批量通过
+    *batchAudit({ payload,callback },{ call }){
+      const data = yield call(outStorageService.batchAudit, payload);
+      if(data.code !== 200){
+        return message.error(data.msg||'批量通过失败')
+      }
+      if(callback) callback(data.data)
+    },
+     // 审核不通过
+     *auditReject({ payload,callback },{ call }){
+      const data = yield call(outStorageService.reject, payload);
+      if(data.code !== 200){
+        return message.error(data.msg||'审核不通过失败')
       }
       if(callback) callback(data.data)
     },

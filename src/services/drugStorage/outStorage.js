@@ -2,7 +2,7 @@
  * @Author: wwb 
  * @Date: 2018-08-31 21:28:10 
  * @Last Modified by: wwb
- * @Last Modified time: 2018-09-06 10:58:54
+ * @Last Modified time: 2018-09-06 12:02:42
  */
 
 import request from '../../utils/request';
@@ -187,6 +187,24 @@ export function createRecallOrLocked(options) {
 // 取消锁定
 export function cancelLocked(options) {
   return request(`${_local}/a/roomrecall/cancelLock`,{
+    method: 'POST',
+    type: 'formData',
+    body: options
+  })
+}
+
+ /*  召回审核  */
+// 批量通过
+export function batchAudit(options) {
+  return request(`${_local}/a/roomrecall/batchThroughAudit`,{
+    method: 'POST',
+    type: 'json',
+    body: options
+  })
+}
+ // 审核不通过
+export function reject(options) {
+  return request(`${_local}/a/roomrecall/reject`,{
     method: 'POST',
     type: 'formData',
     body: options
