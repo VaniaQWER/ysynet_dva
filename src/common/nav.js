@@ -976,31 +976,31 @@ export const getNavData = app => [
       name: "补登单据",
       icon: 'setting',
       path: '/pharmacy/supplementDoc/supplementDocuments',
-      component: dynamicWrapper(app, [], () => import('../routes/Pharmacy/supplementDoc/supplementDocuments')),
+      component: dynamicWrapper(app, ['pharmacy/wareHouse'], () => import('../routes/Pharmacy/supplementDoc/supplementDocuments')),
     },
-    {
-      name: "补登单据-新增",
-      icon: 'setting',
-      path: '/pharmacy/supplementDoc/supplementDocuments/add',
-      component: dynamicWrapper(app, [], () => import('../routes/Pharmacy/supplementDoc/supplementDocuments/add')),
-    },
+    // {
+    //   name: "补登单据-新增",
+    //   icon: 'setting',
+    //   path: '/pharmacy/supplementDoc/supplementDocuments/add',
+    //   component: dynamicWrapper(app, [], () => import('../routes/Pharmacy/supplementDoc/supplementDocuments/add')),
+    // },
     {
       name: "补登单据-详情",
       icon: 'setting',
-      path: '/pharmacy/supplementDoc/supplementDocuments/detail',
-      component: dynamicWrapper(app, [], () => import('../routes/Pharmacy/supplementDoc/supplementDocuments/detail')),
+      path: '/pharmacy/supplementDoc/supplementDocuments/detail/:id',
+      component: dynamicWrapper(app, ['pharmacy/wareHouse'], () => import('../routes/Pharmacy/supplementDoc/supplementDocuments/detail')),
     },
     {
       name: "补登单审核",
       icon: 'setting',
       path: '/pharmacy/supplementDoc/supplementDocCheck',
-      component: dynamicWrapper(app, [], () => import('../routes/Pharmacy/supplementDoc/supplementDocCheck')),
+      component: dynamicWrapper(app, ['pharmacy/wareHouse'], () => import('../routes/Pharmacy/supplementDoc/supplementDocCheck')),
     },
     {
       name: "补登单审核-详情",
       icon: 'setting',
       path: '/pharmacy/supplementDoc/supplementDocCheck/detail',
-      component: dynamicWrapper(app, [], () => import('../routes/Pharmacy/supplementDoc/supplementDocCheck/detail')),
+      component: dynamicWrapper(app, ['pharmacy/wareHouse'], () => import('../routes/Pharmacy/supplementDoc/supplementDocCheck/detail')),
     },
     /* ***************  系统管理  ******************* */
     {

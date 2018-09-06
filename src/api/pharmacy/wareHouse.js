@@ -5,3 +5,9 @@ export const wareHouse = {
   QUERYDRUGBYDEPT: `${_local}/a/common/queryDrugByDept`,    //药品申领 - 新建申领 - 添加产品列表
   ROOMCHECK: `${_local}/a/room/roomacceptance/roomCheck`,   //
 }
+
+ // 药房 - 补登单据 
+export const supplementDoc = {
+  list: `${_local}/a/roommakeup/makeup/list`,  //补登单据列表
+  
+}

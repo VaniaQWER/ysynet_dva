@@ -49,3 +49,13 @@ export function applyAddDrug(options) {
     body: options
   })
 }
+
+/* 补登单据 */
+/* 删除 */
+export function DeleteMakeup(options) {
+  return request(`${_local}/a/roommakeup/makeup/delete`, {
+    method: 'POST',
+    type: 'json',
+    body: options
+  })
+}
