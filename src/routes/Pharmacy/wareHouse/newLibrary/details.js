@@ -4,25 +4,25 @@
 * @Last Modified time: 2018-07-24 13:13:55 
  */
 import React, { PureComponent } from 'react';
-import { Table ,Row, Col, Button, Modal , message , Tooltip} from 'antd';
-import { createData } from '../../../../common/data';
+import { Table ,Row, Col, Button, Modal, Spin, message , Tooltip} from 'antd';
+import querystring from 'querystring';
+import {connect} from 'dva';
 const Conform = Modal.confirm;
 const columns = [
   {
-    title: '通用名称',
+    title: '通用名',
     width:100,
-    dataIndex: 'productName1',
-    render:(text,record)=>record.productName
+    dataIndex: 'ctmmGenericName',
   },
   {
-    title: '商品名称',
+    title: '商品名',
     width:150,
-    dataIndex: 'productName',
+    dataIndex: 'ctmmTradeName',
   },
   {
     title: '规格',
     width:150,
-    dataIndex: 'spec',
+    dataIndex: 'ctmmSpecification',
     className:'ellipsis',
     render:(text)=>(
       <Tooltip placement="topLeft" title={text}>{text}</Tooltip>
@@ -31,53 +31,48 @@ const columns = [
   {
     title: '剂型',
     width:150,
-    dataIndex: 'fmodal',
+    dataIndex: 'ctmmDosageFormDesc',
   },
   {
     title: '包装规格',
     width:150,
-    dataIndex: 'unit',
-    render:(text)=>'g'
+    dataIndex: 'packageSpecification'
   },
   {
     title: '单位',
     width:150,
-    dataIndex: 'unit123',
-    render:(text)=>'g'
+    dataIndex: 'replanUnit'
   },
   {
     title: '入库数量',
     width:150,
-    dataIndex: 'approvalNo1',
-    render:()=>`12`
+    dataIndex: 'quantity'
   },
   {
     title: '生产批号',
     width:150,
-    dataIndex: 'applyNo',
+    dataIndex: 'lot',
   },
   {
     title: '生产日期',
     width:150,
-    dataIndex: 'planTime',
+    dataIndex: 'productDate',
   },
   {
     title: '有效期至',
     width:150,
-    dataIndex: 'approvalNo45',
-    render:(text,record)=>`${record.planTime}`
+    dataIndex: 'validEndDate'
   },
   {
     title: '货位',
     width:150,
-    dataIndex: 'huowei',
+    dataIndex: 'storeLoc',
     render:()=>`A1231`
   },
   {
     title: '货位类型',
     width:150,
-    dataIndex: 'approvalN123o',
-    render:(text,record)=>`补货货位`
+    dataIndex: 'storeType'
   },
   {
     title: '批准文号',
@@ -87,7 +82,7 @@ const columns = [
   {
     title: '生产厂家',
     width:150,
-    dataIndex: 'productCompany',
+    dataIndex: 'ctmmManufacturerName',
   },
 ];
 
@@ -96,8 +91,27 @@ class DetailsNewLibrary extends PureComponent{
   constructor(props){
     super(props)
     this.state={
-      visible:false,
+      info: {},
+      loading: false
     }
+  }
+  componentDidMount() {
+    this.setState({loading: true});
+    let {id} = this.props.match.params;
+    id = querystring.parse(id);
+    this.props.dispatch({
+      type: 'pharmacy/findStorePage',
+      payload: {
+        inRoomCode: id.rCode,
+        dirstrbuteDeptCode: id.dCode
+      },
+      callback: (data) => {
+        this.setState({
+          info: data,
+          loading: false
+        });
+      }
+    })
   }
   //打印
   onBPrint = () =>{
@@ -125,19 +139,22 @@ class DetailsNewLibrary extends PureComponent{
   }
 
   render(){
+    let {info, loading} = this.state;
+    let {showVos} = info;
     return (
-      <div  className='ysynet-main-content' >
-          <h3>单据信息 
-            <Button  style={{float:'right'}} onClick={()=>this.onBPrint()} >导出</Button>
-            <Button  type='primary'  className='button-gap' style={{float:'right'}} onClick={()=>this.onSubmit()}>打印</Button>
-          </h3>
+      <div className='ysynet-main-content' >
+        <h3>单据信息 
+          <Button style={{float:'right'}} onClick={()=>this.onBPrint()} >导出</Button>
+          <Button type='primary' className='button-gap' style={{float:'right'}} onClick={()=>this.onSubmit()}>打印</Button>
+        </h3>
+        <Spin delay={500} spinning={loading}>
           <Row>
             <Col span={8}>
                 <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
                     <label>入库单</label>
                 </div>
                 <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
-                  <div className='ant-form-item-control'>RK00221180700005QU</div>
+                  <div className='ant-form-item-control'>{info.inStoreCode || ''}</div>
                 </div>
             </Col>
             <Col span={8}>
@@ -145,7 +162,7 @@ class DetailsNewLibrary extends PureComponent{
                     <label>出库单</label>
                 </div>
                 <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
-                  <div className='ant-form-item-control'>PO0022118070000383
+                  <div className='ant-form-item-control'>{info.outStoreCode || ''}
                   </div>
                 </div>
             </Col>
@@ -154,15 +171,17 @@ class DetailsNewLibrary extends PureComponent{
                     <label>配货部门</label>
                 </div>
                 <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
-                  <div className='ant-form-item-control'>药库</div>
+                  <div className='ant-form-item-control'>{info.acceptanceDept || ''}</div>
                 </div>
             </Col>
+          </Row>
+          <Row>
             <Col span={8}>
                 <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
                     <label>入库分类</label>
                 </div>
                 <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
-                  <div className='ant-form-item-control'>采购入库</div>
+                  <div className='ant-form-item-control'>{info.inStoreName || ''}</div>
                 </div>
             </Col>
             <Col span={8}>
@@ -170,7 +189,7 @@ class DetailsNewLibrary extends PureComponent{
                     <label>申领单</label>
                 </div>
                 <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
-                  <div className='ant-form-item-control'>DD0022118070000383</div>
+                  <div className='ant-form-item-control'>{info.applyCode || ''}</div>
                 </div>
             </Col>
             <Col span={8}>
@@ -178,15 +197,17 @@ class DetailsNewLibrary extends PureComponent{
                     <label>供应商</label>
                 </div>
                 <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
-                  <div className='ant-form-item-control'>裕美供应商</div>
+                  <div className='ant-form-item-control'>{info.suppilerName || ''}</div>
                 </div>
             </Col>
+          </Row>
+          <Row>
             <Col span={8}>
                 <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
                     <label>上架人</label>
                 </div>
                 <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
-                  <div className='ant-form-item-control'>张三三</div>
+                  <div className='ant-form-item-control'>{info.upUserName || ''}</div>
                 </div>
             </Col>
             <Col span={8}>
@@ -194,23 +215,25 @@ class DetailsNewLibrary extends PureComponent{
                     <label>上架时间</label>
                 </div>
                 <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
-                  <div className='ant-form-item-control'>2018-07-12 17:09:15
+                  <div className='ant-form-item-control'>{info.upUserDate || ''}
                   </div>
                 </div>
             </Col>
           </Row>
-          <hr className='hr'/>
-          <h3>产品信息</h3>
-          <Table
-            dataSource={createData()}
-            bordered
-            scroll={{x: '200%'}}
-            columns={columns}
-            rowKey={'id'}
-            style={{marginTop: 24}}
-          />
+        </Spin>
+        <hr className='hr'/>
+        <h3>产品信息</h3>
+        <Table
+          loading={loading}
+          dataSource={showVos || []}
+          bordered
+          scroll={{x: '200%'}}
+          columns={columns}
+          rowKey={'drugCode'}
+          style={{marginTop: 24}}
+        />
       </div>
     )
   }
 }
-export default DetailsNewLibrary;
+export default connect(state=>state)(DetailsNewLibrary);

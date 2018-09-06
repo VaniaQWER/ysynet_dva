@@ -8,12 +8,12 @@
  * @file 药库 - 货位调整--新建货位
  */
 import React, { PureComponent } from 'react';
-import {Row, message, InputNumber, Col, Button, Input, Table, Modal, Select, Icon, Tooltip} from 'antd';
+import {Row, message, InputNumber, Col, Button, Table, Modal, Select, Icon, Tooltip} from 'antd';
 import RemoteTable from '../../../../components/TableGrid/index';
 import goodsAdjust from '../../../../api/drugStorage/goodsAdjust';
+import FetchSelect from '../../../../components/FetchSelect/index';
 import {connect} from 'dva';
 import _ from 'lodash';
-const { Search } = Input;
 const {Option} = Select;
 class NewAddGoodsAdjust extends PureComponent{
   state = {
@@ -26,7 +26,7 @@ class NewAddGoodsAdjust extends PureComponent{
     modalSelectedRows: [],
     query: {
       existDrugCodeList: [],
-      paramName: {}
+      hisDrugCodeList: []
     },
     dataSource: [],
     submitLoading: false
@@ -364,10 +364,18 @@ class NewAddGoodsAdjust extends PureComponent{
         >
           <Row>
             <Col span={8} style={{marginLeft: 4}}>
-              <Search
-                onSearch={this.search}
+              <FetchSelect
                 style={{ width: 248 }}
                 placeholder='通用名/商品名'
+                url={goodsAdjust.QUERY_DRUG_BY_LIST}
+                cb={(value, option) => {
+                  let {query} = this.state;
+                  query = {
+                    ...query,
+                    hisDrugCodeList: [value]
+                  };
+                  this.setState({query});
+                }}
               />
             </Col>
           </Row>

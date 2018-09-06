@@ -12,7 +12,6 @@ import { Row, Spin, Col, Button, Table, Modal, Icon, Tooltip, message, Select, I
 import {wareHouse} from '../../../../api/pharmacy/wareHouse';
 import RemoteTable from '../../../../components/TableGrid';
 import FetchSelect from '../../../../components/FetchSelect/index';
-import {_local} from '../../../../api/local';
 import _ from 'lodash';
 import {connect} from 'dva';
 
@@ -346,7 +345,7 @@ class NewAdd extends PureComponent {
               <FetchSelect
                 style={{ width: 248 }}
                 placeholder='通用名/商品名'
-                url={`${_local}/a/common/queryDrugByList`}
+                url={wareHouse.QUERY_DRUG_BY_LIST}
                 cb={(value, option) => {
                   let {query} = this.state;
                   query = {
