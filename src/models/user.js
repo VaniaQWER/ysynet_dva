@@ -1,4 +1,5 @@
 import * as usersService from '../services/users';
+import { routerRedux } from 'dva/router';
 import { message } from 'antd';
 
 export default {
@@ -51,10 +52,13 @@ export default {
       const data = yield call(usersService.userLogin, payload);
       if(data.code === 200 && data.msg === 'success'){
         yield put({ type: 'userInfo', payload: data.data });
+
+        if(callback) callback(data.data);
       }else{
-        message.error(data.msg ||'登陆失败')
+        message.warn('会话失效，请重新登录');
+        yield put(routerRedux.push('/login'));
+        return;
       }
-      if(callback) callback(data.data);
     },
     *setCurrentMenu({ payload },{ put }){
       yield put({ type: 'saveCurrentMenu', payload })
