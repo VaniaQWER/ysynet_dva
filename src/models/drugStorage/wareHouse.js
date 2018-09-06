@@ -20,11 +20,7 @@ export default {
     *putawayRequest({ payload, callback }, {put, call}) {
       const data = yield call(wareHouse.putawayInfo, payload);
       if(data.code === 200) {
-        yield put({
-          type: "putawayInfo",
-          payload: data.data
-        });
-        callback && callback();
+        callback && callback(data.data);
       }else {
         message.error(data.msg);
       }
@@ -57,6 +53,8 @@ export default {
       const data = yield call(wareHouse.putSaveCheck, payload);
       if(data.code === 200) {
         callback && callback(data);
+      }else {
+        message.error(data.msg);
       }
     }
   },
@@ -73,11 +71,5 @@ export default {
         supplierList: action.payload
       }
     },
-    putawayInfo(state, action) {
-      return {
-        ...state,
-        putawayInfo: action.payload
-      }
-    }
   },
 }

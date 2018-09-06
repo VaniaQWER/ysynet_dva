@@ -23,6 +23,29 @@ class EditDrugDirectory extends PureComponent{
       }
     })
   }
+  getLayoutInfo = (label,val)=>(
+    <Col span={8}>
+      <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-8">
+        <label>{label}</label>
+      </div>
+      <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-16">
+        <div className='ant-form-item-control'>
+          {val}
+        </div>
+      </div>
+    </Col>
+  )
+  //获取使用单位
+  getMaPInfo = (List,ind)=>{
+    if(List && List.length){
+      let ret =  List.filter(item=>item.sort===ind);
+      if (ret.length){
+        return `${ret[0].bigUnit||''}  =  ${ret[0].conversionRate||''}${ret[0].smallUit||''}`
+      }else{
+        return null
+      }
+    }
+  }
   render(){
     const { baseData } = this.state;
     return (
@@ -119,7 +142,7 @@ class EditDrugDirectory extends PureComponent{
                   <label>最小发药单位</label>
                 </div>
                 <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
-                  <div className='ant-form-item-control'>片  =  1  片</div>
+                  <div className='ant-form-item-control'> {baseData?this.getMaPInfo(baseData.listTransforsVo,3) :''}</div>
                 </div>
               </Col>
               <Col span={10}>
@@ -127,7 +150,7 @@ class EditDrugDirectory extends PureComponent{
                 <label>包装规格</label>
               </div>
               <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
-                <div className='ant-form-item-control'>盒  =  12  片</div>
+                <div className='ant-form-item-control'>{baseData?this.getMaPInfo(baseData.listTransforsVo,2) :''}</div>
               </div>
               </Col>
               <Col span={10}>
@@ -135,7 +158,7 @@ class EditDrugDirectory extends PureComponent{
                   <label>整包装单位</label>
                 </div>
                 <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
-                  <div className='ant-form-item-control'>{ `${baseData.ctmmPackingUnit} = ${baseData.ctmmPackingCoefficient}` }</div>
+                  <div className='ant-form-item-control'>{ baseData.ctmmPackingUnit &&baseData.ctmmPackingCoefficient ?  `${baseData.ctmmPackingUnit} = ${baseData.ctmmPackingCoefficient}`:'' }</div>
                 </div>
               </Col>
             </Row>
@@ -143,107 +166,19 @@ class EditDrugDirectory extends PureComponent{
           <div className='detailCard'>
             <h3>药品信息</h3>
             <hr className='hr'/>
-            <Row>
-              <Col span={8}>
-                <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-6">
-                  <label>一类精神药品</label>
-                </div>
-                <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
-                  <div className='ant-form-item-control'>
-                    非一类精神药品
-                  </div>
-                </div>
-              </Col>
-              <Col span={8}>
-                <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-6">
-                  <label>二类精神药品</label>
-                </div>
-                <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
-                  <div className='ant-form-item-control'>
-                    非二类精神药品
-                  </div>
-                </div>
-              </Col>
-              <Col span={8}>
-                <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-6">
-                  <label>基药标识</label>
-                </div>
-                <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
-                  <div className='ant-form-item-control'>
-                    非基药
-                  </div>
-                </div>
-              </Col>
-              <Col span={8}>
-                <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-6">
-                  <label>是否胰岛素</label>
-                </div>
-                <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
-                  <div className='ant-form-item-control'>
-                    否
-                  </div>
-                </div>
-              </Col>
-              <Col span={8}>
-                <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-6">
-                  <label>报告药</label>
-                </div>
-                <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
-                  <div className='ant-form-item-control'>
-                    非报告药
-                  </div>
-                </div>
-              </Col>
-              <Col span={8}>
-                <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-6">
-                  <label>活动中标识</label>
-                </div>
-                <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
-                  <div className='ant-form-item-control'>
-                    活动中
-                  </div>
-                </div>
-              </Col>
-              <Col span={8}>
-                <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-6">
-                  <label>皮试用药</label>
-                </div>
-                <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
-                  <div className='ant-form-item-control'>
-                    不需要皮试
-                  </div>
-                </div>
-              </Col>
-              <Col span={8}>
-                <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-6">
-                  <label>抗生素级别</label>
-                </div>
-                <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
-                  <div className='ant-form-item-control'>
-                    0
-                  </div>
-                </div>
-              </Col>
-              <Col span={8}>
-                <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-6">
-                  <label>毒麻药品</label>
-                </div>
-                <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
-                  <div className='ant-form-item-control'>
-                    非毒麻药品
-                  </div>
-                </div>
-              </Col>
-              <Col span={8}>
-                <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-6">
-                  <label>贵重标识</label>
-                </div>
-                <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
-                  <div className='ant-form-item-control'>
-                    否
-                  </div>
-                </div>
-              </Col>
+            <Row className='fixHeight'>
+            {this.getLayoutInfo('药品名称',baseData?baseData.ctmmDesc:'')}
+            {this.getLayoutInfo('药品剂量',baseData?baseData.ctphdmiDosageUnitDesc:'')}
+            {this.getLayoutInfo('药学分类描述',baseData?baseData.ctphdmiCategoryDesc:'')}
+            {this.getLayoutInfo('管制分类描述',baseData?baseData.ctphdmiRegulatoryClassDesc:'')}
+            {this.getLayoutInfo('危重药物标志',baseData?baseData.ctmmCriticalCareMedicine:'')}
+            {this.getLayoutInfo('抗菌药物标志',baseData?baseData.ctmmAntibacterialsign:'')}
+            {this.getLayoutInfo('国家基本药物标记',baseData?baseData.ctmmEssentialMedicine:'')}
+            {this.getLayoutInfo('贵重标记',baseData.ctmmValuableSign?baseData.ctmmValuableSign==="1"?'Y':'N':'')}
+            {this.getLayoutInfo('皮试标志',baseData.ctmmSkintestSign?baseData.ctmmSkintestSign==="1"?'Y':'N':'')}
+            {this.getLayoutInfo('冷藏标识',baseData.refrigerateType?baseData.refrigerateType==="1"?'Y':'N':'')}
+            {this.getLayoutInfo('停用标记',baseData.ctmmStatusCode?baseData.ctmmStatusCode==="1"?'Y':'N':'')}
+            
             </Row>
           </div>
       </div>

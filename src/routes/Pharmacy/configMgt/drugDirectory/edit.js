@@ -96,35 +96,38 @@ class EditDrugDirectory extends PureComponent{
       content:"确认保存吗？",
       onOk:()=>{
         this.props.form.validateFields((err,values)=>{
-          console.log(values)
-          const { customUnit , replanUnitCode , replanStore , purchaseQuantity ,
-            upperQuantity , downQuantity ,...otherInfo }  =values; 
-            let postData = {
-              customUnit,
-              drugInfo:{
-                replanUnitCode , purchaseQuantity ,
-                upperQuantity , downQuantity ,
-                replanStore,
-                id:this.props.match.params.id,
-                drugCode:this.state.fillBackData.drugCode||'',
-                bigDrugCode:this.state.fillBackData.bigDrugCode,
-                hisDrugCode:this.state.fillBackData.hisDrugCode,
-                ...otherInfo
+          if(!err){
+            console.log(values)
+            const { customUnit , replanUnitCode , replanStore , purchaseQuantity ,
+              upperQuantity , downQuantity ,...otherInfo }  =values; 
+              let postData = {
+                customUnit,
+                drugInfo:{
+                  replanUnitCode , purchaseQuantity ,
+                  upperQuantity , downQuantity ,
+                  replanStore,
+                  medDrugType:this.state.fillBackData.medDrugType,
+                  id:this.props.match.params.id,
+                  drugCode:this.state.fillBackData.drugCode||'',
+                  bigDrugCode:this.state.fillBackData.bigDrugCode,
+                  hisDrugCode:this.state.fillBackData.hisDrugCode,
+                  ...otherInfo
+                }
               }
-            }
-            delete postData['drugInfo']['keys'];
-            
-          console.log(JSON.stringify(postData));
-          //发出请求
-          this.props.dispatch({
-            type:'drugStorageConfigMgt/EditOperDeptInfo',
-            payload:postData,
-            callback:(data)=>{
-              message.success('保存成功！')
-              const { history } = this.props;
-              history.push({pathname:"/pharmacy/configMgt/drugDirectory"})
-            }
-          })
+              delete postData['drugInfo']['keys'];
+              
+            console.log(JSON.stringify(postData));
+            //发出请求
+            this.props.dispatch({
+              type:'drugStorageConfigMgt/EditOperDeptInfo',
+              payload:postData,
+              callback:(data)=>{
+                message.success('保存成功！')
+                const { history } = this.props;
+                history.push({pathname:"/pharmacy/configMgt/drugDirectory"})
+              }
+            })
+          }
         })
       },
       onCancel:()=>{}
@@ -418,10 +421,7 @@ class EditDrugDirectory extends PureComponent{
                   <FormItem {...formItemLayout} label={`采购量`}>
                     {
                       getFieldDecorator(`purchaseQuantity`,{
-                        initialValue: fillBackData?fillBackData.purchaseQuantity:'',
-                        rules:[{
-                          required:true,message:"请填写采购量！"
-                        }]
+                        initialValue: fillBackData?fillBackData.purchaseQuantity:''
                       })(
                         <Input />
                       )
@@ -631,10 +631,10 @@ class EditDrugDirectory extends PureComponent{
                 {this.getLayoutInfo('危重药物标志',fillBackData?fillBackData.ctmmCriticalCareMedicine:'')}
                 {this.getLayoutInfo('抗菌药物标志',fillBackData?fillBackData.ctmmAntibacterialsign:'')}
                 {this.getLayoutInfo('国家基本药物标记',fillBackData?fillBackData.ctmmEssentialMedicine:'')}
-                {this.getLayoutInfo('贵重标记',fillBackData?fillBackData.ctmmValuableSign:'')}
-                {this.getLayoutInfo('皮试标志',fillBackData?fillBackData.ctmmSkintestSign:'')}
-                {this.getLayoutInfo('冷藏标识',fillBackData?fillBackData.refrigerateType:'')}
-                {this.getLayoutInfo('停用标记',fillBackData?fillBackData.ctmmStatusCode:'')}
+                {this.getLayoutInfo('贵重标记',fillBackData.ctmmValuableSign?fillBackData.ctmmValuableSign==="1"?'Y':'N':'')}
+                {this.getLayoutInfo('皮试标志',fillBackData.ctmmSkintestSign?fillBackData.ctmmSkintestSign==="1"?'Y':'N':'')}
+                {this.getLayoutInfo('冷藏标识',fillBackData.refrigerateType?fillBackData.refrigerateType==="1"?'Y':'N':'')}
+                {this.getLayoutInfo('停用标记',fillBackData.ctmmStatusCode?fillBackData.ctmmStatusCode==="1"?'Y':'N':'')}
                 
                 {/* 
                   {this.getLayoutInfo('适应症',12)}

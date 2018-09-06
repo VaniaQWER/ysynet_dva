@@ -1,8 +1,8 @@
 /*
  * @Author: wwb 
  * @Date: 2018-08-28 17:42:54 
- * @Last Modified by: wwb
- * @Last Modified time: 2018-08-29 18:01:37
+ * @Last Modified by: mikey.zhaopeng
+ * @Last Modified time: 2018-09-06 21:48:20
  */
 
 import React , {PureComponent} from 'react';
@@ -190,20 +190,24 @@ class DrugDirectory extends PureComponent{
     e.preventDefault();
     let { dispatch, form } = this.props;
     form.validateFields((err,values)=>{
+      this.setState({ addLoading: true });
       if(!err){
-        console.log(values,'values');
         values.medDrugType = '2';
+        console.log(JSON.stringify(values),'values');
         dispatch({
           type: "drugDirectory/addMedicine",
           payload: {hisCtMedicineMaterial: values},
           callback: () =>{
             this.setState({ addVisible: false, addLoading: false });
             this.refs.table.fetch(this.state.query);
+            this.props.form.resetFields()
           }
         })
+      }else{
+        this.setState({ addLoading: false });
       }
     })
-    this.setState({ addLoading: true });
+    
     
   }
   render(){
@@ -235,12 +239,12 @@ class DrugDirectory extends PureComponent{
         title='新建'
         width={1000}
         visible={addVisible}
-        onCancel={()=>this.setState({ addVisible: false })}
+        onCancel={()=>{this.setState({ addVisible: false });this.props.form.resetFields()}}
         footer={[
           <Button key="submit" type='primary' loading={addLoading} onClick={this.save}>
               确认
           </Button>,
-          <Button key="back"  type='default' onClick={()=>this.setState({ addVisible: false })}>取消</Button>
+          <Button key="back"  type='default' onClick={()=>{this.setState({ addVisible: false });this.props.form.resetFields()}}>取消</Button>
         ]}
       >
         <Form>
@@ -311,7 +315,7 @@ class DrugDirectory extends PureComponent{
               </FormItem>
               <FormItem {...singleFormItemLayout} label={`包装规格`}>
                 {
-                  getFieldDecorator(`ctmmPackingUnit`,{
+                  getFieldDecorator(`ctpHdmsPackageDesc`,{
                     initialValue: '',
                     rules: [{ required: true,message: '请输入包装规格' }]
                   })(
@@ -321,7 +325,7 @@ class DrugDirectory extends PureComponent{
               </FormItem>
               <FormItem {...singleFormItemLayout} label={`最小发药单位`}>
                 {
-                  getFieldDecorator(`spec`,{
+                  getFieldDecorator(`ctpHdmsCheckinUnitDesc`,{
                     initialValue: '',
                     rules: [{ required: true,message: '请输入最小发药单位' }]
                   })(
@@ -331,7 +335,7 @@ class DrugDirectory extends PureComponent{
               </FormItem>
               <FormItem {...singleFormItemLayout} label={`1包装规格 = `}>
                 {
-                  getFieldDecorator(`conversionRate`,{
+                  getFieldDecorator(`ctpHdmsPackConvfacCode`,{
                     initialValue: '',
                     rules: [{ required: true,message: '请输入转换系数' }]
                   })(

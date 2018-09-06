@@ -40,13 +40,13 @@ class Putaway extends PureComponent{
             makeuplist:selected.map(item=>{ return {makeupCode:item}}),
             type:state
           }
-          console.log(JSON.stringify(postData))
           this.props.dispatch({
             type:'pharmacy/CheckMakeupDetail',
             payload:postData,
             callback:(data)=>{
               message.success('审核状态变更成功！');
-              this.refs.table.fetch(this.refs.searchForm.getFieldsValue())
+              this.refs.table.fetch(this.state.query)
+              this.setState({selected:[],selectedRows:[]})
             }
           })
         }
@@ -64,7 +64,7 @@ class Putaway extends PureComponent{
        dataIndex: 'makeupCode',
        render: (text,record) =>{
         return <span>
-           <Link to={{pathname: `/pharmacy/supplementDoc/supplementDocuments/detail/${record.makeupCode}`}}>{text}</Link>
+           <Link to={{pathname: `/pharmacy/supplementDoc/supplementDocCheck/detail/${record.makeupCode}`}}>{text}</Link>
          </span>
         }
       },
@@ -113,7 +113,7 @@ class Putaway extends PureComponent{
     ];
     return (
       <div className='ysynet-main-content'>
-        <SearchForm query={this.queryHandler} refs='searchForm'/>
+        <SearchForm query={this.queryHandler} ref='searchForm'/>
         <div className='ant-row-bottom'>
           <Button type='primary' onClick={()=>this.onCheck(1)} >批量通过</Button>
           <Button type='default' onClick={()=>this.onCheck(2)} style={{ marginLeft: 8 }}>批量驳回</Button>

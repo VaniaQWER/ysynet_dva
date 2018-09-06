@@ -2,7 +2,7 @@
  * @Author: gaofengjiao 
  * @Date: 2018-08-06
  * @Last Modified by: mikey.zhaopeng
- * @Last Modified time: 2018-09-06 18:11:32
+ * @Last Modified time: 2018-09-06 18:36:52
  */
 import React, { PureComponent } from 'react';
 import { Table ,Row, Col,Tooltip ,message , Button , Modal} from 'antd';
@@ -91,9 +91,11 @@ class ReplenishmentDetail extends PureComponent{
       title:"确定执行此操作？",
       onOk:()=>{
         let postData = {
-          makeuplist:{
-            makeupCode:[this.props.match.params.id]
-          },
+          makeuplist:[
+            {
+              makeupCode:this.props.match.params.id
+            }
+          ],
           type:state
         }
         this.props.dispatch({
@@ -114,7 +116,7 @@ class ReplenishmentDetail extends PureComponent{
       <div className='fullCol fadeIn'>
         <div className='fullCol-fullChild'>
           {
-            baseInfo.makeupStatus===2?
+            baseInfo && baseInfo.makeupStatus===2?
             <Row>
               <Col span={8}><h3>单据信息</h3></Col>
               <Col span={16} style={{textAlign:'right'}}>
@@ -123,7 +125,6 @@ class ReplenishmentDetail extends PureComponent{
               </Col>
             </Row>: <h3>单据信息</h3>
           }
-         
           <Row>
             <Col span={8}>
               <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
