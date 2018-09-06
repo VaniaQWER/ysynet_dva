@@ -67,3 +67,19 @@ export function GETMakeupDetail(options){
     body: options
   })
 }
+
+export function findStorePage(options) {
+  return request(`${_local}/a/roomstore/findStoreDetail`, {
+    method: 'GET',
+    type: 'formData',
+    body: options
+  })
+};
+
+export function roomacceptanceInfo(options) {
+  return request(`${_local}/a/room/roomacceptance/info`, {
+    method: 'POST',
+    type: 'formData',
+    body: options
+  })
+}
