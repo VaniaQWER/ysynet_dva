@@ -5,7 +5,7 @@
  */
 
 import React, { PureComponent } from 'react';
-import { Form, Row, Col, Input, Button, Select , Radio , Affix , Modal , Tree } from 'antd';
+import { Form, Row, Col, Input, Button, Select , Radio , Affix , Modal , Tree, Spin } from 'antd';
 import { connect } from 'dva';
 import querystring from 'querystring';
 import { DeptSelect } from '../../../../common/dic';
@@ -26,6 +26,7 @@ const singleFormItemLayout = {
 class AddMenuMgt extends PureComponent{
 
   state = {
+    spining: false,
     baseInfo:{},
     loading: false,
     visible:false,
@@ -36,18 +37,20 @@ class AddMenuMgt extends PureComponent{
     parentId:''
   }
 
-  componentDidMount (){
+  componentWillMount (){
     //编辑的时候进行回填操作
     const params = this.props.match.params.id;
     const paramsJson = querystring.parse(params);
     if(params && paramsJson.id){
       //console.log('编辑')
+      this.setState({ spining: true });
       this.props.dispatch({
         type:'sysSetting/MenuDetail',
         payload:paramsJson,
         callback:(data)=>{
           this.setState({
-            baseInfo:data.data
+            baseInfo:data.data,
+            spining: false
           })
         }
       })
@@ -87,9 +90,7 @@ class AddMenuMgt extends PureComponent{
           payload: values,
           callback: (data) => {
             // message.success('添加成功！');
-            
             this.props.history.push('/sys/menu');
-            window.reload();
             /* 
               这里要重新获取菜单
             */
@@ -102,7 +103,7 @@ class AddMenuMgt extends PureComponent{
   //取消 - 提交表单
   goBack = () => {
     const { history } = this.props;
-    history.push({pathname:'/sys/setting/menuMgt'})
+    history.push({pathname:'/sys/menu'})
   }
 
   // 选择上级菜单 
@@ -143,7 +144,7 @@ class AddMenuMgt extends PureComponent{
 
   render(){
     const { getFieldDecorator } = this.props.form;
-    const { visible , baseInfo , treeDataSource } = this.state;
+    const { visible , baseInfo , treeDataSource, spining } = this.state;
     console.log(this.state.treeSelectedKeys,'treeSelectedKeys')
     const loop = data => data?data.map((item) => {
       if (item.children && item.children.length) {
@@ -153,172 +154,174 @@ class AddMenuMgt extends PureComponent{
     }):null;
 
     return (
-      <div className='ysynet-main-content'>
-        <Form className="ant-advanced-search-form" onSubmit={this.handleSearch}>
-          <Row>
-            <Col span={8}>
-              <FormItem {...singleFormItemLayout} label={`上级菜单`}>
-                {
-                  getFieldDecorator(`parentName`,{// parent.id
-                    initialValue:baseInfo?baseInfo.parentName:'',
-                    rules: [{ required: true,message: '请输入' }]
-                  })(
-                    <Input onClick={()=>this.setState({visible:true})  } />
-                  )
-                }
-              </FormItem>
-            </Col>
-          </Row>
-          <Row>
-            <Col span={8}>
-              <FormItem {...singleFormItemLayout} label={`菜单名称`}>
-                {
-                  getFieldDecorator(`name`,{
-                    initialValue:baseInfo?baseInfo.name:'',
-                    rules: [{ required: true,message: '请输入' }]
-                  })(
-                    <Input />
-                  )
-                }
-              </FormItem>
-            </Col>
-          </Row>
-          <Row>
-            <Col span={8}>
-              <FormItem {...singleFormItemLayout} label={`链接`}>
-                {
-                  getFieldDecorator(`href`,{
-                    initialValue:baseInfo?baseInfo.href:'',
-                    rules: [{ required: true,message: '请输入' }]
-                  })(
-                    <Input />
-                  )
-                }
-              </FormItem>
-            </Col>
-          </Row>
-          <Row>
-            <Col span={8}>
-              <FormItem {...singleFormItemLayout} label={`排序`}>
-                {
-                  getFieldDecorator(`sort`,{
-                    initialValue:baseInfo?baseInfo.sort:'',
-                    rules: [{ required: true,message: '请输入' }]
-                  })(
-                    <Input />
-                  )
-                }
-              </FormItem>
-            </Col>
-            <Col span={6}>
-                <span style={{padding:8,display:' inline-block'}}>排序顺序，升序</span>
-            </Col>
-          </Row>
-          <Row>
-            <Col span={8}>
-              <FormItem {...singleFormItemLayout} label={`部门类型`}>
-                {
-                  getFieldDecorator(`depType`,{
-                    initialValue:baseInfo.depType?`${baseInfo.depType}`:'',
-                    rules: [{ required: true,message: '请选择部门类型' }]
-                  })(
-                    <Select
-                      showSearch
-                      optionFilterProp="children"
-                      filterOption={(input, option) => option.props.children.indexOf(input) >= 0}
-                      >
-                      {
-                       DeptSelect.map((item,index)=>(
-                          <Option value={`${item.value}`} key={index}>{item.text}</Option>
-                        ))
-                      }
-                    </Select>
-                  )
-                }
-              </FormItem>
-            </Col>
-          </Row>
-          <Row>
-            <Col span={8}>
-              <FormItem {...singleFormItemLayout} label={`是否可见`}>
-                {
-                  getFieldDecorator(`isShow`,{
-                    initialValue:baseInfo?baseInfo.isShow:'1',
-                  })(
-                    <Radio.Group>
-                      <Radio value='1' key='1'>是</Radio>
-                      <Radio value='0' key='0'>否</Radio>
-                    </Radio.Group>
-                  )
-                }
-              </FormItem>
-            </Col>
-            <Col span={6}>
-                <span style={{padding:8,display:' inline-block'}}>该菜单是否显示在系统菜单中。</span>
-            </Col>
-          </Row>
-          <Row>
-            <Col span={8}>
-              <FormItem {...singleFormItemLayout} label={`权限标识`}>
-                {
-                  getFieldDecorator(`permission`,{
-                    initialValue:baseInfo?baseInfo.permission?baseInfo.permission:'':'',
-                  })(
-                    <Input placeholder='请输入' />
-                  )
-                }
-              </FormItem>
-            </Col>
-            <Col span={12}>
-                <span style={{padding:8,display:' inline-block'}}>控制器中定义的权限标识，如：@RequiresPermissions("权限标识")</span>
-            </Col>
-          </Row>
-          <Row>
-            <Col span={8}>
-              <FormItem {...singleFormItemLayout} label={`备注`}>
-                {
-                  getFieldDecorator(`remarks`,{
-                    initialValue:baseInfo?baseInfo.remarks:'',
-                  })(
-                    <Input.TextArea placeholder='请输入' />
-                  )
-                }
-              </FormItem>
-            </Col>
-          </Row>
-        </Form>
+      <Spin spinning={spining}>  
+        <div className='ysynet-main-content'>
+          <Form className="ant-advanced-search-form" onSubmit={this.handleSearch}>
+            <Row>
+              <Col span={8}>
+                <FormItem {...singleFormItemLayout} label={`上级菜单`}>
+                  {
+                    getFieldDecorator(`parentName`,{// parent.id
+                      initialValue:baseInfo?baseInfo.parentName:'',
+                      rules: [{ required: true,message: '请输入' }]
+                    })(
+                      <Input onClick={()=>this.setState({visible:true})  } />
+                    )
+                  }
+                </FormItem>
+              </Col>
+            </Row>
+            <Row>
+              <Col span={8}>
+                <FormItem {...singleFormItemLayout} label={`菜单名称`}>
+                  {
+                    getFieldDecorator(`name`,{
+                      initialValue:baseInfo?baseInfo.name:'',
+                      rules: [{ required: true,message: '请输入' }]
+                    })(
+                      <Input />
+                    )
+                  }
+                </FormItem>
+              </Col>
+            </Row>
+            <Row>
+              <Col span={8}>
+                <FormItem {...singleFormItemLayout} label={`链接`}>
+                  {
+                    getFieldDecorator(`href`,{
+                      initialValue:baseInfo?baseInfo.href:'',
+                      // rules: [{ required: true,message: '请输入' }]
+                    })(
+                      <Input />
+                    )
+                  }
+                </FormItem>
+              </Col>
+            </Row>
+            <Row>
+              <Col span={8}>
+                <FormItem {...singleFormItemLayout} label={`排序`}>
+                  {
+                    getFieldDecorator(`sort`,{
+                      initialValue:baseInfo?baseInfo.sort:'',
+                      rules: [{ required: true,message: '请输入' }]
+                    })(
+                      <Input />
+                    )
+                  }
+                </FormItem>
+              </Col>
+              <Col span={6}>
+                  <span style={{padding:8,display:' inline-block'}}>排序顺序，升序</span>
+              </Col>
+            </Row>
+            <Row>
+              <Col span={8}>
+                <FormItem {...singleFormItemLayout} label={`部门类型`}>
+                  {
+                    getFieldDecorator(`depType`,{
+                      initialValue:baseInfo.depType?`${baseInfo.depType}`:'',
+                      rules: [{ required: true,message: '请选择部门类型' }]
+                    })(
+                      <Select
+                        showSearch
+                        optionFilterProp="children"
+                        filterOption={(input, option) => option.props.children.indexOf(input) >= 0}
+                        >
+                        {
+                        DeptSelect.map((item,index)=>(
+                            <Option value={`${item.value}`} key={index}>{item.text}</Option>
+                          ))
+                        }
+                      </Select>
+                    )
+                  }
+                </FormItem>
+              </Col>
+            </Row>
+            <Row>
+              <Col span={8}>
+                <FormItem {...singleFormItemLayout} label={`是否可见`}>
+                  {
+                    getFieldDecorator(`isShow`,{
+                      initialValue:baseInfo?baseInfo.isShow:'1',
+                    })(
+                      <Radio.Group>
+                        <Radio value='1' key='1'>是</Radio>
+                        <Radio value='0' key='0'>否</Radio>
+                      </Radio.Group>
+                    )
+                  }
+                </FormItem>
+              </Col>
+              <Col span={6}>
+                  <span style={{padding:8,display:' inline-block'}}>该菜单是否显示在系统菜单中。</span>
+              </Col>
+            </Row>
+            <Row>
+              <Col span={8}>
+                <FormItem {...singleFormItemLayout} label={`权限标识`}>
+                  {
+                    getFieldDecorator(`permission`,{
+                      initialValue:baseInfo?baseInfo.permission?baseInfo.permission:'':'',
+                    })(
+                      <Input placeholder='请输入' />
+                    )
+                  }
+                </FormItem>
+              </Col>
+              <Col span={12}>
+                  <span style={{padding:8,display:' inline-block'}}>控制器中定义的权限标识，如：@RequiresPermissions("权限标识")</span>
+              </Col>
+            </Row>
+            <Row>
+              <Col span={8}>
+                <FormItem {...singleFormItemLayout} label={`备注`}>
+                  {
+                    getFieldDecorator(`remarks`,{
+                      initialValue:baseInfo?baseInfo.remarks:'',
+                    })(
+                      <Input.TextArea placeholder='请输入' />
+                    )
+                  }
+                </FormItem>
+              </Col>
+            </Row>
+          </Form>
 
-        <Affix offsetBottom={0} className='affix'  style={{textAlign: 'right',marginLeft:'-16px',marginRight:'-16px'}}>
-            <Button
-              style={{float:'right',padding:20,margin:5}}
-              type="primary"
-              onClick={() => {this.onSubmit()}}
-            >
-              确认
-            </Button>
-            <Button
-              style={{float:'right',padding:20,margin:5}}
-              onClick={() => {this.goBack()}}
-            >
-              取消
-            </Button>
-        </Affix>
+          <Affix offsetBottom={0} className='affix'  style={{textAlign: 'right',marginLeft:'-16px',marginRight:'-16px'}}>
+              <Button
+                style={{float:'right',padding:20,margin:5}}
+                type="primary"
+                onClick={() => {this.onSubmit()}}
+              >
+                确认
+              </Button>
+              <Button
+                style={{float:'right',padding:20,margin:5}}
+                onClick={() => {this.goBack()}}
+              >
+                取消
+              </Button>
+          </Affix>
 
-        <Modal 
-          visible={visible}
-          onOk={()=>this.submitModal()}
-          onCancel={()=>this.cancelSubmitModal()}
-          title='上级菜单'
-          >
-            <Tree
-              showLine
-              defaultExpandedKeys={['0-0-0']}
-              onSelect={this.onSelect}
+          <Modal 
+            visible={visible}
+            onOk={()=>this.submitModal()}
+            onCancel={()=>this.cancelSubmitModal()}
+            title='上级菜单'
             >
-              {loop(treeDataSource)}
-            </Tree>
-          </Modal>
-      </div>
+              <Tree
+                showLine
+                defaultExpandedKeys={['0-0-0']}
+                onSelect={this.onSelect}
+              >
+                {loop(treeDataSource)}
+              </Tree>
+            </Modal>
+        </div>
+      </Spin>
     )
   }
 }

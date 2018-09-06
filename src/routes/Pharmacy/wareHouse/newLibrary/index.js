@@ -5,61 +5,52 @@
  */
 
 import React, { PureComponent } from 'react';
-import { Table , Form, Row, Col, Button, Icon, Select , Input , DatePicker } from 'antd';
+import {Form, Row, Col, Button, Icon, Select , Input , DatePicker } from 'antd';
 import { Link } from 'react-router-dom';
-import { formItemLayout } from '../../../../utils/commonStyles';
-import { createData } from '../../../../common/data';
+import RemoteTable from '../../../../components/TableGrid/index';
+import {formItemLayout} from '../../../../utils/commonStyles';
+import {wareHouse} from '../../../../api/pharmacy/wareHouse';
+import {connect} from 'dva';
 const RangePicker = DatePicker.RangePicker;
 const FormItem = Form.Item;
 const Option = Select.Option;
 const columns = [
   {
    title: '入库单',
-   dataIndex: 'medicinalCode',
+   dataIndex: 'inRoomCode',
    width:150,
-   render:(text)=>(<Link to={{pathname: `/pharmacy/wareHouse/newLibrary/details`}}>{text}</Link>)
+   render:(text, record)=>(<Link to={{pathname: `/pharmacy/wareHouse/newLibrary/details/rCode=${text}&dCode=${record.dirstrbuteDeptCode}`}}>{text}</Link>)
   },
   {
     title: '出库单',
     width:150,
-    dataIndex: 'applyNo',
+    dataIndex: 'outStoreCode',
   },
   {
     title: '申领单',
     width:150,
-    dataIndex: 'productName1',
-    render: (text, record, index) => `${record.planNo}`
+    dataIndex: 'applyCode',
   },
   {
     title: '入库分类',
     width:100,
-    dataIndex: 'fmodal2',
-    render:(text)=>'申领入库'
+    dataIndex: 'inStoreName',
   },
   {
     title: '配货部门',
-    dataIndex: 'spec1',
+    dataIndex: 'dirstrbuteDept',
     width:100,
-    render:(text)=>'药库'
   },
   {
-    title: '上架人',
-    width:100,
-    dataIndex: 'custodian',
-    render: (text, record, index) => '王美丽'
-  },
-  {
-   title: '上架时间',
+   title: '入库时间',
    width:120,
-   dataIndex: 'useDept',
-   render: (text, record, index) => '2018-7-25 21:51'
+   dataIndex: 'inStoreDate',
   },
- {
-  title: '备注',
-  width:100,
-  dataIndex: 'useDept1',
-  render: (text, record, index) => '小可耐'
- }
+  {
+    title: '备注',
+    width:100,
+    dataIndex: 'remarks',
+  }
 ];
 
 class NewLibrary extends PureComponent{
@@ -71,100 +62,120 @@ class NewLibrary extends PureComponent{
     }
   }
   queryHandler = (query) => {
-    this.setState({ query:query })
+    this.setState({ query: query })
   }
   render(){
+    let {query} = this.state;
     return (
-      <div className='ysynet-main-content'>
-        <SearchForm query={this.queryHandler} />
-        <Table
-          dataSource={createData()}
-          bordered
-          loading={ this.state.loading}
-          scroll={{x: '100%'}}
-          columns={columns}
-          rowKey={'id'}
-          style={{marginTop: 20}}
-          pagination={{
-            size: "small",
-            showQuickJumper: true,
-            showSizeChanger: true
-          }}
-        /> 
-      </div>
+        <div className='ysynet-main-content'>
+          <SearchForm dispatch={this.props.dispatch} query={this.queryHandler} />
+          <RemoteTable
+            query={query}
+            url={wareHouse.FIND_STORE_PAGE}
+            scroll={{x: '150%'}}
+            columns={columns}
+            rowKey={'inRoomCode'}
+            style={{marginTop: 20}}
+          /> 
+        </div>
     )
   }
 }
-export default NewLibrary;
+export default connect(state=>state)(NewLibrary);
 /* 搜索 - 表单 */
 class SearchFormWrapper extends PureComponent {
- state = {
-   display: 'none',
- }
- toggle = () => {
-   const { display, expand } = this.state;
-   this.setState({
-     display: display === 'none' ? 'block' : 'none',
-     expand: !expand
-   })
- }
- handleSearch = (e) => {
-   e.preventDefault();
-   this.props.form.validateFields((err, values) => {
-     this.props.query(values);
-   });
- }
- //重置
- handleReset = () => {
-   this.props.form.resetFields();
-   this.props.query({});
- }
+  state = {
+    display: 'none',
+    type: []
+  }
+  toggle = () => {
+    const { display, expand } = this.state;
+    this.setState({
+      display: display === 'none' ? 'block' : 'none',
+      expand: !expand
+    })
+  }
+  handleSearch = (e) => {
+    e.preventDefault();
+    this.props.form.validateFields((err, values) => {
+      let {time} = values;
+      if(time && time.length > 0) {
+        values.startTime = time[0].format('YYYY-MM-DD');
+        values.endTime = time[1].format('YYYY-MM-DD');
+      }else {
+        values.startTime = '';
+        values.endTime = '';
+      };
+      delete values.time;
+      console.log(values);
+      
+      this.props.query(values);
+    });
+  }
+  componentDidMount() {
+    this.props.dispatch({
+      type: 'base/orderStatusOrorderType',
+      payload: {
+        type: 'in_store_type'
+      },
+      callback: (data) => {
+        this.setState({type: data});
+      }
+    })
+  }
+  //重置
+  handleReset = () => {
+    this.props.form.resetFields();
+    this.props.query({});
+  }
 
- render() {
-   const { display } = this.state;
-   const { getFieldDecorator } = this.props.form;
-   return (
-     <Form onSubmit={this.handleSearch}>
-       <Row gutter={30}>
-         <Col span={8}>
-           <FormItem label={`单号`} {...formItemLayout}>
-             {getFieldDecorator('assetCode', {})(
-              <Input placeholder='入库单/配送单/订单号'/>
-             )}
-           </FormItem>
-         </Col>
-         <Col span={8}>
-           <FormItem label={`入库时间`} {...formItemLayout}>
-             {getFieldDecorator('assetName', {})(
-              <RangePicker/>
-             )}
-           </FormItem>
-         </Col>
-         <Col span={8} style={{display: display}}>
-           <FormItem label={`入库分类`} {...formItemLayout}>
-             {getFieldDecorator('useDeptGuid')(
-              <Select 
-                showSearch
-                placeholder={'请选择'}
-                optionFilterProp="children"
-                filterOption={(input, option) => option.props.children.indexOf(input) >= 0}
-                >
-                <Option key="" value="">全部</Option>
-                <Option key="01" value="01">申领入库</Option>
-              </Select>
-             )}
-           </FormItem>
-         </Col>
-         <Col span={8} style={{ textAlign: 'right', marginTop: 4,float:'right'}} >
-           <Button type="primary" htmlType="submit">查询</Button>
-           <Button style={{marginLeft: 8}} onClick={this.handleReset}>重置</Button>
-           <a style={{marginLeft: 8, fontSize: 14}} onClick={this.toggle}>
-             {this.state.expand ? '收起' : '展开'} <Icon type={this.state.expand ? 'up' : 'down'} />
-           </a>
-         </Col>
-       </Row>
-     </Form>
-   )
- }
+  render() {
+    let {display, type} = this.state;
+    const { getFieldDecorator } = this.props.form;
+    type = type.map(item=>{
+      return <Option key={item.value} value={item.value}>{item.label}</Option>
+    })
+    return (
+      <Form onSubmit={this.handleSearch}>
+        <Row gutter={30}>
+          <Col span={8}>
+            <FormItem label={`单号`} {...formItemLayout}>
+              {getFieldDecorator('code', {})(
+                <Input placeholder='入库单/配送单/订单号'/>
+              )}
+            </FormItem>
+          </Col>
+          <Col span={8}>
+            <FormItem label={`入库时间`} {...formItemLayout}>
+              {getFieldDecorator('time', {})(
+                <RangePicker/>
+              )}
+            </FormItem>
+          </Col>
+          <Col span={8} style={{display: display}}>
+            <FormItem label={`入库分类`} {...formItemLayout}>
+              {getFieldDecorator('inStoreType')(
+                <Select 
+                  showSearch
+                  placeholder={'请选择'}
+                  optionFilterProp="children"
+                  filterOption={(input, option) => option.props.children.indexOf(input) >= 0}
+                  >
+                  {type}
+                </Select>
+              )}
+            </FormItem>
+          </Col>
+          <Col span={8} style={{ textAlign: 'right', marginTop: 4,float:'right'}} >
+            <Button type="primary" htmlType="submit">查询</Button>
+            <Button style={{marginLeft: 8}} onClick={this.handleReset}>重置</Button>
+            <a style={{marginLeft: 8, fontSize: 14}} onClick={this.toggle}>
+              {this.state.expand ? '收起' : '展开'} <Icon type={this.state.expand ? 'up' : 'down'} />
+            </a>
+          </Col>
+        </Row>
+      </Form>
+    )
+  }
 }
 const SearchForm = Form.create()(SearchFormWrapper);

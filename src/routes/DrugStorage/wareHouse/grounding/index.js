@@ -9,8 +9,6 @@ import {DatePicker, Form, Input, Row, Col, Button, Icon, Select, message, Popcon
 import {Link} from 'react-router-dom';
 import RemoteTable from '../../../../components/TableGrid';
 import wareHouse from '../../../../api/drugStorage/wareHouse';
-import request from '../../../../utils/request';
-import {_local} from '../../../../api/local';
 import { formItemLayout } from '../../../../utils/commonStyles';
 const FormItem = Form.Item;
 const Option = Select.Option;
@@ -110,30 +108,23 @@ class SearchFormWrapper extends PureComponent {
    status: []
  }
  componentDidMount() {
-   let status = request(`${_local}/a/spd/dict/type`, {
-      methods: 'POST',
-      type: 'formData',
-      body: {
+    this.props.dispatch({
+      type: 'base/orderStatusOrorderType',
+      payload: {
         type: "audit_status"
+      },
+      callback: (data) => {
+        this.setState({status: data});
       }
     });
-    status.then(({data}) => {
-      this.setState({
-        status: data
-      })
-    });
-
-    let type = request(`${_local}/a/spd/dict/type`, {
-      methods: 'POST',
-      type: 'formData',
-      body: {
+    this.props.dispatch({
+      type: 'base/orderStatusOrorderType',
+      payload: {
         type: "in_store_type"
+      },
+      callback: (data) => {
+        this.setState({type: data});
       }
-    });
-    type.then(({data}) => {
-      this.setState({
-        type: data
-      })
     });
  }
  toggle = () => {

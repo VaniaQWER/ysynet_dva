@@ -7,21 +7,35 @@
  * @file 系统管理--系统设置--菜单管理
  */
 import React, { PureComponent } from 'react';
-import { Row, Button } from 'antd';
+import { Row, Button,Table } from 'antd';
 import querystring from 'querystring';
 import { Link } from 'dva/router';
 import { menuFormat } from '../../../../utils/utils';
 import { systemMgt } from '../../../../api/systemMgt';
 import { DeptFormat } from '../../../../common/dic';
-import RemoteTable from '../../../../components/TableGrid';
 
 class MenuMgt extends PureComponent{
 
   state = {
     loading: false,
-    query:{}
+    query:{},
+    dataSource: []
   }
-
+  componentWillMount = () =>{
+    this.setState({ loading: true });
+    fetch(systemMgt.MenuList,{
+      method: 'GET',
+      credentials: 'include',
+      mode: 'cors',
+    })
+    .then(res => res.json())
+    .then(data=>{
+      if(data.code === 200 && data.msg === 'success'){
+        let newData = menuFormat(data.data, true );
+        this.setState({ dataSource: newData, loading: false});
+      }
+    })
+  }
   // 添加菜单
   add = () =>{
     //跳转至添加菜单页面
@@ -30,7 +44,7 @@ class MenuMgt extends PureComponent{
   }
 
   render(){
-    const { query } = this.state;
+    const { dataSource, loading } = this.state;
     const columns = [
       {
         title: '菜单名称',
@@ -64,6 +78,7 @@ class MenuMgt extends PureComponent{
         title: '操作',
         dataIndex: 'action',
         width: 170,
+        fixed: 'right',
         render: (text,record,index)=>{
           return <span>
             <Link className='button-gap' to={{pathname:`/sys/menu/add/${querystring.stringify({id:record.id,parentId:record.parentId})}`}}>编辑</Link>
@@ -77,22 +92,14 @@ class MenuMgt extends PureComponent{
         <Row>
           <Button type='primary' icon='plus' onClick={this.add}>添加菜单</Button>
         </Row>
-        <RemoteTable 
-          ref='table'
-          method='get'
-          query={query}
+        <Table 
+          bordered
+          loading={loading}
+          defaultExpandAllRows
+          dataSource={dataSource}
           style={{marginTop: 20}}
           columns={columns}
-          scroll={{ x: '100%' }}
-          url={systemMgt.MenuList}
-          rowSelection={{
-            onChange:(selectRowKeys, selectedRows)=>{
-              this.setState({selectRowKeys})
-            }
-          }}
-          cb={(dataList,data)=>{
-            menuFormat(data)
-          }}
+          scroll={{ x: '130%' }}
           rowKey='id'
         />
 
