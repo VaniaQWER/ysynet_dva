@@ -2,7 +2,7 @@
  * @Author: wwb 
  * @Date: 2018-08-21 17:46:47 
  * @Last Modified by: wwb
- * @Last Modified time: 2018-08-31 00:58:04
+ * @Last Modified time: 2018-09-06 14:13:43
  */
  /**
  * @file 系统管理--组织机构--用户管理--编辑
@@ -38,7 +38,7 @@ class AddUser extends PureComponent{
     selected: [], // 所属部门
     selectedRows: [],
     userSelected: [], // 角色分配
-    UserselectedRows: [],
+    userselectedRows: [],
     modalSelected: [], // 人员选择
     modalSelectedRows: []
   }
@@ -49,7 +49,23 @@ class AddUser extends PureComponent{
       type: 'Organization/findUserInfo',
       payload: { loginName },
       callback: (data) =>{
-        this.setState({ baseData: data, phone: data.phone, loading: false })
+        let { listDept, listRole } = data;
+        let selected = [], selectedRows = [], userSelected = [],userselectedRows = []
+        listDept.map((item, index)=>{
+          if(item.checked === 1){
+            selected.push(item.id);
+            selectedRows.push(item)
+          }
+          return null;
+        });
+        listRole.map((item, index)=>{
+          if(item.checked === 1){
+            userSelected.push(item.id);
+            userselectedRows.push(item);
+          }
+          return null;
+        });
+        this.setState({ baseData: data, phone: data.phone, loading: false, selected, selectedRows, userSelected, userselectedRows  })
       }
     })
   }
@@ -176,7 +192,7 @@ class AddUser extends PureComponent{
               }), 
               selectedRowKeys: this.state.userSelected,
               onChange: (selectedRowKeys, selectedRows) => {
-                this.setState({userSelected: selectedRowKeys, UserselectedRows: selectedRows})
+                this.setState({userSelected: selectedRowKeys, userselectedRows: selectedRows})
               }
             }}
           />

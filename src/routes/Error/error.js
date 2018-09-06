@@ -2,7 +2,7 @@
  * @Author: wwb 
  * @Date: 2018-09-06 13:43:05 
  * @Last Modified by: wwb
- * @Last Modified time: 2018-09-06 13:49:00
+ * @Last Modified time: 2018-09-06 13:59:40
  */
 
 /* 
@@ -22,7 +22,7 @@ class PageNotFound extends React.Component {
               <h1 style={{color: '#434e59',fontSize: '72px',fontWeight: '600',lineHeight: '72px',marginBottom: '24px'}}>404</h1>
               <div style={{color: 'rgba(0, 0, 0, 0.45)',fontSize: '20px',fontWeight: '600',lineHeight: '28px',marginBottom: '16px'}}>抱歉，你访问的页面不存在</div>
               <div>
-                <a href="#/home">
+                <a href="#/login">
                 <Button type="primary"><span>返回首页</span></Button></a>
                 <Button type="primary" onClick={()=>history.go(-1)} style={{marginLeft:8}}><span>返回上一页</span></Button>
               </div>
