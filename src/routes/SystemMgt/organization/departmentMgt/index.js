@@ -281,7 +281,11 @@ class DepartmentMgt extends PureComponent{
         render: (text,record,index)=>{
           return <span>
             <Link className='button-gap' to={{pathname:`/sys/organization/departmentMgt/edit/${record.id}`,state:record}}>编辑</Link>
-            <Link to={{pathname:`/sys/organization/departmentMgt/goodsAllocation/${record.id}`,state:record}}>货位 </Link>
+            {
+              (record.deptType === '3'||record.deptType === '4')
+              &&
+              <Link to={{pathname:`/sys/organization/departmentMgt/goodsAllocation/${record.id}`,state:record}}>货位 </Link>
+            }
           </span>
         }
       },
