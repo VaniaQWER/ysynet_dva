@@ -146,7 +146,7 @@ class RecallAndLocked extends PureComponent {
       return message.warning('只能选择一条数据');
     }
     let { recallStatus } = selectedRows[0]
-    if(recallStatus !== 3) {
+    if(recallStatus !== '3') {
       return message.warning('只能删除已驳回状态的单据，请重新选择');
     }
     this.setState({ loading: true });

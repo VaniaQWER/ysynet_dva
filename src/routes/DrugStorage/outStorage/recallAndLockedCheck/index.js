@@ -205,10 +205,10 @@ class RecallAndLockedCheck extends PureComponent{
       return message.warning('请至少选中一条数据');
     }
     let detailList = [];
-    selectedRows.map(item => detailList.push(item.recallNo));
+    selectedRows.map(item => detailList.push({ recallNo: item.recallNo }));
     this.props.dispatch({
       type: 'outStorage/batchAudit',
-      payload: { ...detailList },
+      payload: { detailList },
       callback: () =>{
         message.success('批量处理成功');
         this.refs.table.fetch(query);
@@ -236,7 +236,7 @@ class RecallAndLockedCheck extends PureComponent{
             query={query}
             bordered
             url={outStorage.ROOMRECALL_LIST}
-            scroll={{x: '100%'}}
+            scroll={{x: '130%'}}
             columns={columns}
             rowKey={'id'}
             style={{marginTop: 20}}

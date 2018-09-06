@@ -213,7 +213,7 @@ class AddRefund extends PureComponent{
 					deptCode: item.deptCode, 
 					drugCode: item.drugCode,
 					inStoreCode: item.inStoreCode,
-					recallNum: item.usableQuantity,
+					recallNum: item.totalQuantity,
 					refrigerateType: item.refrigerateType,
 					supplierCode: item.supplierCode,
 				}));

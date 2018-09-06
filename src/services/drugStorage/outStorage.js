@@ -2,7 +2,7 @@
  * @Author: wwb 
  * @Date: 2018-08-31 21:28:10 
  * @Last Modified by: wwb
- * @Last Modified time: 2018-09-06 12:02:42
+ * @Last Modified time: 2018-09-06 19:08:43
  */
 
 import request from '../../utils/request';
@@ -161,7 +161,7 @@ export function backStorage(options) {
 /* 召回及锁定 */  
 // 删除召回单据
 export function deleteRecall(options) {
-  return request(`${_local}/a/commonback/roomrecall/delete`,{
+  return request(`${_local}/a/roomrecall/delete`,{
     method: 'POST',
     type: 'formData',
     body: options

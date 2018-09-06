@@ -2,7 +2,7 @@
  * @Author: wwb 
  * @Date: 2018-09-06 00:16:17 
  * @Last Modified by: wwb
- * @Last Modified time: 2018-09-06 12:08:58
+ * @Last Modified time: 2018-09-06 19:02:49
  */
 
 import React, { PureComponent } from 'react';
@@ -43,7 +43,7 @@ class RecallAndLockedDetail extends PureComponent {
 					payload: { recallNo },
 					callback: () =>{
 						message.success('审核不通过成功');
-						history.push({pathname:"/drugStorage/outStorage/recallAndLocked"});
+						history.push({pathname:"/drugStorage/outStorage/recallAndLockedCheck"});
 					}
 				})
       },
@@ -55,14 +55,14 @@ class RecallAndLockedDetail extends PureComponent {
 		Modal.confirm({
 			content:"确认审核通过？",
 			onOk : () =>{
-				let detailList = [ this.props.match.params.recallNo ];
+				let detailList = [ {recallNo:this.props.match.params.recallNo} ];
 				let { dispatch, history } = this.props;
 				dispatch({
 					type: 'outStorage/batchAudit',
-					payload: { ...detailList },
+					payload: { detailList },
 					callback: () =>{
 						message.success('审核通过成功');
-						history.push({ pathname: '/drugStorage/outStorage/recallAndLocked' })
+						history.push({ pathname: '/drugStorage/outStorage/recallAndLockedCheck' })
 					}
 				})
 			},

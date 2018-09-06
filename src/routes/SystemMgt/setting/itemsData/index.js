@@ -2,7 +2,7 @@
  * @Author: wwb 
  * @Date: 2018-08-21 15:45:52 
  * @Last Modified by: wwb
- * @Last Modified time: 2018-08-21 16:41:36
+ * @Last Modified time: 2018-09-06 17:53:32
  */
  /**
  * @file 系统管理--系统设置--字典管理
@@ -105,7 +105,6 @@ class ItemsData extends PureComponent{
       type: 'Dictionary/DictTypeList',
       payload: {},
       callback: (data) =>{
-        console.log(data, 'sdadada');
         this.setState({ typeListData: data });
       }
     });

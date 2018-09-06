@@ -52,12 +52,11 @@ export default {
       const data = yield call(usersService.userLogin, payload);
       if(data.code === 200 && data.msg === 'success'){
         yield put({ type: 'userInfo', payload: data.data });
-
         if(callback) callback(data.data);
       }else{
         message.warn('会话失效，请重新登录');
+        if(callback) callback();
         yield put(routerRedux.push('/login'));
-        return;
       }
     },
     *setCurrentMenu({ payload },{ put }){
