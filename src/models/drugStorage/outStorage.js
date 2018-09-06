@@ -149,6 +149,15 @@ export default {
       if(callback) callback(data.data)
     },
 
+    // 取消锁定
+    *cancelLocked({ payload,callback },{ call }){
+      const data = yield call(outStorageService.cancelLocked, payload);
+      if(data.code !== 200){
+        return message.error(data.msg||'锁定失败')
+      }
+      if(callback) callback(data.data)
+    },
+
     subscriptions: {
       
     }

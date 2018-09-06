@@ -2,7 +2,7 @@
  * @Author: wwb 
  * @Date: 2018-08-31 21:28:10 
  * @Last Modified by: wwb
- * @Last Modified time: 2018-09-05 23:24:22
+ * @Last Modified time: 2018-09-06 10:58:54
  */
 
 import request from '../../utils/request';
@@ -170,6 +170,23 @@ export function deleteRecall(options) {
 // 详情
 export function genDetail(options) {
   return request(`${_local}/a/roomrecall/getDetail`,{
+    method: 'POST',
+    type: 'formData',
+    body: options
+  })
+}
+// 确认锁定 或 确认审核
+export function createRecallOrLocked(options) {
+  return request(`${_local}/a/roomrecall/create`,{
+    method: 'POST',
+    type: 'json',
+    body: options
+  })
+}
+
+// 取消锁定
+export function cancelLocked(options) {
+  return request(`${_local}/a/roomrecall/cancelLock`,{
     method: 'POST',
     type: 'formData',
     body: options

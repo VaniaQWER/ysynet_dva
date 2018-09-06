@@ -169,6 +169,15 @@ export default {
       }
       if(callback) callback(data.data)
     },
+    // 确认召回 或确认锁定
+    *createRecallOrLocked({ payload,callback },{ call }){
+      const data = yield call(outStorageService.createRecallOrLocked, payload);
+      if(data.code !== 200){
+        return message.error(data.msg||'操作失败')
+      }
+      if(callback) callback(data.data)
+    },
+
 
     // 状态 类型 字典
     *orderStatusOrorderType({ payload,callback },{ call }){

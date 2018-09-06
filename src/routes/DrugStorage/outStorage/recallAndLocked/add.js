@@ -25,15 +25,12 @@ const formItemLayout = {
 }
 const columns = [
   {
-   title: '退货数量',
+   title: '部门',
    width: 120,
-   dataIndex: 'backNum',
-  render:(text) =>{
-    return <Input defaultValue={text || 1}/>
-    }
+   dataIndex: 'deptName',
   },
   {
-    title: '当前库存',
+    title: '库存数量',
     width:120,
     dataIndex: 'usableQuantity',
   },
@@ -41,15 +38,6 @@ const columns = [
     title: '单位',
     width: 100,
     dataIndex: 'replanUnit',
-  },
-  {
-    title: '包装规格',
-    width:150,
-    dataIndex: 'packageSpecification',
-    className:'ellipsis',
-    render:(text)=>(
-      <Tooltip placement="topLeft" title={text}>{text}</Tooltip>
-    )
   },
   {
     title: '通用名称',
@@ -70,30 +58,34 @@ const columns = [
     title: '剂型',
     width: 180,
     dataIndex: 'ctmmDosageFormDesc',
+	},
+	{
+    title: '包装规格',
+    width:150,
+    dataIndex: 'packageSpecification',
+    className:'ellipsis',
+    render:(text)=>(
+      <Tooltip placement="topLeft" title={text}>{text}</Tooltip>
+    )
   },
   {
     title: '生产批号',
-    width:150,
     dataIndex: 'batchNo',
   },
   {
     title: '生产日期',
-    width:150,
     dataIndex: 'productDate',
   },
   {
     title: '有效期至',
-    width:150,
     dataIndex: 'validEndDate',
   },
   {
     title: '批准文号',
-    width:150,
     dataIndex: 'approvalNo',
   },
   {
     title: '生产厂家',
-    width:150,
     dataIndex: 'ctmmManufacturerName',
   },
   {
@@ -124,17 +116,14 @@ const modalColumns = [
   },
   {
     title: '生产批号',
-    width: 180,
     dataIndex: 'batchNo',
   },
   {
     title: '生产日期',
-    width: 160,
     dataIndex: 'productDate',
   },
   {
     title: '有效期至',
-    width: 160,
     dataIndex: 'validEndDate',
   },
   {
@@ -164,7 +153,8 @@ class AddRefund extends PureComponent{
   constructor(props){
     super(props)
     this.state={
-      display: 'none',
+			display: 'none',
+			query: {},
       selectedRowKey: [],
       spinLoading: false,
       visible: false,
@@ -210,25 +200,33 @@ class AddRefund extends PureComponent{
   
   //提交该出库单
   backStroage = () =>{
-    const {  selectedRows, detailsData } = this.state;
+    const {  selectedRows, isRecall, remarks } = this.state;
     if( selectedRows.length === 0 ){
       return message.warning('请至少勾选有一条数据');
     }
     Conform({
-      content:"是否确认退货",
+      content: isRecall ? "是否确认召回": "是否确认锁定",
       onOk:()=>{
         const { dispatch, history } = this.props;
-        let postData = {}, backDrugList = [];
-        selectedRows.map(item => backDrugList.push({ backNum: item.backNum, drugCode: item.drugCode }));
-        postData.backDrugList = backDrugList;
-        postData.backcause = detailsData.backCause;
+        let postData = {}, detailList = [];
+        selectedRows.map(item => detailList.push({ 
+					deptCode: item.deptCode, 
+					drugCode: item.drugCode,
+					inStoreCode: item.inStoreCode,
+					recallNum: item.usableQuantity,
+					refrigerateType: item.refrigerateType,
+					supplierCode: item.supplierCode,
+				}));
+				postData.detailList = detailList;
+				postData.recallType = isRecall ? '1': '2';
+        postData.remarks = remarks;
         console.log(postData,'postData')
         dispatch({
-          type: 'base/submitBackStorage',
+          type: 'base/createRecallOrLocked',
           payload: { ...postData },
           callback: () => {
-            message.success('退货成功');
-            history.push({pathname:"/drugStorage/outStorage/backStorage"})
+            message.success(`${isRecall ? '召回': '锁定'}成功`);
+            history.push({pathname:"/drugStorage/outStorage/recallAndLocked"});
           }
         })
       },
@@ -264,7 +262,7 @@ class AddRefund extends PureComponent{
     });
   }
   render(){
-    const { visible, isRecall, dataSource, query, spinLoading, display } = this.state;
+    const { visible, isRecall, dataSource, query, spinLoading, display, selectedRows } = this.state;
     const { getFieldDecorator } = this.props.form;
     return (
       <Spin spinning={spinLoading} size="large">
@@ -293,7 +291,7 @@ class AddRefund extends PureComponent{
               <Button onClick={this.delete} >移除</Button>
             </Col>
             <Col span={24}>
-              <Input placeholder='请输入原因' style={{width:250, marginTop:12}}/>
+              <Input placeholder='请输入原因' onInput={e => this.setState({ remarks: e.target.value })} style={{width:250, marginTop:12}}/>
             </Col>
           </Row>
           </div>
@@ -303,7 +301,7 @@ class AddRefund extends PureComponent{
               dataSource={dataSource}
               title={()=>'产品信息'}
               bordered
-              scroll={{x: '200%'}}
+              scroll={{x: '180%'}}
               columns={columns}
               rowKey={'drugCode'}
               style={{marginTop: 24}}
@@ -320,7 +318,10 @@ class AddRefund extends PureComponent{
             <div className="detailCard" style={{margin: '-12px -8px 0px -8px'}}>
               <Affix offsetBottom={0} className='affix'>
                 <Row>
-                  <Col style={{ textAlign: 'right', padding: '10px' }}>
+									<Col span={12}>
+										<h2>共<span style={{ color: 'red',padding: '0 5px' }}>{selectedRows.length}</span>种物品</h2>
+									</Col>
+                  <Col span={12} style={{ textAlign: 'right', padding: '10px' }}>
                     <Button onClick={this.backStroage} type='primary' style={{ marginRight: 8 }}>确定</Button>
                     <Button type='primary' ghost>
                       <Link to={{pathname:`/drugStorage/outStorage/backStorage`}}>取消</Link>
@@ -396,7 +397,7 @@ class AddRefund extends PureComponent{
               bordered
               isJson={true}
               url={outStorage.RECALLORLOCKADDPRODUCT_LIST}
-              scroll={{x: '180%'}}
+              scroll={{x: '190%'}}
               columns={modalColumns}
               rowKey={'id'}
               rowSelection={{

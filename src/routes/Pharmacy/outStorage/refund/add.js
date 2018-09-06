@@ -165,6 +165,7 @@ class AddRefund extends PureComponent{
     super(props)
     this.state={
       display: 'none',
+      query: {},
       selectedRowKey: [],
       spinLoading: false,
       visible: false,

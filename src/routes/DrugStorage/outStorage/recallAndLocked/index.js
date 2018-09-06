@@ -169,13 +169,18 @@ class RecallAndLocked extends PureComponent {
         width: 180,
         render: (text, record) => 
         <span>
-          <Link to={{pathname: `/drugStorage/outStorage/recallAndLocked/details/${text}`}}>{text}</Link>
+          <Link to={{pathname: `/drugStorage/outStorage/recallAndLocked/details/${text}/${record.recallStatus}`}}>{text}</Link>
         </span>
        },
       {
         title: '状态',
         width:100,
         dataIndex: 'recallStatusName',
+      },
+      {
+        title: '类型',
+        width: 100,
+        dataIndex: 'recallTypeName',
       },
       {
         title: '供应商',

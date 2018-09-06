@@ -2,7 +2,7 @@
  * @Author: wwb 
  * @Date: 2018-09-06 00:16:17 
  * @Last Modified by: wwb
- * @Last Modified time: 2018-09-06 00:29:31
+ * @Last Modified time: 2018-09-06 10:58:55
  */
 
 import React, { PureComponent } from 'react';
@@ -36,45 +36,52 @@ class RecallDetail extends PureComponent {
     Modal.confirm({
       content:"您确定要执行此操作？",
       onOk: () => {
-        message.success('操作成功！');
-        const { history } = this.props;
-        history.push({pathname:"/drugStorage/outStorage/recallAndLocked"});
+        const { dispatch, history } = this.props;
+				const { recallNo } = this.props.match.params;
+				this.setState({ btnLoading: true })
+				dispatch({
+					type: 'outStorage/cancelLocked',
+					payload: { recallNo },
+					callback: () =>{
+						message.success('取消锁定成功');
+						this.setState({ btnLoading: false })
+						history.push({pathname:"/drugStorage/outStorage/recallAndLocked"});
+					}
+				})
       },
       onCancel: () => {}
     })
   }
     render() {
-			const { detailsData, dataSource, spinning } = this.state;
+			const { detailsData, dataSource, spinning, btnLoading } = this.state;
+			const { recallStatus } = this.props.match.params;
         const columns = [
 					{
 						title: '部门',
-						width: 100,
+						width: 150,
 						dataIndex: 'deptName',
 					},
 					{
-						width: 100,
 						title: '库存数量',
+						width: 100,
 						dataIndex: 'recallNum',
 					},
 					{
-						width: 100,
 						title: '单位',
+						width: 100,
 						dataIndex: 'unit',
 					},
 					{
-						width: 120,
 						title: '通用名',
 						dataIndex: 'ctmmGenericName',
 					},
 					{
-						width: 120,
 						title: '商品名',
 						dataIndex: 'ctmmTradeName',
 					},
 					{
 						title: '规格',
 						dataIndex: 'ctmmSpecification',
-						width: 100,
 						className: 'ellipsis',
 						render: (text) => (
 								<Tooltip placement="topLeft" title={text}>{text}</Tooltip>
@@ -82,12 +89,12 @@ class RecallDetail extends PureComponent {
 					},
 					{
 						title: '剂型',
-						width: 100,
+						width: 150,
 						dataIndex: 'ctmmDosageFormDesc'
 					},
 					{
 						title: '包装规格',
-						width: 100,
+						width: 150,
 						dataIndex: 'packageSpecification',
 					},
 					{
@@ -97,22 +104,20 @@ class RecallDetail extends PureComponent {
 					},
 					{
 						title: '生产日期',
-						width: 150,
+						width: 170,
 						dataIndex: 'productDate',
 					},
 					{
 						title: '有效期至',
-						width: 130,
+						width: 170,
 						dataIndex: 'validEndDate',
 					},
 					{
 						title: '生产厂家',
-						width: 130,
 						dataIndex: 'ctmmManufacturerName'
 					},
 					{
 						title: '批准文号',
-						width: 130,
 						dataIndex: 'approvalNo'
 					},
 					{
@@ -129,13 +134,17 @@ class RecallDetail extends PureComponent {
 									<Col span={12}>
 										<h2>单据信息</h2>
 									</Col>
-									<Col span={12} style={{ textAlign: 'right' }}>
-										<Button type='primary' style={{ marginRight: 10 }} onClick={this.reject} >取消锁定</Button>
-									</Col>
+									{
+										recallStatus === '5'
+										&&
+										<Col span={12} style={{ textAlign: 'right' }}>
+											<Button type='primary' style={{ marginRight: 10 }} loading={btnLoading} onClick={this.reject} >取消锁定</Button>
+										</Col>
+									}
 								</Row>
 								<Row>
 									<Col span={8}>
-										<div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-4">
+										<div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-6">
 											<label>单据号</label>
 										</div>
 										<div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
@@ -143,7 +152,7 @@ class RecallDetail extends PureComponent {
 										</div>
 									</Col>
 									<Col span={8}>
-										<div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-4">
+										<div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-6">
 											<label>状态</label>
 										</div>
 										<div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
@@ -151,7 +160,7 @@ class RecallDetail extends PureComponent {
 										</div>
 									</Col>
 									<Col span={8}>
-										<div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-4">
+										<div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-6">
 											<label>发起人</label>
 										</div>
 										<div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
@@ -159,7 +168,7 @@ class RecallDetail extends PureComponent {
 										</div>
 									</Col>
 									<Col span={8}>
-										<div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-4">
+										<div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-6">
 											<label>发起时间</label>
 										</div>
 										<div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
@@ -167,19 +176,19 @@ class RecallDetail extends PureComponent {
 										</div>
 									</Col>
 									<Col span={8}>
-										<div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-4">
+										<div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-6">
 											<label>审核人</label>
 										</div>
 										<div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
-											<div className='ant-form-item-control'>{ detailsData.recallNo }</div>
+											<div className='ant-form-item-control'>{ detailsData.updateUserName }</div>
 										</div>
 									</Col>
 									<Col span={8}>
-										<div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-4">
+										<div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-6">
 											<label>审核时间</label>
 										</div>
 										<div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
-											<div className='ant-form-item-control'>{ detailsData.recallNo }</div>
+											<div className='ant-form-item-control'>{ detailsData.updateDate }</div>
 										</div>
 									</Col>
 								</Row>
@@ -189,9 +198,9 @@ class RecallDetail extends PureComponent {
 									bordered
 									dataSource={dataSource}
 									title={() => '产品信息'}
-									scroll={{ x: '220%' }}
+									scroll={{ x: '210%' }}
 									columns={columns}
-									rowKey={'id'}
+									rowKey={'bigDrugCode'}
 									pagination={{
 										size: 'small',
 										showQuickJumper: true,
