@@ -10,7 +10,6 @@ import { supplementDoc } from '../../../../api/pharmacy/wareHouse';
 import RemoteTable from '../../../../components/TableGrid';
 import _ from 'lodash';
 import { connect } from 'dva';
-import moment from 'moment';
 const Conform = Modal.confirm;
 const { Option } = Select;
 const modalColumns = [
@@ -87,7 +86,6 @@ class AddSupplementDocuments extends PureComponent{
       spinLoading: false,
       visible: false,
       btnLoading: false, // 添加产品modal 确认
-      detailsData: {}, // 详情
       dataSource: [],
       selected: [],  // 新建, 编辑 table 勾选
       selectedRows: [],
@@ -138,7 +136,7 @@ class AddSupplementDocuments extends PureComponent{
 
   //提交
   onSubmit = () =>{
-    const {  dataSource , detailsData } = this.state;
+    const {  dataSource  } = this.state;
     if( dataSource.length === 0 ){
       return message.warning('请至少添加一条数据');
     }
@@ -202,11 +200,7 @@ class AddSupplementDocuments extends PureComponent{
   setRowInput = (val,field,index,isDate)=>{
     console.log(val)
     let ds = this.state.dataSource.slice();
-    // if(!isDate){
-      ds[index][field]=val
-    // }else{
-    //   ds[index][field]=moment
-    // }
+    ds[index][field]=val
     console.log(ds)
     this.setState({dataSource:ds})
   }

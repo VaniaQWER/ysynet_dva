@@ -71,7 +71,6 @@ class AddSupplementDocuments extends PureComponent{
       spinLoading: false,
       visible: false,
       btnLoading: false, // 添加产品modal 确认
-      detailsData: {}, // 详情
       dataSource: [],
       selected: [],  // 新建, 编辑 table 勾选
       selectedRows: [],
@@ -122,7 +121,7 @@ class AddSupplementDocuments extends PureComponent{
 
   //提交
   onSubmit = () =>{
-    const {  dataSource , detailsData } = this.state;
+    const {  dataSource } = this.state;
     if( dataSource.length === 0 ){
       return message.warning('请至少添加一条数据');
     }

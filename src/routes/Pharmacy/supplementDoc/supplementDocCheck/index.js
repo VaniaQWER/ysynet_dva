@@ -222,7 +222,7 @@ class SearchFormWrapper extends PureComponent {
             <FormItem {...formItemLayout} label={`状态`}>
               {
                 getFieldDecorator(`makeupStatus`,{
-                  initialValue:fstate && fstate.length?`2`:''
+                  initialValue: fstate && fstate.length?`2`:''
                 })(
                   <Select >
                     {

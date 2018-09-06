@@ -2,14 +2,11 @@
  * @Author: gaofengjiao 
  * @Date: 2018-08-06
  * @Last Modified by: mikey.zhaopeng
- * @Last Modified time: 2018-09-06 17:34:57
+ * @Last Modified time: 2018-09-06 18:12:11
  */
 import React, { PureComponent } from 'react';
 import { Table ,Row, Col,Tooltip ,message , Button , Modal} from 'antd';
-import { createData } from '../../../../common/data';
 import { connect } from 'dva';
-import RemoteTable from '../../../../components/TableGrid';
-import { supplementDoc } from '../../../../api/pharmacy/wareHouse';
 const Comfirm = Modal.confirm;
 const columns = [
   {
@@ -73,7 +70,6 @@ const columns = [
 class ReplenishmentDetail extends PureComponent{
 
   state ={
-    query:{},
     baseInfo:{}
   }
   componentDidMount(){
@@ -110,7 +106,7 @@ class ReplenishmentDetail extends PureComponent{
   } 
 
   render(){
-    const { query , baseInfo} = this.state;
+    const { baseInfo} = this.state;
     return ( 
       <div className='fullCol fadeIn'>
         <div className='fullCol-fullChild'>
