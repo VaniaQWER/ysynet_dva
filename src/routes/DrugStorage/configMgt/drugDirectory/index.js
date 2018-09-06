@@ -30,7 +30,8 @@ class SearchForm extends PureComponent{
       expand: !expand
     })
   }
-  handleSearch = () => {
+  handleSearch = (e) => {
+    e.preventDefault();
     this.props.form.validateFields((err,values)=>{
       this.props.query(values)
     })
@@ -126,19 +127,15 @@ const columns = [
   {
     title: '通用名称',
     dataIndex: 'ctmmGenericName',
-    width: 120
   },
   {
     title: '商品名称',
     dataIndex: 'ctmmTradeName',
-    width: 120
-    
   },
   {
     title: '规格',
     dataIndex: 'ctmmSpecification',
     className: 'ellipsis',
-    width: 120,
     render:(text)=>(
       <Tooltip placement="topLeft" title={text}>{text}</Tooltip>
     )
@@ -146,22 +143,19 @@ const columns = [
   {
     title: '剂型',
     dataIndex: 'ctmmDosageFormDesc',
-    width: 120
   },
   {
     title: '包装规格',
     dataIndex: 'packageSpecification',
-    width: 120
   },
   {
     title: '单位',
     dataIndex: 'ctmmDosUom',
-    width: 120
+    width: 100
   },
   {
     title: '批准文号',
     dataIndex: 'approvalNo',
-    width: 120
   }
 ]
 
@@ -278,7 +272,6 @@ class DrugDirectory extends PureComponent{
       {
         title: '生产厂家',
         dataIndex: 'ctmmManufacturerName',
-        width: 120
       },
       {
         title: '库存上限',
@@ -396,7 +389,7 @@ class DrugDirectory extends PureComponent{
         query={query}
         style={{marginTop: 20}}
         columns={IndexColumns}
-        scroll={{ x: '100%' }}
+        scroll={{ x: '180%' }}
         url={configMgt.findDepotlist}
         rowSelection={{
           selectedRowKeys: this.state.selected,

@@ -220,7 +220,9 @@ class EditDrugDirectory extends PureComponent{
   getMaPInfo = (List,ind)=>{
     if(List && List.length){
       let ret =  List.filter(item=>item.sort===ind);
-      return `${ret[0].bigUnit||''}  =  ${ret[0].conversionRate||''}${ret[0].smallUit||''}`
+      if(ret.length > 0){
+        return `${ret[0].bigUnit||''}  =  ${ret[0].conversionRate||''}${ret[0].smallUit||''}`
+      }
     }
   }
   //使用互斥radio
@@ -417,6 +419,8 @@ class EditDrugDirectory extends PureComponent{
                 <div className='ant-form-item-control'>{fillBackData?fillBackData.ctmmAnotherName:''}</div>
               </div>
             </Col>
+          </Row>
+          <Row>
             <Col span={8}>
               <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
                 <label>规格</label>
