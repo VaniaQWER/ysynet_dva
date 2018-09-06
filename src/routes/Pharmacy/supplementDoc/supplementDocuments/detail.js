@@ -2,7 +2,7 @@
  * @Author: gaofengjiao 
  * @Date: 2018-08-06
  * @Last Modified by: mikey.zhaopeng
- * @Last Modified time: 2018-09-06 16:34:43
+ * @Last Modified time: 2018-09-06 16:57:35
  */
 /* 
   @file 货位调整 详情
@@ -30,7 +30,7 @@ const columns = [
   {
     title: '包装规格',
     width: 270,
-    dataIndex: 'spec',
+    dataIndex: 'replanUnit',
     className:'ellipsis',
     render:(text)=>(
       <Tooltip placement="topLeft" title={text}>{text}</Tooltip>
@@ -39,19 +39,17 @@ const columns = [
   {
     title: '目的货位类型',
     width: 120,
-    dataIndex: 'unit2',
-    render:(text)=>'补货货位'
+    dataIndex: 'positionTypeName',
   },
   {
     title: '通用名',
     width: 180,
-    dataIndex: 'productName1',
-    render:(text,record)=>record.productName
+    dataIndex: 'ctmmGenericName',
   },
   {
     title: '规格',
     width: 270,
-    dataIndex: 'fmodal',
+    dataIndex: 'ctmmSpecification',
   },
   {
     title: '生产厂家',
@@ -61,19 +59,17 @@ const columns = [
   {
     title: '生产批号',
     width: 180,
-    dataIndex: 'flot',
+    dataIndex: 'lot',
   },
   {
     title: '生产日期',
     width: 200,
-    dataIndex: 'produceTime',
-    render: (text,record,index) => '2018-07-10' 
+    dataIndex: 'productDate',
   },
   {
     title: '有效期至',
     width: 200,
-    dataIndex: 'UserfulDate',
-    render: (text,record,index) => '2022-07-09' 
+    dataIndex: 'validEndDate',
   }
 ];
 
@@ -91,7 +87,7 @@ class ReplenishmentDetail extends PureComponent{
       callback:(data)=>{
         console.log(data)
         this.setState({
-          baseInfo:data.data
+          baseInfo:data
         })
       }
     })
@@ -110,7 +106,7 @@ class ReplenishmentDetail extends PureComponent{
                 <label>补登单</label>
               </div>
               <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
-                <div className='ant-form-item-control'>PA002211807000086U</div>
+                <div className='ant-form-item-control'>{baseInfo?baseInfo.makeupCode:''}</div>
               </div>
             </Col>
             <Col span={8}>
@@ -118,7 +114,7 @@ class ReplenishmentDetail extends PureComponent{
               <label>入库单</label>
             </div>
             <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
-              <div className='ant-form-item-control'>RK00221180700005QU</div>
+              <div className='ant-form-item-control'>{baseInfo?baseInfo.storeCode:''}</div>
             </div>
             </Col>
             <Col span={8}>
@@ -126,7 +122,7 @@ class ReplenishmentDetail extends PureComponent{
                 <label>类型</label>
               </div>
               <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
-                <div className='ant-form-item-control'>补登入库</div>
+                <div className='ant-form-item-control'>{baseInfo?baseInfo.makeupTypeName:''}</div>
               </div>
             </Col>
             <Col span={8}>
@@ -134,7 +130,7 @@ class ReplenishmentDetail extends PureComponent{
                   <label>状态</label>
               </div>
               <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
-                <div className='ant-form-item-control'>待审核</div>
+                <div className='ant-form-item-control'>{baseInfo?baseInfo.makeupStatusName:''}</div>
               </div>
             </Col>
             <Col span={8}>
@@ -142,7 +138,7 @@ class ReplenishmentDetail extends PureComponent{
                   <label>补登人</label>
               </div>
               <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
-                <div className='ant-form-item-control'>李四四
+                <div className='ant-form-item-control'>{baseInfo?baseInfo.createUserName:''}
                 </div>
               </div>
             </Col>
@@ -151,7 +147,7 @@ class ReplenishmentDetail extends PureComponent{
                   <label>补登时间</label>
               </div>
               <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
-                <div className='ant-form-item-control'>2018-07-12 17:09:15</div>
+                <div className='ant-form-item-control'>{baseInfo?baseInfo.createDate:''}</div>
               </div>
             </Col>
             <Col span={8}>
@@ -159,7 +155,7 @@ class ReplenishmentDetail extends PureComponent{
                   <label>审核人</label>
               </div>
               <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
-                <div className='ant-form-item-control'>李四四</div>
+                <div className='ant-form-item-control'>{baseInfo?baseInfo.reviewUserName:''}</div>
               </div>
             </Col>
             <Col span={8}>
@@ -167,7 +163,7 @@ class ReplenishmentDetail extends PureComponent{
                   <label>审核时间</label>
               </div>
               <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
-                <div className='ant-form-item-control'>2018-07-12 17:09:15</div>
+                <div className='ant-form-item-control'>{baseInfo?baseInfo.reviewDate:''}</div>
               </div>
             </Col>
           </Row>
@@ -178,8 +174,8 @@ class ReplenishmentDetail extends PureComponent{
             style={{marginTop: 20}}
             columns={columns}
             scroll={{ x: '100%' }}
-            rowKey='id'
-            dataSource={[]}
+            rowKey='drugCode'
+            dataSource={baseInfo?baseInfo.list:[]}
           />
         </div>
       </div>

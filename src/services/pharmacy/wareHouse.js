@@ -63,7 +63,7 @@ export function DeleteMakeup(options) {
 export function GETMakeupDetail(options){
   return request(`${_local}/a/roommakeup/makeup/info`,{ 
     method: 'POST',
-    type: 'json',
+    type: 'formData',
     body: options
   })
 }
