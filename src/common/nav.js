@@ -857,8 +857,8 @@ export const getNavData = app => [
     {
       name: "上架",//药库-申领入库-上架
       icon: 'setting',
-      path: '/pharmacy/wareHouse/putaway/details',
-      component: dynamicWrapper(app, [], () => import('../routes/Pharmacy/wareHouse/putaway/details')),
+      path: '/pharmacy/wareHouse/putaway/details/:id',
+      component: dynamicWrapper(app, ['pharmacy/wareHouse'], () => import('../routes/Pharmacy/wareHouse/putaway/details')),
     },
     {
       name: "新建入库",//药库-申领入库-新建入库
@@ -869,8 +869,8 @@ export const getNavData = app => [
     {
       name: "新建入库-详情",//药库-申领入库-新建入库-详情
       icon: 'setting',
-      path: '/pharmacy/wareHouse/newLibrary/details',
-      component: dynamicWrapper(app, [], () => import('../routes/Pharmacy/wareHouse/newLibrary/details')),
+      path: '/pharmacy/wareHouse/newLibrary/details/:id',
+      component: dynamicWrapper(app, ['pharmacy/wareHouse'], () => import('../routes/Pharmacy/wareHouse/newLibrary/details')),
     },
      /*-----药房-出库--*/
      {
