@@ -1,8 +1,8 @@
 /*
  * @Author: gaofengjiao 
  * @Date: 2018-08-06
- * @Last Modified by: gaofengjiao
- * @Last Modified time: 2018-08-06
+ * @Last Modified by: mikey.zhaopeng
+ * @Last Modified time: 2018-09-06 16:34:43
  */
 /* 
   @file 货位调整 详情
@@ -10,6 +10,10 @@
 import React, { PureComponent } from 'react';
 import { Table ,Row, Col,Tooltip } from 'antd';
 import { createData } from '../../../../common/data';
+import { connect } from 'dva';
+import RemoteTable from '../../../../components/TableGrid';
+import { supplementDoc } from '../../../../api/pharmacy/wareHouse';
+
 const columns = [
   {
     title: '数量',
@@ -20,7 +24,7 @@ const columns = [
   {
     title: '单位',
     width: 100,
-    dataIndex: 'unit',
+    dataIndex: 'unit1',
     render:(text)=>'箱'
   },
   {
@@ -35,7 +39,7 @@ const columns = [
   {
     title: '目的货位类型',
     width: 120,
-    dataIndex: 'unit',
+    dataIndex: 'unit2',
     render:(text)=>'补货货位'
   },
   {
@@ -74,8 +78,29 @@ const columns = [
 ];
 
 class ReplenishmentDetail extends PureComponent{
+
+  state ={
+    query:{},
+    baseInfo:{}
+  }
+  componentDidMount(){
+    console.log(this.props.match.params.id)
+    this.props.dispatch({
+      type:'pharmacy/GETMakeupDetail',
+      payload:{makeupCode:this.props.match.params.id},
+      callback:(data)=>{
+        console.log(data)
+        this.setState({
+          baseInfo:data.data
+        })
+      }
+    })
+    
+  }
+
   render(){
-    return (
+    const { query , baseInfo} = this.state;
+    return ( 
       <div className='fullCol fadeIn'>
         <div className='fullCol-fullChild'>
           <h3>单据信息</h3>
@@ -149,21 +174,16 @@ class ReplenishmentDetail extends PureComponent{
         </div>
         <div className='detailCard'>
           <Table
-            dataSource={createData()}
-            bordered
             title={()=>'产品信息'}
-            scroll={{x: '130%'}}
+            style={{marginTop: 20}}
             columns={columns}
-            rowKey={'id'}
-            pagination={{
-              size: 'small',
-              showQuickJumper: true,
-              showSizeChanger: true
-            }}
+            scroll={{ x: '100%' }}
+            rowKey='id'
+            dataSource={[]}
           />
         </div>
       </div>
     )
   }
 }
-export default ReplenishmentDetail;
+export default connect(state=>state)(ReplenishmentDetail);

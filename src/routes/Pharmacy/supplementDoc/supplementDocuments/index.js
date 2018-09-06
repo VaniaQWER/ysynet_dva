@@ -4,9 +4,8 @@
 * @Last Modified time: 17:40:15 
  */
 import React, { PureComponent } from 'react';
-import { DatePicker , Form, Input ,Select , Row, Col, Button  , message   } from 'antd';
+import { DatePicker , Form, Input ,Select , Row, Col, Button  , message  ,Modal } from 'antd';
 import { formItemLayout } from '../../../../utils/commonStyles';
-import { createData } from '../../../../common/data';
 import { Link } from 'react-router-dom';
 import { supplementDoc } from '../../../../api/pharmacy/wareHouse';
 import RemoteTable from '../../../../components/TableGrid';
@@ -15,13 +14,14 @@ import { connect } from 'dva';
 const FormItem = Form.Item;
 const { Option } = Select;
 const { RangePicker } = DatePicker;
+const  Confirm = Modal.confirm;
 class SpplementDocList extends PureComponent{
 
   state = {
     selected: [],
     selectedRows: [],
     loading: false,
-    dataSource: createData(),
+    dataSource: [],
     query:{},
   }
 
@@ -33,17 +33,23 @@ class SpplementDocList extends PureComponent{
     if (selected.length === 0) {
       message.warn('请至少选择一条数据')
     } else {
-      this.setState({ loading: true });
-      //出发删除请求
-      this.props.dispatch({
-        type:'pharmacy/DeleteMakeup',
-        payload:{idList:selected},
-        callback:(data)=>{
-          message.success('删除成功')
-          this.setState({loading: false,selected:[],selectedRows: []});
-          this.refs.table.fetch();
+      Confirm({
+        title:"确定执行删除操作吗？",
+        onOk:()=>{
+          this.setState({ loading: true });
+          //出发删除请求
+          this.props.dispatch({
+            type:'pharmacy/DeleteMakeup',
+            payload:{idList:selected},
+            callback:(data)=>{
+              message.success('删除成功')
+              this.setState({loading: false,selected:[],selectedRows: []});
+              this.refs.table.fetch();
+            }
+          })
         }
       })
+      
     }
   }
 
@@ -68,7 +74,7 @@ class SpplementDocList extends PureComponent{
       {
         title: '状态',
         width:100,
-        dataIndex: 'makeupStatus',
+        dataIndex: 'makeupStatusName',
       },
       {
         title: '部门',
@@ -78,7 +84,7 @@ class SpplementDocList extends PureComponent{
       {
         title: '类型',
         width:150,
-        dataIndex: 'makeupType',
+        dataIndex: 'makeupTypeName',
       },
       {
         title: '补登人',
@@ -108,7 +114,7 @@ class SpplementDocList extends PureComponent{
         <SearchForm query={this.queryHandler} />
         <div className='ant-row-bottom'>
           <Button type='primary' onClick={()=>this.props.history.push({ pathname: `/AddSupplementDoc` })}>补登出库单</Button>
-          <Button type='default' onClick={()=>this.props.history.push({ pathname: `/pharmacy/supplementDoc/supplementDocuments/add` })} style={{ marginLeft: 8 }}>补登入库单</Button>
+          <Button type='default' onClick={()=>this.props.history.push({ pathname: `/AddInSupplementDoc` })} style={{ marginLeft: 8 }}>补登入库单</Button>
           <Button type='default' onClick={this.delete} style={{ marginLeft: 8 }}>删除</Button>
         </div>
          <RemoteTable 

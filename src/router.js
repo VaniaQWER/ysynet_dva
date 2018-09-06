@@ -21,6 +21,7 @@ import PslistAdd from './routes/DrugStorage/wareHouse/psListCheck/add';
 import NewAddGoodsAdjust  from './routes/DrugStorage/goodsAdjust/adjust/add';
 import PharmacyAddGoodsAdjust from './routes/Pharmacy/goodsAdjust/adjust/add';
 import AddSupplementDoc from './routes/Pharmacy/supplementDoc/supplementDocuments/add';
+import AddInSupplementDoc from './routes/Pharmacy/supplementDoc/supplementDocuments/addIn';
 import { getNavData } from './common/nav';
 import { getPlainNode } from './utils/utils';
 
@@ -93,6 +94,7 @@ function RouterConfig({ history, app }) {
           <Route path="/addGoodsAdjust" component={NewAddGoodsAdjust}/>
           <Route path="/pharmacyAddGoodsAdjust" component={PharmacyAddGoodsAdjust}/>
           <Route path="/AddSupplementDoc" component={AddSupplementDoc}/>
+          <Route path="/AddInSupplementDoc" component={AddInSupplementDoc}/>
           {/* <Route path="/home" component={Home}/> */}
           {/* <Route path="/app" render={props => <WorkplaceLayout {...props} {...passProps} />} /> */}
           <Route path="/" render={props => <BasicLayout {...props} {...passProps} />} />

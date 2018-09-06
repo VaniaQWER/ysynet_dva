@@ -59,3 +59,11 @@ export function DeleteMakeup(options) {
     body: options
   })
 }
+//补货单据-查详情
+export function GETMakeupDetail(options){
+  return request(`${_local}/a/roommakeup/makeup/info`,{ 
+    method: 'POST',
+    type: 'json',
+    body: options
+  })
+}

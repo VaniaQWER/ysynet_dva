@@ -9,5 +9,5 @@ export const wareHouse = {
  // 药房 - 补登单据 
 export const supplementDoc = {
   list: `${_local}/a/roommakeup/makeup/list`,  //补登单据列表
-  
+  addProductList:`${_local}/a/roomlocadjust/roomDrugList`,//补登单据新增产品列表
 }

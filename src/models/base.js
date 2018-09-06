@@ -1,6 +1,7 @@
 /* 
   全局公共 model
 */
+import * as base from '../services/base';
 import * as replenishment from '../services/replenishment/replenish';
 import * as pharmacy from '../services/pharmacy/wareHouse';
 import * as wareHouse from '../services/drugStorage/wareHouse';
@@ -178,6 +179,14 @@ export default {
       if(callback) callback(data.data)
     },
 
+    //补登单据 - 新建出库单
+    *InsertMakeup({ payload,callback },{ call }){
+      const data = yield call(base.InsertMakeup, payload);
+      if(data.code !== 200){
+        return message.error(data.msg)
+      }
+      if(callback) callback(data.data)
+    },
 
     // 状态 类型 字典
     *orderStatusOrorderType({ payload,callback },{ call }){
@@ -187,6 +196,14 @@ export default {
       }
       if(callback) callback(data.data)
     },
+    //公用---产品搜索下拉框
+    *SearchProductSelect({ payload,callback },{ call }){
+      const data = yield call(base.SearchProductSelect, payload);
+      if(data.code !== 200){
+        return message.error(data.msg)
+      }
+      if(callback) callback(data.data)
+    }
   },
   reducers: {
 

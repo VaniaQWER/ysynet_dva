@@ -27,6 +27,14 @@ export default {
         message.error(data.msg);
       }
     },
+    *GETMakeupDetail({payload, callback}, {put, call}) {
+      const data = yield call(wareHouse.GETMakeupDetail, payload);
+      if(data.code === 200 && data.msg === "success") {
+        callback && callback(data.data);
+      }else {
+        message.error(data.msg);
+      }
+    },
   },
   subscriptions: {
     

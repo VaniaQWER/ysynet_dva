@@ -1,10 +1,10 @@
 /*
- * @Author: yuwei  补登单据 - 新建出库单
+ * @Author: yuwei  补登单据 - 新建入库单
  * @Date: 2018-07-24 13:13:55 
 * @Last Modified time: 2018-07-24 13:13:55 
  */
 import React, { PureComponent } from 'react';
-import { Table , Select , Col, Button, Icon, Modal , message, Input , Affix , Row , Tooltip, Spin, Form } from 'antd';
+import { Table , Select , Col, Button, Icon, Modal , message, Input , Affix , Row , Tooltip, Spin, Form ,DatePicker  } from 'antd';
 import { Link } from 'react-router-dom';
 import { supplementDoc } from '../../../../api/pharmacy/wareHouse';
 import RemoteTable from '../../../../components/TableGrid';
@@ -44,22 +44,6 @@ const modalColumns = [
     width: 180,
     dataIndex: 'ctmmDosageFormDesc',
   },
-  {
-    title: '生产批号',
-    width: 180,
-    dataIndex: 'lot',
-  },
-  {
-    title: '生产日期',
-    width: 160,
-    dataIndex: 'productDate',
-  },
-  {
-    title: '有效期至',
-    width: 160,
-    dataIndex: 'validEndDate',
-  },
- 
   {
     title: '包装规格',
     width: 100,
@@ -143,16 +127,16 @@ class AddSupplementDocuments extends PureComponent{
       return message.warning('请至少添加一条数据');
     }
     Conform({
-      content:"是否补登出库单",
+      content:"是否补登入库单",
       onOk:()=>{
         const { dispatch, history } = this.props;
         let postData = {}, List = [];
-        postData.makeupType=2;
+        postData.makeupType=1;
         dataSource.map(item =>List.push({ 
-          // lot: item.lot,
-          // productDate: item.productDate,
+          lot: item.lot,
+          productDate: item.productDate,
           totalQuantity: item.totalQuantity,
-          // validEndDate: item.validEndDate,
+          validEndDate: item.validEndDate,
           drugCode: item.drugCode 
         }));
         postData.makeupinsertlist = List;
@@ -161,7 +145,7 @@ class AddSupplementDocuments extends PureComponent{
           type: 'base/InsertMakeup',
           payload: { ...postData },
           callback: () => {
-            message.success('补登出库单成功');
+            message.success('补登入库单成功');
             history.push({pathname:"/pharmacy/supplementDoc/supplementDocuments"})
           }
         })
@@ -202,11 +186,12 @@ class AddSupplementDocuments extends PureComponent{
   setRowInput = (val,field,index,isDate)=>{
     console.log(val)
     let ds = this.state.dataSource.slice();
-    // if(!isDate){
+    if(!isDate){
       ds[index][field]=val
-    // }else{
-    //   ds[index][field]=moment
-    // }
+    }else{
+      debugger
+      ds[index][field]=val
+    }
     console.log(ds)
     this.setState({dataSource:ds})
   }
@@ -216,8 +201,8 @@ class AddSupplementDocuments extends PureComponent{
        title: '数量',
        width: 120,
        dataIndex: 'totalQuantity',
-       render:(text,record,index) =>{
-        return <Input defaultValue={text || 1} onChange={(e)=>this.setRowInput(e.target.value,'totalQuantity',index)}/>
+       render:(text) =>{
+        return <Input defaultValue={text || 1} onChange={(e)=>this.setRowInput(e.target.value)}/>
         }
       },
       {
@@ -229,11 +214,6 @@ class AddSupplementDocuments extends PureComponent{
         title: '货位',
         width: 180,
         dataIndex: 'locName',
-      },
-      {
-        title: '可用库存',
-        width: 180,
-        dataIndex: 'usableQuantity',
       },
       {
         title: '货位类型',
@@ -265,19 +245,28 @@ class AddSupplementDocuments extends PureComponent{
         )
       },
       {
-        title: '批准文号',
+        title: '生产批号',
         width:150,
-        dataIndex: 'approvalNo',
+        dataIndex: 'lot',
+        render:(text,record,index) =>{
+          return <Input format={'YYYY-MM-DD'} defaultValue={text} onChange={(e)=>this.setRowInput(e.target.value,'lot',index)}/>
+        }
       },
       {
         title: '生产日期',
         width:150,
         dataIndex: 'productDate',
+        render:(text,record,index) =>{
+          return <DatePicker format={'YYYY-MM-DD HH:ss:mm'} defaultValue={text?moment(text,'YYYY-MM-DD HH:ss:mm'):null} onChange={(date,datestr)=>this.setRowInput(datestr,'productDate',index,'isDate')}/>
+        }
       },
       {
         title: '有效期至',
         width:150,
         dataIndex: 'validEndDate',
+        render:(text,record,index) =>{
+          return <DatePicker format={'YYYY-MM-DD HH:ss:mm'} defaultValue={text?moment(text,'YYYY-MM-DD HH:ss:mm'):null} onChange={(date,datestr)=>this.setRowInput(datestr,'validEndDate',index,'isDate')}/>
+        }
       }
     ];
     const { visible, dataSource, query, spinLoading, fetching, data} = this.state; 
@@ -287,7 +276,7 @@ class AddSupplementDocuments extends PureComponent{
         <div className="fullCol-fullChild" style={{margin: '-9px -24px 0'}}>
           <Row style={{borderBottom: '1px solid rgba(0, 0, 0, .1)', marginBottom: 10}}>
             <Col span={8}>
-              <h2>补登出库单</h2>
+              <h2>补登入库单</h2>
             </Col>
             <Col span={16} style={{ textAlign: 'right' }}>
               <span style={{ cursor: 'pointer' }} onClick={() => this.props.history.go(-1)}><Icon type="close" style={{ fontSize: 26, marginTop: 8 }} /></span>
