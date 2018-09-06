@@ -10,6 +10,7 @@ import {Link} from 'react-router-dom';
 import RemoteTable from '../../../../components/TableGrid';
 import wareHouse from '../../../../api/drugStorage/wareHouse';
 import { formItemLayout } from '../../../../utils/commonStyles';
+import {connect} from 'dva';
 const FormItem = Form.Item;
 const Option = Select.Option;
 const { RangePicker } = DatePicker;
@@ -223,4 +224,4 @@ class SearchFormWrapper extends PureComponent {
    )
  }
 }
-const SearchForm = Form.create()(SearchFormWrapper);
+const SearchForm = connect(state=>state)(Form.create()(SearchFormWrapper));
