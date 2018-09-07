@@ -184,8 +184,8 @@ class SearchFormWrapper extends PureComponent {
  handleSearch = (e) => {
   e.preventDefault();
   this.props.form.validateFields((err, values) => {
-    let {time} = values;
-    if(time.length > 0) {
+    let time = values.time === undefined ? '' : values.time;
+    if(time && time.length > 0) {
       values.startTime = time[0].format('YYYY-MM-DD');
       values.endTime = time[1].format('YYYY-MM-DD');
     }else {
@@ -193,6 +193,7 @@ class SearchFormWrapper extends PureComponent {
       values.endTime = '';
     };
     delete values.time;
+    console.log('搜索条件：', values);
     this.props.query(values);
   });
  }
