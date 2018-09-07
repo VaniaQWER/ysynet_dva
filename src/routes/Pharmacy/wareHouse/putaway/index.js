@@ -5,10 +5,12 @@
  */
 
 import React, { PureComponent } from 'react';
-import { Table , Form, Input , Icon , DatePicker , Row, Col, Button, Select , message  , Popconfirm } from 'antd';
+import {Form, Input , Icon , DatePicker , Row, Col, Button, Select , message  , Popconfirm } from 'antd';
 import { formItemLayout } from '../../../../utils/commonStyles';
-import { createData } from '../../../../common/data';
 import { Link } from 'react-router-dom';
+import RemoteTable from '../../../../components/TableGrid/index';
+import {wareHouse} from '../../../../api/pharmacy/wareHouse';
+import {connect} from 'dva';
 const RangePicker = DatePicker.RangePicker;
 const FormItem = Form.Item;
 const Option = Select.Option;
@@ -24,7 +26,7 @@ class Putaway extends PureComponent{
   }
 
   queryHandler = (query) => {
-    this.setState({ query:query })
+    this.setState({query: query});
   }
 
   //单行确认 
@@ -33,48 +35,33 @@ class Putaway extends PureComponent{
   }
 
   render(){
+    let {query} = this.state;
     const columns = [
       {
         title: '验收单',
-        dataIndex: 'medicinalCode',
+        dataIndex: 'acceptanceCode',
         width:150,
-        render:(text)=>(<Link to={{pathname: `/pharmacy/wareHouse/putaway/details`}}>{text}</Link>)
+        render:(text, record)=>(<Link to={{pathname: `/pharmacy/wareHouse/putaway/details/code=${text}&status=${record.acceptanceStatus}`}}>{text}</Link>)
        },
       {
         title: '状态',
         width:100,
-        dataIndex: 'fstate',
-        render:()=>`待上架`
+        dataIndex: 'acceptanceStatusName',
       },
       {
         title: '类型',
         width:100,
-        dataIndex: 'productName1',
-        render:(text,record)=>`零库存补货`
-      },
-      {
-        title: '验收人',
-        width:150,
-        dataIndex: 'productCompany41',
-        render: (text, record, index) => 'PHXL'
+        dataIndex: 'acceptanceTypeName',
       },
       {
         title: '验收时间',
         width:150,
-        dataIndex: 'productCompany3',
-        render: (text, record, index) => '2018-7-25'
-      },
-      {
-        title: '上架人',
-        width:150,
-        dataIndex: 'productCompany42',
-        render: (text, record, index) =>  'PHXL'
+        dataIndex: 'receptionTime'
       },
       {
         title: '上架时间',
         width:150,
-        dataIndex: 'productCompany3232',
-        render: (text, record, index) => '2018-7-25'
+        dataIndex: 'upUserDate'
       },
       {
         title: '操作',
@@ -87,33 +74,50 @@ class Putaway extends PureComponent{
       }
     ];
     return (
-      <div  className='ysynet-main-content'>
-        <SearchForm query={this.queryHandler} />
-        <Table
-          dataSource={createData()}
-          bordered
-          loading={ this.state.loading}
+      <div className='ysynet-main-content'>
+        <SearchForm dispatch={this.props.dispatch} query={this.queryHandler} />
+        <RemoteTable
+          url={wareHouse.ROOMACCEPTANCE}
+          query={query}
           scroll={{x: '100%'}}
           columns={columns}
-          rowKey={'id'}
+          rowKey={'acceptanceCode'}
           style={{marginTop: 24}}
-          pagination={{
-            size: "small",
-            showQuickJumper: true,
-            showSizeChanger: true
-          }}
         />
       </div>
     )
   }
 }
-export default Putaway;
+export default connect(state=>state)(Putaway);
 
 /* 搜索 - 表单 */
 class SearchFormWrapper extends PureComponent {
  state = {
    display: 'none',
+   status: [],
+   type: []
  }
+ componentDidMount() {
+   this.props.dispatch({
+     type: 'base/orderStatusOrorderType',
+     payload: {
+       type: 'acceptance_status'
+     },
+     callback: (data) => {
+       this.setState({status: data});
+     }
+   });
+   this.props.dispatch({
+     type: 'base/orderStatusOrorderType',
+     payload: {
+       type: 'acceptance_type'
+     },
+     callback: (data) => {
+       this.setState({type: data});
+     }
+   });
+ }
+ 
  toggle = () => {
    const { display, expand } = this.state;
    this.setState({
@@ -121,11 +125,21 @@ class SearchFormWrapper extends PureComponent {
      expand: !expand
    })
  }
+
  handleSearch = (e) => {
-   e.preventDefault();
-   this.props.form.validateFields((err, values) => {
-     this.props.query(values);
-   });
+    e.preventDefault();
+    this.props.form.validateFields((err, values) => {
+      let {time} = values;
+      if(time && time.length > 0) {
+        values.receptionStartTime = time[0].format('YYYY-MM-DD');
+        values.receptionEndTime = time[1].format('YYYY-MM-DD');
+      }else {
+        values.receptionStartTime = '';
+        values.receptionEndTime = '';
+      };
+      delete values.time;
+      this.props.query(values);
+    });
  }
  //重置
  handleReset = () => {
@@ -133,45 +147,60 @@ class SearchFormWrapper extends PureComponent {
    this.props.query({});
  }
 
+ renderList = (list) => {
+   return list.map(item => {
+     return <Option key={item.value} value={item.value}>{item.label}</Option>
+   })
+ }
+
  render() {
-   const { display } = this.state;
+   let {display, type, status} = this.state;
+   type = this.renderList(type);
+   status = this.renderList(status);
+
    const { getFieldDecorator } = this.props.form;
    return (
     <Form onSubmit={this.handleSearch}>
       <Row gutter={30}>
         <Col span={8}>
           <FormItem label={`单据号`} {...formItemLayout}>
-            {getFieldDecorator('assetCode', {})(
+            {getFieldDecorator('acceptanceCode', {})(
             <Input placeholder='验收单'/>
             )}
           </FormItem>
         </Col>
         <Col span={8} >
           <FormItem label={`状态`} {...formItemLayout}>
-            {getFieldDecorator('useDeptGuid123')(
+            {getFieldDecorator('acceptanceStatus')(
             <Select 
               showSearch
               placeholder={'请选择'}
               optionFilterProp="children"
               filterOption={(input, option) => option.props.children.indexOf(input) >= 0}
               >
-              <Option key="" value="">全部</Option>
-              <Option key="01" value="01">待验收</Option>
+              {status}
+            </Select>
+            )}
+          </FormItem>
+        </Col>
+        <Col span={8} >
+          <FormItem label={`类型`} {...formItemLayout}>
+            {getFieldDecorator('acceptanceType')(
+            <Select 
+              showSearch
+              placeholder={'请选择'}
+              optionFilterProp="children"
+              filterOption={(input, option) => option.props.children.indexOf(input) >= 0}
+              >
+              {type}
             </Select>
             )}
           </FormItem>
         </Col>
         <Col span={8} style={{display: display}}>
-          <FormItem label={`发起时间`} {...formItemLayout}>
-            {getFieldDecorator('assetName', {})(
-            <RangePicker/>
-            )}
-          </FormItem>
-        </Col>
-        <Col span={8} style={{display: display}}>
           <FormItem label={`验收时间`} {...formItemLayout}>
-            {getFieldDecorator('assetName123', {})(
-            <RangePicker/>
+            {getFieldDecorator('time', {})(
+              <RangePicker/>
             )}
           </FormItem>
         </Col>
