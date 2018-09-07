@@ -40,7 +40,7 @@ class MenuMgt extends PureComponent{
   add = () =>{
     //跳转至添加菜单页面
     const {history} = this.props;
-    history.push('/sys/menu/add/menuMgt');
+    history.push('/sys/menu/menuMgt/add');
   }
 
   render(){
