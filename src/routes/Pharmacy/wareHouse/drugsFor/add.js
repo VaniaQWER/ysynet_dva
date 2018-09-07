@@ -199,7 +199,6 @@ class NewAdd extends PureComponent {
         render: (text, record, i) => {
           return <InputNumber
                     defaultValue={text}
-                    max={record.usableQuantity}
                     min={1}
                     precision={0}
                     onChange={(value)=>{
