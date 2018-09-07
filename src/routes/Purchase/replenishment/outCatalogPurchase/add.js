@@ -21,7 +21,7 @@ class NewAdd extends PureComponent{
   state = {
     isShow: false,
     query: {
-      medDrugType: '1'
+      medDrugType: '2'
     },
     dataSource: [],// 添加的产品
     deptModules: [],// 采购部门

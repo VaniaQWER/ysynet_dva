@@ -46,7 +46,8 @@ class NewAddGoodsAdjust extends PureComponent{
     });
     this.setState({okLoading: true})
     let payload = {
-      drugCodeList: modalSelected
+      detailList: modalSelected,
+      locType: '1'
     };
     this.props.dispatch({
       type: 'base/drugInformation',
