@@ -10,7 +10,7 @@ const { Header, Content, Sider } = Layout;
 class BasicLayout extends PureComponent {
   state = {
     collapsed: false,
-    title: {}
+    title: ''
   }
   componentWillMount = () =>{
     let { dispatch, users } = this.props;
@@ -18,7 +18,19 @@ class BasicLayout extends PureComponent {
     if(!userInfo.id && !userInfo.loginName){
       dispatch({
         type: 'users/userLogin',
-        payload: { refresh: true }
+        payload: { refresh: true },
+        callback: (data) =>{
+          if(data.deptInfo && data.deptInfo.length){
+            let deptInfo = data.deptInfo;
+            let { menuList } = deptInfo[0];
+            let tree = menuFormat(menuList,true,1) ;
+            console.log(tree,'ret')
+            this.props.dispatch({
+              type: 'users/setCurrentMenu',
+              payload: { menu : tree[0].children[0] }
+            })
+          }
+        }
       })
     }
   }
@@ -28,18 +40,23 @@ class BasicLayout extends PureComponent {
     });
   }
   handleClick = (e) =>{
-    let { dispatch, users } = this.props;
+    let { dispatch, users, history } = this.props;
     let { deptInfo } = users.userInfo;
     dispatch({
       type: 'users/setCurrentDept',
       payload: { id: e.key, deptName: e.item.props.children },
       callback: () =>{
         let currMenuList = deptInfo.filter(item => item.deptId === e.key)[0].menuList;
-        let addMenu = deptInfo[0].menuList.filter(item => item.id === '1')[0];
-        currMenuList.push(addMenu);
         console.log(currMenuList,'current')
-        let tree = menuFormat(currMenuList, true, 1);
-        console.log(tree,'tree')
+        let tree = menuFormat(currMenuList, true, 1 );
+        let menu = tree[0].children[0];
+        console.log(menu,'tree');
+        console.log(menu.children[0].children[0].href,'href')
+        this.props.dispatch({
+          type: 'users/setCurrentMenu',
+          payload: { menu : menu }
+        });
+        history.push({ pathname: menu.children[0].children[0].href })
       }
     })
   }
@@ -75,14 +92,19 @@ class BasicLayout extends PureComponent {
         >
           <SiderMenu 
             history={this.props.history}
+            collapsed={this.state.collapsed}
+            title={this.state.title}
             cb={(title)=> this.setState({ title })}
           />
-          <div className={styles.triggerWrapp} style={{ width: this.state.collapsed ? 80: 232 }}>
+          <div 
+            onClick={this.toggle} 
+            className={styles.triggerWrapp}
+            style={{ width: this.state.collapsed ? 80: 232 }}
+          >
             <Icon
               style={{ color: '#fff',fontSize: 18 }}
               className={styles.trigger}
               type={this.state.collapsed ? 'menu-unfold' : 'menu-fold'}
-              onClick={this.toggle}
               />
           </div>
         </Sider>
@@ -103,13 +125,13 @@ class BasicLayout extends PureComponent {
               </Col>
               <Col span={20} style={{textAlign: 'right'}}>
                 <div className={styles.profile}>
-                  <div>
+                  {/* <div>
                     <Tooltip title="子系统切换">
                       <Icon type="sync" className={styles.icon} onClick={() => this.props.history.push({
                         pathname: '/subSystem'
                       })}/> 
                     </Tooltip>
-                  </div>
+                  </div> */}
                   <Profile userName={userInfo.name}/>
                 </div>
               </Col>
@@ -121,7 +143,7 @@ class BasicLayout extends PureComponent {
                 <Icon type="arrow-left"  style={{ fontSize: 18, marginRight: 16 }}/>
               </a>
             </Tooltip>
-            <span>{title.subTitle}</span>
+            <span>{title}</span>
           </Header>
           <Content className={`${styles.content}`}>
             <Switch>

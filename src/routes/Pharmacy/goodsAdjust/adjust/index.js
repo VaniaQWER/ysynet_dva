@@ -58,7 +58,7 @@ class Putaway extends PureComponent{
        dataIndex: 'applyNo',
        render: (text,record) =>{
         return <span>
-           <Link to={{pathname: `/pharmacy/goodsAdjust/adjust/detail`}}>{text}</Link>
+           <Link to={{pathname: `/pharmacy/goodsAdjust/adjust/detail/${text}`}}>{text}</Link>
          </span>
         }
       },
