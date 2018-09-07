@@ -1038,7 +1038,7 @@ export const getNavData = app => [
     {
       name: "部门管理-货位",
       icon: 'setting',
-      path: '/sys/organization/departmentMgt/goodsAllocation',
+      path: '/sys/organization/departmentMgt/goodsAllocation/:id',
       component: dynamicWrapper(app, ['systemMgt/organization'], () => import('../routes/SystemMgt/organization/departmentMgt/goodsAllocation')),
     },
     // 组织机构 -- 用户管理
