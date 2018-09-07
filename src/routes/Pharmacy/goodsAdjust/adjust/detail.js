@@ -8,55 +8,16 @@
   @file 货位调整 详情
 */
 import React, { PureComponent } from 'react';
-import { Table ,Row, Col,Tooltip } from 'antd';
-import { createData } from '../../../../common/data';
+import {Table ,Row, Col, Tooltip, Spin} from 'antd';
+import {connect} from 'dva';
 const columns = [
   {
-    title: '数量',
-    width: 100,
-    dataIndex: 'num',
-    render:(text,record)=>"24"
-  },
-  {
-    title: '单位',
-    width: 100,
-    dataIndex: 'unit',
-    render:(text)=>'箱'
-  },
-  {
-    title: '原货位',
-    width: 100,
-    dataIndex: 'spec',
-    render:(text)=>'B121'
-  },
-  {
-    title: '目的货位',
-    width: 100,
-    dataIndex: 'spec',
-    render:(text)=>'A121'
-  },
-  {
-    title: '原货位类型',
-    width: 120,
-    dataIndex: 'spec',
-    render:(text)=>'补货货位'
-  },
-  {
-    title: '目的货位类型',
-    width: 120,
-    dataIndex: 'unit',
-    render:(text)=>'补货货位'
-  },
-  {
     title: '通用名',
-    width: 180,
-    dataIndex: 'productName1',
-    render:(text,record)=>record.productName
+    dataIndex: 'ctmmGenericName'
   },
   {
     title: '规格',
-    width: 270,
-    dataIndex: 'spec',
+    dataIndex: 'ctmmSpecification',
     className:'ellipsis',
     render:(text)=>(
       <Tooltip placement="topLeft" title={text}>{text}</Tooltip>
@@ -64,143 +25,127 @@ const columns = [
   },
   {
     title: '生产厂家',
-    width: 200,
-    dataIndex: 'productCompany',
+    dataIndex: 'ctmmManufacturerName'
   },
   {
-    title: '生产批号',
-    width: 180,
-    dataIndex: 'flot',
+    title: '移动数量',
+    dataIndex: 'adjustNum'
   },
   {
-    title: '生产日期',
-    width: 200,
-    dataIndex: 'produceTime',
-    render: (text,record,index) => '2018-07-10' 
+    title: '移动单位',
+    dataIndex: 'replanUnit'
   },
   {
-    title: '有效期至',
-    width: 200,
-    dataIndex: 'UserfulDate',
-    render: (text,record,index) => '2022-07-09' 
+    title: '原库存',
+    dataIndex: 'originalStore'
+  },
+  {
+    title: '原货位',
+    dataIndex: 'originalGoodsName'
+  },
+  {
+    title: '原货位类型',
+    dataIndex: 'originalLocTypeName',
+  },
+  {
+    title: '目的货位',
+    dataIndex: 'goalGoodsName',
+  },
+  {
+    title: '目的货位单位',
+    dataIndex: 'goalUnit',
+  },
+  {
+    title: '目的货位类型',
+    dataIndex: 'goalLocTypeName'
+  },
+  {
+    title: '转换系数',
+    dataIndex: 'conversionRate'
+  },
+  {
+    title: '包装规格',
+    dataIndex: 'packageSpecification'
   }
 ];
 
 class ReplenishmentDetail extends PureComponent{
+  state = {
+    info: {},
+    loading: true
+  }
+  componentDidMount() {
+    this.props.dispatch({
+      type: 'goodsAdjust/goodsDetail',
+      payload: {
+        locAjustNo: this.props.match.params.id
+      },
+      callback: (data) => {
+        this.setState({info: data, loading: false});
+      }
+    })
+  }
   render(){
+    let {info, loading} = this.state;
+    let {list} = info;
     return (
       <div className='fullCol fadeIn'>
         <div className='fullCol-fullChild'>
-          <h3>单据信息</h3>
-          <Row>
-            <Col span={8}>
-              <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
-                <label>部门</label>
-              </div>
-              <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
-                <div className='ant-form-item-control'>药库</div>
-              </div>
-            </Col>
-            <Col span={8}>
-            <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
-              <label>入库分类</label>
-            </div>
-            <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
-              <div className='ant-form-item-control'>采购入库</div>
-            </div>
-            </Col>
-            <Col span={8}>
-              <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
-                <label>供应商</label>
-              </div>
-              <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
-                <div className='ant-form-item-control'>裕美供应商</div>
-              </div>
-            </Col>
-            <Col span={8}>
-              <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
-                  <label>入库单</label>
-              </div>
-              <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
-                <div className='ant-form-item-control'>RK00221180700005QU</div>
-              </div>
-            </Col>
-            <Col span={8}>
-              <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
-                  <label>配送单</label>
-              </div>
-              <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
-                <div className='ant-form-item-control'>PO0022118070000383
+          <Spin spinning={loading}>
+            <h3>单据信息</h3>
+            <Row>
+              <Col span={8}>
+                <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
+                  <label>移库单号</label>
                 </div>
-              </div>
-            </Col>
-            <Col span={8}>
+                <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
+                  <div className='ant-form-item-control'>{info.locAdjustNo || ''}</div>
+                </div>
+              </Col>
+              <Col span={8}>
               <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
-                  <label>订单</label>
+                <label>状态</label>
               </div>
               <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
-                <div className='ant-form-item-control'>DD0022118070000383</div>
+                <div className='ant-form-item-control'>{info.statusName || ''}</div>
               </div>
-            </Col>
-            <Col span={8}>
-              <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
-                  <label>入库人</label>
-              </div>
-              <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
-                <div className='ant-form-item-control'>张三三</div>
-              </div>
-            </Col>
-            <Col span={8}>
-              <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
-                  <label>入库时间</label>
-              </div>
-              <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
-                <div className='ant-form-item-control'>2018-07-12 17:09:15</div>
-              </div>
-            </Col>
-            <Col span={8}>
-              <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
-                  <label>上架人</label>
-              </div>
-              <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
-                <div className='ant-form-item-control'>张三三</div>
-              </div>
-            </Col>
-            <Col span={8}>
-              <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
-                  <label>上架时间</label>
-              </div>
-              <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
-                <div className='ant-form-item-control'>2018-07-12 17:09:15</div>
-              </div>
-            </Col>
-            <Col span={8}>
-              <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
-                  <label>备注</label>
-              </div>
-              <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
-                <div className='ant-form-item-control'></div>
-              </div>
-            </Col>
-          </Row>
+              </Col>
+              <Col span={8}>
+                <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
+                  <label>移库人</label>
+                </div>
+                <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
+                  <div className='ant-form-item-control'>{info.createName || ''}</div>
+                </div>
+              </Col>
+            </Row>
+            <Row>
+              <Col span={8}>
+                <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
+                    <label>移库时间</label>
+                </div>
+                <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
+                  <div className='ant-form-item-control'>{info.createDate || ''}</div>
+                </div>
+              </Col>
+            </Row>
+          </Spin>
         </div>
+          
+        
         <div className='detailCard'>
+          <h3 style={{marginBottom: 15}}>产品信息</h3>
           <Table
-            dataSource={createData()}
+            loading={loading}
+            dataSource={list || []}
             bordered
-            title={()=>'产品信息'}
-            scroll={{x: '130%'}}
+            scroll={{x: '150%'}}
             columns={columns}
-            rowKey={'id'}
-            pagination={{
-              size: 'small',
-              showQuickJumper: true,
-              showSizeChanger: true
-            }}
+            rowKey={'drugCode'}
           />
         </div>
       </div>
     )
   }
 }
-export default ReplenishmentDetail;
+export default connect(state=>state)(ReplenishmentDetail);

@@ -4,135 +4,279 @@
 * @Last Modified time: 2018-07-24 13:13:55 
  */
 import React, { PureComponent } from 'react';
-import { Table ,Row, Col, Input , Select , Button, Modal , Card , message , Tooltip} from 'antd';
-import { createData } from '../../../../common/data';
+import {Table, Row, Col, InputNumber, Select, Button, Tabs, Card, message, Tooltip} from 'antd';
+import {connect} from 'dva';
+import querystring from 'querystring';
 const Option = Select.Option;
-const Conform = Modal.confirm;
-const columns = [
-  {
-    title: '通用名称',
-    width:100,
-    dataIndex: 'productName1',
-    render:(text,record)=>record.productName
-  },
-  {
-    title: '规格',
-    width:150,
-    dataIndex: 'spec',
-    className:'ellipsis',
-    render:(text)=>(
-      <Tooltip placement="topLeft" title={text}>{text}</Tooltip>
-    )
-  },
-  {
-    title: '包装规格',
-    width:150,
-    dataIndex: 'unit',
-    render:(text)=>'g'
-  },
-  {
-    title: '单位',
-    width:150,
-    dataIndex: 'unit123',
-    render:(text)=>'盒'
-  },
-  {
-    title: '生产厂家',
-    width:150,
-    dataIndex: 'productCompany1',
-    render: (text, record, index) => 'PHXL'
-  },
-  {
-    title: '生产批号',
-    width:150,
-    dataIndex: 'productCompany2',
-    render: (text, record, index) => index
-  },
-  {
-    title: '生产日期',
-    width:150,
-    dataIndex: 'productCompany3',
-    render: (text, record, index) => '2018-7-25'
-  },
-  {
-    title: '有效期至',
-    width:150,
-    dataIndex: 'productCompany4',
-    render: (text, record, index) => '2018-7-25'
-  },
-  {
-    title: '指示货位',
-    width:150,
-    dataIndex: 'productCompany23',
-    render: (text, record, index) => `A${index+1}`
-  },
-  {
-    title: '货位类型',
-    width:150,
-    dataIndex: 'productCompany2323',
-    render: (text, record, index) => `补货货位`
-  },
-  {
-    title: '实际货位',
-    width:150,
-    dataIndex: 'productCompany42',
-    render: (text, record, index) => (<Select style={{width:'100%'}}><Option key='01' value='01'></Option></Select>)
-  },
-  {
-    title: '指示数量',
-    width:150,
-    dataIndex: 'productCompany422321',
-    render: (text, record, index) => Number(0.6+index)
-  },
-  
-  {
-    title: '实际上架数量',
-    width:150,
-    dataIndex: 'productCompany5s',
-    render:(text)=>(<Input defaultValue={1}/>)
-  }
-];
+const {TabPane} = Tabs;
+
 
 class DetailsPutaway extends PureComponent{
-
-  constructor(props){
-    super(props)
-    this.state={
-      visible:false,
-    }
+  state = {
+    acceptanceCode: '',
+    defaultActive: '',
+    loading: false,
+    info: {},
+    selectedRowKeys: [],
+    selectedRow: []
+  }
+  componentWillMount() {
+    let infoCode = this.props.match.params.id;
+    infoCode = querystring.parse(infoCode);
+    this.setState({
+      acceptanceCode: infoCode.code,
+      defaultActive: infoCode.status === '2'? '1' : '2',
+    })
+  }
+  
+  componentDidMount() {
+    this.getDetails();
+  }
+  getDetails = () => {
+    this.setState({loading: true});
+    this.props.dispatch({
+      type: 'pharmacy/roomacceptanceInfo',
+      payload: {
+        acceptanceCode: this.state.acceptanceCode
+      },
+      callback: (data) => {
+        this.setState({
+          info: data,
+          loading: false
+        })
+      }
+    })
   }
   //打印
   onPrint = () =>{
-    Conform({
-      content:"您确定要执行此操作？",
-      onOk:()=>{
-        message.success('操作成功！')
-        const { history } = this.props;
-        history.push({pathname:"/pharmacy/wareHouse/putaway"})
-      },
-      onCancel:()=>{}
-    })
+    
   }
   //确认
   onSubmit = () =>{
-    Conform({
-      content:"您确定要执行此操作？",
-      onOk:()=>{
-        message.success('操作成功！')
-        const { history } = this.props;
-        history.push({pathname:"/pharmacy/wareHouse/putaway"})
-      },
-      onCancel:()=>{}
+    let {selectedRow} = this.state;
+    if(selectedRow.length === 0) {
+      message.warning('请选择一条数据');
+      return;
+    };
+    let isNull = selectedRow.every(item=>{
+      if(!item.realReceiveStore) {
+        message.warning('实际货位不能为空!');
+        return false;
+      };
+      if(!item.realNum) {
+        message.warning('实际上架数量不能为空!');
+        return false;
+      };
+      return true;
+    });
+    if(!isNull) return;
+    let detailListVo = selectedRow.map(item=>{
+      return {
+        id: item.id,
+        realNum: item.realNum,
+        realReceiveStore: item.realReceiveStore
+      }
+    })
+    let payload = {
+      acceptanceCode: this.state.acceptanceCode,
+      detailListVo
+    };
+    this.props.dispatch({
+      type: 'pharmacy/finish',
+      payload,
+      callback: (data) => {
+        message.success('上架成功');
+        this.getDetails();
+      }
     })
   }
 
+  changeTabs = (key) => {
+    this.setState({defaultActive: key});
+  }
+
   render(){
+    let {defaultActive, info, loading} = this.state;
+    let {listwsj, listysj} = info;
+    let roomgoodsVo = info.roomgoodsVo? info.roomgoodsVo : [];    
+    const notColumns = [
+      {
+        title: '指示货位',
+        width:100,
+        dataIndex: 'realReceiveStoreName',
+      },
+      {
+        title: '货位类型',
+        width:150,
+        dataIndex: 'storeType',
+      },
+      {
+        title: '实际货位',
+        width:150,
+        dataIndex: 'realReceiveStore',
+        render: (text, record) => {
+          return <Select
+                  defaultValue={text}
+                  onChange={(value)=>{
+                    record.realReceiveStore = value;
+                  }}
+                  style={{width: '100%'}}
+                 >
+                  {
+                    roomgoodsVo.map(item=>{
+                      return <Option key={item.id} value={item.id}>{item.positionName}</Option>
+                    })
+                  }
+                 </Select>
+        }
+      },
+      {
+        title: '指示数量',
+        width:150,
+        dataIndex: 'realReceiveQuantity',
+      },
+      {
+        title: '实际上架数量',
+        width:150,
+        dataIndex: 'realNum',
+        render: (text, record) => {
+          return <InputNumber
+                  min={1}
+                  precision={0}
+                  onChange={(value) => {
+                    if(value > record.realReceiveQuantity) {
+                      message.warning('注意：数量大于指示数量');
+                    };
+                    if(value <= 0) {
+                      message.warning('上架数量不能小于0');
+                    }
+                    record.realNum = value;
+                  }}
+                  defaultValue={text}
+                 />
+        }
+      },
+      {
+        title: '单位',
+        width:150,
+        dataIndex: 'unit'
+      },
+      {
+        title: '通用名',
+        width:150,
+        dataIndex: 'ctmmGenericName'
+      },
+      {
+        title: '规格',
+        width:150,
+        dataIndex: 'ctmmSpecification',
+        className:'ellipsis',
+        render:(text)=>(
+          <Tooltip placement="topLeft" title={text}>{text}</Tooltip>
+        )
+      },
+      {
+        title: '包装规格',
+        width:150,
+        dataIndex: 'packageSpecification',
+      },
+      {
+        title: '生产厂家',
+        width:150,
+        dataIndex: 'ctmmManufacturerName',
+      },
+      {
+        title: '生产批号',
+        width:150,
+        dataIndex: 'productBatchNo',
+      },
+      {
+        title: '生产日期',
+        width:150,
+        dataIndex: 'realProductTime',
+      },
+      {
+        title: '有效期至',
+        width:150,
+        dataIndex: 'realValidEndDate',
+      }
+    ];
+    const hasColumns = [
+      {
+        title: '指示货位',
+        width:100,
+        dataIndex: 'realReceiveStoreName',
+      },
+      {
+        title: '货位类型',
+        width:150,
+        dataIndex: 'storeType',
+      },
+      {
+        title: '实际货位',
+        width:150,
+        dataIndex: 'realReceiveStore',
+      },
+      {
+        title: '指示数量',
+        width:150,
+        dataIndex: 'realReceiveQuantity',
+      },
+      {
+        title: '实际上架数量',
+        width:150,
+        dataIndex: 'realNum',
+      },
+      {
+        title: '单位',
+        width:150,
+        dataIndex: 'unit'
+      },
+      {
+        title: '通用名',
+        width:150,
+        dataIndex: 'ctmmGenericName'
+      },
+      {
+        title: '规格',
+        width:150,
+        dataIndex: 'ctmmSpecification',
+        className:'ellipsis',
+        render:(text)=>(
+          <Tooltip placement="topLeft" title={text}>{text}</Tooltip>
+        )
+      },
+      {
+        title: '包装规格',
+        width:150,
+        dataIndex: 'packageSpecification',
+      },
+      {
+        title: '生产厂家',
+        width:150,
+        dataIndex: 'ctmmManufacturerName',
+      },
+      {
+        title: '生产批号',
+        width:150,
+        dataIndex: 'productBatchNo',
+      },
+      {
+        title: '生产日期',
+        width:150,
+        dataIndex: 'realProductTime',
+      },
+      {
+        title: '有效期至',
+        width:150,
+        dataIndex: 'realValidEndDate',
+      }
+    ];
     return (
       <div className='fadeIn ysynet-content'>
         <Card>
           <h3>单据信息 
             <Button style={{float:'right'}} onClick={()=>this.onPrint()} >打印</Button>
-            <Button type='primary' className='button-gap' style={{float:'right'}} onClick={()=>this.onSubmit()}>上架完成</Button>
           </h3>
           <Row>
             <Col span={8}>
@@ -140,7 +284,7 @@ class DetailsPutaway extends PureComponent{
                   <label>验收单</label>
               </div>
               <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
-                <div className='ant-form-item-control'>PA002211807000086U</div>
+                <div className='ant-form-item-control'>{info.acceptanceCode || ''}</div>
               </div>
             </Col>
             <Col span={8}>
@@ -148,15 +292,7 @@ class DetailsPutaway extends PureComponent{
                   <label>状态</label>
               </div>
               <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
-                <div className='ant-form-item-control'>待上架</div>
-              </div>
-            </Col>
-            <Col span={8}>
-              <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
-                  <label>验收人</label>
-              </div>
-              <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
-                <div className='ant-form-item-control'>张三三</div>
+                <div className='ant-form-item-control'>{info.acceptanceStatusName || ''}</div>
               </div>
             </Col>
             <Col span={8}>
@@ -164,16 +300,8 @@ class DetailsPutaway extends PureComponent{
                   <label>验收时间</label>
               </div>
               <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
-                <div className='ant-form-item-control'>2015-09-03 15:00:02
+                <div className='ant-form-item-control'>{info.receptionTime || ''}
                 </div>
-              </div>
-            </Col>
-            <Col span={8}>
-              <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
-                  <label>上架人</label>
-              </div>
-              <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
-                <div className='ant-form-item-control'></div>
               </div>
             </Col>
             <Col span={8}>
@@ -181,27 +309,43 @@ class DetailsPutaway extends PureComponent{
                   <label>上架时间</label>
               </div>
               <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
-                <div className='ant-form-item-control'></div>
+                <div className='ant-form-item-control'>{info.upUserDate || ''}</div>
               </div>
             </Col>
           </Row>
           <hr className='hr'/>
-          <h3>产品信息</h3>
-            <Table
-              dataSource={createData()}
-              bordered
-              scroll={{x: '200%'}}
-              columns={columns}
-              rowKey={'id'}
-              pagination={{
-                size: 'small',
-                showQuickJumper: true,
-                showSizeChanger: true
-              }}
-            />
+          <Tabs onChange={this.changeTabs} activeKey={defaultActive} tabBarExtraContent={listwsj && listwsj.length > 0 ? <Button onClick={this.onSubmit} type="primary">确认上架</Button> : null}>
+            <TabPane tab="待上架" key="1">
+              <Table
+                loading={loading}
+                dataSource={listwsj}
+                bordered
+                scroll={{x: '200%'}}
+                columns={notColumns}
+                rowKey={'id'}
+                pagination={false}
+                rowSelection={{
+                  onChange: (selectedRowKeys, selectedRow) => {
+                    this.setState({selectedRowKeys, selectedRow});
+                  }
+                }}
+              />
+            </TabPane>
+            <TabPane tab="已上架" key="2">
+              <Table
+                loading={loading}
+                dataSource={listysj}
+                bordered
+                scroll={{x: '200%'}}
+                columns={hasColumns}
+                rowKey={'drugCode'}
+                pagination={false}
+              />
+            </TabPane>
+          </Tabs>
         </Card>
       </div>
     )
   }
 }
-export default DetailsPutaway;
+export default connect(state=>state)(DetailsPutaway);
