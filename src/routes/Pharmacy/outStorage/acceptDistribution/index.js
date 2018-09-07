@@ -77,7 +77,11 @@ class SearchFormWrapper extends PureComponent {
       type: 'outStorage/genDeptList',
       payload: { },
       callback: (data) =>{
-        this.setState({ deptOption: data });
+        if (data && data.length > 0) {
+          this.setState({ deptOption: data });
+        } else {
+          this.setState({ deptOption: [] });
+        }
       }
     });
 
@@ -146,7 +150,7 @@ class SearchFormWrapper extends PureComponent {
                  >
                   <Option key="" value="">全部</Option>
                   {
-                    deptOption.map((item,index)=> <Option key={index} value={item.id} deptType={item.deptType}>{ item.deptName }</Option>)
+                    deptOption.length > 0 ? deptOption.map((item,index)=> <Option key={index} value={item.id} deptType={item.deptType}>{ item.deptName }</Option>) : ''
                   }
                </Select>
               )}
