@@ -134,7 +134,7 @@ class SiderMenu extends PureComponent{
     let changeKey = openKeys.length ? openKeys[openKeys.length - 1] : [];
     if (changeKey.length) {
       let changeKeyArr = changeKey.split('/');
-      console.log(changeKeyArr,'changeKeyArr')
+      // console.log(changeKeyArr,'changeKeyArr')
       if (changeKeyArr.length > 2) {
         // if (openKeys.length === 1) {
         //   changeKey = [];
@@ -167,7 +167,7 @@ class SiderMenu extends PureComponent{
     let menu = this.props.users.currentMenuList; // 正式数据
     const { selectedKeys, openKeys } = this.state;
     // console.log(menu,'menu')
-    console.log(selectedKeys,'selectedKeys',openKeys,'openKeys')
+    // console.log(selectedKeys,'selectedKeys',openKeys,'openKeys')
     return (
     <div>
       <div className='logoWrapper'>

@@ -55,8 +55,8 @@ export default {
         if(callback) callback(data.data);
       }else{
         message.warn('会话失效，请重新登录');
-        if(callback) callback();
         yield put(routerRedux.push('/login'));
+        // if(callback) callback();
       }
     },
     *setCurrentMenu({ payload },{ put }){
