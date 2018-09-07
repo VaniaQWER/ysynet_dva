@@ -11,8 +11,7 @@ class Details extends PureComponent{
         super(props);
         let info = querystring.parse(this.props.match.params.id);
         this.state = {
-            btnShow: true,
-            defaultActiveKey: info.status,
+            defaultActiveKey: info.status === '2' ? '1' : '2',
             id: info.id,
             loading: true,
             selectedRows: [],
@@ -42,10 +41,16 @@ class Details extends PureComponent{
 
     callback = (key) => {
         if(key === "1") {
-            this.setState({btnShow: true});
+            this.setState({
+                btnShow: true,
+                defaultActiveKey: key
+            });
         };
         if(key === "2") {
-            this.setState({btnShow: false});
+            this.setState({
+                btnShow: false,
+                defaultActiveKey: key
+            });
         }
     }
 
@@ -105,7 +110,7 @@ class Details extends PureComponent{
         let shevleDetailList = putawayInfo.shevleDetailList || [];
         let unShevleDetailList = putawayInfo.unShevleDetailList || []
         let goodsLists = putawayInfo.goodsLists || [];
-        let {btnShow, defaultActiveKey, loading, confirmLoading} = this.state;
+        let {defaultActiveKey, loading, confirmLoading} = this.state;
         let goodList = goodsLists.map((item, i) => {
             return (<Option key={item.id} value={item.id}>{item.storeName}</Option>)
         });
@@ -270,8 +275,8 @@ class Details extends PureComponent{
                         </Col>
                     </Row>
                 </div>
-                <Tabs defaultActiveKey={defaultActiveKey} onChange={this.callback} tabBarExtraContent={btnShow? <Button onClick={this.saveCheck} loading={confirmLoading} type='primary'>确认上架</Button> : null}>
-                    <TabPane tab="待上架" key="2">
+                <Tabs activeKey={defaultActiveKey} onChange={this.callback} tabBarExtraContent={defaultActiveKey === '1'? <Button onClick={this.saveCheck} loading={confirmLoading} type='primary'>确认上架</Button> : null}>
+                    <TabPane tab="待上架" key="1">
                         <Table
                             loading={loading}
                             scroll={{x: '200%'}}
@@ -287,7 +292,7 @@ class Details extends PureComponent{
                             }}
                         />
                     </TabPane>
-                    <TabPane tab="已上架" key="3">
+                    <TabPane tab="已上架" key="2">
                         <Table
                             loading={loading}
                             scroll={{x: '200%'}}

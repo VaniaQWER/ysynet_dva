@@ -268,7 +268,7 @@ class NewAddGoodsAdjust extends PureComponent{
     const modalColumns = [
       {
         title: '货位',
-        dataIndex: 'locName'
+        dataIndex: 'goodsName'
       },{
         title: '货位类型',
         dataIndex: 'positionTypeName'

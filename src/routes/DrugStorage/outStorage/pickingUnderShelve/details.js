@@ -31,6 +31,14 @@ class DetailsPickSoldOut extends PureComponent{
         type:'outStorage/getpickingDetail',
         payload: { pickingOrderNo },
         callback:(data)=>{
+          if(data.notDetail) {
+            data.notDetail = data.notDetail.map(item => {
+              return {
+                ...item,
+                amount: item.allocationNum ? item.allocationNum : 1
+              }
+            })
+          }
           this.setState({ 
             detailsData: data, 
             loading: false,
@@ -94,7 +102,7 @@ class DetailsPickSoldOut extends PureComponent{
   }
 
   render(){
-    const { detailsData ,loading, pickingStatus, activeKey, leftDataSource, rightDataSource } = this.state;
+    let { detailsData ,loading, pickingStatus, activeKey, leftDataSource, rightDataSource } = this.state;
     const columns = [
       {
         title: '通用名称',
@@ -228,7 +236,7 @@ class DetailsPickSoldOut extends PureComponent{
                 columns={columns}
                 loading={loading}
                 pagination={false}
-                rowKey={'bigDrugCode'}
+                rowKey={'id'}
                 rowSelection={{
                   selectedRowKeys: this.state.selected,
                   onChange: (selectedRowKeys, selectedRows) => {
@@ -245,7 +253,7 @@ class DetailsPickSoldOut extends PureComponent{
                 loading={loading}
                 columns={readyPickingColumns}
                 pagination={false}
-                rowKey={'bigDrugCode'}
+                rowKey={'id'}
               />
             </TabPane>
           </Tabs>

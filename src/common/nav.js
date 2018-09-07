@@ -1045,63 +1045,63 @@ export const getNavData = app => [
     {
       name: "用门管理",
       icon: 'setting',
-      path: '/sys/user',
+      path: '/sys/organization/userMgt',
       component: dynamicWrapper(app, ['systemMgt/organization'], () => import('../routes/SystemMgt/organization/userMgt')),
     },
     {
       name: "用户管理--添加",
       icon: 'setting',
-      path: '/sys/user/add',
+      path: '/sys/organization/userMgt/add',
       component: dynamicWrapper(app, ['systemMgt/organization'], () => import('../routes/SystemMgt/organization/userMgt/add')),
     },
     {
       name: "用户管理--编辑",
       icon: 'setting',
-      path: '/sys/user/edit/:loginName',
+      path: '/sys/organization/userMgt/edit/:loginName',
       component: dynamicWrapper(app, ['systemMgt/organization'], () => import('../routes/SystemMgt/organization/userMgt/edit')),
     },
     /* *********************** 系统管理  角色管理     ******************** */
     {
       name: "角色管理",
       icon: 'setting',
-      path: '/sys/role',
+      path: '/sys/role/roleMgt',
       component: dynamicWrapper(app, ['systemMgt/roleMgt'], () => import('../routes/SystemMgt/role/roleMgt')),
     },
     {
       name: "角色管理-新增",
       icon: 'setting',
-      path: '/sys/role/add',
+      path: '/sys/role/roleMgt/add',
       component: dynamicWrapper(app, ['systemMgt/roleMgt'], () => import('../routes/SystemMgt/role/roleMgt/add')),
     },
     {
       name: "角色管理-编辑",
       icon: 'setting',
-      path: '/sys/role/edit/:id',
+      path: '/sys/role/roleMgt/edit/:id',
       component: dynamicWrapper(app, ['systemMgt/roleMgt'], () => import('../routes/SystemMgt/role/roleMgt/edit')),
     },
      /* *********************** 系统管理 系统设置     ******************** */
     {
       name: "菜单管理",
       icon: 'setting',
-      path: '/sys/menu',
+      path: '/sys/menu/menuMgt',
       component: dynamicWrapper(app, ['systemMgt/systemMgt'], () => import('../routes/SystemMgt/setting/menuMgt')),
     },
     {
       name: "菜单管理-新增",
       icon: 'setting',
-      path: '/sys/menu/add',
+      path: '/sys/menu/menuMgt/add',
       component: dynamicWrapper(app, ['systemMgt/systemMgt'], () => import('../routes/SystemMgt/setting/menuMgt/add')),
     },
     {
       name: "菜单管理-编辑",
       icon: 'setting',
-      path: '/sys/menu/add/:id',
+      path: '/sys/menu/menuMgt/add/:id',
       component: dynamicWrapper(app, ['systemMgt/systemMgt'], () => import('../routes/SystemMgt/setting/menuMgt/add')),
     },
     {
       name: "字典管理",
       icon: 'setting',
-      path: '/sys/dict',
+      path: '/sys/menu/dictMgt',
       component: dynamicWrapper(app, ['ysy/dict'], () => import('../routes/SystemMgt/setting/itemsData')),
     },
      /* ********************   采购结算 子系统    ******************************* */

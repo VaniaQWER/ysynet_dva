@@ -148,15 +148,10 @@ export const menuFormat = (menuData,returnToggle,returnIndex) => {
     }
 }
 
-export const validAmount = (value, max) => {
+export const validAmount = (value) => {
   let num = Number(value);
   if (/^\d+$/.test(num) && num !== 0) {
-    if (num > max) {
-      message.error('超过库存上限');
-      return false;
-    }else{
-      return true;
-    }
+    return true;
   }else {
     message.error('请输入非0正整数！');
     return false;

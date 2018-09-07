@@ -187,7 +187,7 @@ class UserMgt extends PureComponent{
   }
   add = () =>{
     const { history } = this.props;
-    history.push({ pathname: '/sys/user/add' })
+    history.push({ pathname: '/sys/organization/userMgt/add' })
   }
   render(){
     const { visible, query } = this.state;
@@ -231,7 +231,7 @@ class UserMgt extends PureComponent{
             <Popconfirm title="是否确认重置该用户密码?" onConfirm={this.resetPwd.bind(null, record,index)} okText="是" cancelText="否">
               <a>重置密码</a>
             </Popconfirm>
-            <Link style={{ marginLeft: 8 }} to={{pathname: `/sys/user/edit/${record.loginName}`}}>{'编辑'}</Link>
+            <Link style={{ marginLeft: 8 }} to={{pathname: `/sys/organization/userMgt/edit/${record.loginName}`}}>{'编辑'}</Link>
           </span>
         }
       },

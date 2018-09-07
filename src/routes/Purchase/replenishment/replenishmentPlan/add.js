@@ -145,12 +145,6 @@ class NewAdd extends PureComponent {
     });
     if(!isNull) return;
     dataSource = dataSource.map(item => {
-      if(!item.supplierCode) {
-        message.warning('供应商不能为空');
-      };
-      if(!item.demandQuantity) {
-        message.warning('需求数量不能为空');
-      }
       return {
         bigDrugCode: item.bigDrugCode,
         demandQuantity: item.demandQuantity,
@@ -188,14 +182,14 @@ class NewAdd extends PureComponent {
     let {usableQuantity} = record;
     let {dataSource} = this.state;
     dataSource = JSON.parse(JSON.stringify(dataSource));
-    let validResult = validAmount(val, usableQuantity);
+    let validResult = validAmount(val);
     if(val === "") {
       dataSource[i].demandQuantity = val;
       this.setState({dataSource});
     }
     if(validResult) {
       dataSource[i].demandQuantity = val;
-      dataSource[i].totalPrice = val * dataSource[i].drugPrice;
+      dataSource[i].totalPrice = Number(val * dataSource[i].drugPrice).toFixed(4);
       this.setState({dataSource});
     }else {
       this.setState({dataSource});
@@ -284,7 +278,6 @@ class NewAdd extends PureComponent {
         render: (text, record, i) => {
           return <InputNumber
                     defaultValue={text}
-                    max={record.usableQuantity}
                     min={1}
                     precision={0}
                     onChange={(value)=>{
