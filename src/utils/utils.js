@@ -127,15 +127,6 @@ export const menuFormat = (menuData,returnToggle,returnIndex) => {
         }
       }
     }
-    // 排序
-    function dabendan(tree) {
-      tree.sort((a, b)=>a.sort - b.sort);
-      for (var i in tree) {
-        if(tree[i].children) {
-          dabendan(tree[i].children)
-        }
-      }
-    }
     let min = 1;
     while (min < max + 1) {
       genTree(min);
@@ -143,7 +134,6 @@ export const menuFormat = (menuData,returnToggle,returnIndex) => {
     }
     // console.log(JSON.stringify(tree),'tree');
     if(returnToggle){
-      dabendan(tree);
       return tree
     }
 }

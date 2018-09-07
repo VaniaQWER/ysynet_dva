@@ -5,6 +5,7 @@ import { menuFormat } from '../../utils/utils';
 // import querystring from 'querystring';
 import styles from './style.css';
 const FormItem = Form.Item;
+
 class Login extends PureComponent{
   state = {
     loading: false
@@ -14,15 +15,16 @@ class Login extends PureComponent{
     this.props.form.validateFields((err, values) => {
       if(!err){
         this.setState({ loading: true });
-        let { userName, password } = values;
-        this.userLogin(userName, password)
-        /* this.props.dispatch({
-          type: 'users/EncryptPassword',
-          payload: { password },
-          callback: (data) =>{
-            let newPassword = data.password;
-            this.userLogin(userName,newPassword);
-          }
+         let { userName, password } = values;
+         password = userName === 'admin'? '02a3f0772fcca9f415adc990734b45c6f059c7d33ee28362c4852032': 'a2357bb8ae6b26a14119a0591ab45847c437f7e9f42e90b154db07e9';
+         this.userLogin(userName, password)
+          /* this.props.dispatch({
+            type: 'users/EncryptPassword',
+            payload: { password },
+            callback: (data) =>{
+              let newPassword = data.password;
+              this.userLogin(userName,newPassword);
+            }
         }) */
       }
     })
@@ -34,25 +36,21 @@ class Login extends PureComponent{
       payload: { username, password },
       callback: (data) => {
         this.setState({ loading: false });
-        if(data.deptInfo && data.deptInfo.length){
-          // 正式数据
+        if(data.deptInfo && data.deptInfo.length !== 1){
           let deptInfo = data.deptInfo;
           let { menuList } = deptInfo[0];
-          let tree = menuFormat(menuList, true, 1) ;
-          console.log(tree,'ret');
-          // console.log(JSON.stringify(tree))
-          let subChildren = tree[0].children[0].children[0];
-          console.log(subChildren,'subChildren')
-          let href = subChildren.children ? subChildren.children[0].href: subChildren.href;
-          href =  href && href[href.length -1] === '/'? href.substring(0,href.length-1): href;
-          console.log(href,'href')
-          this.props.dispatch({
-            type: 'users/setCurrentMenu',
-            payload: { menu : tree[0].children[0] }
-          })
-          history.push({ pathname: href ? href: '/error' })
+          let tree = menuFormat(menuList,true,1) ;
+        
+          console.log(tree,'ret')
+          /* let href = tree[0].children[0].children[0].children[0].href;
+          href = href.substring(0,href.length-1); */
+          // this.props.dispatch({
+          //   type: 'users/setCurrentMenu',
+          //   payload: { menu : tree[0].children[0] }
+          // })
+          // history.push({ pathname: href })
           // history.push({ pathname: '/subSystem' })
-          // history.push({ pathname: '/sys/drugDirectory/directory' })
+          history.push({ pathname: '/sys/drugDirectory/directory' })
 
         }
       }
