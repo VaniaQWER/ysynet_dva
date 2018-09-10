@@ -215,7 +215,7 @@ class DetailsPutaway extends PureComponent{
       {
         title: '实际货位',
         width:150,
-        dataIndex: 'realReceiveStore',
+        dataIndex: 'realReceiveStoreName',
       },
       {
         title: '指示数量',

@@ -2,13 +2,14 @@ import React , {PureComponent} from 'react';
 
 import { Link } from 'react-router-dom'
 
-import { Form, Row, Col, Input, Button, Select, Tooltip } from 'antd';
+import { Form, Row, Col, Button, Select, Tooltip } from 'antd';
 
-// import {connect} from 'dva';
+import FetchSelect from '../../../components/FetchSelect/index';
 
 import RemoteTable from '../../../components/TableGrid';
 
 import drugStorage from '../../../api/drugStorage/stockInquiry';
+import goodsAdjust from '../../../api/drugStorage/goodsAdjust';
 
 
 const FormItem = Form.Item;
@@ -26,93 +27,121 @@ const formItemLayout = {
  };
 
 const columns = [
-{
-  title: '通用名',
-  dataIndex: 'ctmmGenericName',
-  width: 200,
-  render: (text, record) => {
-    return (
-      <span>
-        <Link to={{pathname: `/pharmacy/stockMgt/stockInquiry/details/${record.drugCode}`}}>{text}</Link>
-      </span>  
+  {
+    title: '通用名',
+    dataIndex: 'ctmmGenericName',
+    width: 200,
+    render: (text, record) => {
+      return (
+        <span>
+          <Link to={{pathname: `/pharmacy/stockMgt/stockInquiry/details/${record.drugCode}`}}>{text}</Link>
+        </span>  
+      )
+    }
+  }, {
+    title: '商品名',
+    dataIndex: 'ctmmTradeName',
+    width: 200,
+  }, {
+    title: '规格',
+    dataIndex: 'ctmmSpecification',
+    width: 200,
+    className: 'ellipsis',
+    render:(text)=>(
+      <Tooltip placement="topLeft" title={text}>{text}</Tooltip>
     )
+  }, {
+    title: '生产厂家',
+    dataIndex: 'ctmmManufacturerName',
+    width: 200,
+  }, {
+    title: '包装规格',
+    dataIndex: 'packageSpecification',
+    width: 200,
+  }, {
+    title: '单位',
+    dataIndex: 'replanUnit',
+    width: 200,
+  }, {
+    title: '数量',
+    dataIndex: 'currentStoreNum',
+    width: 200,
+  }, {
+    title: '剂型',
+    dataIndex: 'ctmmDosageFormDesc',
+    width: 200,
+  }, {
+    title: '批准文号',
+    dataIndex: 'approvalNo',
+    width: 200,
   }
-}, {
-  title: '商品名',
-  dataIndex: 'ctmmTradeName',
-  width: 200,
-}, {
-  title: '规格',
-  dataIndex: 'ctmmSpecification',
-  width: 200,
-  className: 'ellipsis',
-  render:(text)=>(
-    <Tooltip placement="topLeft" title={text}>{text}</Tooltip>
-  )
-}, {
-  title: '生产厂家',
-  dataIndex: 'ctmmManufacturerName',
-  width: 200,
-}, {
-  title: '包装规格',
-  dataIndex: 'packageSpecification',
-  width: 200,
-}, {
-  title: '单位',
-  dataIndex: 'replanUnit',
-  width: 200,
-}, {
-  title: '数量',
-  dataIndex: 'currentStoreNum',
-  width: 200,
-}, {
-  title: '剂型',
-  dataIndex: 'ctmmDosageFormDesc',
-  width: 200,
-}, {
-  title: '批准文号',
-  dataIndex: 'approvalNo',
-  width: 200,
-},];
+];
 
 
 class StockInquiry extends PureComponent {
   state = {
     query: {
-      paramName: "",
-      deptCode: ""
-    }
+      hisDrugCodeList: [],
+    },
+    value: undefined
   }
   handleSearch = (e) => {
     e.preventDefault();
     this.props.form.validateFields((err, values) => {
-      values.paramName = values.paramName === undefined? "" : values.paramName;
       values.deptCode = values.deptCode === undefined? "" : values.deptCode;
-      let {query} = this.state;
-      query = {...query};
-      query.paramName = values.paramName;
-      query.deptCode = values.deptCode;
-      this.setState({query});
+      let {query, value} = this.state;
+      this.setState({
+        query: {
+          ...query,
+          deptCode: values.deptCode,
+          hisDrugCodeList: value? [value] : [],
+        }
+      });
     });
   }
   //重置
   handleReset = () => {
     this.props.form.resetFields();
+    let {query, value} = this.state;
+    if(!value) return;
+    this.setState({
+      value: undefined,
+      query: {
+        ...query,
+        hisDrugCodeList: []
+      }
+    })
   }
 
   render() {
     const { getFieldDecorator } = this.props.form;
-    const {query} = this.state;
+    const {query, value} = this.state;
     return (
       <div className='ysynet-main-content'>
         <Form onSubmit={this.handleSearch}>
           <Row gutter={30}>
             <Col span={8}>
-              <FormItem label={`关键字`} {...formItemLayout}>
-                {getFieldDecorator('paramName')(
-                  <Input placeholder="通用名/商品名/规格/厂家"/>
-                )}
-              </FormItem>
+              <div className="ant-row ant-form-item">
+                <div className="ant-form-item-label ant-col-xs-24 ant-col-sm-5">
+                  <label>关键字</label>
+                </div>
+                <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-19">
+                  <div className="ant-form-item-control">
+                    <FetchSelect
+                      allowClear={true}
+                      value={value}
+                      style={{ width: 248 }}
+                      placeholder='通用名/商品名'
+                      url={goodsAdjust.QUERY_DRUG_BY_LIST}
+                      cb={(value) => {
+                        this.setState({
+                          value
+                        });
+                      }}
+                    />
+                  </div>
+                </div>
+              </div>
             </Col>
             <Col span={8}>
               <FormItem label={`药品类型`} {...formItemLayout}>

@@ -2,13 +2,17 @@ import React , {PureComponent} from 'react';
 
 import { Link } from 'react-router-dom'
 
-import { Form, Row, Col, Input, Button, Select, Tooltip } from 'antd';
+import { Form, Row, Col, Button, Select, Tooltip } from 'antd';
 
 // import {connect} from 'dva';
+import FetchSelect from '../../../components/FetchSelect/index';
 
 import RemoteTable from '../../../components/TableGrid';
 
 import drugStorage from '../../../api/drugStorage/stockInquiry';
+
+import goodsAdjust from '../../../api/drugStorage/goodsAdjust';
+
 
 
 const FormItem = Form.Item;
@@ -79,40 +83,68 @@ const columns = [
 class StockInquiry extends PureComponent {
   state = {
     query: {
-      paramName: "",
-      deptCode: ""
-    }
+      hisDrugCodeList: [],
+      deptCode: ''
+    },
+    value: undefined
   }
   handleSearch = (e) => {
     e.preventDefault();
     this.props.form.validateFields((err, values) => {
-      values.paramName = values.paramName === undefined? "" : values.paramName;
       values.deptCode = values.deptCode === undefined? "" : values.deptCode;
-      let {query} = this.state;
-      query = {...query};
-      query.paramName = values.paramName;
-      query.deptCode = values.deptCode;
-      this.setState({query});
+      let {query, value} = this.state;
+      this.setState({
+        query: {
+          ...query,
+          deptCode: values.deptCode,
+          hisDrugCodeList: value? [value] : [],
+        }
+      });
     });
   }
   //重置
   handleReset = () => {
     this.props.form.resetFields();
+    let {query, value} = this.state;
+    if(!value) return;
+    this.setState({
+      value: undefined,
+      query: {
+        ...query,
+        hisDrugCodeList: []
+      }
+    })
   }
 
   render() {
     const { getFieldDecorator } = this.props.form;
-    const {query} = this.state;
+    const {query, value} = this.state;
     return (
       <div className='ysynet-main-content'>
         <Form onSubmit={this.handleSearch}>
           <Row gutter={30}>
             <Col span={8}>
-              <FormItem label={`关键字`} {...formItemLayout}>
-                {getFieldDecorator('paramName')(
-                  <Input placeholder="通用名/商品名/规格/厂家"/>
-                )}
-              </FormItem>
+              <div className="ant-row ant-form-item">
+                <div className="ant-form-item-label ant-col-xs-24 ant-col-sm-5">
+                  <label>关键字</label>
+                </div>
+                <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-19">
+                  <div className="ant-form-item-control">
+                    <FetchSelect
+                      allowClear={true}
+                      value={value}
+                      style={{ width: 248 }}
+                      placeholder='通用名/商品名'
+                      url={goodsAdjust.QUERY_DRUG_BY_LIST}
+                      cb={(value, option) => {
+                        this.setState({
+                          value
+                        });
+                      }}
+                    />
+                  </div>
+                </div>
+              </div>
             </Col>
             <Col span={8}>
               <FormItem label={`药品类型`} {...formItemLayout}>
