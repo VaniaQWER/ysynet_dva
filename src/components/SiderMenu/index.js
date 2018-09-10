@@ -19,23 +19,32 @@ const createMenu = menuList => {
           key = hrefArr.slice(0,len).join('/');
         }
       }
-      return (
-        menu.children && menu.name ? (
+      if(menu.children && menu.name) {
+        return (
           <SubMenu
             className='ysy-menu-Item'
-            key={key?key: menu.id} 
+            key={key ? key: menu.id}
             title={<span><Icon type={menu.icon} /><span>{menu.name}</span></span>}
           >
             { createMenu(menu) }
           </SubMenu>
-        ) : (
-          menu.name ? 
-          <Menu.Item name={menu.name} key={menu.href && menu.href[menu.href.length-1] === '/' ? menu.href.substring(0,menu.href.length-1): menu.href && menu.href[menu.href.length-1] !== '/'? menu.href :menu.id } href={menu.href} id={menu.id} className='ysy-subMneu-Item'>
+        )
+      };
+      if(menu.name) {
+        return (
+          <Menu.Item 
+            name={menu.name} 
+            key={menu.href && menu.href[menu.href.length-1] === '/' ? menu.href.substring(0,menu.href.length-1): menu.href && menu.href[menu.href.length-1] !== '/'? menu.href :menu.id } 
+            href={menu.href} 
+            id={menu.id} 
+            className='ysy-subMneu-Item'
+          >
             <Icon type={menu.icon} />
             <span> { menu.name } </span>
-          </Menu.Item> : null
+          </Menu.Item>
         )
-      )
+      };
+      return null;
     }) : (
       <Menu.Item name={menuList.name} key={menuList.key} href={menuList.href} id={menuList.id}>
         <Icon type={menuList.icon} />

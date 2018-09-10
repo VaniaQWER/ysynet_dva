@@ -179,7 +179,6 @@ class NewAdd extends PureComponent {
     })
   }
   setRowInput = (val, record, i) => {
-    let {usableQuantity} = record;
     let {dataSource} = this.state;
     dataSource = JSON.parse(JSON.stringify(dataSource));
     let validResult = validAmount(val);

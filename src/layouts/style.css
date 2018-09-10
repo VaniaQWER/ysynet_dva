@@ -24,16 +24,19 @@
 }
 .triggerWrapp{
   position: fixed;
-  text-align: center;
   bottom: 0;
   cursor: pointer;
   height: 48px;
   line-height: 48px;
   color: #fff;
-  background: #f2a11c;
   z-index: 1;
+  padding-left: 30px;
   -webkit-transition: all .2s;
   transition: all .2s;
+}
+.trigger{
+  color: #f2a11c;
+  font-size: 18px;
 }
 .header {
   background: #fff;

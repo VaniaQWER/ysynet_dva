@@ -557,14 +557,14 @@ export const getNavData = app => [
     {
       name: "库存查询",
       icon: "setting",
-      path: '/drugStorage/stockInquiry',
+      path: '/drugStorage/stockMgt/stockInquiry',
       component: dynamicWrapper(app, [], () => import('../routes/DrugStorage/stockInquiry'))
     },
     //药库 - 库存查询 - 详情
     {
       name: '详情',
       icon: "setting",
-      path: '/drugStorage/stockInquiry/details/:id',
+      path: '/drugStorage/stockMgt/stockInquiry/details/:id',
       component: dynamicWrapper(app, ['drugStorage/stockInquiry'], () => import('../routes/DrugStorage/stockInquiry/details'))
     },
     //药库 - 结算管理
@@ -799,14 +799,14 @@ export const getNavData = app => [
     {
       name: "库存查询",
       icon: 'setting',
-      path: '/pharmacy/stockInquiry',
+      path: '/pharmacy/stockMgt/stockInquiry',
       component: dynamicWrapper(app, [], () => import('../routes/Pharmacy/stockInquiry')),
     },
     //药房 - 库存查询 - 详情
     {
       name: "详情",
       icon: 'setting',
-      path: '/pharmacy/stockInquiry/details/:id',
+      path: '/pharmacy/stockMgt/stockInquiry/details/:id',
       component: dynamicWrapper(app, ['drugStorage/stockInquiry'], () => import('../routes/Pharmacy/stockInquiry/details')),
     }, 
       

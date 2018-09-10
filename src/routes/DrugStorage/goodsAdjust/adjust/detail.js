@@ -78,7 +78,7 @@ class ReplenishmentDetail extends PureComponent{
     this.props.dispatch({
       type: 'goodsAdjust/goodsDetail',
       payload: {
-        locAjustNo: this.props.match.params.id
+        locAdjustNo: this.props.match.params.id
       },
       callback: (data) => {
         this.setState({info: data, loading: false});

@@ -16,8 +16,18 @@ export default {
     userInfo(state,action){
       let { payload } = action;
       let deptList = [];
-      payload.deptInfo.map(item => deptList.push({ deptId: item.deptId,deptName: item.deptName }))
-      let dept = payload.deptInfo[0];
+      payload.deptInfo.map(item => deptList.push({ deptId: item.deptId,deptName: item.deptName }));
+      let id = window.sessionStorage.getItem('key');
+      let deptName = window.sessionStorage.getItem('deptName');
+      let dept;
+      if(id && deptName) {
+        dept = {
+          deptId: id,
+          deptName
+        };
+      }else {
+        dept = payload.deptInfo[0];
+      }
       return {
         ...state,
         userInfo: payload,
@@ -68,6 +78,7 @@ export default {
       if(data.code === 200 && data.msg === 'success'){
         message.success('切换子系统成功');
         yield put({ type: 'setCurrentDeptInfo', payload });
+        callback && callback();
       }else{
         return message.error(data.msg ||'系统切换失败')
       }

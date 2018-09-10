@@ -33,7 +33,7 @@ const columns = [
   render: (text, record) => {
     return (
       <span>
-        <Link to={{pathname: `/pharmacy/stockInquiry/details/${record.drugCode}`}}>{text}</Link>
+        <Link to={{pathname: `/pharmacy/stockMgt/stockInquiry/details/${record.drugCode}`}}>{text}</Link>
       </span>  
     )
   }

@@ -1,6 +1,6 @@
 import React, { PureComponent } from 'react';
 import { Route, Switch, Redirect } from 'dva/router';
-import { Layout, Icon, Row, Col, Tooltip, Menu, Dropdown  } from 'antd';
+import { Layout, Icon, Row, Col, Tooltip, Menu, Dropdown, Spin } from 'antd';
 import { connect } from 'dva';
 import Profile from '../components/profile'
 import SiderMenu from '../components/SiderMenu';
@@ -10,12 +10,14 @@ const { Header, Content, Sider } = Layout;
 class BasicLayout extends PureComponent {
   state = {
     collapsed: false,
-    title: ''
+    title: '',
+    hasDept: true
   }
   componentWillMount = () =>{
     let { dispatch, users } = this.props;
     let { userInfo } = users;
     if(!userInfo.id && !userInfo.loginName){
+      this.setState({hasDept: false});
       dispatch({
         type: 'users/userLogin',
         payload: { refresh: true },
@@ -23,12 +25,37 @@ class BasicLayout extends PureComponent {
           if(data.deptInfo && data.deptInfo.length){
             let deptInfo = data.deptInfo;
             let { menuList } = deptInfo[0];
-            let tree = menuFormat(menuList,true,1) ;
-            console.log(tree,'ret')
-            this.props.dispatch({
-              type: 'users/setCurrentMenu',
-              payload: { menu : tree[0].children[0] }
-            })
+            let tree = menuFormat(menuList,true,1);
+            let id = window.sessionStorage.getItem('key');
+            let deptName = window.sessionStorage.getItem('deptName');
+            if(id && deptName) {
+              console.log('刷新');
+              dispatch({
+                type: 'users/setCurrentDept',
+                payload: { id, deptName },
+                callback: () => {
+                  this.setState({
+                    hasDept: true
+                  });
+                  let currMenuList = deptInfo.filter(item => item.deptId === id)[0].menuList;
+                  let tree = menuFormat(currMenuList, true, 1 );
+                  let menu = tree[0].children[0];
+                  dispatch({
+                    type: 'users/setCurrentMenu',
+                    payload: { menu : menu }
+                  });
+                }
+              })
+            }else {
+              console.log('登录');
+              dispatch({
+                type: 'users/setCurrentMenu',
+                payload: { menu : tree[0].children[0] },
+              })
+              this.setState({
+                hasDept: true
+              });
+            };
           }
         }
       })
@@ -42,21 +69,31 @@ class BasicLayout extends PureComponent {
   handleClick = (e) =>{
     let { dispatch, users, history } = this.props;
     let { deptInfo } = users.userInfo;
+    let currMenuList = deptInfo.filter(item => item.deptId === e.key)[0].menuList;
+    let tree = menuFormat(currMenuList, true, 1 );
+    let menu = tree[0].children[0];
+    if(menu.children[0].children[0].href === this.props.location.pathname) {      //如果切换时路由相同，必须重新渲染
+      this.setState({
+        hasDept: false
+      });
+    }
+    window.sessionStorage.setItem('key', e.key);
+    window.sessionStorage.setItem('deptName', e.item.props.children);
     dispatch({
       type: 'users/setCurrentDept',
       payload: { id: e.key, deptName: e.item.props.children },
       callback: () =>{
-        let currMenuList = deptInfo.filter(item => item.deptId === e.key)[0].menuList;
-        console.log(currMenuList,'current')
-        let tree = menuFormat(currMenuList, true, 1 );
-        let menu = tree[0].children[0];
-        console.log(menu,'tree');
-        console.log(menu.children[0].children[0].href,'href')
-        this.props.dispatch({
+        dispatch({
           type: 'users/setCurrentMenu',
           payload: { menu : menu }
         });
-        history.push({ pathname: menu.children[0].children[0].href })
+        if(menu.children[0].children[0].href !== this.props.location.pathname) {
+          history.push({ pathname: menu.children[0].children[0].href });
+        }else {
+          this.setState({
+            hasDept: true
+          });
+        }
       }
     })
   }
@@ -78,7 +115,7 @@ class BasicLayout extends PureComponent {
   render() {
     const { getRouteData } = this.props;
     let { userInfo, currentDept, deptList } = this.props.users;
-    const { title } = this.state;
+    const { title, hasDept } = this.state;
     return (
       <Layout>
         <Sider
@@ -102,7 +139,6 @@ class BasicLayout extends PureComponent {
             style={{ width: this.state.collapsed ? 80: 232 }}
           >
             <Icon
-              style={{ color: '#fff',fontSize: 18 }}
               className={styles.trigger}
               type={this.state.collapsed ? 'menu-unfold' : 'menu-fold'}
               />
@@ -145,24 +181,26 @@ class BasicLayout extends PureComponent {
             </Tooltip>
             <span>{title}</span>
           </Header>
-          <Content className={`${styles.content}`}>
-            <Switch>
-              <Redirect from="/" to="/login" exact={true}/>
-              {
-                getRouteData('BasicLayout').map(item =>
-                  (
-                    <Route
-                      exact={item.exact}
-                      key={item.path}
-                      path={item.path}
-                      component={item.component}
-                    />
+          {hasDept ? (
+            <Content className={`${styles.content}`}>
+              <Switch>
+                <Redirect from="/" to="/login" exact={true}/>
+                {
+                  getRouteData('BasicLayout').map(item =>
+                    (
+                      <Route
+                        exact={item.exact}
+                        key={item.path}
+                        path={item.path}
+                        component={item.component}
+                      />
+                    )
                   )
-                )
-              }
-              <Route component={() => <div>404</div>} />
-            </Switch>
-          </Content>
+                }
+                <Route component={() => <div>404</div>} />
+              </Switch>
+            </Content>
+          ) : <Spin><div className={styles.content} style={{background: '#fff'}}></div></Spin>}
         </Content>
       </Layout>  
     )

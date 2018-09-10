@@ -14,7 +14,8 @@ class DropdownList extends React.Component {
         })
         .then(res => res.json)
         .then(data=>{
-          // console.log(data,'data');
+          window.sessionStorage.removeItem('key');
+          window.sessionStorage.removeItem('deptName');
         })
       }
     }

@@ -48,7 +48,7 @@ class Login extends PureComponent{
           console.log(href,'href')
           this.props.dispatch({
             type: 'users/setCurrentMenu',
-            payload: { menu : tree[0].children[0] }
+            payload: { menu : tree[0].children[0] },
           })
           history.push({ pathname: href ? href: '/error' })
           // history.push({ pathname: '/subSystem' })

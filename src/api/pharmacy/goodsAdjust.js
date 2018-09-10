@@ -4,5 +4,5 @@
 import {_local} from '../local';
 
 export default {
-  goodsList: `${_local}/a/goodslocation/list`,      //货位移动列表
+  goodsList: `${_local}/a/roomlocadjust/list`,      //货位移动列表
 }
