@@ -304,6 +304,8 @@ class DetailsPutaway extends PureComponent{
                 </div>
               </div>
             </Col>
+          </Row>
+          <Row>
             <Col span={8}>
               <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
                   <label>上架时间</label>
@@ -314,7 +316,7 @@ class DetailsPutaway extends PureComponent{
             </Col>
           </Row>
           <hr className='hr'/>
-          <Tabs onChange={this.changeTabs} activeKey={defaultActive} tabBarExtraContent={listwsj && listwsj.length > 0 ? <Button onClick={this.onSubmit} type="primary">确认上架</Button> : null}>
+          <Tabs onChange={this.changeTabs} activeKey={defaultActive} tabBarExtraContent={defaultActive === "1" && listwsj && listwsj.length > 0 ? <Button onClick={this.onSubmit} type="primary">确认上架</Button> : null}>
             <TabPane tab="待上架" key="1">
               <Table
                 loading={loading}

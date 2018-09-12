@@ -138,7 +138,7 @@ class AddNewAcceptance extends PureComponent{
         acceptanceCode
       },
       callback: (data) => {
-        message.succese('确认验收成功');
+        message.success('确认验收成功');
         this.props.history.go(1);
       }
     })
@@ -285,7 +285,7 @@ class AddNewAcceptance extends PureComponent{
           </Row>
         </div>
         <div className='detailCard' style={{margin: '30px -6px'}}>
-          <Tabs onChange={this.tabsChange} tabBarExtraContent={ btnShow? <Button type='primary' onClick={this.saveCheck}>确认验收</Button> : null}>
+          <Tabs onChange={this.tabsChange} tabBarExtraContent={ btnShow && listUnCheck && listUnCheck.length > 0 ? <Button type='primary' onClick={this.saveCheck}>确认验收</Button> : null}>
             <TabPane tab="待验收" key="1">
               <Table
                 bordered

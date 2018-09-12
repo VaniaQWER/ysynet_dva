@@ -19,7 +19,8 @@ class DetailsPickSoldOut extends PureComponent{
       leftDataSource: [], // 待拣货
       rightDataSource: [], // 已拣货
       selected: [],
-      selectedRows: []
+      selectedRows: [],
+      checkLoading: false
     }
   }
   
@@ -74,6 +75,9 @@ class DetailsPickSoldOut extends PureComponent{
     Conform({
       content:"您确定要执行此操作？",
       onOk:()=>{
+        this.setState({
+          checkLoading: true
+        })
         const { history, dispatch } = this.props;
         let postData = {}, pickingDetail = [];
         let { selectedRows, detailsData } = this.state;
@@ -93,6 +97,9 @@ class DetailsPickSoldOut extends PureComponent{
           type: 'outStorage/finishPicking',
           payload: { ...postData },
           callback: () =>{
+            this.setState({
+              checkLoading: true
+            });
             history.push({pathname:"/drugStorage/outStorage/pickingUnderShelve"})
           }
         })
@@ -102,7 +109,7 @@ class DetailsPickSoldOut extends PureComponent{
   }
 
   render(){
-    let { detailsData ,loading, pickingStatus, activeKey, leftDataSource, rightDataSource } = this.state;
+    let {detailsData ,loading, pickingStatus, activeKey, leftDataSource, rightDataSource, checkLoading} = this.state;
     const columns = [
       {
         title: '通用名称',
@@ -227,7 +234,7 @@ class DetailsPickSoldOut extends PureComponent{
           <h3>产品信息</h3>
           <Tabs  
             defaultActiveKey={activeKey}
-            tabBarExtraContent={ activeKey  === '2' && pickingStatus === '2' ? null: <Button  type='primary'  onClick={()=>this.onSubmit()}>确认拣货</Button>}>
+            tabBarExtraContent={ activeKey  === '2' && pickingStatus === '2' ? null: <Button type='primary' loading={checkLoading} onClick={()=>this.onSubmit()}>确认拣货</Button>}>
             <TabPane tab="待拣货" key="1">
               <Table
                 bordered

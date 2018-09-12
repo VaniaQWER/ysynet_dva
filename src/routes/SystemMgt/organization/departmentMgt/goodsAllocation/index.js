@@ -241,10 +241,10 @@ class SearchForm extends PureComponent{
     this.props.form.validateFields((err,values)=>{
       if(!err){
         console.log(values,'查询数据');
-        if(values.deptType!==''){
-          values.deptType=Number(values.deptType)
+        if(values.positionType!==''){
+          values.positionType = Number(values.positionType)
         }else{
-          delete values['deptType']
+          delete values['positionType']
         }
         this.props.query(values)
       }
@@ -273,7 +273,7 @@ class SearchForm extends PureComponent{
           <Col span={9}>
             <FormItem {...formItemLayout} label={`货位类型`}>
               {
-                getFieldDecorator(`deptType`,{
+                getFieldDecorator(`positionType`,{
                   initialValue: ''
                 })(
                   <Select>

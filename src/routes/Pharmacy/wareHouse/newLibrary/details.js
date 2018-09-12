@@ -100,7 +100,7 @@ class DetailsNewLibrary extends PureComponent{
     let {id} = this.props.match.params;
     id = querystring.parse(id);
     this.props.dispatch({
-      type: 'pharmacy/findStorePage',
+      type: 'pharmacy/findStoreDetail',
       payload: {
         inRoomCode: id.rCode,
         dirstrbuteDeptCode: id.dCode

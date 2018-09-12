@@ -60,7 +60,7 @@ export function distributeEvent(options) { // 配货单据详情
 /* 拣货 */
 
 export function findApplyDepts(options) { // 拣货申请部门
-  return request(`${_local}/a/sys/sysdept/findAllDepts`,{ 
+  return request(`${_local}/a/common/pickingorder/findAllDepts`,{ 
     method: 'GET',
     type: 'formData',
     body: options
@@ -115,7 +115,7 @@ export function checkOutStore(options) {
 
 //出库单申领下拉框
 export function findAllDepts(options) {
-  return request(`${_local}/a/sys/sysdept/findAllDepts`, {
+  return request(`${_local}/a/common/outstore/findAllDeptsAndType`, {
     method: 'GET',
     type: 'formData',
     body: options

@@ -56,22 +56,22 @@ const columns = [
   {
     title: '生产批号',
     width: 180,
-    dataIndex: 'productBatchNo',
+    dataIndex: 'lot',
   },
   {
     title: '生产日期',
     width: 200,
-    dataIndex: 'realProductTime',
+    dataIndex: 'productDate',
   },
   {
     title: '有效期至',
     width: 200,
-    dataIndex: 'realValidEndDate',
+    dataIndex: 'validEndDate',
   },
   {
     title: '货位',
     width: 200,
-    dataIndex: 'realPositionCode',
+    dataIndex: 'realPositionName',
   },
   {
     title: '批准文号',
@@ -183,7 +183,7 @@ class ReplenishmentDetail extends PureComponent{
             dataSource={list}
             scroll={{x: '130%'}}
             columns={columns}
-            rowKey={'id'}
+            rowKey={'batchNo'}
             pagination={false}
           />
         </div>

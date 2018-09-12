@@ -52,10 +52,11 @@ class PslistCheck extends PureComponent{
     this.setState({detailInfo})
   }
   tabsChange = (key) =>{
+    let {detailInfo} = this.state;
     if(key === '2') {
       this.setState({btnShow: false});
     };
-    if(key === '1') {
+    if(key === '1' && detailInfo.unVerfiyList !== undefined && detailInfo.unVerfiyList.length > 0) {
       this.setState({btnShow: true});
     };
   }
@@ -272,11 +273,11 @@ class PslistCheck extends PureComponent{
       },
       {
         title: '生产厂家',
-        dataIndex: 'ctmmManuFacturerName'
+        dataIndex: 'ctmmManufacturerName'
       },
       {
         title: '单位',
-        dataIndex: 'limitDrugUnit',
+        dataIndex: 'replanUnit',
       },
       {
         title: '配送数量',
@@ -304,7 +305,7 @@ class PslistCheck extends PureComponent{
       },
       {
         title: '剂型',
-        dataIndex: 'dosageForm',
+        dataIndex: 'ctmmDosageFormDesc',
       },
       {
         title: '供应商',
@@ -401,7 +402,7 @@ class PslistCheck extends PureComponent{
                 columns={columnsUnVerfiy}
                 dataSource={unVerfiyList || []}
                 pagination={false}
-                rowKey={'id'}
+                rowKey={'batchNo'}
                 rowSelection={{
                   selectedRowKeys: this.state.selected,
                   onChange: this.rowChange
@@ -415,7 +416,7 @@ class PslistCheck extends PureComponent{
                 scroll={{x: '250%'}}
                 columns={columnsVerify || []}
                 dataSource={verifyList}
-                rowKey={'upUserDate'}
+                rowKey={'batchNo'}
                 pagination={false}
               />
             </TabPane>

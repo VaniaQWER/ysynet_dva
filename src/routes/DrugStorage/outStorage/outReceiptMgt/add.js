@@ -4,7 +4,7 @@
 * @Last Modified time: 2018-07-24 13:13:55 
  */
 import React, { PureComponent } from 'react';
-import {Table, Col, Button, Modal, Icon, message, Input, InputNumber, Select, Row, Tooltip} from 'antd';
+import {Table, Col, Button, Modal, Icon, message, Input, InputNumber, Select, Row, Tooltip, Spin} from 'antd';
 import {connect} from 'dva';
 import RemoteTable from '../../../../components/TableGrid/index';
 import {outStorage} from '../../../../api/drugStorage/outStorage';
@@ -66,25 +66,24 @@ class AddOutput extends PureComponent{
       type: [],
       dept: [],
       query: {},
-      submitLoading: false
+      submitLoading: false,
+      outStoreType: undefined
     }
   }
 
   componentDidMount() {
     this.props.dispatch({
-      type: 'base/orderStatusOrorderType',
-      payload: {
-        type: 'new_out_store_type'
-      },
-      callback: (data) => {
-        this.setState({type: data});
-      }
-    });
-    this.props.dispatch({
       type: 'base/findAllDepts',
       callback: (data) => {
+        let type = data.map((item) => {
+          return {
+            key: item.key + '',
+            value: item.value
+          }
+        });
         this.setState({
-          dept: data
+          dept: data,
+          type
         });
       }
     })
@@ -119,7 +118,7 @@ class AddOutput extends PureComponent{
     this.setState({submitLoading: true});
     let listDetail = dataSource.map(item=>{
       return {
-        batch: item.lot,
+        batchNo: item.batchNo,
         drugCode: item.drugCode,
         outStoreNum: item.outStoreNum
       }
@@ -146,7 +145,7 @@ class AddOutput extends PureComponent{
     let {dataSource} = this.state;
     let listDetail = dataSource.map(item=>{
       return {
-        batch: item.lot,
+        batchNo: item.batchNo,
         drugCode: item.drugCode
       }
     });
@@ -159,6 +158,21 @@ class AddOutput extends PureComponent{
         }
       }
     });
+  }
+
+  change = (value) => {
+    let {dept} = this.state;
+    let outStoreType;
+    dept.map(item => {
+      if(item.id === value) {
+        outStoreType = item.key + '';
+      };
+      return item;
+    });
+      this.setState({
+        deptCode: value,
+        outStoreType
+      });
   }
 
   //添加产品 到 主表
@@ -248,7 +262,7 @@ class AddOutput extends PureComponent{
       {
         title: '生产批号',
         width:150,
-        dataIndex: 'approvalNo',
+        dataIndex: 'lot',
       },
       {
         title: '生产日期',
@@ -273,15 +287,15 @@ class AddOutput extends PureComponent{
       {
         title: '批准文号',
         width:150,
-        dataIndex: 'lot',
+        dataIndex: 'approvalNo',
       }
     ];
-    let {visible, selectedRowKeyModal, dataSource, type, dept, query, submitLoading} = this.state; 
+    let {visible, selectedRowKeyModal, dataSource, type, dept, query, submitLoading, outStoreType} = this.state; 
     dept = dept.map((item, i) => {
       return <Option key={i} value={item.id}>{item.deptName}</Option>
     });
     type = type.filter(item => item.label !== '全部').map((item, i) => {
-      return <Option key={i} value={item.value}>{item.label}</Option>
+      return <Option key={i} value={item.key}>{item.value}</Option>
     })
     return (
       <div className='fullCol' style={{padding: '0 24px 24px', background: 'rgb(240, 242, 245)'}}>
@@ -311,11 +325,8 @@ class AddOutput extends PureComponent{
             <Col span={6}>
                 接收部门：
                 <Select
-                  onChange={(value) => {
-                    this.setState({
-                      deptCode: value
-                    });
-                  }}
+                  notFoundContent={<Spin size="small" />}
+                  onChange={this.change}
                   style={{width:'70%'}}
                   showSearch
                   placeholder={'请选择'}
@@ -328,11 +339,8 @@ class AddOutput extends PureComponent{
             <Col span={6}>
               出库类型：
                 <Select
-                  onChange={(value) => {
-                    this.setState({
-                      outStoreType: value
-                    });
-                  }}
+                  disabled
+                  value={outStoreType}
                   style={{width:'70%'}}
                   showSearch
                   placeholder={'请选择'}
@@ -402,7 +410,7 @@ class AddOutput extends PureComponent{
             }}
             scroll={{x: '200%'}}
             columns={modalColumns}
-            rowKey={'lot'}
+            rowKey={'batchNo'}
           />
         </Modal>
       </div>

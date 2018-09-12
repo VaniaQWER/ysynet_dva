@@ -65,6 +65,8 @@ export default {
         if(callback) callback(data.data);
       }else{
         message.warn('会话失效，请重新登录');
+        window.sessionStorage.removeItem('key');
+        window.sessionStorage.removeItem('deptName');
         yield put(routerRedux.push('/login'));
         // if(callback) callback();
       }

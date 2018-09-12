@@ -3,6 +3,7 @@ import {Row, Col} from 'antd';
 import RemoteTable from '../../../components/TableGrid';
 import drugStorage from '../../../api/drugStorage/stockInquiry';
 import {connect} from 'dva';
+import querystring from 'querystring';
 const columns = [
     {
         title: '生产批号',
@@ -34,11 +35,13 @@ const columns = [
 class Details extends PureComponent{
     constructor(props) {
         super(props);
-        let drugCode = this.props.match.params.id;
+        let info = this.props.match.params.id;
+        info = querystring.parse(info);
         this.state = {
             query: {
-                drugCode
+                drugCode: info.dCode
             },
+            bigDrugCode: info.bCode,
             info: {}
         }
     }
@@ -46,7 +49,7 @@ class Details extends PureComponent{
         this.props.dispatch({
             type: 'stockInquiry/repertoryDetail',
             payload: {
-                drugCode: this.state.query.drugCode
+                drugCode: this.state.bigDrugCode
             },
             callback: (data) => {
                 this.setState({info: data});

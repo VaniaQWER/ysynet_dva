@@ -31,6 +31,18 @@ class Details extends PureComponent{
                 distribute: this.state.id
             },
             callback: (data)=>{
+                data.unShevleDetailList = data.unShevleDetailList.map(item => {
+                let replanStore;
+                    data.goodsLists.map(goodsItem=>{
+                        if(item.replanStore === goodsItem.id) {
+                            replanStore = goodsItem.id
+                        };
+                        return goodsItem;
+                    });
+                    item.realNum = item.realDeliveryQuantiry;
+                    item.realStore = replanStore ? replanStore : "";
+                    return item
+                })
                 this.setState({
                     loading: false,
                     putawayInfo: data
@@ -98,9 +110,9 @@ class Details extends PureComponent{
                 status: this.state.defaultActiveKey
             },
             callback: (data) => {
-                message.succese('确认上架成功');
-                this.setState({confirmLoading: false});
                 this.queryDetail();
+                this.setState({confirmLoading: false});
+                message.success('确认上架成功');
             }
         });
     }
@@ -114,30 +126,21 @@ class Details extends PureComponent{
         let goodList = goodsLists.map((item, i) => {
             return (<Option key={item.id} value={item.id}>{item.storeName}</Option>)
         });
-        
-        unShevleDetailList = unShevleDetailList.map(item => {
-            let replanStore;
-            goodsLists.map(goodsItem=>{
-                if(item.replanStore === goodsItem.storeName) {
-                    replanStore = goodsItem.id
-                };
-                return goodsItem;
-            });
-            item.realNum = item.realDeliveryQuantiry;
-            item.realStore = replanStore ? replanStore : "";
-            return item
-        })
         const unShevleColumns = [
             {
                 title: '指示货位',
-                dataIndex: 'replanStore',
+                dataIndex: 'replanStoreName',
             }, {
                 title: '实际货位',
                 dataIndex: 'realStore',
-                render:(text, record)=>{
+                render:(text, record, i)=>{
                     return (
-                        <Select 
+                        <Select
+                            style={{width: '100%'}}
                             onSelect={(value)=>{
+                                console.log(value);
+                            console.log(unShevleDetailList);
+
                                 record.realStore = value;
                             }} 
                             defaultValue={text} 
@@ -155,9 +158,8 @@ class Details extends PureComponent{
                 render: (text, record)=>(
                     <InputNumber 
                         onChange={(value) => {
-                            console.log(value);
-                            
                             record.realNum = value;
+                            
                         }} 
                         defaultValue={record.realDeliveryQuantiry}
                      />
@@ -191,7 +193,7 @@ class Details extends PureComponent{
         const shevleColumns = [
             {
                 title: '指示货位',
-                dataIndex: 'replanStore',
+                dataIndex: 'replanStoreName',
             }, {
                 title: '实际货位',
                 dataIndex: 'realStore'
@@ -275,7 +277,11 @@ class Details extends PureComponent{
                         </Col>
                     </Row>
                 </div>
-                <Tabs activeKey={defaultActiveKey} onChange={this.callback} tabBarExtraContent={defaultActiveKey === '1'? <Button onClick={this.saveCheck} loading={confirmLoading} type='primary'>确认上架</Button> : null}>
+                <Tabs 
+                    activeKey={defaultActiveKey} 
+                    onChange={this.callback} 
+                    tabBarExtraContent={defaultActiveKey === '1' && unShevleDetailList && unShevleDetailList.length > 0? <Button onClick={this.saveCheck} loading={confirmLoading} type='primary'>确认上架</Button> : null}
+                >
                     <TabPane tab="待上架" key="1">
                         <Table
                             loading={loading}
@@ -284,6 +290,7 @@ class Details extends PureComponent{
                             dataSource={unShevleDetailList || []}
                             columns={unShevleColumns}
                             rowKey="id"
+                            pagination={false}
                             rowSelection={{
                                 selectedRowKeys: this.state.selectedRowKeys,
                                 onChange: (selectedRowKeys, selectedRows) => {
@@ -297,6 +304,7 @@ class Details extends PureComponent{
                             loading={loading}
                             scroll={{x: '200%'}}
                             bordered={true}
+                            pagination={false}
                             dataSource={shevleDetailList || []}
                             columns={shevleColumns}
                             rowKey="id"

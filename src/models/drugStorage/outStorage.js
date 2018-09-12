@@ -77,6 +77,8 @@ export default {
     /*  出库拣货 申请部门  */
     *findApplyDepts({ payload,callback },{ call }){
       const data = yield call(outStorageService.findApplyDepts, payload);
+      console.log(data);
+      
       if(data.code !== 200){
         return message.error(data.msg||'获取申请科室失败')
       }

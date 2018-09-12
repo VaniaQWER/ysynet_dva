@@ -6,6 +6,7 @@
 import React, { PureComponent } from 'react';
 import { Table, Row, Col, Button, Tooltip} from 'antd';
 import {connect} from 'dva';
+import querystring from 'querystring';
 const columns = [
   {
     title: '通用名',
@@ -83,9 +84,13 @@ class DetailsOutput extends PureComponent{
 
   constructor(props){
     super(props)
+    let info = this.props.match.params.id;
+    info = querystring.parse(info);
     this.state={
       info: {},
-      loading: false
+      loading: false,
+      id: info.id,
+      status: info.state
     }
   }
   componentDidMount() {
@@ -93,7 +98,7 @@ class DetailsOutput extends PureComponent{
     this.props.dispatch({
       type: 'outStorage/outStoreDetailInfo',
       payload: {
-        backNo: this.props.match.params.id
+        backNo: this.state.id
       },
       callback: (data) => {
         this.setState({info: data, loading: false});
@@ -111,7 +116,7 @@ class DetailsOutput extends PureComponent{
     let outStoreDetail = detailVo.map(item => {
       return {
         backSumNum: item.backNum,
-        batch: item.lot,
+        batchNo: item.batchNo,
         drugCode: item.drugCode
       }
     });
@@ -129,15 +134,26 @@ class DetailsOutput extends PureComponent{
   }
 
   render(){
-    let {info, loading} = this.state;
+    let {info, loading, status} = this.state;
     let {detailVo} = info;
     return (
       <div className='fullCol fadeIn'>
         <div className="fullCol-fullChild">
-          <h3>单据信息 
-            <Button style={{float:'right'}} onClick={()=>this.onBan()} >不通过</Button>
-            <Button type='primary' className='button-gap' style={{float:'right'}} onClick={()=>this.onSubmit()}>复核通过</Button>
-          </h3>
+          <Row>
+            <Col span={6}>
+              <h2>
+                单据信息
+              </h2>
+            </Col>
+            {
+              status === "1"? (
+                <Col style={{textAlign:'right', float: 'right'}} span={6}>
+                  <Button type='primary' className='button-gap' style={{marginRight: 8}} onClick={()=>this.onSubmit()}>复核通过</Button>
+                  <Button onClick={()=>this.onBan()} >不通过</Button>
+                </Col>
+              ) : null
+            }
+          </Row>
           <Row>
             <Col span={8}>
               <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">

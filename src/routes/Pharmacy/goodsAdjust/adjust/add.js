@@ -129,7 +129,8 @@ class NewAddGoodsAdjust extends PureComponent{
         originalStore: item.usableQuantity,
         productDate: item.productDate,
         supplierCode: item.supplierCode,
-        validEndDate: item.validEndDate
+        validEndDate: item.validEndDate,
+        originalUnit: item.replanUnit
       }
     });
     

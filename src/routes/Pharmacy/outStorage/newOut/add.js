@@ -4,7 +4,7 @@
 * @Last Modified time: 2018-07-24 13:13:55 
  */
 import React, { PureComponent } from 'react';
-import {Table, Col, Button, Modal, Icon, message, Input, InputNumber, Select, Row, Tooltip} from 'antd';
+import {Table, Col, Button, Modal, Icon, message, Input, InputNumber, Select, Row, Spin, Tooltip} from 'antd';
 import {connect} from 'dva';
 import RemoteTable from '../../../../components/TableGrid/index';
 import {outStorage} from '../../../../api/drugStorage/outStorage';
@@ -72,19 +72,18 @@ class AddOutput extends PureComponent{
 
   componentDidMount() {
     this.props.dispatch({
-      type: 'base/orderStatusOrorderType',
-      payload: {
-        type: 'new_out_store_type'
-      },
-      callback: (data) => {
-        this.setState({type: data});
-      }
-    });
-    this.props.dispatch({
       type: 'base/findAllDepts',
       callback: (data) => {
+        let type = data.map((item) => {
+          return {
+            key: item.key + '',
+            value: item.value
+          }
+        });
+        type = _.uniqWith(type, _.isEqual);
         this.setState({
-          dept: data
+          dept: data,
+          type
         });
       }
     })
@@ -184,6 +183,21 @@ class AddOutput extends PureComponent{
       selectedRowKeyModal:[]
     })
   }
+
+  deptChange = (value) => {
+   let {dept} = this.state;
+   let outStoreType;
+   dept.map(item => {
+     if(item.id === value) {
+       outStoreType = item.key + '';
+     };
+     return item;
+   });
+    this.setState({
+      deptCode: value,
+      outStoreType
+    });
+  }
   
   render(){
     const columns = [
@@ -276,12 +290,12 @@ class AddOutput extends PureComponent{
         dataIndex: 'lot',
       }
     ];
-    let {visible, selectedRowKeyModal, dataSource, type, dept, query, submitLoading} = this.state; 
+    let {visible, selectedRowKeyModal, dataSource, type, dept, query, submitLoading, outStoreType} = this.state; 
     dept = dept.map((item, i) => {
       return <Option key={i} value={item.id}>{item.deptName}</Option>
     });
-    type = type.filter(item => item.label !== '全部').map((item, i) => {
-      return <Option key={i} value={item.value}>{item.label}</Option>
+    type = type.map((item, i) => {
+      return <Option key={i} value={item.key}>{item.value}</Option>
     })
     return (
       <div className='fullCol' style={{padding: '0 24px 24px', background: 'rgb(240, 242, 245)'}}>
@@ -311,11 +325,8 @@ class AddOutput extends PureComponent{
             <Col span={6}>
                 接收部门：
                 <Select
-                  onChange={(value) => {
-                    this.setState({
-                      deptCode: value
-                    });
-                  }}
+                  notFoundContent={<Spin size="small" />}
+                  onChange={this.deptChange}
                   style={{width:'70%'}}
                   showSearch
                   placeholder={'请选择'}
@@ -328,11 +339,8 @@ class AddOutput extends PureComponent{
             <Col span={6}>
               出库类型：
                 <Select
-                  onChange={(value) => {
-                    this.setState({
-                      outStoreType: value
-                    });
-                  }}
+                  disabled
+                  value={outStoreType}
                   style={{width:'70%'}}
                   showSearch
                   placeholder={'请选择'}

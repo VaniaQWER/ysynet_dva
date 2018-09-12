@@ -39,9 +39,10 @@ export default {
       const data = yield call(wareHouse.detailsInfo, payload);
       if(data.code === 200) {
         callback && callback(data.data);
-      }else {
-        message.error(data.msg);
       };
+      if(data.code === 500) {
+        message.warning('未能找到该单号');
+      }
     },
     //药库 - 入库 - 配送单详情 - 确认验收
     *drugStorageSaveCheck({ payload, callback }, {put, call}) {

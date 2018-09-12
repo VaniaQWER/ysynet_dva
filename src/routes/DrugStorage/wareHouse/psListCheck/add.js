@@ -19,7 +19,8 @@ class PslistAdd extends PureComponent{
     selected: [],
     selectedRows: [],
     loading: false,
-    detailInfo: {}
+    detailInfo: {},
+    btnShow: false
   }
   tabsChange = (key) =>{
     if(key === '2') {
@@ -125,7 +126,7 @@ class PslistAdd extends PureComponent{
     })
   }
   render(){
-    let {detailInfo, loading} = this.state;
+    let {detailInfo, loading, btnShow} = this.state;
     let {unVerfiyList, verifyList} = detailInfo;
     const columnsUnVerfiy = [
       {
@@ -403,7 +404,10 @@ class PslistAdd extends PureComponent{
           </Row>
         </div>
         <div className='detailCard' style={{margin: '30px -6px'}}>
-          <Tabs defaultActiveKey="1" onChange={this.tabsChange}>
+          <Tabs 
+          defaultActiveKey="1" 
+          tabBarExtraContent={ btnShow? <Button type='primary' onClick={this.saveCheck}>确认验收</Button> : null}
+          onChange={this.tabsChange}>
             <TabPane tab="待验收" key="1">
               <Table
                 bordered

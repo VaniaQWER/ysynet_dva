@@ -35,6 +35,14 @@ export default {
         message.error(data.msg);
       }
     },
+    *findStoreDetail({payload, callback}, {put, call}) {
+      const data = yield call(wareHouse.findStorePage, payload);
+      if(data.code === 200 && data.msg === "success") {
+        callback && callback(data.data);
+      }else {
+        message.error(data.msg);
+      }
+    },
     *CheckMakeupDetail({payload, callback}, {put, call}) {
       const data = yield call(wareHouse.CheckMakeupDetail, payload);
       if(data.code === 200 && data.msg === "success") {

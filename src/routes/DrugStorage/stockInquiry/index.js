@@ -37,7 +37,7 @@ const columns = [
   render: (text, record) => {
     return (
       <span>
-        <Link to={{pathname: `/drugStorage/stockMgt/stockInquiry/details/${record.bigDrugCode}`}}>{text}</Link>
+        <Link to={{pathname: `/drugStorage/stockMgt/stockInquiry/details/dCode=${record.drugCode}&bCode=${record.bigDrugCode}`}}>{text}</Link>
       </span>  
     )
   }
@@ -67,7 +67,7 @@ const columns = [
   width: 200,
 }, {
   title: '数量',
-  dataIndex: 'currentStoreNum',
+  dataIndex: 'totalStoreNum',
   width: 200,
 }, {
   title: '剂型',

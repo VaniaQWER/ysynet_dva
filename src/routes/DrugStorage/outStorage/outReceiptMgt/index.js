@@ -22,7 +22,7 @@ const columns = [
    width:150,
    render:(text, record)=>
    <span>
-      <Link to={{pathname: `/drugStorage/outStorage/outReceiptMgt/details/${record.backNo}`}}>{text}</Link>
+      <Link to={{pathname: `/drugStorage/outStorage/outReceiptMgt/details/id=${record.backNo}&state=${record.outStoreStatus}`}}>{text}</Link>
     </span>
   },
   {
@@ -168,6 +168,10 @@ class SearchFormWrapper extends PureComponent {
   this.props.dispatch({
     type: 'base/findAllDepts',
     callback: (data) => {
+      data.unshift({
+        id: '',
+        deptName: '全部'
+      })
       this.setState({
         dept: data
       });
@@ -210,83 +214,83 @@ class SearchFormWrapper extends PureComponent {
  }
 
  render() {
-   let {display, status, type, dept} = this.state;
-   const { getFieldDecorator } = this.props.form;
-   status = this.dataRender(status);
-   type = this.dataRender(type);
-   dept = dept.map((item, i) => {
-     return <Option key={i} value={item.id}>{item.deptName}</Option>
-   });
+  let {display, status, type, dept} = this.state;
+  const { getFieldDecorator } = this.props.form;
+  status = this.dataRender(status);
+  type = this.dataRender(type);
+  dept = dept.map((item, i) => {
+    return <Option key={i} value={item.id}>{item.deptName}</Option>
+  });
 
-   return (
-     <Form onSubmit={this.handleSearch}>
-       <Row gutter={30}>
-         <Col span={8}>
-           <FormItem label={`申领部门`} {...formItemLayout}>
-             {getFieldDecorator('deptCode', {})(
-              <Select 
-                showSearch
-                placeholder={'请选择'}
-                optionFilterProp="children"
-                filterOption={(input, option) => option.props.children.indexOf(input) >= 0}
-                >
-                {dept}
-              </Select>
-             )}
-           </FormItem>
-         </Col>
-         <Col span={8}>
-           <FormItem label={`出库时间`} {...formItemLayout}>
-             {getFieldDecorator('time', {})(
-              <RangePicker/>
-             )}
-           </FormItem>
-         </Col>
-         <Col span={8} style={{display: display}}>
-           <FormItem label={`出库分类`} {...formItemLayout}>
-             {getFieldDecorator('backType')(
-              <Select 
-                showSearch
-                placeholder={'请选择'}
-                optionFilterProp="children"
-                filterOption={(input, option) => option.props.children.indexOf(input) >= 0}
-                >
-                {type}
-              </Select>
-             )}
-           </FormItem>
-         </Col>
-         <Col span={8} style={{display: display}}>
-           <FormItem label={`单据号`} {...formItemLayout}>
-             {getFieldDecorator('orderNo')(
-              <Input placeholder='出库单/拣货单'/>
-             )}
-           </FormItem>
-         </Col>
-         <Col span={8} style={{display: display}}>
-           <FormItem label={`状态`} {...formItemLayout}>
-             {getFieldDecorator('backStatus')(
-              <Select 
-                showSearch
-                placeholder={'请选择'}
-                optionFilterProp="children"
-                filterOption={(input, option) => option.props.children.indexOf(input) >= 0}
-                >
-                {status}
-              </Select>
-             )}
-           </FormItem>
-         </Col>
-         <Col span={8} style={{ textAlign: 'right', marginTop: 4}} >
-           <Button type="primary" htmlType="submit">查询</Button>
-           <Button style={{marginLeft: 8}} onClick={this.handleReset}>重置</Button>
-           <a style={{marginLeft: 8, fontSize: 14}} onClick={this.toggle}>
-             {this.state.expand ? '收起' : '展开'} <Icon type={this.state.expand ? 'up' : 'down'} />
-           </a>
-         </Col>
-       </Row>
-     </Form>
-   )
+  return (
+    <Form onSubmit={this.handleSearch}>
+      <Row gutter={30}>
+        <Col span={8}>
+          <FormItem label={`申领部门`} {...formItemLayout}>
+            {getFieldDecorator('deptCode', {})(
+            <Select 
+              showSearch
+              placeholder={'请选择'}
+              optionFilterProp="children"
+              filterOption={(input, option) => option.props.children.indexOf(input) >= 0}
+              >
+              {dept}
+            </Select>
+            )}
+          </FormItem>
+        </Col>
+        <Col span={8}>
+          <FormItem label={`出库时间`} {...formItemLayout}>
+            {getFieldDecorator('time', {})(
+            <RangePicker/>
+            )}
+          </FormItem>
+        </Col>
+        <Col span={8} style={{display: display}}>
+          <FormItem label={`出库分类`} {...formItemLayout}>
+            {getFieldDecorator('backType')(
+            <Select 
+              showSearch
+              placeholder={'请选择'}
+              optionFilterProp="children"
+              filterOption={(input, option) => option.props.children.indexOf(input) >= 0}
+              >
+              {type}
+            </Select>
+            )}
+          </FormItem>
+        </Col>
+        <Col span={8} style={{display: display}}>
+          <FormItem label={`单据号`} {...formItemLayout}>
+            {getFieldDecorator('orderNo')(
+            <Input placeholder='出库单/拣货单'/>
+            )}
+          </FormItem>
+        </Col>
+        <Col span={8} style={{display: display}}>
+          <FormItem label={`状态`} {...formItemLayout}>
+            {getFieldDecorator('backStatus')(
+            <Select 
+              showSearch
+              placeholder={'请选择'}
+              optionFilterProp="children"
+              filterOption={(input, option) => option.props.children.indexOf(input) >= 0}
+              >
+              {status}
+            </Select>
+            )}
+          </FormItem>
+        </Col>
+        <Col span={8} style={{ textAlign: 'right', marginTop: 4}} >
+          <Button type="primary" htmlType="submit">查询</Button>
+          <Button style={{marginLeft: 8}} onClick={this.handleReset}>重置</Button>
+          <a style={{marginLeft: 8, fontSize: 14}} onClick={this.toggle}>
+            {this.state.expand ? '收起' : '展开'} <Icon type={this.state.expand ? 'up' : 'down'} />
+          </a>
+        </Col>
+      </Row>
+    </Form>
+  )
  }
 }
 const SearchForm = Form.create()(SearchFormWrapper);

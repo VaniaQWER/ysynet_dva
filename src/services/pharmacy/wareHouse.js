@@ -67,7 +67,6 @@ export function GETMakeupDetail(options){
     body: options
   })
 }
-
 //补货单据-审核
 export function CheckMakeupDetail(options){
   return request(`${_local}/a/roommakeup/makeup/makeupSumit`,{ 
@@ -84,6 +83,7 @@ export function SubmitAgainMakeupDetail(options){
     body: options
   })
 }
+//药库 - 入库单详情
 export function findStorePage(options) {
   return request(`${_local}/a/roomstore/findStoreDetail`, {
     method: 'GET',

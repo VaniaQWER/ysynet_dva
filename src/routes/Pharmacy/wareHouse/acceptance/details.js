@@ -91,6 +91,7 @@ class DetailsNewLibrary extends PureComponent{
     super(props)
     let info = querystring.parse(this.props.match.params.id);
     this.state={
+      checkLoading: false,
       detailInfo: {},
       defaultActiveKey: info.state,
       btnShow: info.state === '1'? true : false,
@@ -132,6 +133,9 @@ class DetailsNewLibrary extends PureComponent{
       message.error('至少选择一条数据');
       return;
     };
+    this.setState({
+      checkLoading: true
+    });
     let rommAcceptList = selected.map(item=>{
       return {
         id: item
@@ -144,8 +148,11 @@ class DetailsNewLibrary extends PureComponent{
         acceptanceCode
       },
       callback: (data) => {
-        message.succese('确认验收成功');
-        this.props.history.go(-1);
+        message.success('确认验收成功');
+        this.setState({
+          checkLoading: false
+        });
+        this.queryDetail();
       }
     })
   }
@@ -162,7 +169,7 @@ class DetailsNewLibrary extends PureComponent{
   }
 
   render(){
-    let {defaultActiveKey, btnShow, loading, info } = this.state;
+    let {defaultActiveKey, btnShow, loading, info, checkLoading } = this.state;
     let {listCheck, listUnCheck} = info;
     return (
       <div className='fullCol'>
@@ -228,7 +235,7 @@ class DetailsNewLibrary extends PureComponent{
             </Row>
           </div>
         <div className='detailCard'>
-          <Tabs defaultActiveKey={defaultActiveKey} onChange={this.tabsChange} tabBarExtraContent={ btnShow? <Button type='primary' onClick={this.saveCheck}>确认验收</Button> : null}>
+          <Tabs defaultActiveKey={defaultActiveKey} onChange={this.tabsChange} tabBarExtraContent={ btnShow && listUnCheck && listUnCheck.length > 0? <Button loading={checkLoading} type='primary' onClick={this.saveCheck}>确认验收</Button> : null}>
             <TabPane tab="待验收" key="1">
               <Table
                 bordered

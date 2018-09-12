@@ -125,7 +125,7 @@ class PlanCheckDetail extends PureComponent{
     let { dispatch, history } = this.props;
     dispatch({
       type: 'replenish/updateStatus',
-      payload: { values },
+      payload: { ...values },
       callback: () =>{
         history.push({ pathname: '/purchase/replenishment/planCheck' });
       } 
