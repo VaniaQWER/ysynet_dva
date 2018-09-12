@@ -72,7 +72,7 @@ class AddOutput extends PureComponent{
 
   componentDidMount() {
     this.props.dispatch({
-      type: 'base/findAllDepts',
+      type: 'base/findAllDeptsAndType',
       callback: (data) => {
         let type = data.map((item) => {
           return {

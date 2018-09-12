@@ -4,7 +4,7 @@
 * @Last Modified time: 2018-07-24 13:16:33 
  */
 import React, { PureComponent } from 'react';
-import { Table ,Row, Col, Card , Button, Modal , Input , Tooltip, message } from 'antd';
+import { Table ,Row, Col, Card, Spin, Button, Modal , Input , Tooltip, message } from 'antd';
 import { connect } from 'dva';
 const Conform = Modal.confirm;
 
@@ -19,24 +19,29 @@ class DetailsPicking extends PureComponent{
       leftDataSource: [],
       rightDataSource: [], // 配货明细表格列表
       selectedRow: {}, // 选中行
-      visible: true,
       loading: false,
-      distribite_btn_disable: false,// 配货按钮禁用状态
       selectedRowKey: [],
       applyStatus: null, // 单据状态
       hasStyle: null, // 表格选中某行index
-      hidden:true, //是否显示操作按钮 true 显示 false 隐藏
     }
   }
   componentWillMount = () => {
+    this.getDatailInfo();
+  }
+  getDatailInfo = () => {
     if (this.props.match.params.applyCode) {
-    let { applyCode, applyStatus } = this.props.match.params;
-    this.setState({ loading: true });
+      let { applyCode } = this.props.match.params;
+      this.setState({ loading: true });
       this.props.dispatch({
         type:'outStorage/distributeDetail',
         payload: { applyCode },
         callback:(data)=>{
-          this.setState({ detailsData: data, applyStatus, loading: false, leftDataSource: data.detailList });
+          this.setState({ 
+            detailsData: data, 
+            applyStatus: data.applyStatus, 
+            loading: false, 
+            leftDataSource: data.detailList 
+          });
         }
       });
     }
@@ -45,6 +50,7 @@ class DetailsPicking extends PureComponent{
   distribite = () =>{
     this.distributeEvent('allocate')
   }
+  //请求
   distributeEvent = (editType) =>{
     let values = {};
     values.applyCode = this.state.detailsData.applyCode;
@@ -53,7 +59,7 @@ class DetailsPicking extends PureComponent{
       type: 'outStorage/distributeEvent',
       payload: { ...values },
       callback: (data) =>{
-        this.setState({ distribite_btn_disable: true });
+        this.getDatailInfo();
         let msg;
         switch(editType){
           case 'allocate':
@@ -71,29 +77,23 @@ class DetailsPicking extends PureComponent{
         return message.success(`${msg}成功`);
       }
     })
-    
   }
   //生成拣货单
   onCreate = () =>{
     Conform({
       content:"您确定要执行此操作？",
       onOk:()=>{
-        /* this.setState({
-          hidden:false
-        }) */
         this.distributeEvent('addPick')
       },
       onCancel:()=>{}
     })
   }
-  //确认配货/取消
-  onSubmit = (bool) =>{
+  //确认配货 - 取消
+  onCancel = () =>{
     Conform({
       content:"您确定要执行此操作？",
       onOk:()=>{
-        this.setState({visible:bool})
-        // const { history } = this.props;
-        // history.push({pathname:"/drugStorage/drugStorageManage/picking"})
+        this.distributeEvent('cancel');
       },
       onCancel:()=>{}
     })
@@ -141,10 +141,15 @@ class DetailsPicking extends PureComponent{
       }
     })
   }
+  //时候禁用按钮
+  isDisabled = (x, y) => {
+    let {applyStatus} = this.state;
+    return applyStatus === x || applyStatus === y;
+  }
 
   render(){
     const { detailsData, leftDataSource, rightDataSource,
-      hidden, applyStatus, loading, rightLoading, hasStyle ,distribite_btn_disable
+      applyStatus, loading, rightLoading, hasStyle
     } = this.state;
     const leftColumns = [
       {
@@ -199,8 +204,7 @@ class DetailsPicking extends PureComponent{
       {
         title: '预分配数',
         width:150,
-        dataIndex: 'unit2',
-        render:()=>`80`
+        dataIndex: 'receiveNum'
       },
     ];
     const rightColumns =  [
@@ -239,113 +243,120 @@ class DetailsPicking extends PureComponent{
     return (
       <div className='fadeIn ysynet-content'>
         <Card>
-          <div className='ysynet-details-flex-header'>
-            <h3>单据信息</h3>
-            <div>
-              {
-                applyStatus !== '5'
-                &&
-                <div>
-                  {
-                    hidden?
+          <Spin spinning={loading}>
+            <div className='ysynet-details-flex-header'>
+              <h3>单据信息</h3>
+              <div>
+                {
+                  applyStatus !== 5
+                  &&
+                  <div>
                     <div style={{ textAlign: 'right' }}>
-                      <Button type='primary' disabled={ applyStatus === '2' || applyStatus === '4'? true : distribite_btn_disable} className='button-gap' onClick={()=>this.distribite(false)}>配货</Button>
-                      <Button className='button-gap'  
-                        onClick={()=>this.onSubmit(true)} 
-                        disabled={applyStatus === '2' ? false: true}
+                      <Button 
+                        type='primary' 
+                        disabled={this.isDisabled(3, 4)} 
+                        className='button-gap' 
+                        onClick={()=>this.distribite()}
+                      >
+                        配货
+                      </Button>
+                      <Button 
+                        disabled={this.isDisabled(1, 2)}
+                        className='button-gap'
+                        onClick={()=>this.onCancel()} 
                       >
                         取消
                       </Button>
-                      <Button onClick={()=>this.onCreate()} 
-                        disabled={applyStatus === '2' ? false: true}
+                      <Button 
+                        disabled={this.isDisabled(1, 2)}
+                        onClick={()=>this.onCreate()} 
                       >
                         生成拣货单
                       </Button>
                     </div>
-                    :null
-                  }
-                </div> 
-              }
+                  </div> 
+                }
+              </div>
             </div>
-          </div>
-          <Row>
-            <Col span={8}>
-              <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
-                <label>申领单</label>
-              </div>
-              <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
-                <div className='ant-form-item-control'>{ detailsData.applyCode }</div>
-              </div>
-            </Col>
-            <Col span={8}>
-              <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
-                <label>状态</label>
-              </div>
-              <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
-                <div className='ant-form-item-control'>{ detailsData.applyStatusName }</div>
-              </div>
-            </Col>
-            <Col span={8}>
-              <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
-                <label>申领部门</label>
-              </div>
-              <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
-                <div className='ant-form-item-control'>{ detailsData.applyDeptName }</div>
-              </div>
-            </Col>
-            <Col span={8}>
-              <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
-                <label>发起人</label>
-              </div>
-              <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
-                <div className='ant-form-item-control'>{ detailsData.createUserName }</div>
-              </div>
-            </Col>
-            <Col span={8}>
-              <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
-                <label>发起时间</label>
-              </div>
-              <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
-                <div className='ant-form-item-control'>{ detailsData.createDate }
+            <Row>
+              <Col span={8}>
+                <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
+                  <label>申领单</label>
                 </div>
-              </div>
-            </Col>
-            <Col span={8}>
-              <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
-                <label>联系电话</label>
-              </div>
-              <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
-                <div className='ant-form-item-control'>{ detailsData.mobile }</div>
-              </div>
-            </Col>
-          </Row>
-          <Row>
-            <Col span={8}>
-              <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
-                <label>药房地址</label>
-              </div>
-              <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
-                <div className='ant-form-item-control'>{ detailsData.receiveAddress }</div>
-              </div>
-            </Col>
-            <Col span={8}>
-              <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
-                <label>配货人</label>
-              </div>
-              <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
-                <div className='ant-form-item-control'>{ detailsData.distributeUserName }</div>
-              </div>
-            </Col>
-            <Col span={8}>
-              <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
-                <label>配货时间</label>
-              </div>
-              <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
-                <div className='ant-form-item-control'>{ detailsData.distributeDate }</div>
-              </div>
-            </Col>
-          </Row>
-          <hr className='hr'/>
+                <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
+                  <div className='ant-form-item-control'>{ detailsData.applyCode }</div>
+                </div>
+              </Col>
+              <Col span={8}>
+                <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
+                  <label>状态</label>
+                </div>
+                <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
+                  <div className='ant-form-item-control'>{ detailsData.applyStatusName }</div>
+                </div>
+              </Col>
+              <Col span={8}>
+                <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
+                  <label>申领部门</label>
+                </div>
+                <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
+                  <div className='ant-form-item-control'>{ detailsData.applyDeptName }</div>
+                </div>
+              </Col>
+              <Col span={8}>
+                <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
+                  <label>发起人</label>
+                </div>
+                <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
+                  <div className='ant-form-item-control'>{ detailsData.createUserName }</div>
+                </div>
+              </Col>
+              <Col span={8}>
+                <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
+                  <label>发起时间</label>
+                </div>
+                <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
+                  <div className='ant-form-item-control'>{ detailsData.createDate }
+                  </div>
+                </div>
+              </Col>
+              <Col span={8}>
+                <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
+                  <label>联系电话</label>
+                </div>
+                <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
+                  <div className='ant-form-item-control'>{ detailsData.mobile }</div>
+                </div>
+              </Col>
+            </Row>
+            <Row>
+              <Col span={8}>
+                <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
+                  <label>药房地址</label>
+                </div>
+                <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
+                  <div className='ant-form-item-control'>{ detailsData.receiveAddress }</div>
+                </div>
+              </Col>
+              <Col span={8}>
+                <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
+                  <label>配货人</label>
+                </div>
+                <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
+                  <div className='ant-form-item-control'>{ detailsData.distributeUserName }</div>
+                </div>
+              </Col>
+              <Col span={8}>
+                <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
+                  <label>配货时间</label>
+                </div>
+                <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
+                  <div className='ant-form-item-control'>{ detailsData.distributeDate }</div>
+                </div>
+              </Col>
+            </Row>
+            <hr className='hr'/>
+          </Spin>
           <h3>产品信息</h3>
           <Row>
             <Col span={13} >

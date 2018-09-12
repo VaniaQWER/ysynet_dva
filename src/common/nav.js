@@ -375,7 +375,7 @@ export const getNavData = app => [
     {
       name: "受理配货-详情",
       icon: 'setting',
-      path: '/drugStorage/outStorage/acceptDistribution/details/:applyCode/:applyStatus',
+      path: '/drugStorage/outStorage/acceptDistribution/details/:applyCode',
       component: dynamicWrapper(app, ['drugStorage/outStorage'], () => import('../routes/DrugStorage/outStorage/acceptDistribution/details')),
     },
     {
@@ -686,6 +686,18 @@ export const getNavData = app => [
       component: dynamicWrapper(app, ['drugStorage/configMgt'], () => import('../routes/Pharmacy/configMgt/drugDirectory/edit'))
     },
     {
+      name: '基数药目录管理',
+      icon: 'setting',
+      path: '/pharmacy/configMgt/baseMgt',
+      component: dynamicWrapper(app, ['pharmacy/configMgt'], () => import('../routes/Pharmacy/configMgt/baseMgt'))
+    },
+    {
+      name: '基数药目录管理 - 药品',
+      icon: 'setting',
+      path: '/pharmacy/configMgt/baseMgt/drug/:id',
+      component: dynamicWrapper(app, ['pharmacy/configMgt'], () => import('../routes/Pharmacy/configMgt/baseMgt/drug'))
+    },
+    {
       name: '药房管理',//药房-药房管理
       icon: 'setting',
       path: '/pharmacy/manage',
@@ -922,7 +934,7 @@ export const getNavData = app => [
       name: "拣货下架",
       icon: 'setting',
       path: '/pharmacy/outStorage/pickingUnderShelve',
-      component: dynamicWrapper(app, [], () => import('../routes/Pharmacy/outStorage/pickingUnderShelve')),
+      component: dynamicWrapper(app, ['drugStorage/outStorage'], () => import('../routes/Pharmacy/outStorage/pickingUnderShelve')),
     },
     // 药房-出库-拣货下架-详情
     {
@@ -1185,7 +1197,7 @@ export const getNavData = app => [
     {
       name: "结算管理-详情",
       icon: 'setting',
-      path: '/purchase/settlementMgt/statements/details',
+      path: '/purchase/settlementMgt/statements/details/:id',
       component: dynamicWrapper(app, [], () => import('../routes/Purchase/settlementMgt/statements/details')),
     },
     //采购结算 - 结算管理 - 结算单 - 新建结算
@@ -1201,6 +1213,55 @@ export const getNavData = app => [
       icon: "setting",
       path: '/purchase/settlementMgt/balanceQuery',
       component: dynamicWrapper(app, [], () => import('../routes/Purchase/settlementMgt/balanceQuery')),
+    },
+    /* 基数药 */
+    {
+      name: "药品目录",
+      icon: "setting",
+      path: '/baseDrug/drugMgt/drugCatalog',
+      component: dynamicWrapper(app, ['baseDrug/drugMgt'], () => import('../routes/BaseDrug/drugMgt')),
+    },
+    {
+      name: "药品目录 - 详情",
+      icon: "setting",
+      path: '/baseDrug/drugMgt/drugCatalog/edit/:id',
+      component: dynamicWrapper(app, ['baseDrug/drugMgt'], () => import('../routes/BaseDrug/drugMgt/edit')),
+    },
+    {
+      name: "库存查询",
+      icon: "setting",
+      path: '/baseDrug/stockMgt/stockInquiry',
+      component: dynamicWrapper(app, [], () => import('../routes/BaseDrug/stockMgt')),
+    },
+    {
+      name: "库存查询 - 详情",
+      icon: "setting",
+      path: '/baseDrug/stockMgt/stockInquiry/details/:id',
+      component: dynamicWrapper(app, ['baseDrug/stockMgt'], () => import('../routes/BaseDrug/stockMgt/details')),
+    },
+    {
+      name: "申领入库 - 验收",
+      icon: "setting",
+      path: '/baseDrug/wareHouse/acceptance',
+      component: dynamicWrapper(app, [], () => import('../routes/BaseDrug/wareHouse/acceptance')),
+    },
+    {
+      name: "申领入库 - 验收 - 详情",
+      icon: "setting",
+      path: '/baseDrug/wareHouse/acceptance/details/:id',
+      component: dynamicWrapper(app, ['baseDrug/wareHouse'], () => import('../routes/BaseDrug/wareHouse/acceptance/details')),
+    },
+    {
+      name: "申领入库 - 药品申领",
+      icon: "setting",
+      path: '/baseDrug/wareHouse/drugApply',
+      component: dynamicWrapper(app, [], () => import('../routes/BaseDrug/wareHouse/drugApply')),
+    },
+    {
+      name: "申领入库 - 药品申领 - 详情",
+      icon: "setting",
+      path: '/baseDrug/wareHouse/drugApply/details/:id',
+      component: dynamicWrapper(app, ['pharmacy/wareHouse'], () => import('../routes/BaseDrug/wareHouse/drugApply/details')),
     },
   ]
 }]

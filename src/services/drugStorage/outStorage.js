@@ -113,9 +113,18 @@ export function checkOutStore(options) {
   })
 };
 
-//出库单申领下拉框
-export function findAllDepts(options) {
+//出库单 - 新建申领下拉框
+export function findAllDeptsAndType(options) {
   return request(`${_local}/a/common/outstore/findAllDeptsAndType`, {
+    method: 'GET',
+    type: 'formData',
+    body: options
+  })
+}
+
+//出库单管理 - 申领下拉框
+export function findAllDepts(options) {
+  return request(`${_local}/a/common/outstore/findAllDepts`, {
     method: 'GET',
     type: 'formData',
     body: options

@@ -40,6 +40,21 @@ class DetailsPutaway extends PureComponent{
         acceptanceCode: this.state.acceptanceCode
       },
       callback: (data) => {
+        let {listwsj} = data;
+        listwsj.map(item => {   //如果实际货位下拉框不包含指示货位，则默认第一个
+          let isSame =  item.roomgoodsVo.some(itemNum => {
+            if(item.realReceiveStore !== itemNum.id) {
+              return false;
+            }else {
+              return true;
+            }
+          });
+          if(!isSame) {
+            item.realReceiveStore = item.roomgoodsVo[0].id;
+          }
+          return item;
+        });
+        data.listwsj = listwsj;
         this.setState({
           info: data,
           loading: false
@@ -97,8 +112,7 @@ class DetailsPutaway extends PureComponent{
 
   render(){
     let {defaultActive, info, loading} = this.state;
-    let {listwsj, listysj} = info;
-    let roomgoodsVo = info.roomgoodsVo? info.roomgoodsVo : [];    
+    let {listwsj, listysj} = info;  
     const notColumns = [
       {
         title: '指示货位',
@@ -123,7 +137,7 @@ class DetailsPutaway extends PureComponent{
                   style={{width: '100%'}}
                  >
                   {
-                    roomgoodsVo.map(item=>{
+                    record.roomgoodsVo.map(item=>{
                       return <Option key={item.id} value={item.id}>{item.positionName}</Option>
                     })
                   }
@@ -159,7 +173,7 @@ class DetailsPutaway extends PureComponent{
       {
         title: '单位',
         width:150,
-        dataIndex: 'unit'
+        dataIndex: 'replanUnit'
       },
       {
         title: '通用名',
@@ -230,7 +244,7 @@ class DetailsPutaway extends PureComponent{
       {
         title: '单位',
         width:150,
-        dataIndex: 'unit'
+        dataIndex: 'replanUnit'
       },
       {
         title: '通用名',

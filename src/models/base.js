@@ -134,7 +134,16 @@ export default {
         message.error(data.msg);
       }
     },
-    //出库单管理申领部门
+    //出库单管理 - 新建 - 申领部门
+    *findAllDeptsAndType({callback}, {call}) {
+      const data = yield call(outStorageService.findAllDeptsAndType);
+      if(data.code === 200 && data.msg === 'success') {
+        callback && callback(data.data);
+      }else {
+        message.error(data.msg);
+      }
+    },
+    //出库单管理 - 申领部门
     *findAllDepts({callback}, {call}) {
       const data = yield call(outStorageService.findAllDepts);
       if(data.code === 200 && data.msg === 'success') {

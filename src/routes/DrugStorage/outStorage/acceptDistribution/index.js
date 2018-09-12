@@ -21,7 +21,7 @@ const columns = [
     width:180,
     render:(text,record)=>
     <span>
-      <Link to={{pathname: `/drugStorage/outStorage/acceptDistribution/details/${record.applyCode}/${record.applyStatus}`}}>{text}</Link>
+      <Link to={{pathname: `/drugStorage/outStorage/acceptDistribution/details/${record.applyCode}`}}>{text}</Link>
     </span>  
   },
   {
@@ -36,11 +36,8 @@ const columns = [
   },
   {
     title: '类型',
-    dataIndex: 'applyType',
-    width:150,
-    render: (text, record, index) => {
-      return text === '1' ? '申领': text === '2' ? '调拨': '' 
-    }
+    dataIndex: 'applyTypeName',
+    width:150
   },
   {
     title: '发起人',

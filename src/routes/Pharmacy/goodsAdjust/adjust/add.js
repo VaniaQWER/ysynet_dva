@@ -29,7 +29,8 @@ class NewAddGoodsAdjust extends PureComponent{
       hisDrugCodeList: []
     },
     dataSource: [],
-    submitLoading: false
+    submitLoading: false,
+    value: undefined
   }
 
   addProduct = () => {
@@ -177,7 +178,7 @@ class NewAddGoodsAdjust extends PureComponent{
   }
   
   render(){
-    const {visible, query, dataSource, okLoading, submitLoading} = this.state;
+    const {visible, value, query, dataSource, okLoading, submitLoading} = this.state;
     const columns = [
       {
         title: '通用名',
@@ -363,6 +364,8 @@ class NewAddGoodsAdjust extends PureComponent{
           <Row>
             <Col span={8} style={{marginLeft: 4}}>
               <FetchSelect
+                allowClear
+                value={value}
                 style={{ width: 248 }}
                 placeholder='通用名/商品名'
                 url={goodsAdjust.QUERY_DRUG_BY_LIST}
@@ -370,9 +373,12 @@ class NewAddGoodsAdjust extends PureComponent{
                   let {query} = this.state;
                   query = {
                     ...query,
-                    hisDrugCodeList: [value]
+                    hisDrugCodeList: value? [value] : []
                   };
-                  this.setState({query});
+                  this.setState({
+                    query,
+                    value
+                  });
                 }}
               />
             </Col>

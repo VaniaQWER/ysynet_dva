@@ -22,7 +22,7 @@ const columns = [
    width:150,
    render:(text, record)=>
    <span>
-      <Link to={{pathname: `/pharmacy/outStorage/newOut/details/${record.backNo}`}}>{text}</Link>
+      <Link to={{pathname: `/pharmacy/outStorage/newOut/details/id=${record.backNo}&state=${record.outStoreStatus}`}}>{text}</Link>
     </span>
   },
   {

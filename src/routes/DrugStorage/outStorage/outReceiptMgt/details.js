@@ -241,6 +241,7 @@ class DetailsOutput extends PureComponent{
             scroll={{x: '250%'}}
             columns={columns}
             rowKey={'lot'}
+            pagination={false}
           />
         </div>
       </div>
