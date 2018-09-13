@@ -32,8 +32,15 @@ export default {
         message.error(data.msg)
       }
       if(callback) callback(data);
+    },
+    *allMenuList({payload, callback}, {call}) {
+      const data = yield call(roleMgtService.allMenuList, payload);
+      if(data.code === 200) {
+        callback && callback(data.data);
+      }else {
+        message.error(data.msg);
+      }
     }
-    
   },
   subscriptions: {}
 }

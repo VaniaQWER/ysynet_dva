@@ -200,7 +200,7 @@ class PickSoldOut extends PureComponent{
         width: 180,
         render:(text,record)=>(
           <span>
-            <Link to={{pathname: `/drugStorage/outStorage/pickingUnderShelve/details/${text}/${record.pickingStatus}`}}>{text}</Link>
+            <Link to={{pathname: `/drugStorage/outStorage/pickingUnderShelve/details/${text}/${record.pickingStatus}/${record.pickingType}`}}>{text}</Link>
           </span> 
         )
       },

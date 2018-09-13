@@ -117,7 +117,7 @@ class AddUser extends PureComponent{
           payload: { userInfo },
           callback: () =>{
             this.setState({ btnLoading: false });
-            history.push({ pathname: '/sys/user' })
+            history.push({ pathname: '/sys/organization/userMgt' })
           } 
         })
       }

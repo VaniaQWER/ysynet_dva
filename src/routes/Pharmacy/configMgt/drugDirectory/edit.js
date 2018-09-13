@@ -60,14 +60,21 @@ class EditDrugDirectory extends PureComponent{
       payload:{id:this.props.match.params.id},
       callback:(data)=>{
         console.log(data)
-        this.setState({fillBackData:data.data})
+        const fillBackData = data.data;
+        this.setState({
+          fillBackData
+        })
          //获取补货单位下拉框
           this.props.dispatch({
             type:'drugStorageConfigMgt/GetUnitInfo',
             payload:{bigDrugCode:data.data.bigDrugCode},
             callback:(data)=>{
-              console.log(data)
-              this.setState({replanUnitSelect:data.data})
+              let replanUnitSelect = data.data;
+              let replanUnitZN = replanUnitSelect.filter(item => item.unitCode === fillBackData.replanUnitCode)[0].unit
+              this.setState({
+                replanUnitSelect,
+                replanUnitZN
+              })
             }
           })
       }
@@ -98,13 +105,37 @@ class EditDrugDirectory extends PureComponent{
         this.props.form.validateFields((err,values)=>{
           if(!err){
             console.log(values)
-            const { customUnit , replanUnitCode , replanStore , purchaseQuantity ,
-              upperQuantity , downQuantity ,...otherInfo }  =values; 
+            let {replanUnitSelect} = this.state;
+            const { 
+              customUnit, 
+              replanUnitCode,
+              replanStore, 
+              purchaseQuantity, 
+              dispensingMachineUnitCode,
+              upperQuantity,
+              downQuantity,
+              advanceScatteredUnitCode,
+              scatteredLocUnitCode,
+              ...otherInfo 
+            }  = values;
+              let replanUnit = replanUnitSelect.filter(item => item.unitCode === replanUnitCode)[0].unit;
+              let dispensingMachineUnit = replanUnitSelect.filter(item => item.unitCode === dispensingMachineUnitCode)[0].unit;
+              let advanceScatteredLocUnit = replanUnitSelect.filter(item => item.unitCode === advanceScatteredUnitCode)[0].unit;
+              let scatteredLocUnit = replanUnitSelect.filter(item => item.unitCode === scatteredLocUnitCode)[0].unit;
               let postData = {
                 customUnit,
                 drugInfo:{
-                  replanUnitCode , purchaseQuantity ,
-                  upperQuantity , downQuantity ,
+                  dispensingMachineUnitCode,
+                  advanceScatteredUnitCode,
+                  scatteredLocUnitCode,
+                  replanUnit,
+                  dispensingMachineUnit,
+                  advanceScatteredLocUnit,
+                  scatteredLocUnit,
+                  replanUnitCode, 
+                  purchaseQuantity,
+                  upperQuantity, 
+                  downQuantity,
                   replanStore,
                   medDrugType:this.state.fillBackData.medDrugType,
                   id:this.props.match.params.id,
@@ -116,8 +147,8 @@ class EditDrugDirectory extends PureComponent{
               }
               delete postData['drugInfo']['keys'];
               
-            console.log(JSON.stringify(postData));
-            //发出请求
+            console.log(postData);
+            // 发出请求
             this.props.dispatch({
               type:'drugStorageConfigMgt/EditOperDeptInfo',
               payload:postData,
@@ -556,8 +587,8 @@ class EditDrugDirectory extends PureComponent{
                             ]
                           })(
                             <Select
-                            style={{ width: 100 }}
-                          >
+                              style={{ width: 100 }}
+                            >
                             {
                               replanUnitSelect && replanUnitSelect.length ?
                               replanUnitSelect.map((item,index)=>(

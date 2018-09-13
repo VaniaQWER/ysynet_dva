@@ -37,6 +37,24 @@ export default {
         message.error(data.msg);
       }
     },
+    //转换关系
+    *getHisMedicineTransfor({payload, callback}, {call}) {
+      const data = yield call(drugMgt.getHisMedicineTransfor, payload);
+      if(data.code === 200) {
+        callback && callback(data.data);
+      }else {
+        message.error(data.msg)
+      }
+    },
+    //编辑保存
+    *getHisMedicineBound({payload, callback}, {call}) {
+      const data = yield call(drugMgt.getHisMedicineBound, payload);
+      if(data.code === 200) {
+        callback && callback(data.data);
+      }else {
+        message.error(data.msg);
+      }
+    }
     /*-- end --*/
   },
 }

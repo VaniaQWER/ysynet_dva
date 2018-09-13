@@ -410,7 +410,7 @@ class AddOutput extends PureComponent{
             }}
             scroll={{x: '200%'}}
             columns={modalColumns}
-            rowKey={'lot'}
+            rowKey={'batchNo'}
           />
         </Modal>
       </div>

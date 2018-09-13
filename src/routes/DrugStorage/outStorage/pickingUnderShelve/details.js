@@ -4,7 +4,7 @@
 * @Last Modified time: 2018-07-24 13:13:55 
  */
 import React, { PureComponent } from 'react';
-import { Table ,Row, Col, Button, Modal ,Tabs , message , Input , Tooltip , Card} from 'antd';
+import { Table ,Row, Col, Button, Modal ,Tabs , message , InputNumber , Tooltip , Card} from 'antd';
 import { connect } from 'dva';
 const TabPane = Tabs.TabPane; 
 const Conform = Modal.confirm;
@@ -52,13 +52,12 @@ class DetailsPickSoldOut extends PureComponent{
       });
     }
   }
-  onChange = (record, index, e) => {
-    let value = e.target.value;
+  onChange = (record, index, value) => {
     let { leftDataSource } = this.state;
     let newDataSource = [ ...leftDataSource ];
       if (/^\d+$/.test(value)) {
         if (value > record.allocationNum) {
-          e.target.value  = record.allocationNum;
+          value  = record.allocationNum;
           newDataSource[index].amount = record.allocationNum;
           return message.warn(`输入数值过大, 不能超过${record.allocationNum}`)
         }
@@ -72,6 +71,10 @@ class DetailsPickSoldOut extends PureComponent{
     }
   //确认拣货
   onSubmit = () =>{
+    let { selectedRows, detailsData } = this.state;
+    if(selectedRows.length === 0){
+      return message.warning('请至少选中一条数据')
+    }
     Conform({
       content:"您确定要执行此操作？",
       onOk:()=>{
@@ -80,10 +83,6 @@ class DetailsPickSoldOut extends PureComponent{
         })
         const { history, dispatch } = this.props;
         let postData = {}, pickingDetail = [];
-        let { selectedRows, detailsData } = this.state;
-        if(selectedRows.length === 0){
-          return message.warning('请至少选中一条数据')
-        }
         selectedRows.map(item => pickingDetail.push({
           drugCode: item.drugCode,
           id: item.id,
@@ -168,10 +167,16 @@ class DetailsPickSoldOut extends PureComponent{
         fixed: 'right',
         dataIndex: 'amount',
         render:(text,record,index)=>{
-          return <Input
-                    defaultValue={record.allocationNum ? record.allocationNum: 1} 
-                    onInput={this.onChange.bind(this, record, index)}
-                  />
+          let type = this.props.match.params.pickingType;
+          return type === '9' ? 
+                 <span>{record.allocationNum ? record.allocationNum: 1}</span> :
+                 <InputNumber
+                  min={0}
+                  max={record.allocationNum}
+                  precision={0}
+                  defaultValue={record.allocationNum ? record.allocationNum: 1} 
+                  onChange={this.onChange.bind(this, record, index)}
+                 />
         }
       },
     ];

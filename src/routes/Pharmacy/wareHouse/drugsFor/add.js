@@ -82,7 +82,7 @@ class NewAdd extends PureComponent {
       },
       callback: (data) => {
         this.setState({
-          dataSource: data,
+          dataSource: [...this.state.dataSource, ...data],
           btnLoading: false,
           visible: false,
           modalSelected: []

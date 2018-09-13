@@ -141,7 +141,11 @@ class ItemsData extends PureComponent{
           payload: values,
           callback:(data)=>{
             console.log(data);
-            this.setState({ loading: false, visible: false });
+            this.setState({ 
+              loading: false, 
+              visible: false,
+            });
+            this.props.form.resetFields();
             this.refs.table.fetch();
           }
         })
@@ -212,7 +216,7 @@ class ItemsData extends PureComponent{
           title={this.state.ModalTitle}
           width={488}
           visible={visible}
-          onCancel={()=>this.setState({ visible: false })}
+          onCancel={()=>{this.setState({ visible: false }); this.props.form.resetFields();}}
           footer={[
             <Button key="submit" htmlType='submit' type='primary' onClick={this.newAdd} loading={this.state.loading}>确认</Button>,
             <Button key="back"  type='default' onClick={()=>{this.setState({ visible: false }); this.props.form.resetFields();}}>取消</Button>

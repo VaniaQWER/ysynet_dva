@@ -1,5 +1,5 @@
 import React , {PureComponent} from 'react';
-import { Form, Row, Col, Button, Input, Select, Icon, Tooltip, message, Modal  } from 'antd';
+import { Form, Row, Col, Button, Input, Select, InputNumber, Icon, Tooltip, message, Modal  } from 'antd';
 import { drugMgt } from '../../../api/baseDrug/drugMgt';
 import { Link } from 'react-router-dom';
 import RemoteTable from '../../../components/TableGrid';
@@ -165,6 +165,8 @@ class DrugDirectory extends PureComponent{
     selectedRows: [],
     visible: false,
     loading: false,
+    min: 0,
+    max: 9999999
   }
  
   // 批量设置上下限
@@ -201,8 +203,21 @@ class DrugDirectory extends PureComponent{
       }
     })
   }
+  //限制上下限输入
+  changeQuantity = (value, stateName) => {
+    let {min, max} = this.state;
+    if(stateName === 'min' && value > max) {
+      return message.warning('库存下限不能超过库存上限！');
+    }
+    if(stateName === 'max' && value < min) {
+      return message.warning('库存上限不能低于库存下限！');
+    }
+    this.setState({
+      [stateName]: value? value : 0
+    });
+  }
   render(){
-    const {visible, loading, query} = this.state;
+    const {visible, loading, query, min, max} = this.state;
     const { getFieldDecorator } = this.props.form;
     const IndexColumns = [
       ...columns,
@@ -227,7 +242,7 @@ class DrugDirectory extends PureComponent{
         width: 100,
         render: (text,record)=>{
           return  <span>
-            <Link to={{pathname: `/baseDrug/drugMgt/drugCatalog/edit/${record.bigDrugCode}`}}>{'编辑'}</Link>
+            <Link to={{pathname: `/baseDrug/drugMgt/drugCatalog/edit/bCode=${record.bigDrugCode}&dCode=${record.drugCode}&id=${record.id}`}}>{'编辑'}</Link>
           </span>
         }
       },
@@ -261,7 +276,13 @@ class DrugDirectory extends PureComponent{
                   required:true,message:"请输入库存上限！"
                 }]
               })(
-                <Input placeholder='请输入'/>
+                <InputNumber
+                  onChange={(value) => {this.changeQuantity(value, 'max')}}
+                  min={min}
+                  precision={0}
+                  style={{width: '100%'}}
+                  placeholder='请输入'
+                />
               )
             }
           </FormItem>
@@ -273,7 +294,14 @@ class DrugDirectory extends PureComponent{
                   required:true,message:"请输入库存下限！"
                 }]
               })(
-                <Input placeholder='请输入'/>
+                <InputNumber
+                  onChange={(value) => {this.changeQuantity(value, 'min')}}
+                  min={0}
+                  max={max}
+                  precision={0}
+                  style={{width: '100%'}}
+                  placeholder='请输入'
+                />
               )
             }
           </FormItem>
@@ -282,7 +310,12 @@ class DrugDirectory extends PureComponent{
               getFieldDecorator(`purchaseQuantity`,{
                 initialValue: '',
               })(
-                <Input placeholder='请输入'/>
+                <InputNumber
+                  min={0}
+                  precision={0}
+                  style={{width: '100%'}} 
+                  placeholder='请输入'
+                />
               )
             }
           </FormItem>

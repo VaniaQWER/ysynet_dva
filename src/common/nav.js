@@ -387,7 +387,7 @@ export const getNavData = app => [
     {
       name: "拣货下架-详情",
       icon: 'setting',
-      path: '/drugStorage/outStorage/pickingUnderShelve/details/:pickingOrderNo/:pickingStatus',
+      path: '/drugStorage/outStorage/pickingUnderShelve/details/:pickingOrderNo/:pickingStatus/:pickingType',
       component: dynamicWrapper(app, ['drugStorage/outStorage'], () => import('../routes/DrugStorage/outStorage/pickingUnderShelve/details')),
     },
     {

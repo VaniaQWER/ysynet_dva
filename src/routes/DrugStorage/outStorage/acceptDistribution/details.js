@@ -4,7 +4,7 @@
 * @Last Modified time: 2018-07-24 13:16:33 
  */
 import React, { PureComponent } from 'react';
-import { Table ,Row, Col, Card, Spin, Button, Modal , Input , Tooltip, message } from 'antd';
+import { Table ,Row, Col, Card, Spin, Button, Modal , InputNumber , Tooltip, message, Affix } from 'antd';
 import { connect } from 'dva';
 const Conform = Modal.confirm;
 
@@ -20,14 +20,20 @@ class DetailsPicking extends PureComponent{
       rightDataSource: [], // 配货明细表格列表
       selectedRow: {}, // 选中行
       loading: false,
-      selectedRowKey: [],
       applyStatus: null, // 单据状态
       hasStyle: null, // 表格选中某行index
+      amount: 0,
+      rightLoading: false,
+      okLoading: false,
+      cancelLoading: false,
+      saveLoading: false,
+      createLoaing: false
     }
   }
   componentWillMount = () => {
     this.getDatailInfo();
   }
+  //详情
   getDatailInfo = () => {
     if (this.props.match.params.applyCode) {
       let { applyCode } = this.props.match.params;
@@ -40,7 +46,11 @@ class DetailsPicking extends PureComponent{
             detailsData: data, 
             applyStatus: data.applyStatus, 
             loading: false, 
-            leftDataSource: data.detailList 
+            leftDataSource: data.detailList,
+            hasStyle: null,
+            selectedRow: {},
+            amount: 0,
+            rightDataSource: []
           });
         }
       });
@@ -48,10 +58,13 @@ class DetailsPicking extends PureComponent{
   }
   // 配货
   distribite = () =>{
-    this.distributeEvent('allocate')
+    this.setState({okLoading: true})
+    this.distributeEvent('allocate', ()=>{
+      this.setState({okLoading: false});
+    })
   }
   //请求
-  distributeEvent = (editType) =>{
+  distributeEvent = (editType, cb) =>{
     let values = {};
     values.applyCode = this.state.detailsData.applyCode;
     values.editType = editType;
@@ -74,6 +87,7 @@ class DetailsPicking extends PureComponent{
           default: 
             break;
         }
+        cb && cb();
         return message.success(`${msg}成功`);
       }
     })
@@ -83,7 +97,10 @@ class DetailsPicking extends PureComponent{
     Conform({
       content:"您确定要执行此操作？",
       onOk:()=>{
-        this.distributeEvent('addPick')
+        this.setState({createLoaing: true})
+        this.distributeEvent('addPick', ()=>{
+          this.setState({createLoaing: false})
+        });
       },
       onCancel:()=>{}
     })
@@ -93,7 +110,10 @@ class DetailsPicking extends PureComponent{
     Conform({
       content:"您确定要执行此操作？",
       onOk:()=>{
-        this.distributeEvent('cancel');
+        this.setState({cancelLoading: true})
+        this.distributeEvent('cancel', ()=>{
+          this.setState({cancelLoading: false})
+        });
       },
       onCancel:()=>{}
     })
@@ -109,48 +129,119 @@ class DetailsPicking extends PureComponent{
       }
     })
   }
-  onChange = (record,index, e) =>{
-    let value = e.target.value;
+  //分配数输入框
+  amountInputRender = (text,record,index)=>{
+    let {amount, rightDataSource} = this.state;
+    let otherAmount = rightDataSource.map(item => item.usableQuantity)
+    otherAmount = otherAmount.reduce((total, num) => total + num);
+    let max = amount - otherAmount + record.usableQuantity;
+    console.log(max, 'max');
+    return record.detailDistributeStatus === 1? 
+      <span>{record.usableQuantity}</span>
+      : 
+      <InputNumber
+        min={0}
+        precision={0}
+        max={max}
+        onChange={this.onChange.bind(this, record, index, max)}
+        defaultValue={record.usableQuantity}
+      />
+  }
+  onChange = (record, index, max, value) =>{
     let newRightDataSource = [...this.state.rightDataSource];
-      if (/^\d+$/.test(value)) {
-        if (value > 99999999) {
-          e.target.value  = 99999999;
-          newRightDataSource[index].amount = 99999999;
-          return message.warn('输入数值过大, 不能超过100000000')
-        }
-        else{
-          newRightDataSource[index].amount = value;
-        }
-      } else {
-          return message.warn('请输入非0正整数')
+    if (/^\d+$/.test(value)) {
+      if (value > max) {
+        return message.warn('输入数值过大, 总数不能超过未分配数量')
       }
-    this.setState({  rightDataSource: newRightDataSource })
+    }else {
+      return message.warn('请输入非0正整数')
+    }
+    newRightDataSource[index].usableQuantity = value;
+    
+    this.setState({rightDataSource: newRightDataSource})
   }
   // 修改配货明细
-  singleUpdateDetail = (id) =>{
+  singleUpdateDetail = () =>{
+    this.setState({saveLoading: true});
     let { rightDataSource } = this.state;
     let detailList = [], postData = {};
-    rightDataSource.map(item => detailList.push({ id: item.id, usableQuantity: item.amount }));
+    rightDataSource
+    .filter(item => item.detailDistributeStatus === 0)
+    .map(item => detailList.push({ id: item.id, usableQuantity: item.usableQuantity }));
     postData.detailList = detailList;
-    postData.id = id;
+    postData.id = this.state.selectedRow.id;
     this.props.dispatch({
       type: 'outStorage/singUpdate',
       payload: { ...postData },
       callback: () =>{
-        
+        this.setState({saveLoading: false});
+        this.getDatailInfo();
+        message.success('保存成功');
       }
     })
   }
-  //时候禁用按钮
+  //固钉按钮
+  affixButton = () => {
+    let {rightDataSource} = this.state;
+    let isShow = rightDataSource.some(item => item.detailDistributeStatus === 0);
+    console.log(isShow);
+    
+    if(!isShow) return null;
+    return <Affix offsetBottom={10}>
+              <div style={{textAlign: 'right'}}>
+                <Button
+                  loading={this.state.saveLoading}
+                  type="primary"
+                  onClick={this.singleUpdateDetail}
+                >
+                  保存
+                </Button>
+              </div>
+            </Affix>
+  }
+  //是否禁用按钮
   isDisabled = (x, y) => {
     let {applyStatus} = this.state;
-    return applyStatus === x || applyStatus === y;
+    return !(applyStatus === x || applyStatus === y);
+  }
+  //顶部配货按钮
+  buttonRender = () => {
+    let {applyStatus, okLoading, cancelLoading, createLoaing} = this.state;
+    if(applyStatus === 5) return null;
+    return (
+      <div>
+        <div style={{ textAlign: 'right' }}>
+          <Button 
+            type='primary'
+            loading={okLoading}
+            disabled={this.isDisabled(1, 3)} 
+            className='button-gap' 
+            onClick={()=>this.distribite()}
+          >
+            配货
+          </Button>
+          <Button 
+            loading={cancelLoading}
+            disabled={this.isDisabled(2, 4)}
+            className='button-gap'
+            onClick={()=>this.onCancel()} 
+          >
+            取消
+          </Button>
+          <Button
+            loading={createLoaing}
+            disabled={this.isDisabled(2, 4)}
+            onClick={()=>this.onCreate()} 
+          >
+            生成拣货单
+          </Button>
+        </div>
+      </div>
+    )
   }
 
   render(){
-    const { detailsData, leftDataSource, rightDataSource,
-      applyStatus, loading, rightLoading, hasStyle
-    } = this.state;
+    const { detailsData, leftDataSource, rightDataSource, rightLoading, loading, hasStyle} = this.state;
     const leftColumns = [
       {
         title: '通用名称',
@@ -231,50 +322,19 @@ class DetailsPicking extends PureComponent{
       {
         title: '分配数',
         width: 110,
-        dataIndex: 'amount',
-        render:(text,record,index)=>{
-          return record.detailDistributeStatus === '0'? 
-          <span>{record.allocationNum}</span>
-          : 
-          <Input onInput={this.onChange.bind(this,record,index)} defaultValue={record.allocationNum}/>
-        }
+        dataIndex: 'usableQuantity',
+        render: this.amountInputRender
       }
     ];
     return (
-      <div className='fadeIn ysynet-content'>
+      <div className='ysynet-content'>
         <Card>
           <Spin spinning={loading}>
             <div className='ysynet-details-flex-header'>
               <h3>单据信息</h3>
               <div>
                 {
-                  applyStatus !== 5
-                  &&
-                  <div>
-                    <div style={{ textAlign: 'right' }}>
-                      <Button 
-                        type='primary' 
-                        disabled={this.isDisabled(3, 4)} 
-                        className='button-gap' 
-                        onClick={()=>this.distribite()}
-                      >
-                        配货
-                      </Button>
-                      <Button 
-                        disabled={this.isDisabled(1, 2)}
-                        className='button-gap'
-                        onClick={()=>this.onCancel()} 
-                      >
-                        取消
-                      </Button>
-                      <Button 
-                        disabled={this.isDisabled(1, 2)}
-                        onClick={()=>this.onCreate()} 
-                      >
-                        生成拣货单
-                      </Button>
-                    </div>
-                  </div> 
+                  this.buttonRender()
                 }
               </div>
             </div>
@@ -358,7 +418,7 @@ class DetailsPicking extends PureComponent{
             <hr className='hr'/>
           </Spin>
           <h3>产品信息</h3>
-          <Row>
+          <Row style={{marginBottom: 10}}>
             <Col span={13} >
               <Table
                 bordered
@@ -373,8 +433,15 @@ class DetailsPicking extends PureComponent{
                   return {
                     onClick: () => {
                       let { id } = record;
-                      if(this.state.selectedRow.id !== id){
-                        this.setState({ hasStyle: index , selectedRow: record });
+                      if(!this.isDisabled(1, 3)) {
+                        return message.warning('请先配货');
+                      }
+                      if(this.state.selectedRow.id !== id && this.isDisabled(1, 3)){
+                        this.setState({ 
+                          hasStyle: index, 
+                          selectedRow: record,
+                          amount: record.applyNum - record.finishNum
+                        });
                         this.getDistributeDetail(id);
                       }
                       /* if(applyStatus !== '5'){
@@ -383,7 +450,6 @@ class DetailsPicking extends PureComponent{
                     }
                   };
                 }}
-
               />
             </Col>
             <Col span={10} offset={1}>
@@ -398,6 +464,9 @@ class DetailsPicking extends PureComponent{
               />
             </Col>
           </Row>
+          {
+            this.affixButton()
+          }
         </Card>
       </div>
     )

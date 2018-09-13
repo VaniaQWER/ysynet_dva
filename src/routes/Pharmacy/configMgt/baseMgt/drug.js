@@ -22,7 +22,7 @@ class BaseMgt extends PureComponent{
     this.state = {
       info: {},
       medalQuery: {
-        deptName: info.code,
+        deptCode: info.code,
         mate: ''
       },
       query: {
@@ -35,7 +35,8 @@ class BaseMgt extends PureComponent{
       modalSelectedRows: [],
       modalSelected: [],
       selectedRows: [],
-      selected: []
+      selected: [],
+      removeLoading: false
     }
   }
   componentDidMount() {
@@ -103,8 +104,30 @@ class BaseMgt extends PureComponent{
       modalSelected: [],
     });
   }
+  //移除
+  remove = () => {
+    let {selectedRows, query} = this.state;
+    if(selectedRows.length === 0) {
+      return message.warning('至少选择一条数据移除');
+    };
+    this.setState({
+      removeLoading: true
+    });
+    let ids = selectedRows.map(item => item.id);
+    this.props.dispatch({
+      type: 'configMgt/MoveCardinalMedicineDetail',
+      payload: {ids},
+      callback: () => {
+        message.success('移除成功');
+        this.setState({
+          removeLoading: false
+        });
+        this.refs.table.fetch(query);
+      }
+    })
+  }
   render(){
-    const { medalQuery, info, visible, okLoading, value, query } = this.state;
+    const { medalQuery, info, visible, okLoading, value, query, removeLoading } = this.state;
     const columns = [
       {
         title: '通用名称',
@@ -228,7 +251,7 @@ class BaseMgt extends PureComponent{
         <div className='detailCard'>
           <h3>产品信息
             <Button style={{margin: '0 8px'}} onClick={this.showModal} type="primary">新增</Button>
-            <Button>移除</Button>
+            <Button loading={removeLoading} onClick={this.remove}>移除</Button>
           </h3>
           <hr className="hr"/>
           <RemoteTable
@@ -237,7 +260,7 @@ class BaseMgt extends PureComponent{
             url={drugMgt.FIND_CARDINAL_MEDICINE_DETAIL}
             scroll={{x: true}}
             columns={columns}
-            rowKey={'bigDrugCode'}
+            rowKey={'id'}
             rowSelection={{
               selectedRowKeys: this.state.selected,
               onChange: (selectedRowKeys, selectedRows) => {

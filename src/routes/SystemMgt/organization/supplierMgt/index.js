@@ -215,8 +215,18 @@ class UserMgt extends PureComponent{
                     </span>
                   </div>
                 </div>
-              </div>
-              :null
+              </div> : 
+              <FormItem {...singleFormItemLayout} label={`供应商code`}>
+              {
+                getFieldDecorator(`ctmaSupplierCode`,{
+                  initialValue: isEdit ? record.ctmaSupplierName : '', 
+                  rules: [{ required: true,message: '请填写供应商code' }]
+                })(
+                  <Input />
+                )
+              }
+            </FormItem>
+              
             }
           </Form>
         </Modal>

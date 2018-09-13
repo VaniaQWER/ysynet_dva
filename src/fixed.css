@@ -337,7 +337,7 @@ td:hover .editable-cell-icon {
   width: 100% !important;
   padding:12px 33px;
   min-height: 32px;
-  background:#fff;
+  /* background:#fff; */
 }
 @-webkit-keyframes bounceInLeft {
   from,
@@ -419,9 +419,9 @@ td:hover .editable-cell-icon {
   padding: 0 24px;
 }
 
-.ant-affix{
+/* .ant-affix{
   background: #fff !important;
-}
+} */
 .ysynet-affix{
   height: 70px;
   /* display: flex;

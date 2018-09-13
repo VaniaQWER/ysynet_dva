@@ -28,4 +28,12 @@ export function findBaseMedicineDeptlist(options) {
   })
 }
 
+export function MoveCardinalMedicineDetail(options) {
+  return request(`${_local}/a/basemedicinedetail/MoveCardinalMedicineDetail`, {
+    method: 'POST',
+    type: 'json',
+    body: options
+  })
+}
+
 /*-- end --*/

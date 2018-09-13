@@ -38,6 +38,15 @@ export default {
       }else {
         message.error(data.msg);
       }
+    },
+    //基数药目录移除
+    *MoveCardinalMedicineDetail({payload, callback}, {call}) {
+      const data = yield call(configMgt.MoveCardinalMedicineDetail, payload);
+      if(data.code === 200) {
+        callback && callback(data.data);
+      }else {
+        message.error(data.msg);
+      }
     }
     /*-- end --*/
   }

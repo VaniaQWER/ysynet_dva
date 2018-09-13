@@ -60,11 +60,14 @@ export default {
     // 用户登陆
     *userLogin({ payload, callback },{ put, call }){
       const data = yield call(usersService.userLogin, payload);
+      
       if(data.code === 200 && data.msg === 'success'){
         yield put({ type: 'userInfo', payload: data.data });
-        if(callback) callback(data.data);
-      }else{
-        message.warn('会话失效，请重新登录');
+        callback && callback(data.data);
+      }else if(data.code === 500) {
+        callback && callback(data.data);
+      }else {
+        message.warning('会话失效，请重新登录');
         window.sessionStorage.removeItem('key');
         window.sessionStorage.removeItem('deptName');
         yield put(routerRedux.push('/login'));

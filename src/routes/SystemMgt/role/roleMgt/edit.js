@@ -7,11 +7,10 @@
  * @file 系统管理--角色管理--角色-新增
  */
 import React, { PureComponent } from 'react';
-import { Form, Row, Col, Input, Button , message} from 'antd';
+import { Form, Row, Col, Input, Button, Table, message} from 'antd';
 import { formItemLayout } from '../../../../utils/commonStyles';
-import { systemMgt } from '../../../../api/systemMgt';
 import { menuFormat } from '../../../../utils/utils';
-import RemoteTable from '../../../../components/TableGrid';
+import _ from 'lodash';
 import { connect } from 'dva';
 const FormItem = Form.Item;
 
@@ -21,7 +20,7 @@ class EditRoleMgt extends PureComponent{
     loading: false,
     baseInfo:{},//回显信息
     selectRowKeys:[],
-    query:{}
+    dataSource: [],
   }
 
    //提交表单
@@ -49,6 +48,7 @@ class EditRoleMgt extends PureComponent{
   }
 
   componentDidMount (){
+    this.setState({loading: true});
     this.props.dispatch({
       type: 'systemRole/RoleDetail',
       payload: this.props.match.params,//{id:[]}
@@ -58,13 +58,51 @@ class EditRoleMgt extends PureComponent{
           selectRowKeys:data.data.menuIds.split(','),
         })
       }
+    });
+    this.props.dispatch({
+      type: 'systemRole/allMenuList',
+      callback: (data) => {
+        let dataSource = menuFormat(data, true);
+        this.setState({
+          dataSource,
+          loading: false
+        });
+      }
     })
+  }
+  getIds = (record) => {
+    let ids = []
+    ids.push(record.id);
+    if(record.children) {
+      idsTree(record.children)
+    }
+    function idsTree(tree) {
+      tree.map(item => {
+        ids.push(item.id);
+        if(item.children) {
+          idsTree(item.children)
+        };
+        return item;
+      })
+    };
+    return ids;
+  }
+  //选中
+  setSelectRowKeys = (record, selected, selectedRows) => {
+    let {selectRowKeys} = this.state;
+    let ids = this.getIds(record);
+    if(selected) {  //选中push
+      selectRowKeys = [...new Set([...selectRowKeys, ...ids])];
+    }else {       //反选去除
+      selectRowKeys = _.difference(selectRowKeys, ids);
+    }
+    this.setState({selectRowKeys: selectRowKeys})
   }
 
 
   render(){
     const { getFieldDecorator } = this.props.form;
-    const { baseInfo  , selectRowKeys , query} = this.state;
+    const {baseInfo, selectRowKeys, dataSource, loading} = this.state;
     const columns = [
       {
         title: '菜单名称',
@@ -75,6 +113,7 @@ class EditRoleMgt extends PureComponent{
         dataIndex: 'href',
       }
     ]
+    console.log(dataSource);
     return (
       <div className='fullCol'>
         <div className='fullCol-fullChild'>
@@ -113,21 +152,20 @@ class EditRoleMgt extends PureComponent{
         <div className='detailCard'>
           <h3>角色权限</h3>
           <hr className='hr'/>
-          <RemoteTable 
-            ref='table'
-            query={query}
+          <Table
+            bordered
+            loading={loading}
+            dataSource={dataSource}
             style={{marginTop: 20}}
             columns={columns}
             scroll={{ x: '100%' }}
-            url={systemMgt.MenuList}
             rowSelection={{
               selectedRowKeys:selectRowKeys,
-              onChange:(selectRowKeys, selectedRows)=>{
-                this.setState({selectRowKeys})
-              }
-            }}
-            cb={(dataList,data)=>{
-              menuFormat(data)
+              onSelect: this.setSelectRowKeys,
+              onSelectAll: (selected, selectedRows, changeRows) => {
+                let ids = selectedRows.map(item => item.id);
+                this.setState({selectRowKeys: ids});
+              },
             }}
             rowKey='id'
           />

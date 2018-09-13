@@ -4,8 +4,9 @@
 * @Last Modified time: 2018-07-24 10:58:49 
  */
 import React, { PureComponent } from 'react';
-import { Form , Row , Button , Col , Select , Input , Modal , Collapse , message} from 'antd';
+import { Form , Row , Button , Col , Select , InputNumber , Modal , Collapse , message} from 'antd';
 import { connect } from 'dva';
+import querystring from 'querystring';
 const formItemLayout ={
   labelCol: {
     xs: { span: 24 },
@@ -34,19 +35,33 @@ class EditDrugDirectory extends PureComponent{
   state={
     fillBackData:{},//药品目录详情信息
     replanUnitSelect:[],//补货单位下拉框
-    medDrugType:null,//1 目录内 2 目录外 
+    minUnit: '',        //最小单位
+    packUnit: '',       //包装单位
+    packageSpecification: '',   //包装规格
+    saveLoading: false,
+    max: 0,
+    min: 0,
+    id: ''
   }
 
   componentDidMount(){
+    let info = this.props.match.params.id;
+    info = querystring.parse(info);
+
     //获取当前药品目录详情信息
     this.props.dispatch({
       type: 'drugMgt/getHisMedicineInfo',
       payload: {
-        bigDrugCode: this.props.match.params.id
+        bigDrugCode: info.bCode,
+        drugCode: info.dCode
       },
       callback: (data) => {
         this.setState({
-          fillBackData: data
+          fillBackData: data,
+          bigDrugCode: info.bCode,
+          max: data.upperQuantity,
+          min: data.downQuantity,
+          id: info.id
         });
       }
     });
@@ -54,14 +69,39 @@ class EditDrugDirectory extends PureComponent{
     this.props.dispatch({
       type: 'drugMgt/getUnitInfo',
       payload: {
-        bigDrugCode: this.props.match.params.id
+        bigDrugCode: info.bCode
       },
       callback: (data) => {
         this.setState({
           replanUnitSelect: data
         });
       }
+    });
+    //获取转换关系
+    this.props.dispatch({
+      type: 'drugMgt/getHisMedicineTransfor',
+      payload: {
+        bigDrugCode: info.bCode
+      },
+      callback: (data) => {
+        let minUnit = data.filter(item => item.sort === 3);
+        let packUnit = data.filter(item => item.sort === 1);
+        let packageSpecification = data.filter(item => item.sort === 2);
+        minUnit = this.unitTransform(minUnit);
+        packUnit = this.unitTransform(packUnit);
+        packageSpecification = this.unitTransform(packageSpecification);
+        this.setState({
+          minUnit,
+          packUnit,
+          packageSpecification
+        });
+      }
     })
+  }
+
+  unitTransform(unitList) {
+    let {bigUnit, conversionRate, smallUit} = unitList[0];
+    return `${bigUnit} = ${conversionRate} ${smallUit}`;
   }
 
   //保存
@@ -71,42 +111,24 @@ class EditDrugDirectory extends PureComponent{
         Comfirm({
           content:"确认保存吗？",
           onOk:()=>{
-            const { customUnit ,  supplier , replanUnitCode , replanStore , purchaseQuantity ,
-            upperQuantity , downQuantity  }  =values; 
-            let postData = {
-              customUnit,
-              supplier,
-              drugInfo:{
-                replanUnitCode , replanStore , purchaseQuantity ,
-                upperQuantity , downQuantity ,
-                id:this.props.match.params.id,
-                medDrugType:this.state.fillBackData.medDrugType,
-                drugCode:this.state.fillBackData.drugCode||'',
-                bigDrugCode:this.state.fillBackData.bigDrugCode,
-                hisDrugCode:this.state.fillBackData.hisDrugCode,
-              }
-            }
-            if(this.state.medDrugType===1){//处理目录内的数据
-              const supplierStateList = this.state.supplierList;
-              let  supplierRet = supplierStateList.map((item,index)=>{
-                item = Object.assign(item,supplier[index])//supplier[index],item
-                return item
-              })
-              postData.supplier = supplierRet;
-            }
-            console.log(JSON.stringify(postData));
-            //发出请求
+            this.setState({saveLoading: true});
+            let {replanUnitCode, ...otherValue} = values;
+            let {replanUnitSelect, fillBackData, bigDrugCode, id} = this.state;
+            let {unit} = replanUnitSelect.filter(item => item.unitCode === replanUnitCode)[0];
+            let params = {
+              unit,
+              unitCode: replanUnitCode,
+              ...otherValue,
+              bigDrugCode,
+              hisDrugCode: fillBackData.hisDrugCode,
+              id
+            };
             this.props.dispatch({
-              type:'drugStorageConfigMgt/EditOperDeptInfo',
-              payload:postData,
-              callback:(data)=>{
-                if(data.code!==200){
-                  message.success(data.msg)
-                }else{
-                  message.success('保存成功！')
-                  const { history } = this.props;
-                  history.push({pathname:"/drugStorage/configMgt/drugDirectory"})
-                }
+              type: 'drugMgt/getHisMedicineBound',
+              payload: params,
+              callback: (data) => {
+                message.success('编辑成功');
+                this.props.history.push('/baseDrug/drugMgt/drugCatalog');
               }
             })
           },
@@ -116,16 +138,17 @@ class EditDrugDirectory extends PureComponent{
     })
   }
 
-  //获取使用单位
-  getMaPInfo = (List,ind)=>{
-    if(List && List.length){
-      let ret =  List.filter(item=>item.sort===ind);
-      if (ret.length){
-        return `${ret[0].bigUnit||''}  =  ${ret[0].conversionRate||''}${ret[0].smallUit||''}`
-      }else{
-        return null
-      }
+  changeQuantity = (value, stateName) => {
+    let {min, max} = this.state;
+    if(stateName === 'min' && value > max) {
+      return message.warning('库存下限不能超过库存上限！');
     }
+    if(stateName === 'max' && value < min) {
+      return message.warning('库存上限不能低于库存下限！');
+    }
+    this.setState({
+      [stateName]: value? value : 0
+    });
   }
 
   getLayoutInfo = (label,val)=>(
@@ -142,15 +165,15 @@ class EditDrugDirectory extends PureComponent{
   )
 
   render(){
-    const {fillBackData , replanUnitSelect} =this.state;
+    const {fillBackData, saveLoading, replanUnitSelect, minUnit, packUnit, packageSpecification, min, max} =this.state;
     const { getFieldDecorator } = this.props.form;
-    getFieldDecorator('keys', { initialValue: fillBackData?fillBackData.customUnit?fillBackData.customUnit:[]:[] });
+    // getFieldDecorator('keys', { initialValue: fillBackData?fillBackData.customUnit?fillBackData.customUnit:[]:[] });
     return (
       <div className='fullCol fadeIn fixHeight'>
         <div className='fullCol-fullChild'>
           <div style={{ display:'flex',justifyContent: 'space-between' }}>
             <h3 style={{ fontWeight: 'bold' }}>基本信息</h3>
-            <Button type='primary' onClick={this.onSubmit}>保存</Button>
+            <Button type='primary' loading={saveLoading} onClick={this.onSubmit}>保存</Button>
           </div>
           <Row>
             <Col span={8}>
@@ -239,7 +262,7 @@ class EditDrugDirectory extends PureComponent{
                     <label>最小发药单位</label>
                   </div>
                   <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
-                    <div className='ant-form-item-control'> {fillBackData?this.getMaPInfo(fillBackData.listTransforsVo,3) :''}</div>
+                    <div className='ant-form-item-control'>{minUnit}</div>
                   </div>
                 </Col>
                 <Col span={10}>
@@ -247,7 +270,7 @@ class EditDrugDirectory extends PureComponent{
                   <label>包装规格</label>
                 </div>
                 <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
-                  <div className='ant-form-item-control'>{fillBackData?this.getMaPInfo(fillBackData.listTransforsVo,2) :''}</div>
+                  <div className='ant-form-item-control'>{packageSpecification}</div>
                 </div>
                 </Col>
                 <Col span={10}>
@@ -255,7 +278,7 @@ class EditDrugDirectory extends PureComponent{
                     <label>整包装单位</label>
                   </div>
                   <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
-                    <div className='ant-form-item-control'>{fillBackData?this.getMaPInfo(fillBackData.listTransforsVo,1) :''}</div>
+                    <div className='ant-form-item-control'>{packUnit}</div>
                   </div>
                 </Col>
                 <Col span={10}>
@@ -292,7 +315,12 @@ class EditDrugDirectory extends PureComponent{
                       getFieldDecorator(`upperQuantity`,{
                         initialValue:fillBackData?fillBackData.upperQuantity:''
                       })(
-                        <Input placeholder='请输入' />
+                        <InputNumber
+                          onChange={(value) => {this.changeQuantity(value, 'max')}}
+                          min={min}
+                          precision={0}
+                          style={{width: '100%'}}
+                          placeholder='请输入' />
                       )
                     }
                   </FormItem>
@@ -303,7 +331,11 @@ class EditDrugDirectory extends PureComponent{
                       getFieldDecorator(`purchaseQuantity`,{
                         initialValue: fillBackData?fillBackData.purchaseQuantity : ''
                       })(
-                        <Input placeholder='请输入'/>
+                        <InputNumber
+                          min={0}
+                          precision={0}
+                          style={{width: '100%'}}
+                          placeholder='请输入'/>
                       )
                     }
                   </FormItem>
@@ -316,7 +348,13 @@ class EditDrugDirectory extends PureComponent{
                       getFieldDecorator(`downQuantity`,{
                         initialValue: fillBackData?fillBackData.downQuantity:'',
                       })(
-                        <Input placeholder='请输入' />
+                        <InputNumber
+                          onChange={(value) => {this.changeQuantity(value, 'min')}}
+                          precision={0}
+                          min={0}
+                          max={max}
+                          style={{width: '100%'}}
+                          placeholder='请输入' />
                       )
                     }
                   </FormItem>

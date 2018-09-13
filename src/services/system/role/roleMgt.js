@@ -32,3 +32,11 @@ export function RoleDetail(options){
     body: options
   })
 }
+//角色详情列表
+export function allMenuList(options) {
+  return request(`${_local}/a/spd/sys/menu/allMenuList`, {
+    method: 'GET',
+    type: 'formData',
+    body: options
+  })
+}

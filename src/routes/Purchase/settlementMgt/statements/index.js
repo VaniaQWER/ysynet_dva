@@ -5,9 +5,11 @@ import React, {PureComponent} from 'react';
 
 import {Link} from 'react-router-dom';
 
-import { Form, Row, Col, Input, Button, Table, DatePicker } from 'antd';
+import { Form, Row, Col, Input, Button, DatePicker } from 'antd';
 
-import {createData} from '../../../../common/data.js';
+import {settlementMgt} from '../../../../api/purchase/purchase';
+
+import RemoteTable from '../../../../components/TableGrid/index';
 
 const FormItem = Form.Item;
 
@@ -24,34 +26,30 @@ const formItemLayout = {
     },
 };
 
-let dataSource = createData();
-
-dataSource = dataSource.map( (item) => ( {...item, key: item.id, fstate: item.fstate === "00"? "确认" : "未确认"} ) )
-
 const columns = [
     {
     title: '结算单',
-    dataIndex: 'planNo',
-    render: (text) => (
+    dataIndex: 'settleBillNo',
+    render: (text, record) => (
         <span>
-            <Link to={{ pathname: `/purchase/settlementMgt/statements/details`}}>{text}</Link>
+            <Link to={{ pathname: `/purchase/settlementMgt/statements/details/${record.id}`}}>{text}</Link>
         </span>
     )
 }, {
     title: '供应商',
-    dataIndex: 'productCompany'
+    dataIndex: 'cTMASupplierName'
 }, {
     title: '状态',
-    dataIndex: 'fstate'
+    dataIndex: 'settleStatus'
 }, {
     title: '结算总金额',
-    dataIndex: 'totalMoney',
+    dataIndex: 'settleSumAmount',
     render: (text,record,index) =>{
         return (index*1500*1.5 + 2000)
     }
 }, {
     title: '对账单数量',
-    dataIndex: 'billNum',
+    dataIndex: 'settleSumQty',
     render: (text,record,index) =>{
         return index %3 === 0 ? index + 2: index + 3
     }
@@ -60,53 +58,54 @@ const columns = [
     dataIndex: 'createUser'
 }, {
     title: '结算时间',
-    dataIndex: 'planTime'
+    dataIndex: 'createDate'
 }]
 
 
 class SettlementMgt extends PureComponent {
     state = {
-        showNewSummary: false
-    }
-    showNewSummary = () => {
-        let {showNewSummary} = this.state;
-        showNewSummary = !showNewSummary;
-        this.setState({
-            showNewSummary
-        });
-    }
-    handleCancel = (e) => {
-        this.showNewSummary();
-    }
-    handleOk = (e) => {
-        this.showNewSummary();
-    }
-    onChange = (e) => {
-        console.log(e)
+        query: {}
     }
     handleSearch = (e) => {
-        console.log(e)
+        this.props.form.validateFields((err, values) => {
+            let {time} = values;
+            if(time && time.length > 0) {
+                values.startTime = time[0].format('YYYY-MM-DD');
+                values.endTime = time[1].format('YYYY-MM-DD');
+            }else {
+                values.startTime = '';
+                values.endTime = '';
+            };
+            delete values.time;
+            this.setState({
+                query: values
+            });
+        })
     }
     handleReset = (e) => {
         this.props.form.resetFields();
+        this.setState({
+            query: {}
+        });
     }
     render() {
         let {getFieldDecorator} = this.props.form;
+        let {query} = this.state;
         return (
             <div className="ysynet-main-content">
                 <Form onSubmit={this.handleSearch}>
                     <Row gutter={30}>
                         <Col span={8}>
                             <FormItem label={`汇总单`} {...formItemLayout}>
-                                {getFieldDecorator('summarSheet', {})(
+                                {getFieldDecorator('settleBillNo', {})(
                                     <Input/>
                                 )}
                             </FormItem>
                         </Col>
                         <Col span={8}>
                             <FormItem label={`汇总日期`} {...formItemLayout}>
-                                {getFieldDecorator('summarData', {})(
-                                    <RangePicker onChange={this.onChange} />
+                                {getFieldDecorator('time', {})(
+                                    <RangePicker />
                                 )}
                             </FormItem>
                         </Col>
@@ -122,18 +121,12 @@ class SettlementMgt extends PureComponent {
                         history.push({pathname:"/purchase/settlementMgt/statements/newSettlement"});
                     }}>新建结算</Button>
                 </Row>
-                <Table
-                    bordered={true}
+                <RemoteTable
+                    query={query}
+                    url={settlementMgt.SETTLE_LIST}
                     columns={columns}
-                    dataSource={dataSource}
-                    pagination={{
-                      size: 'small',
-                      showQuickJumper: true,
-                      showSizeChanger : true,
-                      showTotal: (total) => {
-                        return `总共${total}个项目`;
-                      }
-                    }}
+                    rowKey={'id'}
+                    scroll={{x: '100%'}}
                 />
             </div>
         )

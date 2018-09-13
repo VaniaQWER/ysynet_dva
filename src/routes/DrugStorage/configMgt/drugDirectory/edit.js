@@ -119,29 +119,32 @@ class EditDrugDirectory extends PureComponent{
       onOk:()=>{
         this.props.form.validateFields((err,values)=>{
           if(!err){
+            let {replanUnitSelect} = this.state;
             const { customUnit ,  supplier , replanUnitCode , replanStore , purchaseQuantity ,
               upperQuantity , downQuantity  }  =values; 
-              let postData = {
-                customUnit,
-                supplier,
-                drugInfo:{
-                  replanUnitCode , replanStore , purchaseQuantity ,
-                  upperQuantity , downQuantity ,
-                  id:this.props.match.params.id,
-                  medDrugType:this.state.fillBackData.medDrugType,
-                  drugCode:this.state.fillBackData.drugCode||'',
-                  bigDrugCode:this.state.fillBackData.bigDrugCode,
-                  hisDrugCode:this.state.fillBackData.hisDrugCode,
-                }
+            let replanUnit = replanUnitSelect.filter(item => item.unitCode === replanUnitCode)[0].unit;
+            let postData = {
+              customUnit,
+              supplier,
+              drugInfo:{
+                replanUnit,
+                replanUnitCode , replanStore , purchaseQuantity ,
+                upperQuantity , downQuantity ,
+                id:this.props.match.params.id,
+                medDrugType:this.state.fillBackData.medDrugType,
+                drugCode:this.state.fillBackData.drugCode||'',
+                bigDrugCode:this.state.fillBackData.bigDrugCode,
+                hisDrugCode:this.state.fillBackData.hisDrugCode,
               }
-              if(this.state.medDrugType===1){//处理目录内的数据
-                const supplierStateList = this.state.supplierList;
-                let  supplierRet = supplierStateList.map((item,index)=>{
-                  item = Object.assign(item,supplier[index])//supplier[index],item
-                  return item
-                })
-                postData.supplier = supplierRet;
-              }
+            }
+            if(this.state.medDrugType===1){//处理目录内的数据
+              const supplierStateList = this.state.supplierList;
+              let  supplierRet = supplierStateList.map((item,index)=>{
+                item = Object.assign(item,supplier[index])//supplier[index],item
+                return item
+              })
+              postData.supplier = supplierRet;
+            }
             console.log(JSON.stringify(postData));
             //发出请求
             this.props.dispatch({

@@ -23,7 +23,7 @@ class Details extends PureComponent{
     componentDidMount = () => {
         this.queryDetail();
     }
-
+    //获取详情
     queryDetail = () => {
         this.props.dispatch({
             type: 'wareHouse/putawayRequest',
@@ -45,17 +45,17 @@ class Details extends PureComponent{
                 })
                 this.setState({
                     loading: false,
-                    putawayInfo: data
+                    putawayInfo: data,
                 })
             }
         });
     }
 
-    callback = (key) => {
+    change = (key) => {
         if(key === "1") {
             this.setState({
                 btnShow: true,
-                defaultActiveKey: key
+                defaultActiveKey: key,
             });
         };
         if(key === "2") {
@@ -88,20 +88,13 @@ class Details extends PureComponent{
         let detailVos = selectedRows.map((item)=>{
             return {
                 id: item.id,
-                // directiveStore: item.directiveStore,
                 realStore: item.realStore,
-                // unit: item.unit,
                 bigDrugCode: item.bigDrugCode,
                 hisDrugCode: item.hisDrugCode,
-                // genericName: item.genericName,
                 realNum: item.realNum,
                 drugCode: item.drugCode
-                // specification: item.specification,
-                // manufactureName: item.manufactureName,
-                // packageSpecification: item.packageSpecification,
             }
         });
-        console.log(detailVos);
         this.props.dispatch({
             type: 'wareHouse/putSaveCheck',
             payload: {
@@ -166,7 +159,7 @@ class Details extends PureComponent{
                 )   
             },{
                 title: '单位',
-                dataIndex: 'unit'
+                dataIndex: 'replanUnit'
             }, {
                 title: '通用名称',
                 dataIndex: "ctmmGenericName",
@@ -205,7 +198,7 @@ class Details extends PureComponent{
                 dataIndex: "realNum" 
             },{
                 title: '单位',
-                dataIndex: 'unit'
+                dataIndex: 'replanUnit'
             }, {
                 title: '通用名称',
                 dataIndex: "ctmmGenericName",
@@ -279,7 +272,7 @@ class Details extends PureComponent{
                 </div>
                 <Tabs 
                     activeKey={defaultActiveKey} 
-                    onChange={this.callback} 
+                    onChange={this.change} 
                     tabBarExtraContent={defaultActiveKey === '1' && unShevleDetailList && unShevleDetailList.length > 0? <Button onClick={this.saveCheck} loading={confirmLoading} type='primary'>确认上架</Button> : null}
                 >
                     <TabPane tab="待上架" key="1">

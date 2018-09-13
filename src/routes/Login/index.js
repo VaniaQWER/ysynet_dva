@@ -1,5 +1,5 @@
 import React, { PureComponent } from 'react';
-import { Form, Button, Checkbox, Input, Icon } from 'antd';
+import { Form, Button, Checkbox, Input, Icon, message } from 'antd';
 import { connect } from 'dva';
 import { menuFormat } from '../../utils/utils';
 // import querystring from 'querystring';
@@ -34,6 +34,9 @@ class Login extends PureComponent{
       payload: { username, password },
       callback: (data) => {
         this.setState({ loading: false });
+        if(!data) {
+          return message.warning('用户或密码错误, 请重试.');
+        };
         if(data.deptInfo && data.deptInfo.length){
           // 正式数据
           let deptInfo = data.deptInfo;
@@ -54,7 +57,7 @@ class Login extends PureComponent{
           // history.push({ pathname: '/subSystem' })
           // history.push({ pathname: '/sys/drugDirectory/directory' })
 
-        }
+        };
       }
     })
   }

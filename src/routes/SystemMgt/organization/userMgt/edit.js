@@ -36,28 +36,36 @@ class AddUser extends PureComponent{
     loading: false,
     btnLoading: false,
     selected: [], // 所属部门
-    selectedRows: [],
+    selectedRows: [],   //部门
     userSelected: [], // 角色分配
-    UserselectedRows: [],
+    UserselectedRows: [],   //角色
     modalSelected: [], // 人员选择
     modalSelectedRows: []
   }
   componentWillMount = () =>{
-    this.setState({ loading: true })
+    // this.setState({ loading: true })
     const { loginName } = this.props.match.params;
     this.props.dispatch({
       type: 'Organization/findUserInfo',
       payload: { loginName },
       callback: (data) =>{
-        this.setState({ baseData: data, phone: data.phone, loading: false })
+        let UserselectedRows = data.listRole.filter(item => item.checked === 1);
+        let selectedRows = data.listDept.filter(item => item.checked === 1);
+        this.setState({ 
+          baseData: data, 
+          phone: data.phone, 
+          loading: false,
+          UserselectedRows,
+          selectedRows
+        })
       }
     })
   }
   save = () =>{
     let userInfo = {}, deptList = [],roleList = [];
-    let { selectedRows, userSelected, baseData } = this.state;
+    let { selectedRows, UserselectedRows, baseData } = this.state;
     selectedRows.map(item => deptList.push({ deptType: item.deptType, id: item.id }));
-    userSelected.map(item => roleList.push({ id: item }));
+    UserselectedRows.map(item => roleList.push({ id: item.id }));
     userInfo.deptList = deptList;
     userInfo.roleList = roleList;
     userInfo.loginName = baseData.loginName;
@@ -71,14 +79,13 @@ class AddUser extends PureComponent{
       payload: { userInfo },
       callback: () =>{
         this.setState({ btnLoading: false });
-        history.push({ pathname: '/sys/user' })
+        history.push({ pathname: '/sys/organization/userMgt' })
       } 
     })
   }
   render(){
     const { baseData, loading, btnLoading, phone } = this.state;
     return (
-      <div>
       <div className='fullCol fadeIn'>
         <div className='fullCol-fullChild'>
           <div style={{ display:'flex',justifyContent: 'space-between' }}>
@@ -149,6 +156,8 @@ class AddUser extends PureComponent{
               }),
               selectedRowKeys: this.state.selected,
               onChange: (selectedRowKeys, selectedRows) => {
+                console.log(selectedRowKeys);
+                
                 this.setState({selected: selectedRowKeys, selectedRows: selectedRows})
               }
             }}
@@ -176,12 +185,12 @@ class AddUser extends PureComponent{
               }), 
               selectedRowKeys: this.state.userSelected,
               onChange: (selectedRowKeys, selectedRows) => {
+                console.log(selectedRowKeys);
                 this.setState({userSelected: selectedRowKeys, UserselectedRows: selectedRows})
               }
             }}
           />
         </div>
-      </div>
       </div>
     )
   }
