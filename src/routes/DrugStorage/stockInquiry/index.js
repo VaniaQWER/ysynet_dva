@@ -68,7 +68,11 @@ const columns = [
 }, {
   title: '数量',
   dataIndex: 'totalStoreNum',
-  width: 200,
+  width: 100,
+}, {
+  title: '库存数量',
+  width: 100,
+  dataIndex: 'usableQuantity',
 }, {
   title: '剂型',
   dataIndex: 'ctmmDosageFormDesc',
