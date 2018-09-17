@@ -7,42 +7,51 @@
  * @file 系统管理--角色管理--角色-新增
  */
 import React, { PureComponent } from 'react';
-import { Form, Row, Col, Input, Button, Table, message} from 'antd';
+import { Form, Row, Col, Input, Button, message, Tree, Spin} from 'antd';
 import { formItemLayout } from '../../../../utils/commonStyles';
 import { menuFormat } from '../../../../utils/utils';
 import _ from 'lodash';
 import { connect } from 'dva';
 const FormItem = Form.Item;
-
+const {TreeNode} = Tree;
 class EditRoleMgt extends PureComponent{
 
   state = {
     loading: false,
     baseInfo:{},//回显信息
-    selectRowKeys:[],
+    checkedKeys:[],
     dataSource: [],
+    saveLoading: false,
   }
 
    //提交表单
-   onSubmit = () => {
+  onSubmit = () => {
     this.props.form.validateFieldsAndScroll((err,values)=>{
       if(!err){
-        const { baseInfo , selectRowKeys } = this.state;
+        this.setState({
+          saveLoading: true
+        });
+        let { baseInfo , checkedKeys } = this.state;
+        checkedKeys.push('1');//添加功能菜单ID;
         const postData ={
           id:baseInfo.id,
-          menuIds:selectRowKeys,
+          menuIds:checkedKeys,
           name:baseInfo.name,
           ...values
         }
+        console.log(postData);
+        
         this.props.dispatch({
           type:'systemRole/RoleSave',
           payload:postData,
           callback: (data) => {
+            this.setState({
+              saveLoading: false
+            });
             message.success('修改成功！')
             this.props.history.push('/sys/role/roleMgt')
           }
         })
-
       }
     })  
   }
@@ -53,9 +62,10 @@ class EditRoleMgt extends PureComponent{
       type: 'systemRole/RoleDetail',
       payload: this.props.match.params,//{id:[]}
       callback: (data) => {
+        let checkedKeys = data.data.menuIds.split(',').filter(item => item !== '1');
         this.setState({
           baseInfo:data.data,
-          selectRowKeys:data.data.menuIds.split(','),
+          checkedKeys,
         })
       }
     });
@@ -87,39 +97,51 @@ class EditRoleMgt extends PureComponent{
     };
     return ids;
   }
-  //选中
-  setSelectRowKeys = (record, selected, selectedRows) => {
-    let {selectRowKeys} = this.state;
-    let ids = this.getIds(record);
-    if(selected) {  //选中push
-      selectRowKeys = [...new Set([...selectRowKeys, ...ids])];
-    }else {       //反选去除
-      selectRowKeys = _.difference(selectRowKeys, ids);
-    }
-    this.setState({selectRowKeys: selectRowKeys})
+  //标记
+  titleRender = (item) => {
+    return <p style={{margin: 0}}>
+            <span style={{width: 150, display: 'inline-block'}}>{item.name}</span>
+            <span>{item.href}</span>
+           </p>
   }
-
-
+  //渲染树形菜单
+  renderTreeNodes = (data) => {
+    return data.map((item) => {
+      if (item.children) {
+        return (
+          <TreeNode title={this.titleRender(item)} key={item.id} dataRef={item}>
+            {this.renderTreeNodes(item.children)}
+          </TreeNode>
+        );
+      }
+      return <TreeNode title={this.titleRender(item)} key={item.id} dataRef={item} />;
+    });
+  }
+  //选中
+  onCheck = (checkedKey, e) => {
+    let {checkedKeys} = this.state;
+    let ids = this.getIds(e.node.props.dataRef);
+    if(e.checked) {  //选中push
+      checkedKeys = [...new Set([...checkedKeys, ...ids])];
+    }else {       //反选去除
+      checkedKeys = _.difference(checkedKeys, ids);
+    }
+    this.setState({checkedKeys});
+  }
   render(){
     const { getFieldDecorator } = this.props.form;
-    const {baseInfo, selectRowKeys, dataSource, loading} = this.state;
-    const columns = [
-      {
-        title: '菜单名称',
-        dataIndex: 'name',
-      },
-      {
-        title: '路径',
-        dataIndex: 'href',
-      }
-    ]
-    console.log(dataSource);
+    const {baseInfo, checkedKeys, dataSource, loading, saveLoading} = this.state;
     return (
       <div className='fullCol'>
         <div className='fullCol-fullChild'>
           <h3>
             基本信息
-            <Button type='primary' style={{float:'right'}} onClick={this.onSubmit}>保存</Button>
+            <Button 
+              type='primary' 
+              style={{float:'right'}} 
+              onClick={this.onSubmit}
+              loading={saveLoading}
+            >保存</Button>
           </h3>
           <Form>
               <Row gutter={30}>
@@ -149,27 +171,20 @@ class EditRoleMgt extends PureComponent{
               </Row>
           </Form>
         </div>
-        <div className='detailCard'>
-          <h3>角色权限</h3>
-          <hr className='hr'/>
-          <Table
-            bordered
-            loading={loading}
-            dataSource={dataSource}
-            style={{marginTop: 20}}
-            columns={columns}
-            scroll={{ x: '100%' }}
-            rowSelection={{
-              selectedRowKeys:selectRowKeys,
-              onSelect: this.setSelectRowKeys,
-              onSelectAll: (selected, selectedRows, changeRows) => {
-                let ids = selectedRows.map(item => item.id);
-                this.setState({selectRowKeys: ids});
-              },
-            }}
-            rowKey='id'
-          />
-        </div>
+        <Spin spinning={loading}>
+          <div className='detailCard'>
+            <h3>角色权限</h3>
+            <hr className='hr'/>
+            <Tree
+              checkable
+              checkedKeys={dataSource.length > 0 ? checkedKeys : []}
+              checkStrictly
+              onCheck={this.onCheck}
+            >
+              {this.renderTreeNodes(dataSource)}
+            </Tree>
+          </div>
+        </Spin>
       </div>
     )
   }

@@ -64,7 +64,7 @@ class DetailsApplyAccept extends PureComponent{
     loading: true
   }
   componentDidMount() {
-    let {applyCode} = this.props.match.params;
+    let applyCode = this.props.match.params.id;
     this.props.dispatch({
       type: 'pharmacy/drugsForInfo',
       payload: { applyCode },

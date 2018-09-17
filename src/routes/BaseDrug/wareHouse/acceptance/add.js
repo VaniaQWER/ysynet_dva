@@ -4,7 +4,7 @@
 * @Last Modified time: 2018-07-24 13:13:55 
  */
 import React, { PureComponent } from 'react';
-import { Table ,Row, Col, Tabs, Button, Tooltip, message, Icon, Input } from 'antd';
+import { Table ,Row, Col, Tabs, Button, Spin, Tooltip, message, Icon, Input } from 'antd';
 import {connect} from 'dva';
 const columns = [
   {
@@ -90,91 +90,88 @@ class AddNewAcceptance extends PureComponent{
   constructor(props){
     super(props)
     this.state={
+      checkLoading: false,
       detailInfo: {},
+      activeKey: '1',
       btnShow: false,
       loading: false,
-      id: '',
       info: {},
-      selected: []
+      selected: [],
+      acceptanceCode: ''
     }
   }
 
   queryDetail() {
     this.setState({loading: true});
+    console.log(this.props);
+    
     this.props.dispatch({
-      type: 'base/checkDetail',
+      type: 'base/getCheckDetail',
       payload: {
-        acceptanceCode: this.state.id
+        acceptanceCode: this.state.acceptanceCode
       },
       callback: (data) => {
         this.setState({
           loading: false,
-          info: data
+          info: data,
+          activeKey: data.status + '',
+          btnShow: data.status === 1
         })
       }
     })
   }
 
   rowChange = (selectedRowKeys, selectedRows) => {
-    this.setState({selected: selectedRowKeys, selectedRows: selectedRows})
+    this.setState({selected: selectedRowKeys});
   }
 
+  //确认验收
   saveCheck = () => {
     let {selected, info} = this.state;
-    let {acceptanceCode} = info;
     if(selected.length === 0) {
       message.error('至少选择一条数据');
       return;
     };
-    let rommAcceptList = selected.map(item=>{
-      return {
-        id: item
-      }
+    this.setState({
+      checkLoading: true
     });
+    let rommAcceptList = selected.map(item => ({id: item}));
     this.props.dispatch({
-      type: 'pharmacy/saveCheck',
+      type: 'base/saveCheck',
       payload: {
         rommAcceptList,
-        acceptanceCode
+        acceptanceCode: info.accordingCode
       },
       callback: (data) => {
         message.success('确认验收成功');
-        this.props.history.go(1);
+        this.setState({
+          checkLoading: false
+        });
+        this.queryDetail();
       }
     })
   }
 
   search = (value) => {
-    this.setState({loading: true});
-    this.props.dispatch({
-      type: 'base/checkDetail',
-      payload: {
-        acceptanceCode: value
-      },
-      callback: (data) => {
-        this.setState({
-          loading: false,
-          info: data
-        })
-      }
-    })
+    this.setState({
+      loading: true,
+      acceptanceCode: value
+    });
+    this.queryDetail();
   }
  
-  tabsChange = (key) =>{
-    let {info} = this.state;
-    let {listUnCheck} = info;
-    
-    if(key === '2') {
-      this.setState({btnShow: false});
+  tabsChange = (activeKey) =>{
+    if(activeKey === '2') {
+      this.setState({activeKey, btnShow: false});
     };
-    if(key === '1' && listUnCheck !== undefined && listUnCheck.length !== 0) {
-      this.setState({btnShow: true});
+    if(activeKey === '1') {
+      this.setState({activeKey, btnShow: true});
     };
   }
 
   render(){
-    let {btnShow, loading, info} = this.state;
-    let {listCheck, listUnCheck} = info;
+    let {btnShow, loading, info, checkLoading, activeKey } = this.state;
+    let {checkListVos, uncheckListVos} = info;
     return (
       <div className='fullCol' style={{padding: '0 24px 24px', background: 'rgb(240, 242, 245)'}}>
         <div className='fullCol-fullChild' style={{marginLeft: -24, marginRight: -24}}>
@@ -195,7 +192,6 @@ class AddNewAcceptance extends PureComponent{
               />
             </Col>
           </Row>
-          
           <Row style={{marginTop: 10}}>
             <Col span={6}>
               <div className="ant-form-item-label ant-col-xs-24 ant-col-sm-5">
@@ -224,75 +220,87 @@ class AddNewAcceptance extends PureComponent{
           </Row>
         </div>
         <div className='detailCard' style={{margin: '-10px -6px'}}>
-          <h3>单据信息</h3>
-          <Row>
-            <Col span={8}>
+          <Spin spinning={loading}>
+            <h3>单据信息</h3>
+            <Row>
+              <Col span={8}>
                 <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
                     <label>出库单</label>
                 </div>
                 <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
                   <div className='ant-form-item-control'>{info.outStoreCode || ''}</div>
                 </div>
-            </Col>
-            <Col span={8}>
-                <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
-                    <label>申领单</label>
-                </div>
-                <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
-                  <div className='ant-form-item-control'>{info.acceptanceCode || ''}</div>
-                </div>
-            </Col>
-            <Col span={8}>
-                <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
-                    <label>状态</label>
-                </div>
-                <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
-                  <div className='ant-form-item-control'>{info.acceptStatusName || ''}</div>
-                </div>
-            </Col>
-            <Col span={8}>
-                <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
-                    <label>配货部门</label>
-                </div>
-                <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
-                  <div className='ant-form-item-control'>{info.department || ''}</div>
-                </div>
-            </Col>
-            <Col span={8}>
-                <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
-                    <label>发起人</label>
-                </div>
-                <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
-                  <div className='ant-form-item-control'>{info.createUserName || ''}</div>
-                </div>
-            </Col>
-            <Col span={8}>
-                <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
-                    <label>发起时间</label>
-                </div>
-                <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
-                  <div className='ant-form-item-control'>{info.createDate || ''}</div>
-                </div>
-            </Col>
-            <Col span={8}>
-                <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
-                    <label>验收时间</label>
-                </div>
-                <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
-                  <div className='ant-form-item-control'>{info.receptionTime || ''}</div>
-                </div>
-            </Col>
-          </Row>
+              </Col>
+              <Col span={8}>
+                  <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
+                      <label>申领单</label>
+                  </div>
+                  <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
+                    <div className='ant-form-item-control'>{info.applyCode || ''}</div>
+                  </div>
+              </Col>
+              <Col span={8}>
+                  <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
+                      <label>状态</label>
+                  </div>
+                  <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
+                    <div className='ant-form-item-control'>{info.statusName || ''}</div>
+                  </div>
+              </Col>
+            </Row>
+            <Row>
+              <Col span={8}>
+                  <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
+                      <label>配货部门</label>
+                  </div>
+                  <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
+                    <div className='ant-form-item-control'>{info.accordingDept || ''}</div>
+                  </div>
+              </Col>
+              <Col span={8}>
+                  <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
+                      <label>发起人</label>
+                  </div>
+                  <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
+                    <div className='ant-form-item-control'>{info.launchUser || ''}</div>
+                  </div>
+              </Col>
+              <Col span={8}>
+                  <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
+                      <label>发起时间</label>
+                  </div>
+                  <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
+                    <div className='ant-form-item-control'>{info.launchDate || ''}</div>
+                  </div>
+              </Col>
+            </Row>
+            <Row>
+              <Col span={8}>
+                  <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
+                      <label>验收时间</label>
+                  </div>
+                  <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
+                    <div className='ant-form-item-control'>{info.accordingDate || ''}</div>
+                  </div>
+              </Col>
+            </Row>
+          </Spin>
         </div>
         <div className='detailCard' style={{margin: '30px -6px'}}>
-          <Tabs onChange={this.tabsChange} tabBarExtraContent={ btnShow && listUnCheck && listUnCheck.length > 0 ? <Button type='primary' onClick={this.saveCheck}>确认验收</Button> : null}>
+          <Tabs 
+            activeKey={activeKey} 
+            onChange={this.tabsChange} 
+            tabBarExtraContent={ btnShow && uncheckListVos && uncheckListVos.length > 0? 
+              <Button loading={checkLoading} type='primary' onClick={this.saveCheck}>确认验收</Button> : 
+              null
+            }>
             <TabPane tab="待验收" key="1">
               <Table
                 bordered
                 loading={loading}
-                scroll={{x: true}}
+                scroll={{x: '150%'}}
                 columns={columns}
-                dataSource={listUnCheck || []}
+                dataSource={uncheckListVos || []}
                 pagination={false}
                 rowKey={'id'}
                 rowSelection={{
@@ -305,10 +313,10 @@ class AddNewAcceptance extends PureComponent{
               <Table
                 loading={loading}
                 bordered
-                scroll={{x: true}}
+                scroll={{x: '150%'}}
+                rowKey={'id'}
                 columns={columns}
-                dataSource={listCheck || []}
-                rowKey={'realReceiveStore'}
+                dataSource={checkListVos || []}
                 pagination={false}
               />
             </TabPane>

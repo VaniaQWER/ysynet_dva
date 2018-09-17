@@ -19,7 +19,7 @@ const columns = [
    title: '出库单',
    dataIndex: 'outStoreCode',
    width:150,
-   render:(text, record)=>(<Link to={{pathname: `/pharmacy/wareHouse/acceptance/details/id=${record.acceptanceCode}&state=${record.acceptanceStatus}`}}>{text}</Link>)
+   render:(text, record)=>(<Link to={{pathname: `/baseDrug/wareHouse/acceptance/details/${record.accordingCode}`}}>{text}</Link>)
   },
   {
     title: '申领单',
@@ -34,7 +34,7 @@ const columns = [
   {
     title: '状态',
     width:150,
-    dataIndex: 'status',
+    dataIndex: 'statusName',
   },
   {
     title: '发起人',
@@ -77,7 +77,7 @@ class Acceptance extends PureComponent{
         <SearchForm query={this.queryHandler} />
         <Row>
           <Button type='primary' className='button-gap'>
-            <Link to={{pathname:`/addNewAcceptance`}}>新建验收</Link>
+            <Link to={{pathname:`/baseAddNewAcceptance`}}>新建验收</Link>
           </Button>
         </Row>
         <RemoteTable
@@ -123,18 +123,18 @@ class SearchFormWrapper extends PureComponent {
    this.props.form.validateFields((err, values) => {
     let {initTime, checkTime} = values;
     if(initTime && initTime.length !== 0){
-      values.startCreateTime = initTime[0].format('YYYY-MM-DD');
-      values.endCreateTime = initTime[1].format('YYYY-MM-DD');
+      values.launchStartTime = initTime[0].format('YYYY-MM-DD');
+      values.launchEndTime = initTime[1].format('YYYY-MM-DD');
     }else {
-      values.startCreateTime = '';
-      values.endCreateTime = '';
+      values.launchStartTime = '';
+      values.launchEndTime = '';
     };
     if(checkTime && checkTime.length !== 0){
-      values.receptionStartTime = checkTime[0].format('YYYY-MM-DD');
-      values.receptionEndTime = checkTime[1].format('YYYY-MM-DD');
+      values.checkStartTime = checkTime[0].format('YYYY-MM-DD');
+      values.checkEndTime = checkTime[1].format('YYYY-MM-DD');
     }else {
-      values.receptionStartTime = '';
-      values.receptionEndTime = '';
+      values.checkStartTime = '';
+      values.checkEndTime = '';
     };
     delete values.initTime;
     delete values.checkTime;
@@ -158,14 +158,14 @@ class SearchFormWrapper extends PureComponent {
        <Row gutter={30}>
          <Col span={8}>
            <FormItem label={`单据`} {...formItemLayout}>
-             {getFieldDecorator('acceptanceCode', {})(
+             {getFieldDecorator('bill', {})(
               <Input placeholder='入库单/配送单/订单号'/>
              )}
            </FormItem>
          </Col>
          <Col span={8} >
            <FormItem label={`状态`} {...formItemLayout}>
-             {getFieldDecorator('acceptanceStatus')(
+             {getFieldDecorator('status')(
               <Select 
                 showSearch
                 placeholder={'请选择'}

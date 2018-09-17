@@ -33,20 +33,22 @@ class NewAddGoodsAdjust extends PureComponent{
   }
 
   addProduct = () => {
-    let {modalSelected, dataSource} = this.state;
-    
-    if(modalSelected.length === 0) {
+    let {modalSelectedRows, dataSource} = this.state;
+    if(modalSelectedRows.length === 0) {
       message.warning('请选择一条数据');
       return;
     };
-    modalSelected = modalSelected.map(item=>{
+    console.log();
+    
+    modalSelectedRows = modalSelectedRows.map(item=>{
       return {
         drugCode: item.drugCode
       }
     });
+    
     this.setState({okLoading: true})
     let payload = {
-      detailList: modalSelected,
+      detailList: modalSelectedRows,
       locType: '1'
     };
     this.props.dispatch({

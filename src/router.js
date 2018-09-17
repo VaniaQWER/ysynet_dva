@@ -1,5 +1,5 @@
 import React from 'react';
-import { Router, Route, Switch } from 'dva/router';
+import { Router, Route, Switch, Redirect } from 'dva/router';
 import { LocaleProvider, Spin } from 'antd';
 import zhCN from 'antd/lib/locale-provider/zh_CN';
 import dynamic from 'dva/dynamic';
@@ -23,9 +23,9 @@ import PharmacyAddGoodsAdjust from './routes/Pharmacy/goodsAdjust/adjust/add';
 import AddSupplementDoc from './routes/Pharmacy/supplementDoc/supplementDocuments/add';
 import AddInSupplementDoc from './routes/Pharmacy/supplementDoc/supplementDocuments/addIn';
 import BaseAddDrugsApply from './routes/BaseDrug/wareHouse/drugApply/add';
+import BaseAddNewAcceptance from './routes/BaseDrug/wareHouse/acceptance/add';
 import { getNavData } from './common/nav';
 import { getPlainNode } from './utils/utils';
-
 
 
 dynamic.setDefaultLoadingComponent(() => (
@@ -97,9 +97,14 @@ function RouterConfig({ history, app }) {
           <Route path="/AddSupplementDoc" component={AddSupplementDoc}/>
           <Route path="/AddInSupplementDoc" component={AddInSupplementDoc}/>
           <Route path="/baseAddDrugsApply" component={BaseAddDrugsApply} />
+          <Route path="/baseAddNewAcceptance" component={BaseAddNewAcceptance}/>
           {/* <Route path="/home" component={Home}/> */}
           {/* <Route path="/app" render={props => <WorkplaceLayout {...props} {...passProps} />} /> */}
           <Route path="/" render={props => <BasicLayout {...props} {...passProps} />} />
+          <Route path="/" exact render={()=> (
+               <Redirect to='/login' />
+           )}/>
+
         </Switch>
       </Router>
     </LocaleProvider>

@@ -16,7 +16,7 @@ const { Option } = Select;
 const modalColumns = [
   {
     title: '货位',
-    dataIndex: 'locName',
+    dataIndex: 'goodsName',
   },
   {
     title: '货位类型',
@@ -364,7 +364,7 @@ class AddSupplementDocuments extends PureComponent{
               query={query}
               ref="table"
               isJson={true}
-              url={supplementDoc.addProductList}
+              url={supplementDoc.addlist}
               scroll={{x: '180%'}}
               columns={modalColumns}
               rowKey={'drugCode'}

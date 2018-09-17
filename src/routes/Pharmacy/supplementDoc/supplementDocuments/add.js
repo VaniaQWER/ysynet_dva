@@ -15,7 +15,7 @@ const { Option } = Select;
 const modalColumns = [
   {
     title: '货位',
-    dataIndex: 'locName',
+    dataIndex: 'goodsName',
   },
   {
     title: '货位类型',

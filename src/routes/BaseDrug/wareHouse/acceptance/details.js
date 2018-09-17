@@ -4,8 +4,7 @@
 * @Last Modified time: 2018-07-24 13:13:55 
  */
 import React, { PureComponent } from 'react';
-import { Table ,Row, Col, Tabs, Tooltip, Button, message } from 'antd';
-import querystring from 'querystring';
+import { Table ,Row, Col, Tabs, Tooltip, Button, message, Spin } from 'antd';
 import {connect} from 'dva';
 const columns = [
   {
@@ -46,13 +45,11 @@ const columns = [
     title: '剂型',
     width:150,
     dataIndex: 'ctmmDosageFormDesc',
-    
   },
   {
     title: '包装规格',
     width:150,
     dataIndex: 'packageSpecification',
-    render:(text)=>'g'
   },
   {
     title: '批准文号',
@@ -89,14 +86,13 @@ const {TabPane} = Tabs;
 class DetailsNewLibrary extends PureComponent{
   constructor(props){
     super(props)
-    let info = querystring.parse(this.props.match.params.id);
     this.state={
       checkLoading: false,
       detailInfo: {},
-      defaultActiveKey: info.state,
-      btnShow: info.state === '1'? true : false,
+      activeKey: '1',
+      btnShow: false,
       loading: false,
-      id: info.id,
+      id: this.props.match.params.id,
       info: {},
       selected: []
     }
@@ -116,19 +112,20 @@ class DetailsNewLibrary extends PureComponent{
       callback: (data) => {
         this.setState({
           loading: false,
-          info: data
+          info: data,
+          activeKey: data.status + '',
+          btnShow: data.status === 1
         })
       }
     })
   }
 
-  rowChange = (selectedRowKeys, selectedRows) => {
-    this.setState({selected: selectedRowKeys, selectedRows: selectedRows})
+  rowChange = (selectedRowKeys) => {
+    this.setState({selected: selectedRowKeys})
   }
-
+  //确认验收
   saveCheck = () => {
-    let {selected, info} = this.state;
-    let {acceptanceCode} = info;
+    let {selected, id} = this.state;
     if(selected.length === 0) {
       message.error('至少选择一条数据');
       return;
@@ -136,16 +133,12 @@ class DetailsNewLibrary extends PureComponent{
     this.setState({
       checkLoading: true
     });
-    let rommAcceptList = selected.map(item=>{
-      return {
-        id: item
-      }
-    });
+    let rommAcceptList = selected.map(item => ({id: item}));
     this.props.dispatch({
       type: 'base/saveCheck',
       payload: {
         rommAcceptList,
-        acceptanceCode
+        acceptanceCode: id
       },
       callback: (data) => {
         message.success('确认验收成功');
@@ -157,23 +150,22 @@ class DetailsNewLibrary extends PureComponent{
     })
   }
 
-  tabsChange = (key) =>{
-    let {info} = this.state;
-    let {listUnCheck} = info;
-    if(key === '2') {
-      this.setState({btnShow: false});
+  tabsChange = (activeKey) =>{
+    if(activeKey === '2') {
+      this.setState({activeKey, btnShow: false});
     };
-    if(key === '1' && listUnCheck !== undefined && listUnCheck.length !== 0) {
-      this.setState({btnShow: true});
+    if(activeKey === '1') {
+      this.setState({activeKey, btnShow: true});
     };
   }
 
   render(){
-    let {defaultActiveKey, btnShow, loading, info, checkLoading } = this.state;
-    let {listCheck, listUnCheck} = info;
+    let {btnShow, loading, info, checkLoading, activeKey } = this.state;
+    let {checkListVos, uncheckListVos} = info;
     return (
       <div className='fullCol'>
-          <div  className='fullCol-fullChild'>
+        <div  className='fullCol-fullChild'>
+          <Spin spinning={loading}>
             <h3>单据信息</h3>
             <Row>
               <Col span={8}>
@@ -189,7 +181,7 @@ class DetailsNewLibrary extends PureComponent{
                       <label>申领单</label>
                   </div>
                   <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
-                    <div className='ant-form-item-control'>{info.acceptanceCode || ''}</div>
+                    <div className='ant-form-item-control'>{info.applyCode || ''}</div>
                   </div>
               </Col>
               <Col span={8}>
@@ -197,15 +189,17 @@ class DetailsNewLibrary extends PureComponent{
                       <label>状态</label>
                   </div>
                   <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
-                    <div className='ant-form-item-control'>{info.acceptStatusName || ''}</div>
+                    <div className='ant-form-item-control'>{info.statusName || ''}</div>
                   </div>
               </Col>
+            </Row>
+            <Row>
               <Col span={8}>
                   <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
                       <label>配货部门</label>
                   </div>
                   <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
-                    <div className='ant-form-item-control'>{info.department || ''}</div>
+                    <div className='ant-form-item-control'>{info.accordingDept || ''}</div>
                   </div>
               </Col>
               <Col span={8}>
@@ -213,7 +207,7 @@ class DetailsNewLibrary extends PureComponent{
                       <label>发起人</label>
                   </div>
                   <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
-                    <div className='ant-form-item-control'>{info.createUserName || ''}</div>
+                    <div className='ant-form-item-control'>{info.launchUser || ''}</div>
                   </div>
               </Col>
               <Col span={8}>
@@ -221,28 +215,37 @@ class DetailsNewLibrary extends PureComponent{
                       <label>发起时间</label>
                   </div>
                   <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
-                    <div className='ant-form-item-control'>{info.createDate || ''}</div>
+                    <div className='ant-form-item-control'>{info.launchDate || ''}</div>
                   </div>
               </Col>
+            </Row>
+            <Row>
               <Col span={8}>
                   <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
                       <label>验收时间</label>
                   </div>
                   <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
-                    <div className='ant-form-item-control'>{info.receptionTime || ''}</div>
+                    <div className='ant-form-item-control'>{info.accordingDate || ''}</div>
                   </div>
               </Col>
             </Row>
-          </div>
+          </Spin>
+        </div>
         <div className='detailCard'>
-          <Tabs defaultActiveKey={defaultActiveKey} onChange={this.tabsChange} tabBarExtraContent={ btnShow && listUnCheck && listUnCheck.length > 0? <Button loading={checkLoading} type='primary' onClick={this.saveCheck}>确认验收</Button> : null}>
+          <Tabs 
+            activeKey={activeKey} 
+            onChange={this.tabsChange} 
+            tabBarExtraContent={ btnShow && uncheckListVos && uncheckListVos.length > 0? 
+              <Button loading={checkLoading} type='primary' onClick={this.saveCheck}>确认验收</Button> : 
+              null
+            }>
             <TabPane tab="待验收" key="1">
               <Table
                 bordered
                 loading={loading}
-                scroll={{x: true}}
+                scroll={{x: '150%'}}
                 columns={columns}
-                dataSource={listUnCheck || []}
+                dataSource={uncheckListVos || []}
                 pagination={false}
                 rowKey={'id'}
                 rowSelection={{
@@ -255,10 +258,10 @@ class DetailsNewLibrary extends PureComponent{
               <Table
                 loading={loading}
                 bordered
-                scroll={{x: true}}
+                scroll={{x: '150%'}}
+                rowKey={'id'}
                 columns={columns}
-                dataSource={listCheck || []}
-                rowKey={'realReceiveStore'}
+                dataSource={checkListVos || []}
                 pagination={false}
               />
             </TabPane>

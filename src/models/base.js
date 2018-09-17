@@ -7,6 +7,7 @@ import * as pharmacy from '../services/pharmacy/wareHouse';
 import * as wareHouse from '../services/drugStorage/wareHouse';
 import * as outStorageService from '../services/drugStorage/outStorage';
 import * as goodsAdjust from '../services/drugStorage/goodsAdjust';
+import * as baseDrug from '../services/baseDrug/wareHouse';
 import { message } from 'antd';
 
 export default {
@@ -15,6 +16,15 @@ export default {
     replenishDetailsInfo: {}
   },
   effects:{
+    //基数药 - 验收 - 新增验收 - 搜索
+    *getCheckDetail({payload, callback}, {call}) {
+      const data = yield call(baseDrug.getCheckDetail, payload);
+      if(data.code === 200) {
+        callback && callback(data.data);
+      }else {
+        message.error(data.msg);
+      }
+    },
     //货位移动 - 添加产品弹窗确认
     *drugInformation({payload, callback}, {call}) {
       const data = yield call(goodsAdjust.drugInformation, payload);

@@ -103,6 +103,7 @@ class SiderMenu extends PureComponent{
         }
         return href === pathname;
       });
+      // debugger
       if(targetItem.length){
         let name = targetItem[0].name;
         this.setState({ name })

@@ -14,8 +14,7 @@ class DetailsPickSoldOut extends PureComponent{
     this.state = {
       detailsData: {},
       loading: false,
-      activeKey: this.props.match.params.pickingStatus === '1'? '1': '2',
-      pickingStatus: null, // 拣货状态 显示tabs
+      activeKey: '1',
       leftDataSource: [], // 待拣货
       rightDataSource: [], // 已拣货
       selected: [],
@@ -26,7 +25,7 @@ class DetailsPickSoldOut extends PureComponent{
   
   componentWillMount = () =>{
     if (this.props.match.params.pickingOrderNo) {
-      let { pickingOrderNo, pickingStatus } = this.props.match.params;
+      let { pickingOrderNo} = this.props.match.params;
       this.setState({ loading: true });
       this.props.dispatch({
         type:'outStorage/getpickingDetail',
@@ -45,8 +44,7 @@ class DetailsPickSoldOut extends PureComponent{
             loading: false,
             leftDataSource: data.notDetail,
             rightDataSource: data.existDetail,
-            pickingStatus,
-            activeKey: pickingStatus === '1'? '1': '2'
+            activeKey: data.status === 1? '1': '2'
           });
         }
       });
@@ -107,8 +105,14 @@ class DetailsPickSoldOut extends PureComponent{
     })
   }
 
+  changeTabs = (key) => {
+    this.setState({
+      activeKey: key
+    })
+  }
+
   render(){
-    let {detailsData ,loading, pickingStatus, activeKey, leftDataSource, rightDataSource, checkLoading} = this.state;
+    let {detailsData ,loading, activeKey, leftDataSource, rightDataSource, checkLoading} = this.state;
     const columns = [
       {
         title: '通用名称',
@@ -130,7 +134,7 @@ class DetailsPickSoldOut extends PureComponent{
       {
         title: '生产批号',
         width: 150,
-        dataIndex: 'ph'
+        dataIndex: 'lot'
       },
       {
         title: '生产日期',
@@ -223,7 +227,7 @@ class DetailsPickSoldOut extends PureComponent{
                 <label>状态</label>
               </div>
               <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
-                <div className='ant-form-item-control'>{ detailsData.status }</div>
+                <div className='ant-form-item-control'>{ detailsData.statusName }</div>
               </div>
             </Col>
             <Col span={8}>
@@ -238,8 +242,13 @@ class DetailsPickSoldOut extends PureComponent{
           <hr className='hr'/>
           <h3>产品信息</h3>
           <Tabs  
-            defaultActiveKey={activeKey}
-            tabBarExtraContent={ activeKey  === '2' && pickingStatus === '2' ? null: <Button type='primary' loading={checkLoading} onClick={()=>this.onSubmit()}>确认拣货</Button>}>
+            activeKey={activeKey}
+            onChange={this.changeTabs}
+            tabBarExtraContent={ 
+              activeKey  === '1' && leftDataSource && leftDataSource.length >0 ? 
+              <Button type='primary' loading={checkLoading} onClick={()=>this.onSubmit()}>确认拣货</Button> 
+              : null
+            }>
             <TabPane tab="待拣货" key="1">
               <Table
                 bordered

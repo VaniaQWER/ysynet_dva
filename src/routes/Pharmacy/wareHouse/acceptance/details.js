@@ -52,7 +52,6 @@ const columns = [
     title: '包装规格',
     width:150,
     dataIndex: 'packageSpecification',
-    render:(text)=>'g'
   },
   {
     title: '批准文号',
