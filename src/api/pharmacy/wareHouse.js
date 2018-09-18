@@ -3,9 +3,9 @@ import {_local} from '../local';
 export const wareHouse = {
   APPLYLIST: `${_local}/a/apply/list`,    //药品申领列表
   QUERYDRUGBYDEPT: `${_local}/a/common/queryDrugByDept`,    //药品申领 - 新建申领 - 添加产品列表
-  ROOMCHECK: `${_local}/a/room/roomacceptance/roomCheck`,   //申领入库 - 验收列表
+  CHECKACCEPT_LIST: `${_local}/a/checkaccept/list`,   //申领入库 - 验收列表
   FIND_STORE_PAGE: `${_local}/a/roomstore/findStorePage`,   //申领入库 - 入库单管理
-  ROOMACCEPTANCE: `${_local}/a/room/roomacceptance/list`,   //申领入库 - 上架列表
+  ROOMACCEPTANCE: `${_local}/a/checkaccept/shelfList`,   //申领入库 - 上架列表
   QUERY_DRUG_BY_LIST: `${_local}/a/common/queryDrugByList`,  //申领入库 - 新建申领-添加产品
 }
 

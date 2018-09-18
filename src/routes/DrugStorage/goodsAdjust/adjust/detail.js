@@ -33,7 +33,7 @@ const columns = [
   },
   {
     title: '移动单位',
-    dataIndex: 'replanUnit'
+    dataIndex: 'originalUnitName'
   },
   {
     title: '原库存',
@@ -53,7 +53,7 @@ const columns = [
   },
   {
     title: '目的货位单位',
-    dataIndex: 'goalUnit',
+    dataIndex: 'goalUnitName',
   },
   {
     title: '目的货位类型',

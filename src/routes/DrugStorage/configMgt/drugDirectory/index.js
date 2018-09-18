@@ -150,7 +150,7 @@ const columns = [
   },
   {
     title: '单位',
-    dataIndex: 'ctmmDosUom',
+    dataIndex: 'replanUnit',
     width: 100
   },
   {
@@ -197,6 +197,7 @@ class DrugDirectory extends PureComponent{
             upperQuantity:values.upperQuantity||'',
             downQuantity:values.downQuantity||'',
             purchaseQuantity:values.purchaseQuantity||'',
+            id: item.id || ''
           })
           return item 
         })

@@ -3,15 +3,19 @@
  */
 import React, {PureComponent} from 'react';
 
-import { Form, Row, Col, Input, Button, Table, DatePicker, Select } from 'antd';
+import { Form, Row, Col, Input, Button, DatePicker, Select } from 'antd';
 
 import {Link} from 'react-router-dom';
 
-import {createData} from '../../../../common/data';
+import {dayStatements} from '../../../../api/purchase/purchase';
+
+import RemoteTable from '../../../../components/TableGrid';
+
+import {connect} from 'dva';
 
 const FormItem = Form.Item;
 
-const {Option} = Select; 
+const {Option} = Select;
 
 const { RangePicker } = DatePicker;
 
@@ -25,127 +29,115 @@ const formItemLayout = {
       sm: { span: 19 },
     },
 };
-
-const dataSource = createData().map( (item) => {
-    return {
-            ...item,
-            key: item.id,
-            SettlementMan: '路飞',
-            detailsNum: 50,
-            paymentDay: '2018-08-08',
-            confirmMan: '索隆',
-            fstate: item.fstate === "00"? '对账中' : '对账失败'
-          }
-} )
 const columns = [
     {
     title: '对账单',
-    dataIndex: 'planNo',
-    fixed: 'left',
-    width: 200,
+    dataIndex: 'balanceCode',
+    width: 250,
     render: (text) => (
         <span>
-            <Link to={{ pathname: `/purchase/settlementMgt/dayStatements/details`}}>{text}</Link>
+            <Link to={{ pathname: `/purchase/settlementMgt/dayStatements/details/${text}`}}>{text}</Link>
         </span>
     )
-}, {
-    title: '供应商',
-    dataIndex: 'productCompany',
-}, {
-    title: '状态',
-    dataIndex: 'fstate',
-    width: 100
-}, {
-    title: '明细数量',
-    dataIndex: 'detailsNum',
-    width: 90
-}, {
-    title: '账期',
-    dataIndex: 'paymentDay',
-}, {
-    title: '对账人',
-    dataIndex: 'confirmMan',
-    width: 100
-}, {
-    title: '对账完成时间',
-    dataIndex: 'planTime',
-}, {
-    title: '结算人',
-    dataIndex: 'SettlementMan',
-    width: 100
-}, {
-    title: '结算时间',
-    dataIndex: 'SettlementData',
-    render: (text,record) =>{
-        return '2018-10-28'
-    }
-}]
+    }, {
+        title: '状态',
+        dataIndex: 'confirmStatusName',
+        width: 100
+    }, {
+        title: '明细数量',
+        dataIndex: 'detailCount',
+        width: 90
+    }, {
+        title: '对账人',
+        dataIndex: 'balanceUserName',
+        width: 100
+    }, {
+        title: '对账完成时间',
+        dataIndex: 'balanceEndTime',
+    }]
 
 
 class Statements extends PureComponent{
     state = {
-        showNewSummary: false
+        query: {},
+        status: []
     }
-    showNewSummary = () => {
-        let {showNewSummary} = this.state;
-        showNewSummary = !showNewSummary;
-        this.setState({
-            showNewSummary
-        });
-    }
-    handleCancel = (e) => {
-        this.showNewSummary();
-    }
-    handleOk = (e) => {
-        this.showNewSummary();
-    }
-    onChange = (e) => {
-        console.log(e)
+    componentDidMount() {
+        this.props.dispatch({
+            type: 'base/orderStatusOrorderType',
+            payload: {
+                type: 'balance_status'
+            },
+            callback: (data) => {
+                this.setState({
+                    status: data
+                });
+            }
+        })
     }
     handleSearch = (e) => {
-        console.log(e)
+        e.preventDefault();
+        this.props.form.validateFields((err, values) => {
+            let {time} = values;
+            if(time && time.length > 0) {
+                values.startTime = time[0].format('YYYY-MM-DD');
+                values.endTime = time[1].format('YYYY-MM-DD');
+            }else {
+                values.startTime = '';
+                values.endTime = '';
+            };
+            delete values.time;
+            this.setState({
+                query: values
+            });
+        })
     }
     handleReset = (e) => {
         this.props.form.resetFields();
     }
+    statusRender = () => {
+        let {status} = this.state;
+        return status.map(item => {
+            return <Option key={item.value} value={item.value}>{item.label}</Option>
+        })
+    }
     render() {
         let {getFieldDecorator} = this.props.form;
+        let {query} = this.state;
         return (
             <div className="ysynet-main-content">
                 <Form onSubmit={this.handleSearch}>
                     <Row gutter={30} style={{marginBottom: 20}}>
                         <Col span={8}>
                             <FormItem label={`对账单`} {...formItemLayout}>
-                                {getFieldDecorator('summarSheet', {})(
-                                    <Input/>
+                                {getFieldDecorator('balanceCode', {})(
+                                    <Input placeholder="请输入"/>
                                 )}
                             </FormItem>
                         </Col>
                         <Col span={8}>
                             <FormItem label={`对账日期`} {...formItemLayout}>
-                                {getFieldDecorator('summarData', {})(
-                                    <RangePicker onChange={this.onChange} />
+                                {getFieldDecorator('time', {})(
+                                    <RangePicker />
                                 )}
                             </FormItem>
                         </Col>
                         <Col span={8}>
                             <FormItem label={`状态`} {...formItemLayout}>
-                                {getFieldDecorator('assetName', {})(
+                                {getFieldDecorator('balanceStatus', {})(
                                 <Select 
                                     showSearch
                                     placeholder={'请选择'}
                                     optionFilterProp="children"
                                     filterOption={(input, option) => option.props.children.indexOf(input) >= 0}
                                     >
-                                        <Option key="" value="">全部</Option>
-                                        <Option key="01" value="01">待确认</Option>
-                                        <Option key="02" value="02">已确认</Option>
+                                        {this.statusRender()}
                                 </Select>
                                 )}
                             </FormItem>
                         </Col>
                         <Col span={12}>
-                            <Link to={{ pathname: `/purchase/settlementMgt/dayStatements/newRecon` }}><Button type="primary">新建对账</Button></Link>
+                            <Link to={{ pathname: `/NewRecon` }}><Button type="primary">生成对账</Button></Link>
                         </Col>
                         <Col span={12} style={{marginTop: 4, textAlign: 'right'}}>
                             <Button type="primary" htmlType="submit">查询</Button>
@@ -153,23 +145,17 @@ class Statements extends PureComponent{
                         </Col>
                     </Row>
                 </Form>
-                <Table
-                    bordered={true}
+                <RemoteTable
+                    isJson
+                    rowKey="id"
+                    query={query}
                     columns={columns}
-                    scroll={{ x: '120%' }}
-                    dataSource={dataSource}
-                    pagination={{
-                      size: 'small',
-                      showQuickJumper: true,
-                      showSizeChanger : true,
-                      showTotal: (total) => {
-                        return `总共${total}个项目`;
-                      }
-                    }}
+                    scroll={{ x: '100%' }}
+                    url={dayStatements.DAILY_LIST}
                 />
             </div>
         )
     }
 };
 const WrappedStatements = Form.create()(Statements);
-export default WrappedStatements;
+export default connect()(WrappedStatements);

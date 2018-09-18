@@ -1,16 +1,22 @@
 /**
- * @file 药库 - 盘点损益 - 盘点审核
+ * @file 药库 - 盘点损益 - 新建盘点
  */
 import React, { PureComponent } from 'react';
-import { Form, Row, Col, DatePicker, Input, Select, Button, Icon, Table } from 'antd';
+import { Form, Row, Col, DatePicker, Input, Select, Button, Icon, Modal, Radio, message } from 'antd';
 import { Link } from 'react-router-dom';
-
+import { formItemLayout } from '../../../../utils/commonStyles';
+import RemoteTable from '../../../../components/TableGrid';
+import {common} from '../../../../api/checkDecrease';
+import {connect} from 'dva';
+import moment from 'moment';
 const FormItem = Form.Item;
 const { RangePicker } = DatePicker;
 const { Option } = Select;
+const RadioGroup = Radio.Group;
+
 class SearchForm extends PureComponent {
   state = {
-    display: 'none',
+    display: 'none'
   }
   toggle = () => {
     const { display, expand } = this.state;
@@ -23,8 +29,11 @@ class SearchForm extends PureComponent {
     e.preventDefault();
     this.props.form.validateFields((err, values) => {
       if (!err) {
-        values.startTime = values.makingTime[0].format('YYYY-MM-DD HH:mm');
-        values.endTime = values.makingTime[1].format('YYYY-MM-DD HH:mm');
+        const makingTime = values.makingTime === undefined || values.makingTime === null ? "" : values.makingTime;
+        if(makingTime.length > 0) {
+          values.checkStartTime = makingTime[0].format('YYYY-MM-DD HH:mm');
+          values.checkEndTime = makingTime[1].format('YYYY-MM-DD HH:mm');
+        };
         console.log(values, '查询条件');
         this.props.query(values);
       }
@@ -34,50 +43,46 @@ class SearchForm extends PureComponent {
     this.props.form.resetFields();
     this.props.query({});
   }
+  listRender = (list) => {
+    return <Select placeholder="请选择">
+            {
+              list.map(item => {
+                return <Option key={item.value} value={item.value}>{item.label}</Option>
+              })
+            }
+           </Select>
+  } 
   render() {
     const { getFieldDecorator } = this.props.form;
-    const formItemLayout = { labelCol: {span: 4}, wrapperCol: {span: 18} };
+    let {status, types} = this.props;
     return(
       <Form onSubmit={this.handleSearch}>
         <Row gutter={30}>
           <Col span={8}>
-            <FormItem label={'开始时间'} {...formItemLayout}>
+            <FormItem label={'盘点时间'} {...formItemLayout}>
               {getFieldDecorator('makingTime')(
-                <RangePicker showTime={{ format: 'HH:mm' }} format={'YYYY-MM-DD HH:mm'} style={{ width: 313 }} />
+                <RangePicker />
               )}
             </FormItem>
           </Col>
           <Col span={8}>
             <FormItem label={'单号'} {...formItemLayout}>
-              {getFieldDecorator('odd')(
+              {getFieldDecorator('checkBillNo')(
                 <Input placeholder={'盘点单号'} />
               )}
             </FormItem>
           </Col>
           <Col span={8}>
             <FormItem label={'状态'} {...formItemLayout} style={{ display: this.state.display }}>
-              {getFieldDecorator('status', {
-                initialValue: ''
-              })(
-                <Select>
-                  <Option value={''}>全部</Option>
-                  <Option value={'01'}>待审核</Option>
-                  <Option value={'02'}>已审核</Option>
-                </Select>
+              {getFieldDecorator('checkStatus')(
+                this.listRender(status)
               )}
             </FormItem>
           </Col>
           <Col span={8}>
             <FormItem label={'类型'} {...formItemLayout} style={{ display: this.state.display }}>
-              {getFieldDecorator('types', {
-                initialValue: ''
-              })(
-                <Select>
-                  <Option value={''}>全部</Option>
-                  <Option value={'00'}>明盘全盘</Option>
-                  <Option value={'01'}>暗盘动销盘</Option>
-                  <Option value={'02'}>明盘动盘</Option>
-                </Select>
+              {getFieldDecorator('checkBillType')(
+                this.listRender(types)
               )}
             </FormItem>
           </Col>
@@ -99,394 +104,262 @@ const SearchFormWarp = Form.create()(SearchForm);
 
 class InventoryAudit extends PureComponent {
   state = {
-    query: {},
-    loading: false
+    query: { 
+      checkStatus: 1
+    },
+    loading: false,
+    visible: false,
+    subType: '',
+    display: 'none',
+    types: [],
+    status: [],
+    subTypes: [],
+    deleteLoadig: false
   }
+  componentDidMount() {
+    this.props.dispatch({
+      type: 'base/orderStatusOrorderType',
+      payload: {
+        type: 'check_bill_type'
+      },
+      callback: (data) => {
+        this.setState({
+          types: data
+        });
+      }
+    });
+    this.props.dispatch({
+      type: 'base/orderStatusOrorderType',
+      payload: {
+        type: 'check_status'
+      },
+      callback: (data) => {
+        this.setState({
+          status: data
+        });
+      }
+    });
+    this.props.dispatch({
+      type: 'base/orderStatusOrorderType',
+      payload: {
+        type: 'check_bill_sub_type'
+      },
+      callback: (data) => {
+        this.setState({
+          subTypes: data
+        });
+      }
+    })
+  }
+  //查询
   queryHandler = query => {
     this.setState({ query });
   }
+  //新建
+  handleOk = (e) => {
+    e.preventDefault();
+    this.props.form.validateFields((err, values) => {
+      if(err) return;
+      console.log(values);
+      if(values.checkStartTime) {
+        values.checkStartTime = values.checkStartTime.format('YYYY-MM-DD HH:mm');
+      }
+      this.setState({ loading: true });
+      
+      this.props.dispatch({
+        type: 'checkDecrease/createCheckbill',
+        payload: values,
+        callback: (data) => {
+          if(data.msg === 'success') {
+            this.setState({
+              loading: false,
+              visible: false,
+            });
+            this.refs.table.fetch(this.state.query);
+            message.success('新建成功！');
+          }else {
+            this.setState({
+              loading: false
+            });
+            message.error(data.msg);
+            message.warning('新建失败！');
+          }
+        }
+      })
+    })
+  }
+  //删除
+  delete = () =>{
+    const {selectedRows} = this.state;
+    if (selectedRows.length === 0) {
+      return message.warn('请至少选择一条数据')
+    };
+    this.setState({ deleteLoadig: true });
+    let ids = selectedRows.map(item=>item.id);
+    this.props.dispatch({
+      type: 'checkDecrease/deleteCheckBill',
+      payload: {ids},
+      callback: (data) => {
+        if(data.msg === 'success') {
+          this.ref.table.fetch(this.state.query);
+        }else {
+          message.error(data.msg);
+          message.warning('删除失败！');
+        }
+        this.setState({
+          deleteLoadig: false
+        })
+      }
+    })
+  }
+  //单选框渲染
+  radioRender = (list) => {
+    list = list.filter(item => item.label !== "全部")
+    return list.map(item => {
+      return <Radio key={item.value} value={item.value}>{item.label}</Radio>
+    })
+  }
   render() {
+    const { getFieldDecorator} = this.props.form;
+    const formItemLayoutAdd = { 
+      labelCol: { span: 6 }, 
+      wrapperCol: { span: 18 } 
+    };
+    const {status, types, query, subTypes, subType, deleteLoadig} = this.state;
     const columns = [
       {
         title: '盘点单',
-        dataIndex: 'odd',
-        key: 'odd',
+        dataIndex: 'checkBillNo',
+        width: 220,
         render: (text, record) => {
-          if (record.status === '已审核') {
-            return <span><Link to={{ pathname: `/drugStorage/checkDecrease/inventoryAudit/detailsConfirm` }}>{text}</Link></span>
-          } else {
-            return <span><Link to={{ pathname: `/drugStorage/checkDecrease/inventoryAudit/details` }}>{text}</Link></span>
-          }
+          return <span><Link to={{ pathname: `/drugStorage/checkDecrease/newInventory/details/${record.checkBillNo}`}}>{text}</Link></span>
         }
       },
       {
         title: '状态',
-        dataIndex: 'status',
-        key: 'status'
+        dataIndex: 'checkStatusName',
       },
       {
-        title: '类型',
-        dataIndex: 'types',
-        key: 'types'
+        title: '盘点类型',
+        dataIndex: 'checkBillTypeName',
+      },
+      {
+        title: '盘点子类型',
+        dataIndex: 'checkBillSubTypeName',
       },
       {
         title: '部门',
-        dataIndex: 'dept',
-        key: 'dept'
-      },
-      {
-        title: '盈亏总金额',
-        dataIndex: 'ykje',
-        key: 'ykje',
-        render: (text, record, index) => '0.00'
+        dataIndex: 'checkBillDeptName',
       },
       {
         title: '盘点责任人',
-        dataIndex: 'oddUser',
-        key: 'oddUser'
+        dataIndex: 'sheveUserName',
       },
       {
         title: '制单时间',
-        dataIndex: 'makingTime',
-        key: 'makingTime'
+        dataIndex: 'createDate',
       },
       {
         title: '盘点时间',
-        dataIndex: 'startTime',
-        key: 'startTime'
-      },{
-        title: '审核人',
-        dataIndex: 'auditor',
-        key: 'auditor',
-        render: () => '王力宏'
-      },{
-        title: '审核时间',
-        dataIndex: 'auditorTime',
-        key: 'auditorTime',
-        render: () => '2018-7-25 21:45'
+        dataIndex: 'checkTime',
       },
       {
         title: '备注',
-        dataIndex: 'remark',
-        key: 'remark'
-      }
-    ];
-    const dataSource = [
-      {
-        key: '1',
-        odd: 'KP0022118070000383',
-        status: '待审核',
-        types: '明盘全盘',
-        dept: '药库',
-        oddUser: '张三三',
-        makingTime: '2018-7-24 16:45',
-        startTime: '2018-7-24 16:45',
-        remark: '我是盘点审核列表'
-      },
-      {
-        key: '2',
-        odd: 'KP00221180700002DN',
-        status: '待审核',
-        types: '暗盘动销盘',
-        dept: '药库',
-        oddUser: '张三三',
-        makingTime: '2018-7-24 16:45',
-        startTime: '2018-7-24 16:45',
-        remark: '我是盘点审核列表'
-      },
-      {
-        key: '3',
-        odd: 'KP00221180700001CW',
-        status: '已审核',
-        types: '明盘动盘',
-        dept: '药库',
-        oddUser: '张三三',
-        makingTime: '2018-7-24 16:45',
-        startTime: '2018-7-24 16:45',
-        remark: '我是盘点审核列表'
-      },
-      {
-        key: '4',
-        odd: 'KP0022118070000383',
-        status: '待审核',
-        types: '明盘全盘',
-        dept: '药库',
-        oddUser: '张三三',
-        makingTime: '2018-7-24 16:45',
-        startTime: '2018-7-24 16:45',
-        remark: '我是盘点审核列表'
-      },
-      {
-        key: '5',
-        odd: 'KP00221180700002DN',
-        status: '待审核',
-        types: '暗盘动销盘',
-        dept: '药库',
-        oddUser: '张三三',
-        makingTime: '2018-7-24 16:45',
-        startTime: '2018-7-24 16:45',
-        remark: '我是盘点审核列表'
-      },
-      {
-        key: '6',
-        odd: 'KP00221180700001CW',
-        status: '已审核',
-        types: '明盘动盘',
-        dept: '药库',
-        oddUser: '张三三',
-        makingTime: '2018-7-24 16:45',
-        startTime: '2018-7-24 16:45',
-        remark: '我是盘点审核列表'
-      },
-      {
-        key: '7',
-        odd: 'KP0022118070000383',
-        status: '待审核',
-        types: '明盘全盘',
-        dept: '药库',
-        oddUser: '张三三',
-        makingTime: '2018-7-24 16:45',
-        startTime: '2018-7-24 16:45',
-        remark: '我是盘点审核列表'
-      },
-      {
-        key: '8',
-        odd: 'KP00221180700002DN',
-        status: '待审核',
-        types: '暗盘动销盘',
-        dept: '药库',
-        oddUser: '张三三',
-        makingTime: '2018-7-24 16:45',
-        startTime: '2018-7-24 16:45',
-        remark: '我是盘点审核列表'
-      },
-      {
-        key: '9',
-        odd: 'KP00221180700001CW',
-        status: '已审核',
-        types: '明盘动盘',
-        dept: '药库',
-        oddUser: '张三三',
-        makingTime: '2018-7-24 16:45',
-        startTime: '2018-7-24 16:45',
-        remark: '我是盘点审核列表'
-      },
-      {
-        key: '10',
-        odd: 'KP0022118070000383',
-        status: '待审核',
-        types: '明盘全盘',
-        dept: '药库',
-        oddUser: '张三三',
-        makingTime: '2018-7-24 16:45',
-        startTime: '2018-7-24 16:45',
-        remark: '我是盘点审核列表'
-      },
-      {
-        key: '11',
-        odd: 'KP00221180700002DN',
-        status: '待审核',
-        types: '暗盘动销盘',
-        dept: '药库',
-        oddUser: '张三三',
-        makingTime: '2018-7-24 16:45',
-        startTime: '2018-7-24 16:45',
-        remark: '我是盘点审核列表'
-      },
-      {
-        key: '12',
-        odd: 'KP00221180700001CW',
-        status: '已审核',
-        types: '明盘动盘',
-        dept: '药库',
-        oddUser: '张三三',
-        makingTime: '2018-7-24 16:45',
-        startTime: '2018-7-24 16:45',
-        remark: '我是盘点审核列表'
-      },
-      {
-        key: '13',
-        odd: 'KP0022118070000383',
-        status: '待审核',
-        types: '明盘全盘',
-        dept: '药库',
-        oddUser: '张三三',
-        makingTime: '2018-7-24 16:45',
-        startTime: '2018-7-24 16:45',
-        remark: '我是盘点审核列表'
-      },
-      {
-        key: '14',
-        odd: 'KP00221180700002DN',
-        status: '待审核',
-        types: '暗盘动销盘',
-        dept: '药库',
-        oddUser: '张三三',
-        makingTime: '2018-7-24 16:45',
-        startTime: '2018-7-24 16:45',
-        remark: '我是盘点审核列表'
-      },
-      {
-        key: '15',
-        odd: 'KP00221180700001CW',
-        status: '已审核',
-        types: '明盘动盘',
-        dept: '药库',
-        oddUser: '张三三',
-        makingTime: '2018-7-24 16:45',
-        startTime: '2018-7-24 16:45',
-        remark: '我是盘点审核列表'
-      },
-      {
-        key: '16',
-        odd: 'KP0022118070000383',
-        status: '待审核',
-        types: '明盘全盘',
-        dept: '药库',
-        oddUser: '张三三',
-        makingTime: '2018-7-24 16:45',
-        startTime: '2018-7-24 16:45',
-        remark: '我是盘点审核列表'
-      },
-      {
-        key: '17',
-        odd: 'KP00221180700002DN',
-        status: '待审核',
-        types: '暗盘动销盘',
-        dept: '药库',
-        oddUser: '张三三',
-        makingTime: '2018-7-24 16:45',
-        startTime: '2018-7-24 16:45',
-        remark: '我是盘点审核列表'
-      },
-      {
-        key: '18',
-        odd: 'KP00221180700001CW',
-        status: '已审核',
-        types: '明盘动盘',
-        dept: '药库',
-        oddUser: '张三三',
-        makingTime: '2018-7-24 16:45',
-        startTime: '2018-7-24 16:45',
-        remark: '我是盘点审核列表'
-      },
-      {
-        key: '19',
-        odd: 'KP0022118070000383',
-        status: '待审核',
-        types: '明盘全盘',
-        dept: '药库',
-        oddUser: '张三三',
-        makingTime: '2018-7-24 16:45',
-        startTime: '2018-7-24 16:45',
-        remark: '我是盘点审核列表'
-      },
-      {
-        key: '20',
-        odd: 'KP00221180700002DN',
-        status: '待审核',
-        types: '暗盘动销盘',
-        dept: '药库',
-        oddUser: '张三三',
-        makingTime: '2018-7-24 16:45',
-        startTime: '2018-7-24 16:45',
-        remark: '我是盘点审核列表'
-      },
-      {
-        key: '21',
-        odd: 'KP00221180700001CW',
-        status: '已审核',
-        types: '明盘动盘',
-        dept: '药库',
-        oddUser: '张三三',
-        makingTime: '2018-7-24 16:45',
-        startTime: '2018-7-24 16:45',
-        remark: '我是盘点审核列表'
-      },
-      {
-        key: '22',
-        odd: 'KP0022118070000383',
-        status: '待审核',
-        types: '明盘全盘',
-        dept: '药库',
-        oddUser: '张三三',
-        makingTime: '2018-7-24 16:45',
-        startTime: '2018-7-24 16:45',
-        remark: '我是盘点审核列表'
-      },
-      {
-        key: '23',
-        odd: 'KP00221180700002DN',
-        status: '待审核',
-        types: '暗盘动销盘',
-        dept: '药库',
-        oddUser: '张三三',
-        makingTime: '2018-7-24 16:45',
-        startTime: '2018-7-24 16:45',
-        remark: '我是盘点审核列表'
-      },
-      {
-        key: '24',
-        odd: 'KP00221180700001CW',
-        status: '已审核',
-        types: '明盘动盘',
-        dept: '药库',
-        oddUser: '张三三',
-        makingTime: '2018-7-24 16:45',
-        startTime: '2018-7-24 16:45',
-        remark: '我是盘点审核列表'
-      },
-      {
-        key: '25',
-        odd: 'KP0022118070000383',
-        status: '待审核',
-        types: '明盘全盘',
-        dept: '药库',
-        oddUser: '张三三',
-        makingTime: '2018-7-24 16:45',
-        startTime: '2018-7-24 16:45',
-        remark: '我是盘点审核列表'
-      },
-      {
-        key: '26',
-        odd: 'KP00221180700002DN',
-        status: '待审核',
-        types: '暗盘动销盘',
-        dept: '药库',
-        oddUser: '张三三',
-        makingTime: '2018-7-24 16:45',
-        startTime: '2018-7-24 16:45',
-        remark: '我是盘点审核列表'
-      },
-      {
-        key: '27',
-        odd: 'KP00221180700001CW',
-        status: '已审核',
-        types: '明盘动盘',
-        dept: '药库',
-        oddUser: '张三三',
-        makingTime: '2018-7-24 16:45',
-        startTime: '2018-7-24 16:45',
-        remark: '我是盘点审核列表'
+        dataIndex: 'remarks',
       }
     ];
     return (
       <div className='ysynet-main-content'>
-        <SearchFormWarp />
-        <Table
-          loading={ this.state.loading}
-          scroll={{x: '150%'}}
-          bordered
-          columns={columns}
-          pagination={{
-            size: "small",
-            showQuickJumper: true,
-            showSizeChanger: true
-          }}
-          dataSource={dataSource}
+        <SearchFormWarp
+          status={status}
+          types={types}
+          dispatch={this.props.dispatch} 
+          query={this.queryHandler} 
         />
+        <div>
+          <Button type='primary' onClick={()=>this.setState({ visible: true })}><Icon type="plus" />新建</Button>
+          <Button loading={deleteLoadig} style={{ marginLeft: 8 }} onClick={this.delete}>删除</Button>
+        </div>
+        <RemoteTable 
+          query={query}
+          url={common.CHECKBILL_LIST}
+          columns={columns}
+          rowKey={'id'}
+          ref="table"
+          scroll={{x: '130%'}}
+          style={{marginTop: 20}}
+          rowSelection={{
+            selectedRowKeys: this.state.selected,
+            onChange: (selectedRowKeys, selectedRows) => {
+              this.setState({selected: selectedRowKeys, selectedRows: selectedRows})
+            },
+            getCheckboxProps: record => ({
+              disabled: record.checkStatus !== 1 || record.checkStatus !== 6
+            }),
+          }}
+        />
+        <Modal
+          visible={this.state.visible}
+          title="新增盘点"
+          onOk={this.handleOk}
+          onCancel={() => this.setState({ visible: false })}
+          footer={[
+            <Button key="submit" type="primary" loading={this.state.loading} onClick={this.handleOk}>确认</Button>,
+            <Button key="back" onClick={() => this.setState({ visible: false })}>取消</Button>
+          ]}
+        >
+          <Form>
+            <Row>
+              <Col span={24}>
+                <FormItem label={'类型'} {...formItemLayoutAdd}>
+                  {getFieldDecorator('checkBillType')(
+                    <RadioGroup>
+                      {this.radioRender(types)}
+                    </RadioGroup>
+                  )}
+                  
+                </FormItem>
+              </Col>
+              <Col span={24}>
+                <FormItem label={'子类型'} {...formItemLayoutAdd}>
+                  {getFieldDecorator('checkBillSubType')(
+                    <RadioGroup onChange={(e) => this.setState({ subType: e.target.value })}>
+                      {this.radioRender(subTypes)}
+                    </RadioGroup>
+                  )}
+                </FormItem>
+              </Col>
+              {
+                subType === '3' ?
+                  <Col span={24}>
+                    <FormItem label={'起始时间'} {...formItemLayoutAdd}>
+                      {getFieldDecorator('checkStartTime', {
+                        rules: [{ required: true, message: '请选择起始时间' }],
+                        initialValue: moment(new Date(), moment().format('YYYY-MM-DD 00:00'))
+                      })(
+                        <DatePicker
+                          showTime
+                          format="YYYY-MM-DD HH:mm"
+                        />
+                        )
+                      }
+                    </FormItem>
+                  </Col> 
+                  : 
+                  null
+              }
+              <Col span={24}>
+                <FormItem label={'备注'} {...formItemLayoutAdd}>
+                  {getFieldDecorator('remark')(
+                    <Input style={{ width: 280 }} />
+                  )}
+                </FormItem>
+              </Col>
+            </Row>
+          </Form>
+        </Modal>
       </div>
     )
   }
 }
-export default InventoryAudit;
+export default connect()(Form.create()(InventoryAudit));

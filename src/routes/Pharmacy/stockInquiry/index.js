@@ -63,11 +63,11 @@ const columns = [
     dataIndex: 'replanUnit',
     width: 200,
   }, {
-    title: '数量',
+    title: '库存数量',
     dataIndex: 'totalStoreNum',
     width: 100,
   }, {
-    title: '库存数量',
+    title: '可用库存',
     width: 100,
     dataIndex: 'usableQuantity',
   }, {

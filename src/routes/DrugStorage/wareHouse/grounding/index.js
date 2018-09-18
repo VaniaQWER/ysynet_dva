@@ -8,7 +8,7 @@ import React, { PureComponent } from 'react';
 import {DatePicker, Form, Input, Row, Col, Button, Icon, Select, message, Popconfirm } from 'antd';
 import {Link} from 'react-router-dom';
 import RemoteTable from '../../../../components/TableGrid';
-import wareHouse from '../../../../api/drugStorage/wareHouse';
+import {wareHouse} from '../../../../api/pharmacy/wareHouse';
 import { formItemLayout } from '../../../../utils/commonStyles';
 import {connect} from 'dva';
 const FormItem = Form.Item;
@@ -43,11 +43,11 @@ class Putaway extends PureComponent{
       {
        title: '配送单',
        width:150,
-       dataIndex: 'shelfCode',
+       dataIndex: 'distributeCode',
        render: (text, record) => 
        <span>
         <Link 
-          to={{ pathname: `/drugStorage/wareHouse/grounding/detail/id=${record.shelfCode}&status=${record.status === '待上架'? 2 : 3}`}}>
+          to={{ pathname: `/drugStorage/wareHouse/grounding/detail/${record.distributeCode}`}}>
           {text}
         </Link>
        </span>
@@ -55,22 +55,22 @@ class Putaway extends PureComponent{
       {
         title: '状态',
         width:100,
-        dataIndex: 'status'
+        dataIndex: 'statusName'
       },
       {
         title: '类型',
         width:100,
-        dataIndex: 'shelfType'
+        dataIndex: 'typeName'
       },
       {
         title: '验收时间',
         width:150,
-        dataIndex: 'shelfTime',
+        dataIndex: 'receptionTime',
       },
       {
         title: '上架时间',
         width:180,
-        dataIndex: 'sjsj',
+        dataIndex: 'upUserDate',
       },
       {
         title: '操作',
@@ -90,10 +90,10 @@ class Putaway extends PureComponent{
         <RemoteTable
           query={query}
           ref="tab"
-          url={wareHouse.shelfList}
+          url={wareHouse.ROOMACCEPTANCE}
           scroll={{x: '100%'}}
           columns={columns}
-          rowKey={'shelfCode'}
+          rowKey={'id'}
           style={{marginTop: 24}}
         />
       </div>

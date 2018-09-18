@@ -8,7 +8,7 @@ import { _local } from '../../api/local';
 /* 配送单验收 */
 
 export function detailsInfo(options) {
-  return request(`${_local}/a/DepotDistribute/depotdistribute/detail`,{ //配送单详情
+  return request(`${_local}/a/checkaccept/detail`,{ //配送单详情
     method: 'GET',
     type: 'formData',
     body: options
@@ -16,7 +16,7 @@ export function detailsInfo(options) {
 };
 /* 上架 */
 export function putawayInfo(options) {
-  return request(`${_local}/a/depot/shelfList/selectDistributeDetail`,{ //上架列表详情
+  return request(`${_local}/a/checkacceptdetail/shelfInfo`,{ //上架列表详情
     method: 'GET',
     type: 'formData',
     body: options
@@ -40,7 +40,7 @@ export function getPutStorageInfo(options) {    //入库单详情
 };
 
 export function saveCheck(options) {       //增加验收批号
-  return request(`${_local}/a/depot/depotdistributedetail/checkList`, {
+  return request(`${_local}/a/checkacceptdetail/checkList`, {
     method: 'POST',
     type: 'json',
     body: options

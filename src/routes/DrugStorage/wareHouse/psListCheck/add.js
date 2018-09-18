@@ -20,14 +20,15 @@ class PslistAdd extends PureComponent{
     selectedRows: [],
     loading: false,
     detailInfo: {},
-    btnShow: false
+    btnShow: false,
+    activeKey: "1"
   }
   tabsChange = (key) =>{
     if(key === '2') {
-      this.setState({btnShow: false});
+      this.setState({btnShow: false, activeKey: key});
     };
     if(key === '1') {
-      this.setState({btnShow: true});
+      this.setState({btnShow: true, activeKey: key});
     };
   }
   addBatch = (record) => {
@@ -115,20 +116,21 @@ class PslistAdd extends PureComponent{
     this.props.dispatch({
       type: 'base/deliverRequest',
       payload: {
-        distributeCode: value
+        distributeCode: value,
       },
       callback: (data) => {
         this.setState({
           loading: false,
           detailInfo: data,
+          activeKey: data.auditStatus === 1? '1' : '2'
         });
       }
     })
   }
   render(){
-    let {detailInfo, loading, btnShow} = this.state;
+    let {detailInfo, loading, btnShow, activeKey} = this.state;
     let {unVerfiyList, verifyList} = detailInfo;
-    const columnsUnVerfiy = [
+    let columnsUnVerfiy = [
       {
         title: '通用名称',
         dataIndex: 'ctmmGenericName',
@@ -147,11 +149,11 @@ class PslistAdd extends PureComponent{
       },
       {
         title: '生产厂家',
-        dataIndex: 'ctmmManuFacturerName'
+        dataIndex: 'ctmmManufacturerName'
       },
       {
         title: '单位',
-        dataIndex: 'limitDrugUnit',
+        dataIndex: 'unit',
       },
       {
         title: '配送数量',
@@ -201,8 +203,6 @@ class PslistAdd extends PureComponent{
         title: '有效期至',
         dataIndex: 'realValidEndDate',
         render: (text,record,index)=> {
-          console.log(text);
-          
           return <DatePicker
                   disabledDate={(current) => current && current < moment(record.realProductTime)}
                   onChange={(dates, moment) => {
@@ -213,26 +213,12 @@ class PslistAdd extends PureComponent{
         }
       },
       {
-        title: '验收温度',
-        dataIndex: 'realAcceptanceTemperature',
-        render: (text,record,index)=> {
-          return <Input 
-                  type="number"
-                  onChange={(e)=>{
-                    record.realAcceptanceTemperature = e.target.value;
-                  }}
-                  defaultValue={text || '' } 
-                  addonAfter={`℃`}
-                />
-        }
-      },
-      {
         title: '包装规格',
         dataIndex: 'packageSpecification',
       },
       {
         title: '剂型',
-        dataIndex: 'dosageForm',
+        dataIndex: 'ctmmDosageFormDesc',
       },
       {
         title: '供应商',
@@ -252,14 +238,14 @@ class PslistAdd extends PureComponent{
         }
       }
     ];
-    const columnsVerify = [
+    let columnsVerify = [
       {
         title: '通用名称',
         dataIndex: 'ctmmGenericName',
       },
       {
         title: '商品名',
-        dataIndex: 'ctmmTradeName'
+        dataIndex: 'ctmmTradeName',
       },
       {
         title: '规格',
@@ -271,11 +257,11 @@ class PslistAdd extends PureComponent{
       },
       {
         title: '生产厂家',
-        dataIndex: 'ctmmManuFacturerName'
+        dataIndex: 'ctmmManufacturerName'
       },
       {
         title: '单位',
-        dataIndex: 'limitDrugUnit',
+        dataIndex: 'replanUnit',
       },
       {
         title: '配送数量',
@@ -283,7 +269,7 @@ class PslistAdd extends PureComponent{
       },  
       {
         title: '实到数量',
-        dataIndex: 'realReceiveQuantity'
+        dataIndex: 'realReceiveQuantiry'
       },
       {
         title: '生产批号',
@@ -298,16 +284,12 @@ class PslistAdd extends PureComponent{
         dataIndex: 'realValidEndDate'
       },
       {
-        title: '验收温度',
-        dataIndex: 'realAcceptanceTemperature'
-      },
-      {
         title: '包装规格',
         dataIndex: 'packageSpecification',
       },
       {
         title: '剂型',
-        dataIndex: 'dosageForm',
+        dataIndex: 'ctmmDosageFormDesc',
       },
       {
         title: '供应商',
@@ -405,8 +387,8 @@ class PslistAdd extends PureComponent{
         </div>
         <div className='detailCard' style={{margin: '30px -6px'}}>
           <Tabs 
-          defaultActiveKey="1" 
-          tabBarExtraContent={ btnShow? <Button type='primary' onClick={this.saveCheck}>确认验收</Button> : null}
+          activeKey={activeKey}
+          tabBarExtraContent={ btnShow && unVerfiyList && unVerfiyList.length? <Button type='primary' onClick={this.saveCheck}>确认验收</Button> : null}
           onChange={this.tabsChange}>
             <TabPane tab="待验收" key="1">
               <Table
@@ -416,7 +398,7 @@ class PslistAdd extends PureComponent{
                 columns={columnsUnVerfiy}
                 dataSource={unVerfiyList || []}
                 pagination={false}
-                rowKey={'upUserDate'}
+                rowKey={'key'}
                 rowSelection={{
                   selectedRowKeys: this.state.selected,
                   onChange: this.rowChange
@@ -430,7 +412,7 @@ class PslistAdd extends PureComponent{
                 scroll={{x: '250%'}}
                 columns={columnsVerify}
                 dataSource={verifyList || []}
-                rowKey={'upUserDate'}
+                rowKey={'key'}
                 pagination={false}
               />
             </TabPane>

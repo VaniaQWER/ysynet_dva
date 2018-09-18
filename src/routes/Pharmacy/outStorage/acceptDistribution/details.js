@@ -381,7 +381,7 @@ class DetailsPicking extends PureComponent{
                   <label>联系电话</label>
                 </div>
                 <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
-                  <div className='ant-form-item-control'>{ detailsData.mobile }</div>
+                  <div className='ant-form-item-control'>{ detailsData.applyUserPhone }</div>
                 </div>
               </Col>
             </Row>
@@ -391,7 +391,7 @@ class DetailsPicking extends PureComponent{
                   <label>药房地址</label>
                 </div>
                 <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
-                  <div className='ant-form-item-control'>{ detailsData.receiveAddress }</div>
+                  <div className='ant-form-item-control'>{ detailsData.applyLocation }</div>
                 </div>
               </Col>
               <Col span={8}>

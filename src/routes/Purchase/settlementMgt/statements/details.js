@@ -2,54 +2,74 @@
  * @file 药房 - 日对账单 - 详情
  */
 import React, { PureComponent } from 'react';
-import { Table ,Row, Col, Input, Modal, message, Tooltip } from 'antd';
-import { createData } from '../../../../common/data';
-
+import { Row, Col, Input, message, Tooltip } from 'antd';
+import RemoteTable from '../../../../components/TableGrid';
+import FetchSelect from '../../../../components/FetchSelect';
+import {settlementMgt, common} from '../../../../api/purchase/purchase';
+import {connect} from 'dva';
 const {Search} = Input;
 
-let dataSource = createData().map((item) => {
-  return {
-    ...item,
-    key: item.id,
-    closeUnit: '盒',
-    closeNum: 238,
-    closePrice: '10.0000',
-    closeMoney: '2390.0000',
-    surplusUnit: '粒',
-    prevSurplus: 2,
-    nowSurplus: 5
-  }
-})
 
 class Details extends PureComponent {
-
-  // 确认
-  confirm = () => {
-    Modal.confirm({
-      content:"您确定要执行此操作？",
-      onOk: () => {
-        message.success('操作成功！');
-        const { history } = this.props;
-        history.push({pathname:"/drugStorage/checkDecrease/inventoryAudit"});
-      },
-      onCancel: () => {}
+  state = {
+    info: {},
+    vaule: undefined,
+    query: {
+      settleBillNo: this.props.match.params.id,
+      drugCodeList: [],
+      dispensingNo: ''
+    }
+  }
+  componentDidMount() {
+    this.props.dispatch({
+      type: 'settlementMgt/settleDetail',
+      payload: {settleBillNo: this.state.query.settleBillNo},
+      callback: (data) => {
+        if(data.msg === 'success') {
+          this.setState({
+            info: data.data
+          });
+        }else {
+          message.error(data.msg);
+        }
+      } 
     })
   }
-
-
+  changeFetchSelect = (value) => {
+    let {query} = this.state;
+    query = {
+      ...query,
+      drugCodeList: value? [value] : []
+    };
+    this.setState({
+      value,
+      query
+    });
+  }
+  changeSelect = (value) => {
+    let {query} = this.state;
+    query = {
+      ...query,
+      dispensingNo: value
+    };
+    this.setState({
+      query
+    });
+  }
   render() {
+    let {info, query, value} = this.state;
     const columns = [
       {
         title: '通用名',
-        dataIndex: 'geName'
+        dataIndex: 'ctmmGenericName'
       },
       {
         title: '商品名',
-        dataIndex: 'productName',
+        dataIndex: 'drugName',
       },
       {
         title: '规格',
-        dataIndex: 'spec',
+        dataIndex: 'ctmmSpecification',
         className:'ellipsis',
         render:(text)=>(
             <Tooltip placement="topLeft" title={text}>{text}</Tooltip>
@@ -57,12 +77,12 @@ class Details extends PureComponent {
       },
       {
         title: '包装规格',
-        dataIndex: 'packingSpec',
+        dataIndex: 'packageSpecification',
         width: 200,
       },
       {
         title: '生产厂家',
-        dataIndex: 'manu'
+        dataIndex: 'ctmmManufacturerName'
       },
       {
         title: '批准文号',
@@ -70,68 +90,68 @@ class Details extends PureComponent {
       },
       {
         title: '结算单位',
-        dataIndex: 'closeUnit'
+        dataIndex: 'replanUnit'
       },
       {
         title: '结算数量',
-        dataIndex: 'closeNum'
+        dataIndex: 'settleQty'
       },
       {
         title: '结算价格',
-        dataIndex: 'closePrice'
+        dataIndex: 'settlePrice'
       },
       {
         title: '结算金额',
-        dataIndex: 'closeMoney'
+        dataIndex: 'settleAmount'
       },
-      {
-        title: '结余单位',
-        dataIndex: 'surplusUnit'
-      },
-      {
-       title: '上期结余',
-       dataIndex: 'prevSurplus'
-      },
-      {
-        title: '本期结余',
-        dataIndex: 'nowSurplus'
-      }
+      // {
+      //   title: '结余单位',
+      //   dataIndex: 'surplusUnit'
+      // },
+      // {
+      //  title: '上期结余',
+      //  dataIndex: 'prevSurplus'
+      // },
+      // {
+      //   title: '本期结余',
+      //   dataIndex: 'nowSurplus'
+      // }
     ];
     return (
       <div className='fullCol'>
         <div className='fullCol-fullChild'>
           <Row>
             <Col span={12}>
-              <h2>结算单: <span>KP00221180700001CW</span></h2>
+              <h2>结算单: <span>{info.settleBillNo || ''}</span></h2>
             </Col>
           </Row>
           <Row>
             <Col span={8}>
-              <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-4">
+              <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
                 <label>状态</label>
               </div>
               <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
-                <div className='ant-form-item-control'>对账失败</div>
+                <div className='ant-form-item-control'>{info.settleStatusName || ''}</div>
               </div>
             </Col>
-            <Col span={8}>
-              <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-4">
+            {/* <Col span={8}>
+              <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
                 <label>账期</label>
               </div>
               <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
                 <div className='ant-form-item-control'>2018-07-16 09:05:06 ~2018-07-16 09:05:06</div>
               </div>
-            </Col>
+            </Col> */}
             <Col span={8}>
-              <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-4">
+              <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
                 <label>供应商</label>
               </div>
               <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
-                <div className='ant-form-item-control'>华润药业集团</div>
+                <div className='ant-form-item-control'>{info.ctmaSupplierName || ''}</div>
               </div>
             </Col>
-            <Col span={8}>
-              <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-4">
+            {/* <Col span={8}>
+              <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
                 <label>对账人</label>
               </div>
               <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
@@ -139,7 +159,7 @@ class Details extends PureComponent {
               </div>
             </Col>
             <Col span={8}>
-              <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-4">
+              <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
                 <label>对账完成时间</label>
               </div>
               <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
@@ -147,7 +167,7 @@ class Details extends PureComponent {
               </div>
             </Col>
             <Col span={8}>
-              <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-4">
+              <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
                 <label>结算人</label>
               </div>
               <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
@@ -155,13 +175,13 @@ class Details extends PureComponent {
               </div>
             </Col>
             <Col span={8}>
-              <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-4">
+              <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
                 <label>结算时间</label>
               </div>
               <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
                 <div className='ant-form-item-control'>2018-7-24 16:45:15</div>
               </div>
-            </Col>
+            </Col> */}
           </Row>
           <div style={{borderBottom: '1px dashed #d9d9d9', marginBottom: 10}}></div>
           <Row align="middle">
@@ -174,7 +194,7 @@ class Details extends PureComponent {
                   <div className="ant-form-item-control">
                     <Search 
                       placeholder='发药单/出库单'
-                      onSearch={value => console.log(value)}
+                      onSearch={this.changeSelect}
                      />
                   </div>
                 </div>
@@ -187,9 +207,13 @@ class Details extends PureComponent {
                 </div>
                 <div className="ant-col-18">
                   <div className="ant-form-item-control">
-                    <Search 
+                    <FetchSelect
+                      allowClear
+                      value={value}
+                      style={{width: '100%'}}
+                      url={common.QUERY_DRUG_BY_LIST}
                       placeholder='通用名/产品名/生产厂家/供应商'
-                      onSearch={value => console.log(value)}
+                      cb={this.changeFetchSelect}
                      />
                   </div>
                 </div>
@@ -201,26 +225,18 @@ class Details extends PureComponent {
           <Row>
               <Col span={4} style={{ paddingBottom: 10, borderBottom: '1px solid #f5f5f5' }} >产品信息</Col>
           </Row>
-          <Table
-            dataSource={dataSource}
-            bordered
+          <RemoteTable
+            isJson={true}
+            query={query}
+            url={settlementMgt.DETAIL_LIST}
             scroll={{x: '220%'}}
             columns={columns}
             rowKey={'id'}
             style={{marginTop: 24}}
-            pagination={{
-              size: 'small',
-              showQuickJumper: true,
-              showSizeChanger : true,
-              showTotal: (total) => {
-                return `总共${total}个项目`;
-              }
-            }}
           />
-          <footer>总金额<span style={{ color: 'red' }}>123456.0000</span>元</footer>
         </div>
       </div>
     )
   }
 }
-export default Details;
+export default connect(state=>state)(Details);

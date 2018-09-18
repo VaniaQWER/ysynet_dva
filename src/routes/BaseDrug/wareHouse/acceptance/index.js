@@ -17,19 +17,19 @@ const Option = Select.Option;
 const columns = [
   {
    title: '出库单',
-   dataIndex: 'outStoreCode',
+   dataIndex: 'distributeCode',
    width:150,
-   render:(text, record)=>(<Link to={{pathname: `/baseDrug/wareHouse/acceptance/details/${record.accordingCode}`}}>{text}</Link>)
+   render:(text, record)=>(<Link to={{pathname: `/baseDrug/wareHouse/acceptance/details/${record.distributeCode}`}}>{text}</Link>)
   },
   {
     title: '申领单',
     width:150,
-    dataIndex: 'applyCode',
+    dataIndex: 'supplierCode',
   },
   {
     title: '配货部门',
     width:100,
-    dataIndex: 'accordingDept'
+    dataIndex: 'deptName'
   },
   {
     title: '状态',
@@ -39,17 +39,17 @@ const columns = [
   {
     title: '发起人',
     width:100,
-    dataIndex: 'launchUser'
+    dataIndex: 'createName'
   },
   {
     title: '发起时间',
-    dataIndex: 'launchDate',
+    dataIndex: 'createDate',
     width:120
   },
   {
    title: '验收时间',
    width:120,
-   dataIndex: 'accordingDate'
+   dataIndex: 'receptionTime'
   }
 ];
 
@@ -58,7 +58,9 @@ class Acceptance extends PureComponent{
   constructor(props) {
     super(props);
     this.state = {
-      query:{},
+      query:{
+        checkType: 3
+      },
     }
   }
   queryHandler = (query) => {
@@ -81,9 +83,10 @@ class Acceptance extends PureComponent{
           </Button>
         </Row>
         <RemoteTable
+          isJson
           query={query}
           ref="tab"
-          url={acceptance.GET_CHECK_INFO}
+          url={acceptance.CHECKACCEPT_LIST}
           scroll={{x: '100%'}}
           columns={columns}
           rowKey={'id'}

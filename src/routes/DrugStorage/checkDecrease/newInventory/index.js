@@ -2,9 +2,12 @@
  * @file 药库 - 盘点损益 - 新建盘点
  */
 import React, { PureComponent } from 'react';
-import { Form, Row, Col, DatePicker, Input, Select, Button, Icon, Table, Modal, Radio, message } from 'antd';
+import { Form, Row, Col, DatePicker, Input, Select, Button, Icon, Modal, Radio, message } from 'antd';
 import { Link } from 'react-router-dom';
 import { formItemLayout } from '../../../../utils/commonStyles';
+import RemoteTable from '../../../../components/TableGrid';
+import {common} from '../../../../api/checkDecrease';
+import {connect} from 'dva';
 import moment from 'moment';
 const FormItem = Form.Item;
 const { RangePicker } = DatePicker;
@@ -13,7 +16,7 @@ const RadioGroup = Radio.Group;
 
 class SearchForm extends PureComponent {
   state = {
-    display: 'none',
+    display: 'none'
   }
   toggle = () => {
     const { display, expand } = this.state;
@@ -28,9 +31,9 @@ class SearchForm extends PureComponent {
       if (!err) {
         const makingTime = values.makingTime === undefined || values.makingTime === null ? "" : values.makingTime;
         if(makingTime.length > 0) {
-          values.startMakingTime = makingTime[0].format('YYYY-MM-DD HH:mm');
-          values.endMakingTime = makingTime[1].format('YYYY-MM-DD HH:mm');
-        }
+          values.checkStartTime = makingTime[0].format('YYYY-MM-DD HH:mm');
+          values.checkEndTime = makingTime[1].format('YYYY-MM-DD HH:mm');
+        };
         console.log(values, '查询条件');
         this.props.query(values);
       }
@@ -40,50 +43,46 @@ class SearchForm extends PureComponent {
     this.props.form.resetFields();
     this.props.query({});
   }
+  listRender = (list) => {
+    return <Select placeholder="请选择">
+            {
+              list.map(item => {
+                return <Option key={item.value} value={item.value}>{item.label}</Option>
+              })
+            }
+           </Select>
+  } 
   render() {
     const { getFieldDecorator } = this.props.form;
+    let {status, types} = this.props;
     return(
       <Form onSubmit={this.handleSearch}>
         <Row gutter={30}>
           <Col span={8}>
             <FormItem label={'盘点时间'} {...formItemLayout}>
               {getFieldDecorator('makingTime')(
-                <RangePicker showTime={{ format: 'HH:mm' }} format={'YYYY-MM-DD HH:mm'} style={{ width: 313 }} />
+                <RangePicker />
               )}
             </FormItem>
           </Col>
           <Col span={8}>
             <FormItem label={'单号'} {...formItemLayout}>
-              {getFieldDecorator('odd')(
+              {getFieldDecorator('checkBillNo')(
                 <Input placeholder={'盘点单号'} />
               )}
             </FormItem>
           </Col>
           <Col span={8}>
             <FormItem label={'状态'} {...formItemLayout} style={{ display: this.state.display }}>
-              {getFieldDecorator('status', {
-                initialValue: ''
-              })(
-                <Select>
-                  <Option value={''}>全部</Option>
-                  <Option value={'00'}>新建</Option>
-                  <Option value={'01'}>待确认</Option>
-                  <Option value={'02'}>已确认</Option>
-                </Select>
+              {getFieldDecorator('checkStatus')(
+                this.listRender(status)
               )}
             </FormItem>
           </Col>
           <Col span={8}>
             <FormItem label={'类型'} {...formItemLayout} style={{ display: this.state.display }}>
-              {getFieldDecorator('types', {
-                initialValue: ''
-              })(
-                <Select>
-                  <Option value={''}>全部</Option>
-                  <Option value={'00'}>00</Option>
-                  <Option value={'01'}>01</Option>
-                  <Option value={'02'}>02</Option>
-                </Select>
+              {getFieldDecorator('checkBillType')(
+                this.listRender(types)
               )}
             </FormItem>
           </Col>
@@ -109,408 +108,194 @@ class NewInventory extends PureComponent {
     loading: false,
     visible: false,
     selected: [],
-    types2: '1',
-    display: 'none'
+    selectedRows: [],
+    subType: '',
+    display: 'none',
+    types: [],
+    status: [],
+    subTypes: [],
+    deleteLoadig: false
   }
+  componentDidMount() {
+    this.props.dispatch({
+      type: 'base/orderStatusOrorderType',
+      payload: {
+        type: 'check_bill_type'
+      },
+      callback: (data) => {
+        this.setState({
+          types: data
+        });
+      }
+    });
+    this.props.dispatch({
+      type: 'base/orderStatusOrorderType',
+      payload: {
+        type: 'check_status'
+      },
+      callback: (data) => {
+        this.setState({
+          status: data
+        });
+      }
+    });
+    this.props.dispatch({
+      type: 'base/orderStatusOrorderType',
+      payload: {
+        type: 'check_bill_sub_type'
+      },
+      callback: (data) => {
+        this.setState({
+          subTypes: data
+        });
+      }
+    })
+  }
+  //查询
   queryHandler = query => {
     this.setState({ query });
   }
-  handleOk = () => {
-    this.setState({ loading: true });
-    setTimeout(() => {
-      this.setState({ loading: false, visible: false });
-    }, 3000);
-  }
-  delete = () =>{
-    const selected = this.state.selected;
-    if (selected.length === 0) {
-      message.warn('请至少选择一条数据')
-    } else {
+  //新建
+  handleOk = (e) => {
+    e.preventDefault();
+    this.props.form.validateFields((err, values) => {
+      if(err) return;
+      console.log(values);
+      if(values.checkStartTime) {
+        values.checkStartTime = values.checkStartTime.format('YYYY-MM-DD HH:mm');
+      }
       this.setState({ loading: true });
-      message.warn('删除成功！');
-      setTimeout(()=>{this.setState({loading: false, selected: []});}, 500);
-    }
+      
+      this.props.dispatch({
+        type: 'checkDecrease/createCheckbill',
+        payload: values,
+        callback: (data) => {
+          if(data.msg === 'success') {
+            this.setState({
+              loading: false,
+              visible: false,
+            });
+            this.refs.table.fetch(this.state.query);
+            message.success('新建成功！');
+          }else {
+            this.setState({
+              loading: false
+            });
+            message.error(data.msg);
+            message.warning('新建失败！');
+          }
+        }
+      })
+    })
   }
-  onChange = (value, dateString) =>{
-    console.log('Selected Time: ', value);
-    console.log('Formatted Selected Time: ', dateString);
+  //删除
+  delete = () =>{
+    const {selectedRows} = this.state;
+    if (selectedRows.length === 0) {
+      return message.warn('请至少选择一条数据')
+    };
+    this.setState({ deleteLoadig: true });
+    let ids = selectedRows.map(item=>item.id);
+    this.props.dispatch({
+      type: 'checkDecrease/deleteCheckBill',
+      payload: {ids},
+      callback: (data) => {
+        if(data.msg === 'success') {
+          this.ref.table.fetch(this.state.query);
+        }else {
+          message.error(data.msg);
+          message.warning('删除失败！');
+        }
+        this.setState({
+          deleteLoadig: false
+        })
+      }
+    })
   }
-  onOk = (value) => {
-    console.log('onOk: ', value);
+  //单选框渲染
+  radioRender = (list) => {
+    list = list.filter(item => item.label !== "全部")
+    return list.map(item => {
+      return <Radio key={item.value} value={item.value}>{item.label}</Radio>
+    })
   }
   render() {
-    const { getFieldDecorator } = this.props.form;
-    const formItemLayoutAdd = { labelCol: { span: 6 }, wrapperCol: { span: 18 } };
+    const { getFieldDecorator} = this.props.form;
+    const formItemLayoutAdd = { 
+      labelCol: { span: 6 }, 
+      wrapperCol: { span: 18 } 
+    };
+    const {status, types, query, subTypes, subType, deleteLoadig} = this.state;
     const columns = [
       {
         title: '盘点单',
-        dataIndex: 'odd',
-        key: 'odd',
+        dataIndex: 'checkBillNo',
+        width: 220,
         render: (text, record) => {
-          if (record.status === '已确认') {
-            return <span><Link to={{ pathname: `/drugStorage/checkDecrease/newInventory/detailsConfirm/${record.types}`}}>{text}</Link></span>
-          } else {
-            return <span><Link to={{ pathname: `/drugStorage/checkDecrease/newInventory/details/${record.types}`}}>{text}</Link></span>
-          }
+          return <span><Link to={{ pathname: `/drugStorage/checkDecrease/newInventory/details/${record.checkBillNo}`}}>{text}</Link></span>
         }
       },
       {
         title: '状态',
-        dataIndex: 'status',
-        key: 'status'
+        dataIndex: 'checkStatusName',
       },
       {
-        title: '类型',
-        dataIndex: 'types',
-        key: 'types',
-        render: (text,record,index)=>{
-          return text === '00' ? '明盘全盘': text ==='01'?'暗盘动销盘': '明盘动盘'
-        }
+        title: '盘点类型',
+        dataIndex: 'checkBillTypeName',
+      },
+      {
+        title: '盘点子类型',
+        dataIndex: 'checkBillSubTypeName',
       },
       {
         title: '部门',
-        dataIndex: 'dept',
-        key: 'dept'
+        dataIndex: 'checkBillDeptName',
       },
       {
         title: '盘点责任人',
-        dataIndex: 'oddUser',
-        key: 'oddUser'
+        dataIndex: 'sheveUserName',
       },
       {
         title: '制单时间',
-        dataIndex: 'makingTime',
-        key: 'makingTime'
+        dataIndex: 'createDate',
       },
       {
         title: '盘点时间',
-        dataIndex: 'startTime',
-        key: 'startTime'
+        dataIndex: 'checkTime',
       },
       {
         title: '备注',
-        dataIndex: 'remark',
-        key: 'remark'
-      }
-    ];
-    const dataSource = [
-      {
-        key: '1',
-        odd: 'KP0022118070000383',
-        status: '草稿',
-        types: '00',
-        dept: '药库',
-        oddUser: '张三三',
-        makingTime: '2018-7-24 16:45',
-        startTime: '2018-7-24 16:45',
-        remark: '我是新建盘点列表'
-      },
-      {
-        key: '2',
-        odd: 'KP00221180700002DN',
-        status: '待确认',
-        types: '01',
-        dept: '药库',
-        oddUser: '张三三',
-        makingTime: '2018-7-24 16:45',
-        startTime: '2018-7-24 16:45',
-        remark: '我是新建盘点列表'
-      },
-      {
-        key: '3',
-        odd: 'KP00221180700001CW',
-        status: '已确认',
-        types: '02',
-        dept: '药库',
-        oddUser: '张三三',
-        makingTime: '2018-7-24 16:45',
-        startTime: '2018-7-24 16:45',
-        remark: '我是新建盘点列表'
-      },
-      {
-        key: '4',
-        odd: 'KP0022118070000383',
-        status: '草稿',
-        types: '00',
-        dept: '药库',
-        oddUser: '张三三',
-        makingTime: '2018-7-24 16:45',
-        startTime: '2018-7-24 16:45',
-        remark: '我是新建盘点列表'
-      },
-      {
-        key: '5',
-        odd: 'KP00221180700002DN',
-        status: '待确认',
-        types: '01',
-        dept: '药库',
-        oddUser: '张三三',
-        makingTime: '2018-7-24 16:45',
-        startTime: '2018-7-24 16:45',
-        remark: '我是新建盘点列表'
-      },
-      {
-        key: '6',
-        odd: 'KP00221180700001CW',
-        status: '已确认',
-        types: '02',
-        dept: '药库',
-        oddUser: '张三三',
-        makingTime: '2018-7-24 16:45',
-        startTime: '2018-7-24 16:45',
-        remark: '我是新建盘点列表'
-      },
-      {
-        key: '7',
-        odd: 'KP0022118070000383',
-        status: '草稿',
-        types: '00',
-        dept: '药库',
-        oddUser: '张三三',
-        makingTime: '2018-7-24 16:45',
-        startTime: '2018-7-24 16:45',
-        remark: '我是新建盘点列表'
-      },
-      {
-        key: '8',
-        odd: 'KP00221180700002DN',
-        status: '待确认',
-        types: '01',
-        dept: '药库',
-        oddUser: '张三三',
-        makingTime: '2018-7-24 16:45',
-        startTime: '2018-7-24 16:45',
-        remark: '我是新建盘点列表'
-      },
-      {
-        key: '9',
-        odd: 'KP00221180700001CW',
-        status: '已确认',
-        types: '02',
-        dept: '药库',
-        oddUser: '张三三',
-        makingTime: '2018-7-24 16:45',
-        startTime: '2018-7-24 16:45',
-        remark: '我是新建盘点列表'
-      },
-      {
-        key: '10',
-        odd: 'KP0022118070000383',
-        status: '草稿',
-        types: '00',
-        dept: '药库',
-        oddUser: '张三三',
-        makingTime: '2018-7-24 16:45',
-        startTime: '2018-7-24 16:45',
-        remark: '我是新建盘点列表'
-      },
-      {
-        key: '11',
-        odd: 'KP00221180700002DN',
-        status: '待确认',
-        types: '01',
-        dept: '药库',
-        oddUser: '张三三',
-        makingTime: '2018-7-24 16:45',
-        startTime: '2018-7-24 16:45',
-        remark: '我是新建盘点列表'
-      },
-      {
-        key: '12',
-        odd: 'KP00221180700001CW',
-        status: '已确认',
-        types: '02',
-        dept: '药库',
-        oddUser: '张三三',
-        makingTime: '2018-7-24 16:45',
-        startTime: '2018-7-24 16:45',
-        remark: '我是新建盘点列表'
-      },
-      {
-        key: '13',
-        odd: 'KP0022118070000383',
-        status: '草稿',
-        types: '00',
-        dept: '药库',
-        oddUser: '张三三',
-        makingTime: '2018-7-24 16:45',
-        startTime: '2018-7-24 16:45',
-        remark: '我是新建盘点列表'
-      },
-      {
-        key: '14',
-        odd: 'KP00221180700002DN',
-        status: '待确认',
-        types: '01',
-        dept: '药库',
-        oddUser: '张三三',
-        makingTime: '2018-7-24 16:45',
-        startTime: '2018-7-24 16:45',
-        remark: '我是新建盘点列表'
-      },
-      {
-        key: '15',
-        odd: 'KP00221180700001CW',
-        status: '已确认',
-        types: '02',
-        dept: '药库',
-        oddUser: '张三三',
-        makingTime: '2018-7-24 16:45',
-        startTime: '2018-7-24 16:45',
-        remark: '我是新建盘点列表'
-      },
-      {
-        key: '16',
-        odd: 'KP0022118070000383',
-        status: '草稿',
-        types: '00',
-        dept: '药库',
-        oddUser: '张三三',
-        makingTime: '2018-7-24 16:45',
-        startTime: '2018-7-24 16:45',
-        remark: '我是新建盘点列表'
-      },
-      {
-        key: '17',
-        odd: 'KP00221180700002DN',
-        status: '待确认',
-        types: '01',
-        dept: '药库',
-        oddUser: '张三三',
-        makingTime: '2018-7-24 16:45',
-        startTime: '2018-7-24 16:45',
-        remark: '我是新建盘点列表'
-      },
-      {
-        key: '18',
-        odd: 'KP00221180700001CW',
-        status: '已确认',
-        types: '02',
-        dept: '药库',
-        oddUser: '张三三',
-        makingTime: '2018-7-24 16:45',
-        startTime: '2018-7-24 16:45',
-        remark: '我是新建盘点列表'
-      },
-      {
-        key: '19',
-        odd: 'KP0022118070000383',
-        status: '草稿',
-        types: '00',
-        dept: '药库',
-        oddUser: '张三三',
-        makingTime: '2018-7-24 16:45',
-        startTime: '2018-7-24 16:45',
-        remark: '我是新建盘点列表'
-      },
-      {
-        key: '20',
-        odd: 'KP00221180700002DN',
-        status: '待确认',
-        types: '01',
-        dept: '药库',
-        oddUser: '张三三',
-        makingTime: '2018-7-24 16:45',
-        startTime: '2018-7-24 16:45',
-        remark: '我是新建盘点列表'
-      },
-      {
-        key: '21',
-        odd: 'KP00221180700001CW',
-        status: '已确认',
-        types: '02',
-        dept: '药库',
-        oddUser: '张三三',
-        makingTime: '2018-7-24 16:45',
-        startTime: '2018-7-24 16:45',
-        remark: '我是新建盘点列表'
-      },
-      {
-        key: '22',
-        odd: 'KP0022118070000383',
-        status: '草稿',
-        types: '00',
-        dept: '药库',
-        oddUser: '张三三',
-        makingTime: '2018-7-24 16:45',
-        startTime: '2018-7-24 16:45',
-        remark: '我是新建盘点列表'
-      },
-      {
-        key: '23',
-        odd: 'KP00221180700002DN',
-        status: '待确认',
-        types: '01',
-        dept: '药库',
-        oddUser: '张三三',
-        makingTime: '2018-7-24 16:45',
-        startTime: '2018-7-24 16:45',
-        remark: '我是新建盘点列表'
-      },
-      {
-        key: '24',
-        odd: 'KP00221180700001CW',
-        status: '已确认',
-        types: '02',
-        dept: '药库',
-        oddUser: '张三三',
-        makingTime: '2018-7-24 16:45',
-        startTime: '2018-7-24 16:45',
-        remark: '我是新建盘点列表'
-      },
-      {
-        key: '25',
-        odd: 'KP0022118070000383',
-        status: '草稿',
-        types: '00',
-        dept: '药库',
-        oddUser: '张三三',
-        makingTime: '2018-7-24 16:45',
-        startTime: '2018-7-24 16:45',
-        remark: '我是新建盘点列表'
-      },
-      {
-        key: '26',
-        odd: 'KP00221180700002DN',
-        status: '待确认',
-        types: '01',
-        dept: '药库',
-        oddUser: '张三三',
-        makingTime: '2018-7-24 16:45',
-        startTime: '2018-7-24 16:45',
-        remark: '我是新建盘点列表'
-      },
-      {
-        key: '27',
-        odd: 'KP00221180700001CW',
-        status: '已确认',
-        types: '02',
-        dept: '药库',
-        oddUser: '张三三',
-        makingTime: '2018-7-24 16:45',
-        startTime: '2018-7-24 16:45',
-        remark: '我是新建盘点列表'
+        dataIndex: 'remarks',
       }
     ];
     return (
       <div className='ysynet-main-content'>
-        <SearchFormWarp query={this.queryHandler} />
+        <SearchFormWarp
+          status={status}
+          types={types}
+          dispatch={this.props.dispatch} 
+          query={this.queryHandler} 
+        />
         <div>
           <Button type='primary' onClick={()=>this.setState({ visible: true })}><Icon type="plus" />新建</Button>
-          <Button style={{ marginLeft: 10 }} onClick={this.delete}>删除</Button>
+          <Button loading={deleteLoadig} style={{ marginLeft: 8 }} onClick={this.delete}>删除</Button>
         </div>
-        <Table
-          loading={ this.state.loading}
+        <RemoteTable 
+          query={query}
+          url={common.CHECKBILL_LIST}
           columns={columns}
-          // rowKey={'oddGuid'}
+          rowKey={'id'}
+          ref="table"
+          scroll={{x: '130%'}}
           style={{marginTop: 20}}
-          dataSource={dataSource}
-          bordered
           rowSelection={{
             selectedRowKeys: this.state.selected,
             onChange: (selectedRowKeys, selectedRows) => {
               this.setState({selected: selectedRowKeys, selectedRows: selectedRows})
-            }
+            },
+            getCheckboxProps: record => ({
+              disabled: record.checkStatus !== 1 || record.checkStatus !== 6
+            }),
           }}
         />
         <Modal
@@ -527,74 +312,34 @@ class NewInventory extends PureComponent {
             <Row>
               <Col span={24}>
                 <FormItem label={'类型'} {...formItemLayoutAdd}>
-                  {getFieldDecorator('types1')(
+                  {getFieldDecorator('checkBillType')(
                     <RadioGroup>
-                      <Radio value={'1'}>明盘</Radio>
-                      <Radio value={'2'}>暗盘</Radio>
+                      {this.radioRender(types)}
                     </RadioGroup>
                   )}
                   
                 </FormItem>
               </Col>
               <Col span={24}>
-                <FormItem label={''}>
-                  {getFieldDecorator('types2')(
-                    <RadioGroup style={{ marginLeft: 118 }} {...formItemLayoutAdd} onChange={(e) => this.setState({ types2: e.target.value })}>
-                      <Radio value={'1'}>全盘</Radio>
-                      <Radio value={'2'}>动盘</Radio>
-                      <Radio value={'3'}>动销盘</Radio>
-                    </RadioGroup>
-                  )}
-                </FormItem>
-              </Col>
-              <Col span={24}>
-                <FormItem label={'药品特征'} {...formItemLayoutAdd}>
-                  {getFieldDecorator('types3')(
-                    <RadioGroup>
-                      <Radio value={'1'}>全部</Radio>
-                      <Radio value={'2'}>中成药</Radio>
-                      <Radio value={'3'}>西药</Radio>
-                    </RadioGroup>
-                  )}
-                  
-                </FormItem>
-              </Col>
-              <Col span={24}>
-                <FormItem label={''}>
-                  {getFieldDecorator('types4')(
-                    <RadioGroup style={{ marginLeft: 118 }} {...formItemLayoutAdd}>
-                      <Radio value={'1'}>大输液</Radio>
-                      <Radio value={'2'}>报告药</Radio>
-                      <Radio value={'3'}>贵重品</Radio>
-                    </RadioGroup>
-                  )}
-                </FormItem>
-              </Col>
-              <Col span={24}>
-                <FormItem label={''}>
-                  {getFieldDecorator('types5')(
-                    <RadioGroup style={{ marginLeft: 118 }} {...formItemLayoutAdd}>
-                      <Radio value={'1'}>冷藏</Radio>
-                      <Radio value={'2'}>毒麻药品</Radio>
-                      <Radio value={'3'}>中草药</Radio>
+                <FormItem label={'子类型'} {...formItemLayoutAdd}>
+                  {getFieldDecorator('checkBillSubType')(
+                    <RadioGroup onChange={(e) => this.setState({ subType: e.target.value })}>
+                      {this.radioRender(subTypes)}
                     </RadioGroup>
                   )}
                 </FormItem>
               </Col>
               {
-                this.state.types2 === '3' ?
+                subType === '3' ?
                   <Col span={24}>
                     <FormItem label={'起始时间'} {...formItemLayoutAdd}>
-                      {getFieldDecorator('startTime', {
+                      {getFieldDecorator('checkStartTime', {
                         rules: [{ required: true, message: '请选择起始时间' }],
                         initialValue: moment(new Date(), moment().format('YYYY-MM-DD 00:00'))
                       })(
                         <DatePicker
                           showTime
                           format="YYYY-MM-DD HH:mm"
-                          onChange={this.onChange}
-                          onOk={this.onOk}
-                          style={{ width: 280 }}
                         />
                         )
                       }
@@ -617,4 +362,4 @@ class NewInventory extends PureComponent {
     )
   }
 }
-export default Form.create()(NewInventory);
+export default connect()(Form.create()(NewInventory));

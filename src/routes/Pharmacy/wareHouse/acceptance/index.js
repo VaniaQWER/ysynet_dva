@@ -17,9 +17,9 @@ const Option = Select.Option;
 const columns = [
   {
    title: '出库单',
-   dataIndex: 'acceptanceCode',
+   dataIndex: 'distributeCode',
    width:150,
-   render:(text, record)=>(<Link to={{pathname: `/pharmacy/wareHouse/acceptance/details/id=${record.acceptanceCode}&state=${record.acceptanceStatus}`}}>{text}</Link>)
+   render:(text, record)=>(<Link to={{pathname: `/pharmacy/wareHouse/acceptance/details/id=${record.distributeCode}&state=${record.auditStatus}`}}>{text}</Link>)
   },
   {
     title: '申领单',
@@ -29,17 +29,17 @@ const columns = [
   {
     title: '配货部门',
     width:100,
-    dataIndex: 'department'
+    dataIndex: 'deptName'
   },
   {
     title: '状态',
     width:150,
-    dataIndex: 'acceptanceStatusName',
+    dataIndex: 'statusName',
   },
   {
     title: '发起人',
     width:100,
-    dataIndex: 'sponsorName'
+    dataIndex: 'createName'
   },
   {
     title: '发起时间',
@@ -58,7 +58,9 @@ class Acceptance extends PureComponent{
   constructor(props) {
     super(props);
     this.state = {
-      query:{},
+      query:{
+        checkType: 2
+      },
     }
   }
   queryHandler = (query) => {
@@ -79,9 +81,10 @@ class Acceptance extends PureComponent{
           </Button>
         </Row>
         <RemoteTable
+          isJson
           query={query}
           ref="tab"
-          url={wareHouse.ROOMCHECK}
+          url={wareHouse.CHECKACCEPT_LIST}
           scroll={{x: '100%'}}
           columns={columns}
           rowKey={'id'}

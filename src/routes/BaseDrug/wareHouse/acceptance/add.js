@@ -10,7 +10,7 @@ const columns = [
   {
     title: '实到数量',
     width:100,
-    dataIndex: 'realReceiveQuantity'
+    dataIndex: 'realReceiveQuantiry'
   },
   {
     title: '需求数量',
@@ -20,7 +20,7 @@ const columns = [
   {
     title: '单位',
     width:150,
-    dataIndex: 'replanUnit'
+    dataIndex: '单位'
   },
   {
     title: '通用名',
@@ -50,7 +50,6 @@ const columns = [
     title: '包装规格',
     width:150,
     dataIndex: 'packageSpecification',
-    render:(text)=>'g'
   },
   {
     title: '批准文号',
@@ -65,7 +64,7 @@ const columns = [
   {
     title: '生产批号',
     width:150,
-    dataIndex: 'medicinalCode',
+    dataIndex: 'productBatchNo',
   },
   {
     title: '生产日期',
@@ -106,16 +105,16 @@ class AddNewAcceptance extends PureComponent{
     console.log(this.props);
     
     this.props.dispatch({
-      type: 'base/getCheckDetail',
+      type: 'base/deliverRequest',
       payload: {
-        acceptanceCode: this.state.acceptanceCode
+        distributeCode: this.state.acceptanceCode
       },
       callback: (data) => {
         this.setState({
           loading: false,
           info: data,
-          activeKey: data.status + '',
-          btnShow: data.status === 1
+          activeKey: data.auditStatus + '',
+          btnShow: data.auditStatus === 1
         })
       }
     })
@@ -135,12 +134,12 @@ class AddNewAcceptance extends PureComponent{
     this.setState({
       checkLoading: true
     });
-    let rommAcceptList = selected.map(item => ({id: item}));
+    let detailList = selected.map(item => ({id: item}));
     this.props.dispatch({
       type: 'base/saveCheck',
       payload: {
-        rommAcceptList,
-        acceptanceCode: info.accordingCode
+        detailList,
+        distributeCode: info.distributeCode
       },
       callback: (data) => {
         message.success('确认验收成功');
@@ -156,8 +155,9 @@ class AddNewAcceptance extends PureComponent{
     this.setState({
       loading: true,
       acceptanceCode: value
+    }, () => {
+      this.queryDetail();
     });
-    this.queryDetail();
   }
  
   tabsChange = (activeKey) =>{
@@ -171,7 +171,7 @@ class AddNewAcceptance extends PureComponent{
 
   render(){
     let {btnShow, loading, info, checkLoading, activeKey } = this.state;
-    let {checkListVos, uncheckListVos} = info;
+    let {verifyList, unVerfiyList} = info;
     return (
       <div className='fullCol' style={{padding: '0 24px 24px', background: 'rgb(240, 242, 245)'}}>
         <div className='fullCol-fullChild' style={{marginLeft: -24, marginRight: -24}}>
@@ -228,7 +228,7 @@ class AddNewAcceptance extends PureComponent{
                     <label>出库单</label>
                 </div>
                 <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
-                  <div className='ant-form-item-control'>{info.outStoreCode || ''}</div>
+                  <div className='ant-form-item-control'>{info.distributeCode || ''}</div>
                 </div>
               </Col>
               <Col span={8}>
@@ -247,14 +247,12 @@ class AddNewAcceptance extends PureComponent{
                     <div className='ant-form-item-control'>{info.statusName || ''}</div>
                   </div>
               </Col>
-            </Row>
-            <Row>
               <Col span={8}>
                   <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
                       <label>配货部门</label>
                   </div>
                   <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
-                    <div className='ant-form-item-control'>{info.accordingDept || ''}</div>
+                    <div className='ant-form-item-control'>{info.deptName || ''}</div>
                   </div>
               </Col>
               <Col span={8}>
@@ -262,7 +260,7 @@ class AddNewAcceptance extends PureComponent{
                       <label>发起人</label>
                   </div>
                   <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
-                    <div className='ant-form-item-control'>{info.launchUser || ''}</div>
+                    <div className='ant-form-item-control'>{info.createName || ''}</div>
                   </div>
               </Col>
               <Col span={8}>
@@ -270,17 +268,15 @@ class AddNewAcceptance extends PureComponent{
                       <label>发起时间</label>
                   </div>
                   <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
-                    <div className='ant-form-item-control'>{info.launchDate || ''}</div>
+                    <div className='ant-form-item-control'>{info.createDate || ''}</div>
                   </div>
               </Col>
-            </Row>
-            <Row>
               <Col span={8}>
                   <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
                       <label>验收时间</label>
                   </div>
                   <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
-                    <div className='ant-form-item-control'>{info.accordingDate || ''}</div>
+                    <div className='ant-form-item-control'>{info.receptionTime || ''}</div>
                   </div>
               </Col>
             </Row>
@@ -290,7 +286,7 @@ class AddNewAcceptance extends PureComponent{
           <Tabs 
             activeKey={activeKey} 
             onChange={this.tabsChange} 
-            tabBarExtraContent={ btnShow && uncheckListVos && uncheckListVos.length > 0? 
+            tabBarExtraContent={ btnShow && unVerfiyList && unVerfiyList.length > 0? 
               <Button loading={checkLoading} type='primary' onClick={this.saveCheck}>确认验收</Button> : 
               null
             }>
@@ -300,7 +296,7 @@ class AddNewAcceptance extends PureComponent{
                 loading={loading}
                 scroll={{x: '150%'}}
                 columns={columns}
-                dataSource={uncheckListVos || []}
+                dataSource={unVerfiyList || []}
                 pagination={false}
                 rowKey={'id'}
                 rowSelection={{
@@ -316,7 +312,7 @@ class AddNewAcceptance extends PureComponent{
                 scroll={{x: '150%'}}
                 rowKey={'id'}
                 columns={columns}
-                dataSource={checkListVos || []}
+                dataSource={verifyList || []}
                 pagination={false}
               />
             </TabPane>

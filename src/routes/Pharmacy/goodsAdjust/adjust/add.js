@@ -34,16 +34,22 @@ class NewAddGoodsAdjust extends PureComponent{
   }
 
   addProduct = () => {
-    let {modalSelected, dataSource} = this.state;
+    let {modalSelectedRows, dataSource} = this.state;
     
-    if(modalSelected.length === 0) {
+    if(modalSelectedRows.length === 0) {
       message.warning('请选择一条数据');
       return;
     };
     this.setState({okLoading: true});
-    modalSelected = modalSelected.map(item=>({drugCode: item}));
+    modalSelectedRows = modalSelectedRows.map(item=>{
+      return {
+        drugCode: item.drugCode,
+        lot: item.lot,
+        locCode: item.locCode
+      }
+    });
     let payload = {
-      detailList: modalSelected,
+      detailList: modalSelectedRows,
       locType: '2'
     };
     this.props.dispatch({
@@ -57,7 +63,8 @@ class NewAddGoodsAdjust extends PureComponent{
           ],
           okLoading: false,
           visible: false,
-          modalSelected: []
+          modalSelected: [],
+          modalSelectedRows: []
         });
       }
     })
@@ -72,6 +79,8 @@ class NewAddGoodsAdjust extends PureComponent{
         existDrugCodeList: dataSource
       }, 
       visible: true,
+      modalSelectedRows: [],
+      modalSelected: []
     });
   }
 
@@ -123,7 +132,7 @@ class NewAddGoodsAdjust extends PureComponent{
         goalBigDrugCode: item.goalBigDrugCode,
         goalDrugCode: item.goalDrugCode,
         goalLocCode: item.goalLocCode,
-        goalUnit: item.targetUnit,
+        goalUnit: item.targetUnitCode,
         lot: item.lot,
         originalBigDrugCode: item.bigDrugCode,
         originalLocCode: item.goodsCode,
@@ -131,7 +140,7 @@ class NewAddGoodsAdjust extends PureComponent{
         productDate: item.productDate,
         supplierCode: item.supplierCode,
         validEndDate: item.validEndDate,
-        originalUnit: item.replanUnit
+        originalUnit: item.replanUnitCode
       }
     });
     
@@ -170,6 +179,7 @@ class NewAddGoodsAdjust extends PureComponent{
     dataSource[i].goalBigDrugCode = record.targetLocInfoVoList[index].goalBigDrugCode;
     dataSource[i].goalDrugCode = record.targetLocInfoVoList[index].goalDrugCode;
     dataSource[i].targetUnit = record.targetLocInfoVoList[index].targetUnit;
+    dataSource[i].targetUnitCode = record.targetLocInfoVoList[index].targetUnitCode
     dataSource[i].targetTypeName = record.targetLocInfoVoList[index].targetTypeName;
     dataSource[i].conversionRate = record.targetLocInfoVoList[index].conversionRate;
     this.setState({
@@ -324,7 +334,7 @@ class NewAddGoodsAdjust extends PureComponent{
           <Table 
             columns={columns}
             bordered
-            rowKey='drugCode'
+            rowKey='id'
             dataSource={dataSource}
             scroll={{ x: '210%' }}
             pagination={false}
@@ -390,7 +400,7 @@ class NewAddGoodsAdjust extends PureComponent{
             style={{ marginTop: 16 }} 
             columns={modalColumns}
             scroll={{ x: '180%' }}
-            rowKey='drugCode'
+            rowKey='id'
             rowSelection={{
               selectedRowKeys: this.state.modalSelected,
               onChange: (selectedRowKeys, selectedRows) => {

@@ -12,8 +12,8 @@ import { Form, Input, Row, Col, Select, Button, Tooltip, Icon } from 'antd';
 import { Link } from 'react-router-dom';
 import wareHouse from '../../../../api/drugStorage/wareHouse';
 import RemoteTable from '../../../../components/TableGrid';
+import FetchSelect from '../../../../components/FetchSelect';
 import {connect} from 'dva';
-import _ from 'loadsh';
 
 const FormItem = Form.Item;
 const { Option } = Select;
@@ -71,11 +71,8 @@ class SearchForm extends PureComponent{
   state = {
     display: 'none',
     type: [],
-    status: []
-  }
-  constructor(props) {
-    super(props)
-    this.ChangeSupplier = _.debounce(this.ChangeSupplier, 300);
+    status: [],
+    value: undefined
   }
   componentDidMount = () => {
     this.props.dispatch({
@@ -105,6 +102,7 @@ class SearchForm extends PureComponent{
         for (const key in values) {
           values[key] = values[key] === undefined? "" : values[key];
         }
+        values.supplierCode = this.state.value? [this.state.value] : [];
         this.props.query(values);
       };
     });
@@ -116,28 +114,16 @@ class SearchForm extends PureComponent{
       expand: !expand
     })
   }
-  ChangeSupplier = (value) => {
-    if(value === "") return;
-    this.props.dispatch({
-      type: 'wareHouse/getsupplierList',
-      payload: {
-        ctmaSupplierName: value
-      }
+  listRender = (list) => {
+    return list.map(item => {
+      return (<Option key={item.value} value={item.value}>{item.label}</Option>)
     });
   }
   render(){
     const { getFieldDecorator } = this.props.form;
-    let { display, expand, type, status } = this.state;
-    let {supplierList} = this.props;
-    supplierList = supplierList.map(item=>{
-      return (<Option key={item.ctmaSupplierCode} value={item.ctmaSupplierCode}>{item.ctmaSupplierName}</Option>)
-    })
-    type = type.map(item => {
-      return (<Option key={item.value} value={item.value}>{item.label}</Option>)
-    });
-    status = status.map(item => {
-      return (<Option key={item.value} value={item.value}>{item.label}</Option>)
-    });
+    let { display, expand, type, status, value } = this.state;
+    type = this.listRender(type);
+    status = this.listRender(status);
     return (
       <Form className="ant-advanced-search-form" onSubmit={this.handleSearch}>
         <Row gutter={30}>
@@ -152,19 +138,23 @@ class SearchForm extends PureComponent{
           </Col>
           <Col span={8}>
             <FormItem {...formItemLayout} label={`供应商`}>
-              {
-                getFieldDecorator(`supplierCode`)(
-                  <Select
-                    allowClear
-                    showSearch
-                    placeholder={'请选择'}
-                    optionFilterProp="children"
-                    onSearch={this.ChangeSupplier}
-                  >
-                      {supplierList}
-                  </Select>
-                )
-              }
+                <FetchSelect
+                  value={value}
+                  url={wareHouse.SUPPLIER_LIST}
+                  queryKey="ctmaSupplierName"
+                  valueAndLabel={{
+                    value: 'ctmaSupplierCode',
+                    label: 'ctmaSupplierName'
+                  }}
+                  allowClear
+                  placeholder={'请选择'}
+                  optionFilterProp="children"
+                  cb={(value) => {
+                    this.setState({
+                      value
+                    })
+                  }}
+                />
             </FormItem>
           </Col>
           <Col span={8} style={{ display: display }}>
@@ -217,30 +207,39 @@ const WrapperForm = connect(state=>state.wareHouse)(Form.create()(SearchForm));
 
 class DistributionCheck extends PureComponent{
   state = {
-    query: {},
+    query: {
+      checkType: 1
+    },
     data: []
   }
 
-  queryHandler = (query) => {
-    query.type = query.type === ""? 0 : query.type;
-    this.refs.tab.fetch(query);
+  queryHandler = (queryValue) => {
+    let {query} = this.state;
+    this.setState({
+      query: {
+        ...query,
+        ...queryValue
+      }
+    });
+    // this.ref.table.fetch(query)
   }
   render(){
     let {query} = this.state;
     return (
       <div className='ysynet-main-content'>
-         <WrapperForm query={this.queryHandler} />
-         <div className='ant-row-bottom'>
-            <Button type='primary' onClick={()=>this.props.history.push({ pathname: `/AddNewCheck` })}>新建验收</Button>
-         </div>
-         <RemoteTable
+        <WrapperForm query={this.queryHandler} />
+        <div className='ant-row-bottom'>
+          <Button type='primary' onClick={()=>this.props.history.push({ pathname: `/AddNewCheck` })}>新建验收</Button>
+        </div>
+        <RemoteTable
+          isJson={true}
           query={query}
           ref="tab"
           url={wareHouse.depotdistributeList}
           columns={columns}
           scroll={{ x: '100%' }}
           rowKey={'id'}
-         />
+        />
       </div>
     )
   }

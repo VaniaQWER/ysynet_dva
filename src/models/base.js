@@ -8,6 +8,7 @@ import * as wareHouse from '../services/drugStorage/wareHouse';
 import * as outStorageService from '../services/drugStorage/outStorage';
 import * as goodsAdjust from '../services/drugStorage/goodsAdjust';
 import * as baseDrug from '../services/baseDrug/wareHouse';
+import * as settlementMgt from '../services/purchase/settlementMgt';
 import { message } from 'antd';
 
 export default {
@@ -24,6 +25,11 @@ export default {
       }else {
         message.error(data.msg);
       }
+    },
+    //采购结算 - 结算管理 - 日对账单 - 生成对账 - 确认
+    *push2Hrp({payload, callback}, {call}) {
+      const data = yield call(settlementMgt.push2Hrp, payload);
+      callback && callback(data);
     },
     //货位移动 - 添加产品弹窗确认
     *drugInformation({payload, callback}, {call}) {
@@ -44,7 +50,7 @@ export default {
         message.error(data.msg);
       }
     },
-    //药库 - 入库 - 配送单详情
+    //公共模块 验收 - 详情
     *deliverRequest({ payload, callback },{ put, call }) {
       const data = yield call(wareHouse.detailsInfo, payload);
       if(data.code === 200) {
@@ -59,15 +65,6 @@ export default {
       const data = yield call(wareHouse.saveCheck, payload);
       if(data.code === 200) {
         callback && callback(data);
-      }
-    },
-    //药品验收详情
-    *checkDetail({payload, callback}, {put, call}) {
-      const data = yield call(pharmacy.checkDetail, payload);
-      if(data.code === 200 && data.msg === 'success') {
-        callback && callback(data.data)
-      }else {
-        message.error(data.msg);
       }
     },
     //药品确认验收

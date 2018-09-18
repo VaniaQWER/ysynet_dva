@@ -351,7 +351,7 @@ export const getNavData = app => [
       name: "上架",
       icon: 'setting',
       path: '/drugStorage/wareHouse/grounding/detail/:id',
-      component: dynamicWrapper(app, ['drugStorage/wareHouse'], () => import('../routes/DrugStorage/wareHouse/grounding/detail')),
+      component: dynamicWrapper(app, ['pharmacy/wareHouse'], () => import('../routes/DrugStorage/wareHouse/grounding/detail')),
     },
     {
       name: "入库单管理",
@@ -487,14 +487,14 @@ export const getNavData = app => [
       name: "新建盘点",
       icon: 'setting',
       path: '/drugStorage/checkDecrease/newInventory',
-      component: dynamicWrapper(app, [], () => import('../routes/DrugStorage/checkDecrease/newInventory')),
+      component: dynamicWrapper(app, ['checkDecrease/index'], () => import('../routes/DrugStorage/checkDecrease/newInventory')),
     },
     // 药库 - 盘点损益 - 新建盘点 - 详情(待确认)
     {
       name: "新建盘点-详情(待确认)",
       icon: 'setting',
-      path: '/drugStorage/checkDecrease/newInventory/details/:types',
-      component: dynamicWrapper(app, [], () => import('../routes/DrugStorage/checkDecrease/newInventory/details')),
+      path: '/drugStorage/checkDecrease/newInventory/details/:id',
+      component: dynamicWrapper(app, ['checkDecrease/index'], () => import('../routes/DrugStorage/checkDecrease/newInventory/details')),
     },
     // 药库 - 盘点损益 - 新建盘点 - 详情(已确认)
     {
@@ -894,8 +894,8 @@ export const getNavData = app => [
     {
       name: "发药出库-详情",//药库-出库-发药出库-详情
       icon: 'setting',
-      path: '/pharmacy/outStorage/output/details',
-      component: dynamicWrapper(app, [], () => import('../routes/Pharmacy/outStorage/output/details')),
+      path: '/pharmacy/outStorage/output/details/:id',
+      component: dynamicWrapper(app, ['pharmacy/outStorage'], () => import('../routes/Pharmacy/outStorage/output/details')),
     },
     {
       name: "退库",//药库-出库-退库
@@ -1172,19 +1172,12 @@ export const getNavData = app => [
       path: '/purchase/settlementMgt/dayStatements',
       component: dynamicWrapper(app, [], () => import('../routes/Purchase/settlementMgt/dayStatements')),
     },
-    //采购结算 - 结算管理 - 日对账单
-    {
-      name: "日对账单 - 新建对账",
-      icon: 'setting',
-      path: '/purchase/settlementMgt/dayStatements/newRecon',
-      component: dynamicWrapper(app, [], () => import('../routes/Purchase/settlementMgt/dayStatements/newRecon')),
-    },
     //采购结算 - 结算管理 - 日对账单 - 详情
     {
       name: "日对账单-详情",
       icon: 'setting',
-      path: '/purchase/settlementMgt/dayStatements/details',
-      component: dynamicWrapper(app, [], () => import('../routes/Purchase/settlementMgt/dayStatements/details')),
+      path: '/purchase/settlementMgt/dayStatements/details/:id',
+      component: dynamicWrapper(app, ['purchase/settlementMgt'], () => import('../routes/Purchase/settlementMgt/dayStatements/details')),
     },
     //采购结算 - 结算管理 - 结算单
     {
@@ -1198,14 +1191,7 @@ export const getNavData = app => [
       name: "结算管理-详情",
       icon: 'setting',
       path: '/purchase/settlementMgt/statements/details/:id',
-      component: dynamicWrapper(app, [], () => import('../routes/Purchase/settlementMgt/statements/details')),
-    },
-    //采购结算 - 结算管理 - 结算单 - 新建结算
-    {
-      name: "新建结算",
-      icon: 'setting',
-      path: '/purchase/settlementMgt/statements/newSettlement',
-      component: dynamicWrapper(app, [], () => import('../routes/Purchase/settlementMgt/statements/newSettlement')),
+      component: dynamicWrapper(app, ['purchase/settlementMgt'], () => import('../routes/Purchase/settlementMgt/statements/details')),
     },
     //采购结算 - 结算管理 - 结余查询
     {

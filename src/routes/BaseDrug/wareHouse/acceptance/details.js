@@ -10,7 +10,7 @@ const columns = [
   {
     title: '实到数量',
     width:100,
-    dataIndex: 'realReceiveQuantity'
+    dataIndex: 'realReceiveQuantiry'
   },
   {
     title: '需求数量',
@@ -20,7 +20,7 @@ const columns = [
   {
     title: '单位',
     width:150,
-    dataIndex: 'replanUnit'
+    dataIndex: '单位'
   },
   {
     title: '通用名',
@@ -64,17 +64,17 @@ const columns = [
   {
     title: '生产批号',
     width:150,
-    dataIndex: 'batchNo',
+    dataIndex: 'productBatchNo',
   },
   {
     title: '生产日期',
     width:150,
-    dataIndex: 'productDate',
+    dataIndex: 'realProductTime',
   },
   {
     title: '有效期至',
     width:150,
-    dataIndex: 'validEndDate'
+    dataIndex: 'realValidEndDate'
   },
   {
     title: '供应商',
@@ -105,16 +105,16 @@ class DetailsNewLibrary extends PureComponent{
   queryDetail() {
     this.setState({loading: true});
     this.props.dispatch({
-      type: 'wareHouse/getCheckDetail',
+      type: 'base/deliverRequest',
       payload: {
-        acceptanceCode: this.state.id
+        distributeCode: this.state.id
       },
       callback: (data) => {
         this.setState({
           loading: false,
           info: data,
-          activeKey: data.status + '',
-          btnShow: data.status === 1
+          activeKey: data.auditStatus + '',
+          btnShow: data.auditStatus === 1
         })
       }
     })
@@ -133,12 +133,12 @@ class DetailsNewLibrary extends PureComponent{
     this.setState({
       checkLoading: true
     });
-    let rommAcceptList = selected.map(item => ({id: item}));
+    let detailList = selected.map(item => ({id: item}));
     this.props.dispatch({
       type: 'base/saveCheck',
       payload: {
-        rommAcceptList,
-        acceptanceCode: id
+        detailList,
+        distributeCode: id
       },
       callback: (data) => {
         message.success('确认验收成功');
@@ -161,7 +161,7 @@ class DetailsNewLibrary extends PureComponent{
 
   render(){
     let {btnShow, loading, info, checkLoading, activeKey } = this.state;
-    let {checkListVos, uncheckListVos} = info;
+    let {verifyList, unVerfiyList} = info;
     return (
       <div className='fullCol'>
         <div  className='fullCol-fullChild'>
@@ -173,7 +173,7 @@ class DetailsNewLibrary extends PureComponent{
                     <label>出库单</label>
                 </div>
                 <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
-                  <div className='ant-form-item-control'>{info.outStoreCode || ''}</div>
+                  <div className='ant-form-item-control'>{info.distributeCode || ''}</div>
                 </div>
               </Col>
               <Col span={8}>
@@ -192,14 +192,12 @@ class DetailsNewLibrary extends PureComponent{
                     <div className='ant-form-item-control'>{info.statusName || ''}</div>
                   </div>
               </Col>
-            </Row>
-            <Row>
               <Col span={8}>
                   <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
                       <label>配货部门</label>
                   </div>
                   <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
-                    <div className='ant-form-item-control'>{info.accordingDept || ''}</div>
+                    <div className='ant-form-item-control'>{info.deptName || ''}</div>
                   </div>
               </Col>
               <Col span={8}>
@@ -207,7 +205,7 @@ class DetailsNewLibrary extends PureComponent{
                       <label>发起人</label>
                   </div>
                   <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
-                    <div className='ant-form-item-control'>{info.launchUser || ''}</div>
+                    <div className='ant-form-item-control'>{info.createName || ''}</div>
                   </div>
               </Col>
               <Col span={8}>
@@ -215,17 +213,15 @@ class DetailsNewLibrary extends PureComponent{
                       <label>发起时间</label>
                   </div>
                   <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
-                    <div className='ant-form-item-control'>{info.launchDate || ''}</div>
+                    <div className='ant-form-item-control'>{info.createDate || ''}</div>
                   </div>
               </Col>
-            </Row>
-            <Row>
               <Col span={8}>
                   <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
                       <label>验收时间</label>
                   </div>
                   <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
-                    <div className='ant-form-item-control'>{info.accordingDate || ''}</div>
+                    <div className='ant-form-item-control'>{info.receptionTime || ''}</div>
                   </div>
               </Col>
             </Row>
@@ -235,7 +231,7 @@ class DetailsNewLibrary extends PureComponent{
           <Tabs 
             activeKey={activeKey} 
             onChange={this.tabsChange} 
-            tabBarExtraContent={ btnShow && uncheckListVos && uncheckListVos.length > 0? 
+            tabBarExtraContent={ btnShow && unVerfiyList && unVerfiyList.length > 0? 
               <Button loading={checkLoading} type='primary' onClick={this.saveCheck}>确认验收</Button> : 
               null
             }>
@@ -245,7 +241,7 @@ class DetailsNewLibrary extends PureComponent{
                 loading={loading}
                 scroll={{x: '150%'}}
                 columns={columns}
-                dataSource={uncheckListVos || []}
+                dataSource={unVerfiyList || []}
                 pagination={false}
                 rowKey={'id'}
                 rowSelection={{
@@ -261,7 +257,7 @@ class DetailsNewLibrary extends PureComponent{
                 scroll={{x: '150%'}}
                 rowKey={'id'}
                 columns={columns}
-                dataSource={checkListVos || []}
+                dataSource={verifyList || []}
                 pagination={false}
               />
             </TabPane>

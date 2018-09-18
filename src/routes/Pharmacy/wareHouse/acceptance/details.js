@@ -11,7 +11,7 @@ const columns = [
   {
     title: '实到数量',
     width:100,
-    dataIndex: 'realReceiveQuantity'
+    dataIndex: 'realReceiveQuantiry'
   },
   {
     title: '需求数量',
@@ -66,7 +66,7 @@ const columns = [
   {
     title: '生产批号',
     width:150,
-    dataIndex: 'medicinalCode',
+    dataIndex: 'productBatchNo',
   },
   {
     title: '生产日期',
@@ -108,9 +108,9 @@ class DetailsNewLibrary extends PureComponent{
   queryDetail() {
     this.setState({loading: true});
     this.props.dispatch({
-      type: 'base/checkDetail',
+      type: 'base/deliverRequest',
       payload: {
-        acceptanceCode: this.state.id
+        distributeCode: this.state.id
       },
       callback: (data) => {
         this.setState({
@@ -127,7 +127,7 @@ class DetailsNewLibrary extends PureComponent{
 
   saveCheck = () => {
     let {selected, info} = this.state;
-    let {acceptanceCode} = info;
+    let {distributeCode} = info;
     if(selected.length === 0) {
       message.error('至少选择一条数据');
       return;
@@ -135,7 +135,7 @@ class DetailsNewLibrary extends PureComponent{
     this.setState({
       checkLoading: true
     });
-    let rommAcceptList = selected.map(item=>{
+    let detailList = selected.map(item=>{
       return {
         id: item
       }
@@ -143,8 +143,8 @@ class DetailsNewLibrary extends PureComponent{
     this.props.dispatch({
       type: 'base/saveCheck',
       payload: {
-        rommAcceptList,
-        acceptanceCode
+        detailList,
+        distributeCode
       },
       callback: (data) => {
         message.success('确认验收成功');
@@ -169,10 +169,10 @@ class DetailsNewLibrary extends PureComponent{
 
   render(){
     let {defaultActiveKey, btnShow, loading, info, checkLoading } = this.state;
-    let {listCheck, listUnCheck} = info;
+    let {verifyList, unVerfiyList} = info;
     return (
       <div className='fullCol'>
-          <div  className='fullCol-fullChild'>
+          <div className='fullCol-fullChild'>
             <h3>单据信息</h3>
             <Row>
               <Col span={8}>
@@ -180,7 +180,7 @@ class DetailsNewLibrary extends PureComponent{
                     <label>出库单</label>
                 </div>
                 <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
-                  <div className='ant-form-item-control'>{info.outStoreCode || ''}</div>
+                  <div className='ant-form-item-control'>{info.distributeCode || ''}</div>
                 </div>
               </Col>
               <Col span={8}>
@@ -188,7 +188,7 @@ class DetailsNewLibrary extends PureComponent{
                       <label>申领单</label>
                   </div>
                   <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
-                    <div className='ant-form-item-control'>{info.acceptanceCode || ''}</div>
+                    <div className='ant-form-item-control'>{info.applyCode || ''}</div>
                   </div>
               </Col>
               <Col span={8}>
@@ -196,7 +196,7 @@ class DetailsNewLibrary extends PureComponent{
                       <label>状态</label>
                   </div>
                   <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
-                    <div className='ant-form-item-control'>{info.acceptStatusName || ''}</div>
+                    <div className='ant-form-item-control'>{info.statusName || ''}</div>
                   </div>
               </Col>
               <Col span={8}>
@@ -204,7 +204,7 @@ class DetailsNewLibrary extends PureComponent{
                       <label>配货部门</label>
                   </div>
                   <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
-                    <div className='ant-form-item-control'>{info.department || ''}</div>
+                    <div className='ant-form-item-control'>{info.deptName || ''}</div>
                   </div>
               </Col>
               <Col span={8}>
@@ -212,7 +212,7 @@ class DetailsNewLibrary extends PureComponent{
                       <label>发起人</label>
                   </div>
                   <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
-                    <div className='ant-form-item-control'>{info.createUserName || ''}</div>
+                    <div className='ant-form-item-control'>{info.createName || ''}</div>
                   </div>
               </Col>
               <Col span={8}>
@@ -234,14 +234,14 @@ class DetailsNewLibrary extends PureComponent{
             </Row>
           </div>
         <div className='detailCard'>
-          <Tabs defaultActiveKey={defaultActiveKey} onChange={this.tabsChange} tabBarExtraContent={ btnShow && listUnCheck && listUnCheck.length > 0? <Button loading={checkLoading} type='primary' onClick={this.saveCheck}>确认验收</Button> : null}>
+          <Tabs defaultActiveKey={defaultActiveKey} onChange={this.tabsChange} tabBarExtraContent={ btnShow && unVerfiyList && unVerfiyList.length > 0? <Button loading={checkLoading} type='primary' onClick={this.saveCheck}>确认验收</Button> : null}>
             <TabPane tab="待验收" key="1">
               <Table
                 bordered
                 loading={loading}
                 scroll={{x: '200%'}}
                 columns={columns}
-                dataSource={listUnCheck || []}
+                dataSource={unVerfiyList || []}
                 pagination={false}
                 rowKey={'id'}
                 rowSelection={{
@@ -256,8 +256,8 @@ class DetailsNewLibrary extends PureComponent{
                 bordered
                 scroll={{x: '250%'}}
                 columns={columns}
-                dataSource={listCheck || []}
-                rowKey={'realReceiveStore'}
+                dataSource={verifyList || []}
+                rowKey={'id'}
                 pagination={false}
               />
             </TabPane>

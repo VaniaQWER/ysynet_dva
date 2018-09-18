@@ -38,13 +38,16 @@ class NewAddGoodsAdjust extends PureComponent{
       message.warning('请选择一条数据');
       return;
     };
-    console.log();
+    console.log(modalSelectedRows);
     
     modalSelectedRows = modalSelectedRows.map(item=>{
       return {
-        drugCode: item.drugCode
+        drugCode: item.drugCode,
+        lot: item.lot,
+        locCode: item.goodsCode
       }
     });
+    console.log(modalSelectedRows);
     
     this.setState({okLoading: true})
     let payload = {
@@ -62,7 +65,8 @@ class NewAddGoodsAdjust extends PureComponent{
           ],
           okLoading: false,
           visible: false,
-          modalSelected: []
+          modalSelected: [],
+          modalSelectedRows: []
         });
       }
     })
@@ -128,9 +132,10 @@ class NewAddGoodsAdjust extends PureComponent{
         goalBigDrugCode: item.goalBigDrugCode,
         goalDrugCode: item.goalDrugCode,
         goalLocCode: item.goalLocCode,
-        goalUnit: item.targetUnit,
+        goalUnit: item.targetUnitCode,
         lot: item.lot,
         originalBigDrugCode: item.bigDrugCode,
+        originalUnit: item.replanUnitCode,
         originalLocCode: item.goodsCode,
         originalStore: item.usableQuantity,
         productDate: item.productDate,
@@ -174,6 +179,7 @@ class NewAddGoodsAdjust extends PureComponent{
     dataSource[i].goalBigDrugCode = record.targetLocInfoVoList[index].goalBigDrugCode;
     dataSource[i].goalDrugCode = record.targetLocInfoVoList[index].goalDrugCode;
     dataSource[i].targetUnit = record.targetLocInfoVoList[index].targetUnit;
+    dataSource[i].targetUnitCode = record.targetLocInfoVoList[index].targetUnitCode;
     dataSource[i].targetTypeName = record.targetLocInfoVoList[index].targetTypeName;
     dataSource[i].conversionRate = record.targetLocInfoVoList[index].conversionRate;
     this.setState({
@@ -328,7 +334,7 @@ class NewAddGoodsAdjust extends PureComponent{
           <Table 
             columns={columns}
             bordered
-            rowKey='drugCode'
+            rowKey='id'
             dataSource={dataSource}
             scroll={{ x: '210%' }}
             pagination={false}
@@ -389,7 +395,7 @@ class NewAddGoodsAdjust extends PureComponent{
             style={{ marginTop: 16 }} 
             columns={modalColumns}
             scroll={{ x: '180%' }}
-            rowKey='drugCode'
+            rowKey='id'
             rowSelection={{
               selectedRowKeys: this.state.modalSelected,
               onChange: (selectedRowKeys, selectedRows) => {

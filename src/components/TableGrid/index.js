@@ -89,18 +89,18 @@ class RemoteTable extends Component {
           if(!params.pageNo) {
             pagination.current = 1;
           }
-          if (typeof this.props.cb === 'function') {
-            this.props.cb(data.data.list, data.data);
-          }
-          if (typeof this.props.getTotal === 'function') {
-            this.props.getTotal(data.data);
-          }
           this.setState({
             loading: false,
             data: data.data.list || (Array.isArray(data.data.list) ? data.data.list : (Array.isArray(data.data) ? data.data : []) ) ,
             // fieldName: data.result.fieldName,
             pagination,
           });
+          if (typeof this.props.cb === 'function') {
+            this.props.cb(data.data.list, data.data);
+          }
+          if (typeof this.props.getTotal === 'function') {
+            this.props.getTotal(data.data);
+          }
         })
         .catch((error) => {
           if (error.code) {

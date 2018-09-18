@@ -75,13 +75,21 @@ class FetchSelect extends React.Component {
     if(value === '') return;
     // fake(value, data => this.setState({ data }), this.props.url, this.props.query,this.props.parmas);
     this.setState({ data: [], fetching: true });
-    request(this.props.url, {
-      method: this.props.method || 'POST',
-      type: this.props.type || 'formData',
-      body: {
+    let body;
+    if(this.props.queryKey) {
+      body = {
+        [this.props.queryKey]: value
+      };
+    }else {
+      body = {
         paramName: value,
         queryType: 3
       }
+    } 
+    request(this.props.url, {
+      method: this.props.method || 'POST',
+      type: this.props.type || 'formData',
+      body
     })
     .then((data)=>{
       if(data.code === 200 && data.msg === 'success') {
@@ -94,18 +102,22 @@ class FetchSelect extends React.Component {
       }
     })
   }
+  listRender = () => {
+    let {data} = this.state;
+    let {valueAndLabel} = this.props;
+    if(valueAndLabel) {
+      let {value, label} = valueAndLabel;
+      return data.map((item, i) => {
+        return <Option key={i} value={item[value]}>{item[label]}</Option>
+      })
+    }else {
+      return data.map(item=>{
+        return <Option key={item.bigDrugCode} value={item.bigDrugCode}>{item.ctmmParam}</Option>
+      })
+    }
+  }
   render() {
-    let options = [];
-    let {data, fetching} = this.state;
-    // if(this.props.parmas){
-    //   let parmas = this.props.parmas;
-    //   options = this.state.data.map(d => <Option value={d.value} parmas={d[parmas]} key={d.value}>{d.text}</Option>); 
-    // }else{
-    //   options = this.state.data.map(d => <Option value={d.value}  key={d.value}>{d.text}</Option>);
-    // }
-    options = data.map(item=>{
-      return <Option key={item.bigDrugCode} value={item.bigDrugCode}>{item.ctmmParam}</Option>
-    })
+    let {fetching} = this.state;
     return (
       <Select
         showSearch
@@ -123,7 +135,7 @@ class FetchSelect extends React.Component {
         disabled={this.props.disabled}
         placeholder={this.props.placeholder}
       >
-        {options}
+        {this.listRender()}
       </Select>
     );
   }

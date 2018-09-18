@@ -39,19 +39,19 @@ class Putaway extends PureComponent{
     const columns = [
       {
         title: '验收单',
-        dataIndex: 'acceptanceCode',
+        dataIndex: 'distributeCode',
         width:150,
-        render:(text, record)=>(<Link to={{pathname: `/pharmacy/wareHouse/putaway/details/code=${text}&status=${record.acceptanceStatus}`}}>{text}</Link>)
+        render:(text, record)=>(<Link to={{pathname: `/pharmacy/wareHouse/putaway/details/code=${text}&status=${record.auditStatus}`}}>{text}</Link>)
        },
       {
         title: '状态',
         width:100,
-        dataIndex: 'acceptanceStatusName',
+        dataIndex: 'statusName',
       },
       {
         title: '类型',
         width:100,
-        dataIndex: 'acceptanceTypeName',
+        dataIndex: 'typeName',
       },
       {
         title: '验收时间',
@@ -81,7 +81,7 @@ class Putaway extends PureComponent{
           query={query}
           scroll={{x: '100%'}}
           columns={columns}
-          rowKey={'acceptanceCode'}
+          rowKey={'id'}
           style={{marginTop: 24}}
         />
       </div>

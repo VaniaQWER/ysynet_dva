@@ -26,7 +26,8 @@ class PslistCheck extends PureComponent{
       btnShow: info.state === '1'? true : false,
       defaultActiveKey: info.state === '1'? '1' : '2',
       id: info.id,
-      detailInfo: {}
+      detailInfo: {},
+      checkLoading: false
     }
   }
   addBatch = (record) => {
@@ -46,7 +47,7 @@ class PslistCheck extends PureComponent{
       record.parentId = record.id;
     }
     record.id = null;
-    record.upUserDate = new Date().getTime();
+    record.key = new Date().getTime();
     record.realReceiveQuantity = '';
     detailInfo.unVerfiyList.splice(index, 0, record);
     this.setState({detailInfo})
@@ -98,9 +99,11 @@ class PslistCheck extends PureComponent{
       return true;
     });
     if(!isNull) return;
+    this.setState({checkLoading: true});
+
     let detailList = selectedRows.map(item=>{
       let i = {
-        realReceiveQuantity: item.realReceiveQuantity,
+        realReceiveQuantiry: item.realReceiveQuantity,
         productBatchNo: item.productBatchNo,
         realValidEndDate: item.realValidEndDate,
         realProductTime: item.realProductTime,
@@ -123,7 +126,11 @@ class PslistCheck extends PureComponent{
         if(data.code === 200) {
           message.success('确认验收成功');
           this.queryDetail();
-        }
+        }else {
+          message.error(data.msg);
+          message.warning('验收失败');
+        };
+        this.setState({checkLoading: false});
       }
     })
   }
@@ -143,7 +150,7 @@ class PslistCheck extends PureComponent{
     })
   }
   render(){
-    let {loading, defaultActiveKey, btnShow, detailInfo} = this.state;
+    let {loading, defaultActiveKey, btnShow, detailInfo, checkLoading} = this.state;
     let {unVerfiyList, verifyList} = detailInfo;
     
     let columnsUnVerfiy = [
@@ -165,11 +172,11 @@ class PslistCheck extends PureComponent{
       },
       {
         title: '生产厂家',
-        dataIndex: 'ctmmManuFacturerName'
+        dataIndex: 'ctmmManufacturerName'
       },
       {
         title: '单位',
-        dataIndex: 'limitDrugUnit',
+        dataIndex: 'unit',
       },
       {
         title: '配送数量',
@@ -234,7 +241,7 @@ class PslistCheck extends PureComponent{
       },
       {
         title: '剂型',
-        dataIndex: 'dosageForm',
+        dataIndex: 'ctmmDosageFormDesc',
       },
       {
         title: '供应商',
@@ -285,7 +292,7 @@ class PslistCheck extends PureComponent{
       },  
       {
         title: '实到数量',
-        dataIndex: 'realReceiveQuantity'
+        dataIndex: 'realReceiveQuantiry'
       },
       {
         title: '生产批号',
@@ -393,7 +400,7 @@ class PslistCheck extends PureComponent{
           </Row>
         </div>
         <div className='detailCard'>
-          <Tabs defaultActiveKey={defaultActiveKey} onChange={this.tabsChange} tabBarExtraContent={ btnShow? <Button type='primary' onClick={this.saveCheck}>确认验收</Button> : null}>
+          <Tabs defaultActiveKey={defaultActiveKey} onChange={this.tabsChange} tabBarExtraContent={ btnShow? <Button loading={checkLoading} type='primary' onClick={this.saveCheck}>确认验收</Button> : null}>
             <TabPane tab="待验收" key="1">
               <Table
                 bordered
@@ -402,7 +409,7 @@ class PslistCheck extends PureComponent{
                 columns={columnsUnVerfiy}
                 dataSource={unVerfiyList || []}
                 pagination={false}
-                rowKey={'batchNo'}
+                rowKey={'key'}
                 rowSelection={{
                   selectedRowKeys: this.state.selected,
                   onChange: this.rowChange
@@ -416,7 +423,7 @@ class PslistCheck extends PureComponent{
                 scroll={{x: '250%'}}
                 columns={columnsVerify || []}
                 dataSource={verifyList}
-                rowKey={'batchNo'}
+                rowKey={'key'}
                 pagination={false}
               />
             </TabPane>

@@ -18,14 +18,14 @@ class DetailsPutaway extends PureComponent{
     loading: false,
     info: {},
     selectedRowKeys: [],
-    selectedRow: []
+    selectedRow: [],
+    saveLoading: false
   }
   componentWillMount() {
     let infoCode = this.props.match.params.id;
     infoCode = querystring.parse(infoCode);
     this.setState({
       acceptanceCode: infoCode.code,
-      defaultActive: infoCode.status === '2'? '1' : '2',
     })
   }
   
@@ -37,12 +37,13 @@ class DetailsPutaway extends PureComponent{
     this.props.dispatch({
       type: 'pharmacy/roomacceptanceInfo',
       payload: {
-        acceptanceCode: this.state.acceptanceCode
+        distributeCode: this.state.acceptanceCode
       },
       callback: (data) => {
         let {listwsj} = data;
-        listwsj.map(item => {   //如果实际货位下拉框不包含指示货位，则默认第一个
-          let isSame =  item.roomgoodsVo.some(itemNum => {
+        if(listwsj.length > 0) {
+          listwsj.map(item => {   //如果实际货位下拉框不包含指示货位，则默认第一个
+          let isSame =  item.acceptoodsVo.some(itemNum => {
             if(item.realReceiveStore !== itemNum.id) {
               return false;
             }else {
@@ -50,14 +51,16 @@ class DetailsPutaway extends PureComponent{
             }
           });
           if(!isSame) {
-            item.realReceiveStore = item.roomgoodsVo[0].id;
+            item.realReceiveStore = item.acceptoodsVo[0].id;
           }
-          return item;
-        });
-        data.listwsj = listwsj;
+            return item;
+          });
+          data.listwsj = listwsj;
+        }
         this.setState({
           info: data,
-          loading: false
+          loading: false,
+          defaultActive: data.auditStatus === 2? '1' : '2',
         })
       }
     })
@@ -85,6 +88,7 @@ class DetailsPutaway extends PureComponent{
       return true;
     });
     if(!isNull) return;
+    this.setState({saveLoading: true});
     let detailListVo = selectedRow.map(item=>{
       return {
         id: item.id,
@@ -93,15 +97,17 @@ class DetailsPutaway extends PureComponent{
       }
     })
     let payload = {
-      acceptanceCode: this.state.acceptanceCode,
+      distributeCode: this.state.acceptanceCode,
       detailListVo
     };
+    
     this.props.dispatch({
       type: 'pharmacy/finish',
       payload,
       callback: (data) => {
         message.success('上架成功');
         this.getDetails();
+        this.setState({saveLoading: false});
       }
     })
   }
@@ -111,13 +117,13 @@ class DetailsPutaway extends PureComponent{
   }
 
   render(){
-    let {defaultActive, info, loading} = this.state;
+    let {defaultActive, info, loading, saveLoading} = this.state;
     let {listwsj, listysj} = info;  
     const notColumns = [
       {
         title: '指示货位',
         width:100,
-        dataIndex: 'realReceiveStoreName',
+        dataIndex: 'actualStore',
       },
       {
         title: '货位类型',
@@ -137,7 +143,7 @@ class DetailsPutaway extends PureComponent{
                   style={{width: '100%'}}
                  >
                   {
-                    record.roomgoodsVo.map(item=>{
+                    record.acceptoodsVo.map(item=>{
                       return <Option key={item.id} value={item.id}>{item.positionName}</Option>
                     })
                   }
@@ -147,7 +153,7 @@ class DetailsPutaway extends PureComponent{
       {
         title: '指示数量',
         width:150,
-        dataIndex: 'realReceiveQuantity',
+        dataIndex: 'realReceiveQuantiry',
       },
       {
         title: '实际上架数量',
@@ -158,7 +164,7 @@ class DetailsPutaway extends PureComponent{
                   min={1}
                   precision={0}
                   onChange={(value) => {
-                    if(value > record.realReceiveQuantity) {
+                    if(value > record.realReceiveQuantiry) {
                       message.warning('注意：数量大于指示数量');
                     };
                     if(value <= 0) {
@@ -219,7 +225,7 @@ class DetailsPutaway extends PureComponent{
       {
         title: '指示货位',
         width:100,
-        dataIndex: 'realReceiveStoreName',
+        dataIndex: 'actualStore',
       },
       {
         title: '货位类型',
@@ -234,7 +240,7 @@ class DetailsPutaway extends PureComponent{
       {
         title: '指示数量',
         width:150,
-        dataIndex: 'realReceiveQuantity',
+        dataIndex: 'realReceiveQuantiry',
       },
       {
         title: '实际上架数量',
@@ -298,7 +304,7 @@ class DetailsPutaway extends PureComponent{
                   <label>验收单</label>
               </div>
               <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
-                <div className='ant-form-item-control'>{info.acceptanceCode || ''}</div>
+                <div className='ant-form-item-control'>{info.distributeCode || ''}</div>
               </div>
             </Col>
             <Col span={8}>
@@ -306,7 +312,7 @@ class DetailsPutaway extends PureComponent{
                   <label>状态</label>
               </div>
               <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
-                <div className='ant-form-item-control'>{info.acceptanceStatusName || ''}</div>
+                <div className='ant-form-item-control'>{info.statusName || ''}</div>
               </div>
             </Col>
             <Col span={8}>
@@ -330,7 +336,7 @@ class DetailsPutaway extends PureComponent{
             </Col>
           </Row>
           <hr className='hr'/>
-          <Tabs onChange={this.changeTabs} activeKey={defaultActive} tabBarExtraContent={defaultActive === "1" && listwsj && listwsj.length > 0 ? <Button onClick={this.onSubmit} type="primary">确认上架</Button> : null}>
+          <Tabs onChange={this.changeTabs} activeKey={defaultActive} tabBarExtraContent={defaultActive === "1" && listwsj && listwsj.length > 0 ? <Button loading={saveLoading} onClick={this.onSubmit} type="primary">确认上架</Button> : null}>
             <TabPane tab="待上架" key="1">
               <Table
                 loading={loading}

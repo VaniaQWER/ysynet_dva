@@ -24,6 +24,7 @@ import AddSupplementDoc from './routes/Pharmacy/supplementDoc/supplementDocument
 import AddInSupplementDoc from './routes/Pharmacy/supplementDoc/supplementDocuments/addIn';
 import BaseAddDrugsApply from './routes/BaseDrug/wareHouse/drugApply/add';
 import BaseAddNewAcceptance from './routes/BaseDrug/wareHouse/acceptance/add';
+import NewRecon from './routes/Purchase/settlementMgt/dayStatements/newRecon';
 import { getNavData } from './common/nav';
 import { getPlainNode } from './utils/utils';
 
@@ -98,6 +99,7 @@ function RouterConfig({ history, app }) {
           <Route path="/AddInSupplementDoc" component={AddInSupplementDoc}/>
           <Route path="/baseAddDrugsApply" component={BaseAddDrugsApply} />
           <Route path="/baseAddNewAcceptance" component={BaseAddNewAcceptance}/>
+          <Route path="/newRecon" component={NewRecon}/>
           {/* <Route path="/home" component={Home}/> */}
           {/* <Route path="/app" render={props => <WorkplaceLayout {...props} {...passProps} />} /> */}
           <Route path="/" render={props => <BasicLayout {...props} {...passProps} />} />

@@ -26,16 +26,8 @@ export function applySubmit(options) {
   })
 };
 
-export function checkDetail(options) {
-  return request(`${_local}/a/room/roomacceptance/roomCheckDetail`, {
-    method: 'GET',
-    type: 'formData',
-    body: options
-  })
-}
-
 export function saveCheck(options) {
-  return request(`${_local}/a/room/roomacceptancedetail/cheak`, {
+  return request(`${_local}/a/checkacceptdetail/checkList`, {
     method: 'POST',
     type: 'json',
     body: options
@@ -93,15 +85,15 @@ export function findStorePage(options) {
 };
 
 export function roomacceptanceInfo(options) {
-  return request(`${_local}/a/room/roomacceptance/info`, {
-    method: 'POST',
+  return request(`${_local}/a/checkacceptdetail/shelfInfo`, {
+    method: 'GET',
     type: 'formData',
     body: options
   })
 }
 
 export function finish(options) {
-  return request(`${_local}/a/room/roomacceptance/finish`, {
+  return request(`${_local}/a/checkacceptdetail/finish`, {
     method: 'POST',
     type: 'json',
     body: options

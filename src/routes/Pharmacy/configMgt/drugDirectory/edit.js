@@ -70,7 +70,10 @@ class EditDrugDirectory extends PureComponent{
             payload:{bigDrugCode:data.data.bigDrugCode},
             callback:(data)=>{
               let replanUnitSelect = data.data;
-              let replanUnitZN = replanUnitSelect.filter(item => item.unitCode === fillBackData.replanUnitCode)[0].unit
+              let replanUnitZN = '';
+              if(fillBackData.replanUnitCode) {
+                replanUnitZN = replanUnitSelect.filter(item => item.unitCode === fillBackData.replanUnitCode)[0].unit
+              }
               this.setState({
                 replanUnitSelect,
                 replanUnitZN

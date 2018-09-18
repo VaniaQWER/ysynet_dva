@@ -32,34 +32,31 @@ const columns = [
     dataIndex: 'settleBillNo',
     render: (text, record) => (
         <span>
-            <Link to={{ pathname: `/purchase/settlementMgt/statements/details/${record.id}`}}>{text}</Link>
+            <Link to={{ pathname: `/purchase/settlementMgt/statements/details/${text}`}}>{text}</Link>
         </span>
     )
-}, {
-    title: '供应商',
-    dataIndex: 'cTMASupplierName'
-}, {
-    title: '状态',
-    dataIndex: 'settleStatus'
-}, {
-    title: '结算总金额',
-    dataIndex: 'settleSumAmount',
-    render: (text,record,index) =>{
-        return (index*1500*1.5 + 2000)
-    }
-}, {
-    title: '对账单数量',
-    dataIndex: 'settleSumQty',
-    render: (text,record,index) =>{
-        return index %3 === 0 ? index + 2: index + 3
-    }
-}, {
-    title: '结算人',
-    dataIndex: 'createUser'
-}, {
-    title: '结算时间',
-    dataIndex: 'createDate'
-}]
+    }, {
+        title: '供应商',
+        dataIndex: 'ctmaSupplierName'
+    }, {
+        title: '状态',
+        dataIndex: 'settleStatusName'
+    }, {
+        title: '结算总金额',
+        dataIndex: 'settleSumAmount',
+        render: (text,record,index) =>{
+            return (index*1500*1.5 + 2000)
+        }
+    }, {
+        title: '对账单数量',
+        dataIndex: 'settleSumQty',
+        render: (text,record,index) =>{
+            return index %3 === 0 ? index + 2: index + 3
+        }
+    }, {
+        title: '结算时间',
+        dataIndex: 'settleDate'
+    }]
 
 
 class SettlementMgt extends PureComponent {
@@ -67,6 +64,7 @@ class SettlementMgt extends PureComponent {
         query: {}
     }
     handleSearch = (e) => {
+        e.preventDefault();
         this.props.form.validateFields((err, values) => {
             let {time} = values;
             if(time && time.length > 0) {
@@ -98,12 +96,12 @@ class SettlementMgt extends PureComponent {
                         <Col span={8}>
                             <FormItem label={`汇总单`} {...formItemLayout}>
                                 {getFieldDecorator('settleBillNo', {})(
-                                    <Input/>
+                                    <Input placeholder="请输入"/>
                                 )}
                             </FormItem>
                         </Col>
                         <Col span={8}>
-                            <FormItem label={`汇总日期`} {...formItemLayout}>
+                            <FormItem label={`制单日期`} {...formItemLayout}>
                                 {getFieldDecorator('time', {})(
                                     <RangePicker />
                                 )}
@@ -115,12 +113,6 @@ class SettlementMgt extends PureComponent {
                         </Col>
                     </Row>
                 </Form>
-                <Row style={{marginBottom: 30}}>
-                    <Button type="primary" onClick={() => {
-                        const { history } = this.props;
-                        history.push({pathname:"/purchase/settlementMgt/statements/newSettlement"});
-                    }}>新建结算</Button>
-                </Row>
                 <RemoteTable
                     query={query}
                     url={settlementMgt.SETTLE_LIST}

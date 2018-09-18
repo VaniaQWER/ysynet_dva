@@ -5,5 +5,5 @@ import {_local} from '../local';
 /* 验收 */
 
 export const acceptance = {
-  GET_CHECK_INFO: `${_local}/a/basemedicinedetail/getCheckInfo`,  //列表
+  CHECKACCEPT_LIST: `${_local}/a/checkaccept/list`,  //列表
 }

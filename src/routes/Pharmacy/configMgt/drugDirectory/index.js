@@ -160,11 +160,6 @@ const columns = [
     width: 120
   },
   {
-    title: '单位',
-    dataIndex: 'ctmmDosUom',
-    width: 120
-  },
-  {
     title: '批准文号',
     dataIndex: 'approvalNo',
     width: 120
@@ -209,6 +204,7 @@ class DrugDirectory extends PureComponent{
             upperQuantity:values.upperQuantity||'',
             downQuantity:values.downQuantity||'',
             purchaseQuantity:values.purchaseQuantity||'',
+            id: item.id || ''
           })
           return item 
         })
@@ -281,6 +277,11 @@ class DrugDirectory extends PureComponent{
     const { getFieldDecorator } = this.props.form;
     const IndexColumns = [
       ...columns,
+      {
+        title: '单位',
+        dataIndex: 'replanUnit',
+        width: 120
+      },
       {
         title: '生产厂家',
         dataIndex: 'ctmmManufacturerName',
