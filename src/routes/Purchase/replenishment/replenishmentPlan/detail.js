@@ -188,6 +188,7 @@ class ReplenishmentDetail extends PureComponent{
             scroll={{x: '130%'}}
             columns={columns}
             rowKey={'batchNo'}
+            bordered
             dataSource={detailsData ? detailsData.list : []}
             pagination={{
               size: 'small',

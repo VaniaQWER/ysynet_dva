@@ -112,7 +112,14 @@ export function checkOutStore(options) {
     body: options
   })
 };
-
+//出库单不通过
+export function rejectOutStore(options) {
+  return request(`${_local}/a/common/outstoredetail/rejectOutStore`, {
+    method: 'POST',
+    type: 'json',
+    body: options
+  })
+}
 //出库单 - 新建申领下拉框
 export function findAllDeptsAndType(options) {
   return request(`${_local}/a/common/outstore/findAllDeptsAndType`, {

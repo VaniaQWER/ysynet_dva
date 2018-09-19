@@ -2,72 +2,282 @@
  * @file 药库 - 盘点损益 - 新建盘点 - 详情(待确认)
  */
 import React, { PureComponent } from 'react';
-import { Table ,Row, Col, Input, Button, Modal, message, Tooltip } from 'antd';
-import { createData } from '../../../../common/data';
-
+import {Row, Col, Input, Button, message, Tooltip, DatePicker, InputNumber} from 'antd';
+import {checkDecrease} from '../../../../api/checkDecrease';
+import RetomeTable from '../../../../components/TableGrid';
+import {connect} from 'dva';
+import moment from 'moment';
+const {Search} = Input;
+const monthFormat = 'YYYY-MM-DD';
 class Details extends PureComponent {
-
-  // 确认
+  state = {
+    info: {},
+    query: {
+      checkBillNo: this.props.match.params.id,
+    },
+    checkLoading: false,
+    dataSource: [],
+    selected: [],
+    selectedRows: [],
+    submitLoading: false,
+    expandedRowKeys: []
+  }
+  //获取详情表头
+  getDetail = (cb) => {
+    this.props.dispatch({
+      type: 'checkDecrease/getCheckbill',
+      payload: {
+        checkBillNo: this.props.match.params.id
+      },
+      callback: (data) => {
+        if(data.msg === 'success') {
+          this.setState({
+            info: data.data
+          }, cb);
+        }else {
+          message.error(data.msg);
+          message.error('获取详情头部失败！');
+        }
+      }
+    });
+  }
+  // 提交
   confirm = () => {
-    Modal.confirm({
-      content:"您确定要执行此操作？",
-      onOk: () => {
-        message.success('提交成功！');
-        const { history } = this.props;
-        history.push({pathname:"/pharmacy/checkDecrease/newInventory"});
+    let {selectedRows} = this.state;
+    if(selectedRows.length === 0) {
+      return message.warning('至少选择一条数据');
+    };
+    this.setState({
+      submitLoading: true
+    });
+    let detailList = selectedRows.map(item => {
+      return {
+        accountBatchNo: item.accountBatchNo,
+        accountEndTime: item.accountEndTime,
+        accountProductTime: item.accountProductTime,
+        accountStoreNum: item.accountStoreNum,
+        bigDrugCode: item.bigDrugCode,
+        drugCode: item.drugCode,
+        id: item.id,
+        locCode: item.locCode,
+        pId: item.pId,
+        practicalBatch: item.practicalBatch,
+        practicalRepertory: item.practicalRepertory,
+        realProductTime: item.realProductTime,
+        referencePrice: item.referencePrice,
+        unitCode: item.unitCode,
+        validEndTime: item.validEndTime,
+        supplierCode: item.supplierCode
+      }
+    });
+    this.props.dispatch({
+      type: 'checkDecrease/submitCheck',
+      payload: {
+        detailList,
+        checkBillNo: this.props.match.params.id,
       },
-      onCancel: () => {}
+      callback: (data) => {
+        if(data.msg === 'success') {
+          message.success('提交成功');
+          this.refs.table.fetch(this.state.query);
+        }else {
+          message.error('提交失败');
+          message.error(data.msg);
+        };
+        this.setState({
+          submitLoading: false
+        });
+      }
     })
   }
+  // 盘点
+  check = () => {
+    this.setState({checkLoading: true});
+    this.props.dispatch({
+      type: 'checkDecrease/beginCheck',
+      payload: {
+        checkBillNo: this.props.match.params.id
+      },
+      callback: (data) => {
+        if(data.msg === 'success') {
+          message.success('盘点成功');
+          this.getDetail();
+        }else {
+          message.warning('盘点失败');
+          message.error(data.msg);
+        };
+        this.setState({
+          checkLoading: false
+        });
+      }
+    })
+  }
+  //新增批号 - 后端
+  createBatchNo = (record) => {
+    this.props.dispatch({
+      type: 'checkDecrease/createBatchNo',
+      payload: {
+        id: record.id
+      },
+      callback: (data) => {
+        if(data.msg === 'success') {
+          this.refs.table.fetch(this.state.query);
+        }else {
+          message.warning('新增失败');
+          message.error(data.msg);
+        };
+      }
+    })
+  }
+  //新增批号 - 前端
+  addBatch = (record, i) => {
+    let {dataSource, expandedRowKeys} = this.state;
+    dataSource[i].children = [];
+    dataSource[i].children.push({
+      ...record,
+      uuid: new Date().getTime(),
+      children: null,
+      pId: record.id,
+      accountBatchNo: null,
+      id: null,
+      accountProductTime: null,
+      accountEndTime: null,
+      accountStoreNum: 0,
+      practicalRepertory: 0
+    });
+    expandedRowKeys.push(record.id);
+    this.setState({
+      dataSource: [...dataSource],
+      expandedRowKeys: [...expandedRowKeys]
+    })
+  }
+  onSearch = (value) => {
+    let {query} = this.state;
+    query.paramName = value;
+    this.setState({
+      query: {...query}
+    });
+  }
+  //table回调
+  tableCallBack = (data) => {
+    this.getDetail(() => {
+      let {info} = this.state;
+      if(info.checkStatus === 2) {
+        data = data.map((item, i)=>{
+          item.practicalRepertory = item.accountStoreNum;
+          item.validEndTime = item.accountEndTime;
+          item.realProductTime = item.accountProductTime;
+          item.practicalBatch = item.accountBatchNo;
+          return item;
+        })
+      }
+      this.setState({
+        dataSource: data
+      });
+    })
+  }
+  //更改日期
+  changeDataSource = (value, i, key, record) => {
+    let {dataSource} = this.state;
+    if(!record.id) {
+      let index;
+      dataSource.map((item, pIndex)=>{
+        if(item.id === record.pId) {
+          index = pIndex
+        };
+        return item;
+      });
+      dataSource[index].children[i][key] = value;
+    console.log(dataSource[index].children[i][key]);
 
-  // 保存
-  save = () => {
-    Modal.confirm({
-      content:"您确定要执行此操作？",
-      onOk: () => {
-        message.success('保存成功！');
-        const { history } = this.props;
-        history.push({pathname:"/pharmacy/checkDecrease/newInventory"});
-      },
-      onCancel: () => {}
-    })
+    }else {
+      dataSource[i][key] = value;
+    };
+    
+    this.setState({
+      dataSource: [...dataSource]
+    });
   }
-
-  // 恢复
-  recover = () => {
-    Modal.confirm({
-      content:"您确定要执行此操作？",
-      onOk: () => {
-        message.success('盘点成功！');
-        const { history } = this.props;
-        history.push({pathname:"/pharmacy/checkDecrease/newInventory"});
-      },
-      onCancel: () => {}
-    })
+  changePracticalBatch = (e, i, key, record) => {
+    let {dataSource} = this.state;
+    if(!record.id) {
+      let index;
+      dataSource.map((item, pIndex)=>{
+        if(item.id === record.pId) {
+          index = pIndex
+        };
+        return item;
+      });
+      dataSource[index].children[i][key] = e.target.value;
+    }else {
+      dataSource[i][key] = e.target.value;
+    };
+    this.setState({
+      dataSource: [...dataSource]
+    });
   }
-  add = () => {
-    message.success('增加成功！');
+  //更改实际数量
+  changePracticalRepertory = (value, i, record) => {
+    let {dataSource} = this.state;
+    if(!record.id) {
+      let index;
+      dataSource.map((item, pIndex)=>{
+        if(item.id === record.pId) {
+          index = pIndex
+        };
+        return item;
+      });
+      dataSource[index].children[i].practicalRepertory = value;
+      if(typeof value === 'number') {
+        let checkNum = value - dataSource[index].children[i].accountStoreNum;
+        let mount = checkNum * dataSource[index].children[i].referencePrice
+        dataSource[index].children[i].checkNum = checkNum;
+        dataSource[index].children[i].mount = mount.toFixed(4);
+      };
+      this.setState({
+        dataSource: [...dataSource]
+      });
+    }else {
+      dataSource[i].practicalRepertory = value;
+      if(typeof value === 'number') {
+        let checkNum = value - dataSource[i].accountStoreNum;
+        let mount = checkNum * dataSource[i].referencePrice
+        dataSource[i].checkNum = checkNum;
+        dataSource[i].mount = mount.toFixed(4);
+      };
+      this.setState({
+        dataSource: [...dataSource]
+      });
+    }
+  }
+  //展开
+  onExpandedRowsChange = (expandedRows) => {
+    console.log(expandedRows, 'expandedRows');
+    
+    // this.setState({expandedRows})
   }
   render() {
-    const columns = [
+    let {info, query, dataSource, submitLoading, expandedRowKeys} = this.state;
+    let columns = [
       {
         title: '货位',
-        dataIndex: 'huowei',
-        render:(text,record, index)=>'A1231'+index
+        dataIndex: 'locName',
+        width: 200
       },
       {
         title: '货位类型',
-        dataIndex: 'huoweitype',
-        render:(text,record, index)=>'发药机货位'
+        dataIndex: 'positionTypeName',
+        width: 180
       },
       {
         title: '通用名称',
-        dataIndex: 'productName1',
-        render:(text,record)=>record.productName
+        dataIndex: 'ctmmGenericName',
+        width: 180
       },
       {
         title: '规格',
-        dataIndex: 'spec',
+        dataIndex: 'ctmmSpecification',
+        width: 100,
         className: 'ellipsis',
         render:(text)=>(
           <Tooltip placement="topLeft" title={text}>{text}</Tooltip>
@@ -75,208 +285,282 @@ class Details extends PureComponent {
       },
       {
         title: '生产厂家',
-        dataIndex: 'productName1d2',
-        render:(text,record)=>'浙江安宝药业有限公司'
+        dataIndex: 'ctmmManufacturerName',
+        width: 250
       },
       {
         title: '包装规格',
-        dataIndex: 'bzgg',
-        render:(text,record)=>'0.25gX12片'
+        dataIndex: 'packageSpecification',
+        width: 180
       },
       {
         title: '单位',
-        dataIndex: 'dw',
-        render:(text,record)=>'瓶'
+        dataIndex: 'unit',
+        width: 50
       },
       {
         title: '账面库存',
-        dataIndex: 'zmkc',
-        render:(text,record)=>'120'
+        dataIndex: 'accountStoreNum',
+        width: 100
       },
       {
         title: '实际数量',
-        dataIndex: 'sjsl',
-        render:(text,record)=>{
-          return <Input defaultValue={110} />
-        }
+        dataIndex: 'practicalRepertory',
+        render:(text, record, i)=>{
+          return info.checkStatus === 2 && record.checkDetailStatus === 1?
+                 <InputNumber
+                  style={{width: '100%'}}
+                  onChange={(value) => {
+                    this.changePracticalRepertory(value, i, record);
+                  }}
+                  min={0}
+                  defaultValue={text} 
+                  placeholder="请输入实际数量"
+                  precision={0}
+                 /> : text
+        },
+        width: 180
       },
       {
         title: '盈亏数量',
-        dataIndex: 'yksl', 
-        render: (text, record, index) => '01'
+        dataIndex: 'checkNum', 
+        render: (text, record) => text? text : 0,
+        width: 180
       },
       {
         title: '账面批号',
-        dataIndex: 'zmph',
-        render:(text)=> 'PH123'
+        dataIndex: 'accountBatchNo',
+        width: 180
       },
       {
         title: '实际批号',
-        dataIndex: 'sjph',
-        render: (text, record, index) => <Input defaultValue={'PH123'} />
+        dataIndex: 'practicalBatch',
+        render: (text, record, i) => {
+          return info.checkStatus === 2 && record.checkDetailStatus === 1? 
+                 <Input
+                  onChange={(value) => {
+                    this.changePracticalBatch(value, i, 'practicalBatch', record);
+                  }}
+                  defaultValue={text}
+                  placeholder="请输入实际批号" 
+                 /> : text
+        },
+        width: 180
       },
       {
         title: '生产日期',
-        dataIndex: 'shengcDate'
+        dataIndex: 'accountProductTime',
+        width: 150
       },
       {
         title: '实际生产日期',
-        dataIndex: 'sjshengcDate'
+        dataIndex: 'realProductTime',
+        render: (text, record, i) => {
+          return info.checkStatus === 2 && record.checkDetailStatus === 1? 
+                 <DatePicker
+                  disabledDate={(stareTime)=>{
+                    return stareTime.valueOf() > moment(record.validEndTime).valueOf();
+                  }}
+                  onChange={(moment, value) => {
+                    this.changeDataSource(value, i, 'realProductTime', record);
+                  }}
+                  defaultValue={moment(text, monthFormat)}
+                  placeholder="请输入实际生产日期" 
+                 /> : text
+        },
+        width: 200
       },
       {
         title: '有效期至',
-        dataIndex: 'yxqz'
+        dataIndex: 'accountEndTime',
+        width: 150
       },
       {
         title: '实际有效期至',
-        dataIndex: 'sjyxqz',
-        render: (text, record, index) => '2022-07-09'
+        dataIndex: 'validEndTime',
+        render: (text, record, i) => {
+          return info.checkStatus === 2 && record.checkDetailStatus === 1? 
+                 <DatePicker
+                  disabledDate={(endTime)=>{
+                    return endTime.valueOf() <= moment(record.realProductTime).valueOf();
+                  }}
+                  onChange={(Moment, value) => {
+                    this.changeDataSource(value, i, 'validEndTime', record);
+                  }}
+                  defaultValue={moment(text, monthFormat)} 
+                  placeholder="请输入实际有效期至" 
+                 /> : text
+        },
+        width: 200
       },
       {
         title: '单价',
-        dataIndex: 'unit',
-        render:(text)=>'10.00'
+        dataIndex: 'referencePrice',
+        width: 50
       },
       {
         title: '盈亏金额',
         dataIndex: 'mount'
       },
-      {
+    ];
+    if(info.checkStatus === 2) {
+      columns.push({
         title: '操作',
         dataIndex: 'action', 
-        render: (text, record, index) => {
-          return <a onClick={this.add}>新增批号</a>
+        width: 100,
+        render: (text, record, i) => {
+          if(record.id && record.checkDetailStatus === 1) {
+            return <a onClick={()=>{
+                      this.addBatch(record, i)
+                    }}>新增批号
+                   </a>
+          };
+          return null;
         }
-      }
-    ];
+      })
+    }
+    //onClick={this.deleteCheckbill.bind(this, record)}
     return (
       <div className='fullCol fadeIn'>
         <div className='fullCol-fullChild'>
           <Row>
             <Col span={12}>
-              <h2>盘点单: <span>KP00221180700001CW</span></h2>
+              <h2>盘点单: <span>{info.checkBillNo || ''}</span></h2>
             </Col>
-            <Col span={12} style={{ textAlign: 'right' }}>
-              <Button type='primary' style={{marginRight: 10}} onClick={this.recover}>盘点</Button>
-              <Button className='button-gap' style={{marginRight: 10}} onClick={this.save}>保存</Button>
-              <Button className='button-gap' onClick={this.confirm} >提交</Button>
-              
+            {
+              info.checkStatus === 1 ? 
+              <Col span={12} style={{ textAlign: 'right' }}>
+                <Button type='primary' style={{marginRight: 10}} onClick={this.check}>盘点</Button>
+              </Col> : null
+            }
+          </Row>
+          <Row>
+            <Col span={8}>
+              <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-6">
+                <label>状态</label>
+              </div>
+              <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
+                <div className='ant-form-item-control'>{info.checkStatusName || ''}</div>
+              </div>
+            </Col>
+            <Col span={8}>
+              <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-6">
+                <label>类型</label>
+              </div>
+              <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
+                <div className='ant-form-item-control'>{info.checkBillTypeName || ''}</div>
+              </div>
+            </Col>
+            <Col span={8}>
+              <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-6">
+                <label>部门</label>
+              </div>
+              <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
+                <div className='ant-form-item-control'>{info.checkBillDeptName || ''}</div>
+              </div>
             </Col>
           </Row>
           <Row>
             <Col span={8}>
-              <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-4">
-                <label>状态</label>
-              </div>
-              <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
-                <div className='ant-form-item-control'>已确认</div>
-              </div>
-            </Col>
-            <Col span={8}>
-              <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-4">
-                <label>类型</label>
-              </div>
-              <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
-                <div className='ant-form-item-control'>明盘全盘</div>
-              </div>
-            </Col>
-            <Col span={8}>
-              <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-4">
-                <label>部门</label>
-              </div>
-              <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
-                <div className='ant-form-item-control'>药库</div>
-              </div>
-            </Col>
-            <Col span={8}>
-              <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-4">
+              <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-6">
                 <label>制单人</label>
               </div>
               <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
-                <div className='ant-form-item-control'>张三三</div>
+                <div className='ant-form-item-control'>{info.createUserName || ''}</div>
               </div>
             </Col>
             <Col span={8}>
-              <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-4">
+              <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-6">
                 <label>制单时间</label>
               </div>
               <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
-                <div className='ant-form-item-control'>2018-7-24 16:45:15</div>
+                <div className='ant-form-item-control'>{info.createDate || ''}</div>
               </div>
             </Col>
             <Col span={8}>
-              <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-4">
+              <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-6">
                 <label>起始时间</label>
               </div>
               <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
-                <div className='ant-form-item-control'>2018-7-24 16:45:15</div>
-              </div>
-            </Col>
-            <Col span={8}>
-              <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-4">
-                <label>盘点周期</label>
-              </div>
-              <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
-                <div className='ant-form-item-control'>2018-07-11 ~ 2018-07-12</div>
-              </div>
-            </Col>
-            <Col span={8}>
-              <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-4">
-                <label>盘点时间</label>
-              </div>
-              <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
-                <div className='ant-form-item-control'>2018-07-12 17:09:15</div>
-              </div>
-            </Col>
-            <Col span={8}>
-              <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-4">
-                <label>提交时间</label>
-              </div>
-              <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
-                <div className='ant-form-item-control'>2018-07-12 17:09:15</div>
-              </div>
-            </Col>
-            <Col span={8}>
-              <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-4">
-                <label>备注</label>
-              </div>
-              <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
-                <div className='ant-form-item-control'>我是新建盘点列表</div>
+                <div className='ant-form-item-control'>{info.checkStartTime || ''}</div>
               </div>
             </Col>
           </Row>
-          <div style={{borderBottom: '1px dashed #d9d9d9', marginBottom: 10}}></div>
+          <Row>
+            <Col span={8}>
+              <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-6">
+                <label>盘点时间</label>
+              </div>
+              <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
+                <div className='ant-form-item-control'>{info.checkTime || ''}</div>
+              </div>
+            </Col>
+            <Col span={8}>
+              <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-6">
+                <label>提交时间</label>
+              </div>
+              <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
+                <div className='ant-form-item-control'>{info.checkEndTime || ''}</div>
+              </div>
+            </Col>
+            <Col span={8}>
+              <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-6">
+                <label>备注</label>
+              </div>
+              <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
+                <div className='ant-form-item-control'>{info.remarks || ''}</div>
+              </div>
+            </Col>
+          </Row>
+           <div style={{borderBottom: '1px dashed #d9d9d9', marginBottom: 10}}></div>
           <Row>
             <Col span={8}>
               <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-4">
                 <label>名称</label>
               </div>
               <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18" style={{ marginLeft: -30 }}>
-                <div className='ant-form-item-control'><Input placeholder={'通用名称/商品名称'} /></div>
-              </div>
-            </Col>
-            <Col span={8}>
-              <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-4" style={{ textAlign: 'right' }}>
-                <label>供应商</label>
-              </div>
-              <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
-                <div className='ant-form-item-control'><Input placeholder={'请输入'} /></div>
+                <div className='ant-form-item-control'>
+                  <Search onSearch={this.onSearch} placeholder={'通用名称/商品名称'} />
+                </div>
               </div>
             </Col>
           </Row>
         </div>
         <div className='detailCard'>
-          <Table
-            dataSource={createData()}
-            bordered
-            title={()=>'产品信息'}
-            scroll={{x: '220%'}}
+          <Row>
+            <Col span={12}>
+              <span style={{margin: 0, fontSize: 16, lineHeight: '32px'}}>产品信息</span>
+            </Col>
+            {
+              info.checkStatus === 2 ? 
+              <Col style={{textAlign: 'right'}} span={12}>
+                <Button loading={submitLoading} className='button-gap' onClick={this.confirm} >提交</Button>
+              </Col> : null
+            }
+          </Row>
+          <hr className="hr"/>
+          <RetomeTable
+            ref={'table'}
+            query={query}
+            data={dataSource}
+            url={checkDecrease.GET_LIST_BY_BILLNO}
+            scroll={{x: '250%'}}
             columns={columns}
-            rowKey={'id'}
-            pagination={{
-              size: 'small',
-              showQuickJumper: true,
-              showSizeChanger: true
+            rowKey={'uuid'}
+            expandedRowKeys={expandedRowKeys}
+            cb={this.tableCallBack}
+            onExpand={this.onExpandedRowsChange}
+            rowSelection={{
+              selectedRowKeys: this.state.selected,
+              onChange: (selectedRowKeys, selectedRows) => {
+                this.setState({selected: selectedRowKeys, selectedRows: selectedRows})
+              },
+              onSelect: (record, selected, selectedRows) => {
+                console.log(record, selected, selectedRows);
+              },
+              onSelectAll: (selected, selectedRows, changeRows) => {
+                console.log(selected, selectedRows, changeRows);
+              },
             }}
           />
         </div>
@@ -284,4 +568,4 @@ class Details extends PureComponent {
     )
   }
 }
-export default Details;
+export default connect()(Details);

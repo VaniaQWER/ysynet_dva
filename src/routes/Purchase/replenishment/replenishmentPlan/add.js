@@ -85,7 +85,7 @@ class NewAdd extends PureComponent {
     }
   }
   handleOk = () => {
-    let {modalSelectedRows, query} = this.state;
+    let {modalSelectedRows, query, dataSource} = this.state;
     if(modalSelectedRows.length === 0) {
       message.warning('至少选择一条信息');
       return;
@@ -99,8 +99,15 @@ class NewAdd extends PureComponent {
         drugCodeList: modalSelectedRows
       },
       callback: (data) => {
+        dataSource.push(data);
+        dataSource = dataSource.map((item) => {
+          if(!item.id) {
+            item.supplierCode = item.supplierList[0].ctmaSupplierCode;
+          };
+          return item;
+        })
         this.setState({
-          dataSource: data,
+          dataSource: [...dataSource],
           btnLoading: false,
           visible: false,
           modalSelected: []
@@ -205,7 +212,6 @@ class NewAdd extends PureComponent {
       modalLoading,
       spinLoading,
       btnLoading,
-      submitLoading,
       saveLoading
     } = this.state;
     const columns = [
@@ -250,8 +256,10 @@ class NewAdd extends PureComponent {
                   };
                   return item;
                 });
+                dataSource[i].supplierCode = value;
                 dataSource[i].drugPrice = referencePrice;
                 dataSource[i].totalPrice = referencePrice * record.demandQuantity;
+                
                 this.setState({dataSource});
                 
               }} 
@@ -419,7 +427,7 @@ class NewAdd extends PureComponent {
                 modalLoading={modalLoading}
                 columns={modalColumns}
                 scroll={{ x: '150%' }}
-                rowKey='bigDrugCode'
+                rowKey='drugCode'
                 rowSelection={{
                   selectedRowKeys: this.state.modalSelected,
                   onChange: (selectedRowKeys, selectedRows) => {
@@ -456,7 +464,7 @@ class NewAdd extends PureComponent {
             <div className="detailCard" style={{margin: '-12px -8px 0px -8px'}}>
               <Row>
                 <Col style={{ textAlign: 'right', padding: '10px' }}>
-                  <Button loading={submitLoading} onClick={()=>{this.submit('2')}} type='primary'>提交</Button>
+                  <Button loading={saveLoading} onClick={()=>{this.submit('2')}} type='primary'>提交</Button>
                   <Button loading={saveLoading} onClick={()=>{this.submit('1')}} type='danger' style={{ marginLeft: 8 }} ghost>保存</Button>
                 </Col>
               </Row>

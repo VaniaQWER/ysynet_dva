@@ -1,17 +1,20 @@
 /**
- * @file 药库 - 盘点损益 - 盘后调整
+ * @file 药库 - 盘点损益 - 新建盘点
  */
 import React, { PureComponent } from 'react';
-import { Form, Row, Col, DatePicker, Input, Select, Button, Icon, Table } from 'antd';
+import { Form, Row, Col, DatePicker, Input, Select, Button, Icon } from 'antd';
 import { Link } from 'react-router-dom';
-
+import { formItemLayout } from '../../../../utils/commonStyles';
+import RemoteTable from '../../../../components/TableGrid';
+import {common} from '../../../../api/checkDecrease';
+import {connect} from 'dva';
 const FormItem = Form.Item;
 const { RangePicker } = DatePicker;
 const { Option } = Select;
 
 class SearchForm extends PureComponent {
   state = {
-    display: 'none',
+    display: 'none'
   }
   toggle = () => {
     const { display, expand } = this.state;
@@ -24,8 +27,16 @@ class SearchForm extends PureComponent {
     e.preventDefault();
     this.props.form.validateFields((err, values) => {
       if (!err) {
-        values.startTime = values.makingTime[0].format('YYYY-MM-DD HH:mm');
-        values.endTime = values.makingTime[1].format('YYYY-MM-DD HH:mm');
+        const makingTime = values.makingTime === undefined || values.makingTime === null ? "" : values.makingTime;
+        if(makingTime.length > 0) {
+          values.checkStartTime = makingTime[0].format('YYYY-MM-DD HH:mm');
+          values.checkEndTime = makingTime[1].format('YYYY-MM-DD HH:mm');
+        };
+        let {filterStatus} = values;
+        let {status} = this.props;
+        if(filterStatus === "") {
+          values.filterStatus = status.map(item=>item.value).filter(item=>item !== "").join(',');
+        }
         console.log(values, '查询条件');
         this.props.query(values);
       }
@@ -33,52 +44,50 @@ class SearchForm extends PureComponent {
   }
   handleReset = () => {
     this.props.form.resetFields();
-    this.props.query({});
+    this.props.query({
+      filterStatus: '4,5'
+    });
   }
+  listRender = (list) => {
+    return <Select placeholder="请选择">
+            {
+              list.map(item => {
+                return <Option key={item.value} value={item.value}>{item.label}</Option>
+              })
+            }
+           </Select>
+  } 
   render() {
-    const { getFieldDecorator } = this.props.form;  
-    const formItemLayout = { labelCol: {span: 4}, wrapperCol: {span: 18} };
+    const { getFieldDecorator } = this.props.form;
+    let {status, types} = this.props;
     return(
       <Form onSubmit={this.handleSearch}>
         <Row gutter={30}>
           <Col span={8}>
-            <FormItem label={'制单时间'} {...formItemLayout}>
+            <FormItem label={'盘点时间'} {...formItemLayout}>
               {getFieldDecorator('makingTime')(
-                <RangePicker showTime={{ format: 'HH:mm' }} format={'YYYY-MM-DD HH:mm'} style={{ width: 313 }} />
+                <RangePicker />
               )}
             </FormItem>
           </Col>
           <Col span={8}>
             <FormItem label={'单号'} {...formItemLayout}>
-              {getFieldDecorator('odd')(
+              {getFieldDecorator('checkBillNo')(
                 <Input placeholder={'盘点单号'} />
               )}
             </FormItem>
           </Col>
           <Col span={8}>
             <FormItem label={'状态'} {...formItemLayout} style={{ display: this.state.display }}>
-              {getFieldDecorator('status', {
-                initialValue: ''
-              })(
-                <Select>
-                  <Option value={''}>全部</Option>
-                  <Option value={'01'}>已审核</Option>
-                  <Option value={'02'}>已审核</Option>
-                </Select>
+              {getFieldDecorator('filterStatus')(
+                this.listRender(status)
               )}
             </FormItem>
           </Col>
           <Col span={8}>
             <FormItem label={'类型'} {...formItemLayout} style={{ display: this.state.display }}>
-              {getFieldDecorator('types', {
-                initialValue: ''
-              })(
-                <Select>
-                  <Option value={''}>全部</Option>
-                  <Option value={'00'}>明盘全盘</Option>
-                  <Option value={'01'}>暗盘动销盘</Option>
-                  <Option value={'02'}>明盘动盘</Option>
-                </Select>
+              {getFieldDecorator('checkBillType')(
+                this.listRender(types)
               )}
             </FormItem>
           </Col>
@@ -98,377 +107,108 @@ class SearchForm extends PureComponent {
 }
 const SearchFormWarp = Form.create()(SearchForm);
 
-class AfterAdjustment extends PureComponent{
+class AfterAdjustment extends PureComponent {
   state = {
-    query: {},
-    loading: false
+    query: {
+      filterStatus: '4,5'
+    },
+    display: 'none',
+    types: [],
+    status: [],
   }
+  componentDidMount() {
+    this.props.dispatch({
+      type: 'base/orderStatusOrorderType',
+      payload: {
+        type: 'check_bill_type'
+      },
+      callback: (data) => {
+        this.setState({
+          types: data
+        });
+      }
+    });
+    this.props.dispatch({
+      type: 'base/orderStatusOrorderType',
+      payload: {
+        type: 'check_status',
+        values: '4,5'
+      },
+      callback: (data) => {
+        this.setState({
+          status: data
+        });
+      }
+    });
+  }
+  //查询
   queryHandler = query => {
     this.setState({ query });
   }
   render() {
+    const {status, types, query} = this.state;
     const columns = [
       {
         title: '盘点单',
-        dataIndex: 'odd',
-        render: (text, record) =>
-          <span><Link to={{ pathname: `/drugStorage/checkDecrease/afterAdjustment/details` }}>{text}</Link></span>
+        dataIndex: 'checkBillNo',
+        width: 220,
+        render: (text, record) => {
+          return <span><Link to={{ pathname: `/drugStorage/checkDecrease/afterAdjustment/details/${record.checkBillNo}`}}>{text}</Link></span>
+        }
       },
       {
         title: '状态',
-        dataIndex: 'status',
+        dataIndex: 'checkStatusName',
       },
       {
-        title: '类型',
-        dataIndex: 'types',
+        title: '盘点类型',
+        dataIndex: 'checkBillTypeName',
+      },
+      {
+        title: '盘点子类型',
+        dataIndex: 'checkBillSubTypeName',
       },
       {
         title: '部门',
-        dataIndex: 'dept',
-      },
-      {
-        title: '盈亏总金额',
-        dataIndex: 'ykzje',
-        render: (text, record, index) => '0.00'
+        dataIndex: 'checkBillDeptName',
       },
       {
         title: '盘点责任人',
-        dataIndex: 'oddUser',
+        dataIndex: 'sheveUserName',
       },
       {
         title: '制单时间',
-        dataIndex: 'makingTime',
+        dataIndex: 'createDate',
       },
       {
         title: '盘点时间',
-        dataIndex: 'startTime',
-      },{
-        title: '调整人',
-        dataIndex: 'auditor',
-        render: () => '王力宏'
-      },{
-        title: '调整时间',
-        dataIndex: 'auditorTime',
-        render: () => '2018-7-25 21:45'
+        dataIndex: 'checkTime',
       },
       {
         title: '备注',
-        dataIndex: 'remark',
-      }
-    ];
-    const dataSource = [
-      {
-        key: '1',
-        odd: 'KP0022118070000383',
-        status: '已审核',
-        types: '明盘全盘',
-        dept: '药库',
-        oddUser: '张三三',
-        makingTime: '2018-7-24 16:45',
-        startTime: '2018-7-24 16:45',
-        remark: '我是盘后调整列表'
-      },
-      {
-        key: '2',
-        odd: 'KP00221180700002DN',
-        status: '已审核',
-        types: '暗盘动销盘',
-        dept: '药库',
-        oddUser: '张三三',
-        makingTime: '2018-7-24 16:45',
-        startTime: '2018-7-24 16:45',
-        remark: '我是盘后调整列表'
-      },
-      {
-        key: '3',
-        odd: 'KP00221180700001CW',
-        status: '已审核',
-        types: '明盘动盘',
-        dept: '药库',
-        oddUser: '张三三',
-        makingTime: '2018-7-24 16:45',
-        startTime: '2018-7-24 16:45',
-        remark: '我是盘后调整列表'
-      },
-      {
-        key: '4',
-        odd: 'KP0022118070000383',
-        status: '已审核',
-        types: '明盘全盘',
-        dept: '药库',
-        oddUser: '张三三',
-        makingTime: '2018-7-24 16:45',
-        startTime: '2018-7-24 16:45',
-        remark: '我是盘后调整列表'
-      },
-      {
-        key: '5',
-        odd: 'KP00221180700002DN',
-        status: '已审核',
-        types: '暗盘动销盘',
-        dept: '药库',
-        oddUser: '张三三',
-        makingTime: '2018-7-24 16:45',
-        startTime: '2018-7-24 16:45',
-        remark: '我是盘后调整列表'
-      },
-      {
-        key: '6',
-        odd: 'KP00221180700001CW',
-        status: '已审核',
-        types: '明盘动盘',
-        dept: '药库',
-        oddUser: '张三三',
-        makingTime: '2018-7-24 16:45',
-        startTime: '2018-7-24 16:45',
-        remark: '我是盘后调整列表'
-      },
-      {
-        key: '7',
-        odd: 'KP0022118070000383',
-        status: '已审核',
-        types: '明盘全盘',
-        dept: '药库',
-        oddUser: '张三三',
-        makingTime: '2018-7-24 16:45',
-        startTime: '2018-7-24 16:45',
-        remark: '我是盘后调整列表'
-      },
-      {
-        key: '8',
-        odd: 'KP00221180700002DN',
-        status: '已审核',
-        types: '暗盘动销盘',
-        dept: '药库',
-        oddUser: '张三三',
-        makingTime: '2018-7-24 16:45',
-        startTime: '2018-7-24 16:45',
-        remark: '我是盘后调整列表'
-      },
-      {
-        key: '9',
-        odd: 'KP00221180700001CW',
-        status: '已审核',
-        types: '明盘动盘',
-        dept: '药库',
-        oddUser: '张三三',
-        makingTime: '2018-7-24 16:45',
-        startTime: '2018-7-24 16:45',
-        remark: '我是盘后调整列表'
-      },
-      {
-        key: '10',
-        odd: 'KP0022118070000383',
-        status: '已审核',
-        types: '明盘全盘',
-        dept: '药库',
-        oddUser: '张三三',
-        makingTime: '2018-7-24 16:45',
-        startTime: '2018-7-24 16:45',
-        remark: '我是盘后调整列表'
-      },
-      {
-        key: '11',
-        odd: 'KP00221180700002DN',
-        status: '已审核',
-        types: '暗盘动销盘',
-        dept: '药库',
-        oddUser: '张三三',
-        makingTime: '2018-7-24 16:45',
-        startTime: '2018-7-24 16:45',
-        remark: '我是盘后调整列表'
-      },
-      {
-        key: '12',
-        odd: 'KP00221180700001CW',
-        status: '已审核',
-        types: '明盘动盘',
-        dept: '药库',
-        oddUser: '张三三',
-        makingTime: '2018-7-24 16:45',
-        startTime: '2018-7-24 16:45',
-        remark: '我是盘后调整列表'
-      },
-      {
-        key: '13',
-        odd: 'KP0022118070000383',
-        status: '已审核',
-        types: '明盘全盘',
-        dept: '药库',
-        oddUser: '张三三',
-        makingTime: '2018-7-24 16:45',
-        startTime: '2018-7-24 16:45',
-        remark: '我是盘后调整列表'
-      },
-      {
-        key: '14',
-        odd: 'KP00221180700002DN',
-        status: '已审核',
-        types: '暗盘动销盘',
-        dept: '药库',
-        oddUser: '张三三',
-        makingTime: '2018-7-24 16:45',
-        startTime: '2018-7-24 16:45',
-        remark: '我是盘后调整列表'
-      },
-      {
-        key: '15',
-        odd: 'KP00221180700001CW',
-        status: '已审核',
-        types: '明盘动盘',
-        dept: '药库',
-        oddUser: '张三三',
-        makingTime: '2018-7-24 16:45',
-        startTime: '2018-7-24 16:45',
-        remark: '我是盘后调整列表'
-      },
-      {
-        key: '16',
-        odd: 'KP0022118070000383',
-        status: '已审核',
-        types: '明盘全盘',
-        dept: '药库',
-        oddUser: '张三三',
-        makingTime: '2018-7-24 16:45',
-        startTime: '2018-7-24 16:45',
-        remark: '我是盘后调整列表'
-      },
-      {
-        key: '17',
-        odd: 'KP00221180700002DN',
-        status: '已审核',
-        types: '暗盘动销盘',
-        dept: '药库',
-        oddUser: '张三三',
-        makingTime: '2018-7-24 16:45',
-        startTime: '2018-7-24 16:45',
-        remark: '我是盘后调整列表'
-      },
-      {
-        key: '18',
-        odd: 'KP00221180700001CW',
-        status: '已审核',
-        types: '明盘动盘',
-        dept: '药库',
-        oddUser: '张三三',
-        makingTime: '2018-7-24 16:45',
-        startTime: '2018-7-24 16:45',
-        remark: '我是盘后调整列表'
-      },
-      {
-        key: '19',
-        odd: 'KP0022118070000383',
-        status: '已审核',
-        types: '明盘全盘',
-        dept: '药库',
-        oddUser: '张三三',
-        makingTime: '2018-7-24 16:45',
-        startTime: '2018-7-24 16:45',
-        remark: '我是盘后调整列表'
-      },
-      {
-        key: '20',
-        odd: 'KP00221180700002DN',
-        status: '已审核',
-        types: '暗盘动销盘',
-        dept: '药库',
-        oddUser: '张三三',
-        makingTime: '2018-7-24 16:45',
-        startTime: '2018-7-24 16:45',
-        remark: '我是盘后调整列表'
-      },
-      {
-        key: '21',
-        odd: 'KP00221180700001CW',
-        status: '已审核',
-        types: '明盘动盘',
-        dept: '药库',
-        oddUser: '张三三',
-        makingTime: '2018-7-24 16:45',
-        startTime: '2018-7-24 16:45',
-        remark: '我是盘后调整列表'
-      },
-      {
-        key: '22',
-        odd: 'KP0022118070000383',
-        status: '已审核',
-        types: '明盘全盘',
-        dept: '药库',
-        oddUser: '张三三',
-        makingTime: '2018-7-24 16:45',
-        startTime: '2018-7-24 16:45',
-        remark: '我是盘后调整列表'
-      },
-      {
-        key: '23',
-        odd: 'KP00221180700002DN',
-        status: '已审核',
-        types: '暗盘动销盘',
-        dept: '药库',
-        oddUser: '张三三',
-        makingTime: '2018-7-24 16:45',
-        startTime: '2018-7-24 16:45',
-        remark: '我是盘后调整列表'
-      },
-      {
-        key: '24',
-        odd: 'KP00221180700001CW',
-        status: '已审核',
-        types: '明盘动盘',
-        dept: '药库',
-        oddUser: '张三三',
-        makingTime: '2018-7-24 16:45',
-        startTime: '2018-7-24 16:45',
-        remark: '我是盘后调整列表'
-      },
-      {
-        key: '25',
-        odd: 'KP0022118070000383',
-        status: '已审核',
-        types: '明盘全盘',
-        dept: '药库',
-        oddUser: '张三三',
-        makingTime: '2018-7-24 16:45',
-        startTime: '2018-7-24 16:45',
-        remark: '我是盘后调整列表'
-      },
-      {
-        key: '26',
-        odd: 'KP00221180700002DN',
-        status: '已审核',
-        types: '暗盘动销盘',
-        dept: '药库',
-        oddUser: '张三三',
-        makingTime: '2018-7-24 16:45',
-        startTime: '2018-7-24 16:45',
-        remark: '我是盘后调整列表'
-      },
-      {
-        key: '27',
-        odd: 'KP00221180700001CW',
-        status: '已审核',
-        types: '明盘动盘',
-        dept: '药库',
-        oddUser: '张三三',
-        makingTime: '2018-7-24 16:45',
-        startTime: '2018-7-24 16:45',
-        remark: '我是盘后调整列表'
+        dataIndex: 'remarks',
       }
     ];
     return (
       <div className='ysynet-main-content'>
-        <SearchFormWarp />
-        <Table
-          bordered
-          loading={ this.state.loading}
-          scroll={{x: '150%'}}
+        <SearchFormWarp
+          status={status}
+          types={types}
+          dispatch={this.props.dispatch} 
+          query={this.queryHandler} 
+        />
+        <RemoteTable
+          isJson
+          query={query}
+          url={common.CHECKBILL_LIST}
           columns={columns}
-          // rowKey={'oddGuid'}
+          rowKey={'id'}
+          ref="table"
+          scroll={{x: '130%'}}
           style={{marginTop: 20}}
-          dataSource={dataSource}
         />
       </div>
     )
   }
 }
-export default AfterAdjustment;
+export default connect()(AfterAdjustment);

@@ -9,3 +9,10 @@ export const common = {
 export const checkDecrease = {
   GET_LIST_BY_BILLNO: `${_local}/a/checkbilldetail/getListByBillNo`,    //详情底部
 }
+
+/*-- 损益记录 --*/
+export const profiLossRecord = {
+  CAUSTICEXCESSIVE_LIST: `${_local}/a/causticexcessive/list`,     //列表
+  GET_LIST_BY_BILLNO: `${_local}/a/checkbilldetail/getListByBillNo`,  //详情底部
+}
+

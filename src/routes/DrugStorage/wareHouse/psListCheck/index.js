@@ -102,7 +102,7 @@ class SearchForm extends PureComponent{
         for (const key in values) {
           values[key] = values[key] === undefined? "" : values[key];
         }
-        values.supplierCode = this.state.value? [this.state.value] : [];
+        values.supplierCodeList = this.state.value? [this.state.value] : [];
         this.props.query(values);
       };
     });

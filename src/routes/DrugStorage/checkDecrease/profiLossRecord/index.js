@@ -1,17 +1,20 @@
 /**
- * @file 药库 - 盘点损益 - 损益记录
+ * @file 药库 - 盘点损益 - 新建盘点
  */
 import React, { PureComponent } from 'react';
-import { Form, Row, Col, DatePicker, Input, Select, Button, Icon, Table } from 'antd';
+import { Form, Row, Col, DatePicker, Input, Select, Button, Icon } from 'antd';
 import { Link } from 'react-router-dom';
-
+import { formItemLayout } from '../../../../utils/commonStyles';
+import RemoteTable from '../../../../components/TableGrid';
+import {profiLossRecord} from '../../../../api/checkDecrease';
+import {connect} from 'dva';
 const FormItem = Form.Item;
 const { RangePicker } = DatePicker;
 const { Option } = Select;
 
 class SearchForm extends PureComponent {
   state = {
-    display: 'none',
+    display: 'none'
   }
   toggle = () => {
     const { display, expand } = this.state;
@@ -24,8 +27,16 @@ class SearchForm extends PureComponent {
     e.preventDefault();
     this.props.form.validateFields((err, values) => {
       if (!err) {
-        values.startTime = values.generatedTime[0].format('YYYY-MM-DD HH:mm');
-        values.endTime = values.generatedTime[1].format('YYYY-MM-DD HH:mm');
+        const makingTime = values.makingTime === undefined || values.makingTime === null ? "" : values.makingTime;
+        if(makingTime.length > 0) {
+          values.checkStartTime = makingTime[0].format('YYYY-MM-DD HH:mm');
+          values.checkEndTime = makingTime[1].format('YYYY-MM-DD HH:mm');
+        };
+        let {filterStatus} = values;
+        let {status} = this.props;
+        if(filterStatus === "") {
+          values.filterStatus = status.map(item=>item.value).filter(item=>item !== "").join(',');
+        }
         console.log(values, '查询条件');
         this.props.query(values);
       }
@@ -35,43 +46,43 @@ class SearchForm extends PureComponent {
     this.props.form.resetFields();
     this.props.query({});
   }
+  listRender = (list) => {
+    return <Select placeholder="请选择">
+            {
+              list.map(item => {
+                return <Option key={item.value} value={item.value}>{item.label}</Option>
+              })
+            }
+           </Select>
+  } 
   render() {
     const { getFieldDecorator } = this.props.form;
-    const formItemLayout = { labelCol: {span: 4}, wrapperCol: {span: 18} };
+    let {types} = this.props;
     return(
       <Form onSubmit={this.handleSearch}>
         <Row gutter={30}>
           <Col span={8}>
-            <FormItem label={'生成时间'} {...formItemLayout}>
-              {getFieldDecorator('generatedTime')(
-                <RangePicker showTime={{ format: 'HH:mm' }} format={'YYYY-MM-DD HH:mm'} style={{ width: 313 }} />
+            <FormItem label={'盘点时间'} {...formItemLayout}>
+              {getFieldDecorator('makingTime')(
+                <RangePicker />
               )}
             </FormItem>
           </Col>
           <Col span={8}>
             <FormItem label={'单号'} {...formItemLayout}>
-              {getFieldDecorator('odd')(
+              {getFieldDecorator('checkBillNo')(
                 <Input placeholder={'盘点单号'} />
               )}
             </FormItem>
           </Col>
           <Col span={8}>
             <FormItem label={'类型'} {...formItemLayout} style={{ display: this.state.display }}>
-              {getFieldDecorator('types', {
-                initialValue: ''
-              })(
-                <Select>
-                  <Option value={''}>全部</Option>
-                  <Option value={'00'}>明盘全盘</Option>
-                  <Option value={'01'}>暗盘动销盘</Option>
-                  <Option value={'02'}>明盘动盘</Option>
-                </Select>
+              {getFieldDecorator('checkBillType')(
+                this.listRender(types)
               )}
             </FormItem>
           </Col>
-          <Col span={16} style={{ display: this.state.display }}>
-          </Col>
-          <Col span={8} style={{ textAlign: 'right', marginBottom: 10 }}>
+          <Col span={8} style={{float: 'right', textAlign: 'right', marginTop: 4 }}>
             <Button type="primary" htmlType="submit">查询</Button>
             <Button style={{ marginLeft: 8 }} onClick={this.handleReset}>重置</Button>
             <a style={{ marginLeft: 8, fontSize: 14 }} onClick={this.toggle}>
@@ -84,286 +95,85 @@ class SearchForm extends PureComponent {
   }
 }
 const SearchFormWarp = Form.create()(SearchForm);
+
 class ProfiLossRecord extends PureComponent {
   state = {
     query: {},
-    loading: false
+    display: 'none',
+    types: [],
+    status: [],
   }
+  componentDidMount() {
+    this.props.dispatch({
+      type: 'base/orderStatusOrorderType',
+      payload: {
+        type: 'check_bill_type'
+      },
+      callback: (data) => {
+        this.setState({
+          types: data
+        });
+      }
+    });
+  }
+  //查询
   queryHandler = query => {
     this.setState({ query });
   }
   render() {
+    const {types, query} = this.state;
     const columns = [
       {
         title: '损益单',
-        dataIndex: 'syNo',
-        key: 'syNo',
-        render: (text, record) =>
-          <span>
-            <Link to={{ pathname: `/drugStorage/checkDecrease/profiLossRecord/details` }}>{text}</Link>
-          </span>
+        dataIndex: 'causticExcessiveNo',
+        width: 220,
+        render: (text, record) => {
+          return <span><Link to={{ pathname: `/drugStorage/checkDecrease/profiLossRecord/details/${record.causticExcessiveNo}`}}>{text}</Link></span>
+        }
       },
       {
         title: '盘点单',
-        dataIndex: 'odd',
-        key: 'odd'
+        dataIndex: 'checkBillNo',
       },
       {
-        title: '类型',
-        dataIndex: 'types',
-        key: 'types'
+        title: '盘点类型',
+        dataIndex: 'checkBillTypeName',
+      },
+      {
+        title: '盘点子类型',
+        dataIndex: 'checkBillSubTypeName',
       },
       {
         title: '部门',
-        dataIndex: 'dept',
-        key: 'dept'
+        dataIndex: 'deptName',
       },
       {
         title: '生成人',
-        dataIndex: 'generatedUser',
-        key: 'generatedUser'
+        dataIndex: 'createUserName',
       },
       {
         title: '生成时间',
-        dataIndex: 'generatedTime',
-        key: 'generatedTime'
+        dataIndex: 'createDate',
       }
     ];
-    const dataSource = [
-      {
-        key: '1',
-        syNo: 'SY0022118070000383',
-        odd: 'KP0022118070000383',
-        types: '明盘全盘',
-        dept: '药库',
-        generatedUser: '张三三',
-        generatedTime: '2018-7-24 20:06'
-      },
-      {
-        key: '2',
-        syNo: 'SY00221180700002DN',
-        odd: 'KP00221180700002DN',
-        types: '暗盘动销盘',
-        dept: '药库',
-        generatedUser: '张三三',
-        generatedTime: '2018-7-24 20:06'
-      },
-      {
-        key: '3',
-        syNo: 'SY00221180700001CW',
-        odd: 'KP00221180700001CW',
-        types: '明盘动盘',
-        dept: '药库',
-        generatedUser: '张三三',
-        generatedTime: '2018-7-24 20:06'
-      },
-      {
-        key: '4',
-        syNo: 'SY0022118070000383',
-        odd: 'KP0022118070000383',
-        types: '明盘全盘',
-        dept: '药库',
-        generatedUser: '张三三',
-        generatedTime: '2018-7-24 20:06'
-      },
-      {
-        key: '5',
-        syNo: 'SY00221180700002DN',
-        odd: 'KP00221180700002DN',
-        types: '暗盘动销盘',
-        dept: '药库',
-        generatedUser: '张三三',
-        generatedTime: '2018-7-24 20:06'
-      },
-      {
-        key: '6',
-        syNo: 'SY00221180700001CW',
-        odd: 'KP00221180700001CW',
-        types: '明盘动盘',
-        dept: '药库',
-        generatedUser: '张三三',
-        generatedTime: '2018-7-24 20:06'
-      },
-      {
-        key: '7',
-        syNo: 'SY0022118070000383',
-        odd: 'KP0022118070000383',
-        types: '明盘全盘',
-        dept: '药库',
-        generatedUser: '张三三',
-        generatedTime: '2018-7-24 20:06'
-      },
-      {
-        key: '8',
-        syNo: 'SY00221180700002DN',
-        odd: 'KP00221180700002DN',
-        types: '暗盘动销盘',
-        dept: '药库',
-        generatedUser: '张三三',
-        generatedTime: '2018-7-24 20:06'
-      },
-      {
-        key: '9',
-        syNo: 'SY00221180700001CW',
-        odd: 'KP00221180700001CW',
-        types: '明盘动盘',
-        dept: '药库',
-        generatedUser: '张三三',
-        generatedTime: '2018-7-24 20:06'
-      },
-      {
-        key: '10',
-        syNo: 'SY0022118070000383',
-        odd: 'KP0022118070000383',
-        types: '明盘全盘',
-        dept: '药库',
-        generatedUser: '张三三',
-        generatedTime: '2018-7-24 20:06'
-      },
-      {
-        key: '11',
-        syNo: 'SY00221180700002DN',
-        odd: 'KP00221180700002DN',
-        types: '暗盘动销盘',
-        dept: '药库',
-        generatedUser: '张三三',
-        generatedTime: '2018-7-24 20:06'
-      },
-      {
-        key: '12',
-        syNo: 'SY00221180700001CW',
-        odd: 'KP00221180700001CW',
-        types: '明盘动盘',
-        dept: '药库',
-        generatedUser: '张三三',
-        generatedTime: '2018-7-24 20:06'
-      },
-      {
-        key: '13',
-        syNo: 'SY0022118070000383',
-        odd: 'KP0022118070000383',
-        types: '明盘全盘',
-        dept: '药库',
-        generatedUser: '张三三',
-        generatedTime: '2018-7-24 20:06'
-      },
-      {
-        key: '14',
-        syNo: 'SY00221180700002DN',
-        odd: 'KP00221180700002DN',
-        types: '暗盘动销盘',
-        dept: '药库',
-        generatedUser: '张三三',
-        generatedTime: '2018-7-24 20:06'
-      },
-      {
-        key: '15',
-        syNo: 'SY00221180700001CW',
-        odd: 'KP00221180700001CW',
-        types: '明盘动盘',
-        dept: '药库',
-        generatedUser: '张三三',
-        generatedTime: '2018-7-24 20:06'
-      },
-      {
-        key: '16',
-        syNo: 'SY0022118070000383',
-        odd: 'KP0022118070000383',
-        types: '明盘全盘',
-        dept: '药库',
-        generatedUser: '张三三',
-        generatedTime: '2018-7-24 20:06'
-      },
-      {
-        key: '17',
-        syNo: 'SY00221180700002DN',
-        odd: 'KP00221180700002DN',
-        types: '暗盘动销盘',
-        dept: '药库',
-        generatedUser: '张三三',
-        generatedTime: '2018-7-24 20:06'
-      },
-      {
-        key: '18',
-        syNo: 'SY00221180700001CW',
-        odd: 'KP00221180700001CW',
-        types: '明盘动盘',
-        dept: '药库',
-        generatedUser: '张三三',
-        generatedTime: '2018-7-24 20:06'
-      },
-      {
-        key: '19',
-        syNo: 'SY0022118070000383',
-        odd: 'KP0022118070000383',
-        types: '明盘全盘',
-        dept: '药库',
-        generatedUser: '张三三',
-        generatedTime: '2018-7-24 20:06'
-      },
-      {
-        key: '20',
-        syNo: 'SY00221180700002DN',
-        odd: 'KP00221180700002DN',
-        types: '暗盘动销盘',
-        dept: '药库',
-        generatedUser: '张三三',
-        generatedTime: '2018-7-24 20:06'
-      },
-      {
-        key: '21',
-        syNo: 'SY00221180700001CW',
-        odd: 'KP00221180700001CW',
-        types: '明盘动盘',
-        dept: '药库',
-        generatedUser: '张三三',
-        generatedTime: '2018-7-24 20:06'
-      },
-      {
-        key: '22',
-        syNo: 'SY0022118070000383',
-        odd: 'KP0022118070000383',
-        types: '明盘全盘',
-        dept: '药库',
-        generatedUser: '张三三',
-        generatedTime: '2018-7-24 20:06'
-      },
-      {
-        key: '23',
-        syNo: 'SY00221180700002DN',
-        odd: 'KP00221180700002DN',
-        types: '暗盘动销盘',
-        dept: '药库',
-        generatedUser: '张三三',
-        generatedTime: '2018-7-24 20:06'
-      },
-      {
-        key: '24',
-        syNo: 'SY00221180700001CW',
-        odd: 'KP00221180700001CW',
-        types: '明盘动盘',
-        dept: '药库',
-        generatedUser: '张三三',
-        generatedTime: '2018-7-24 20:06'
-      }
-    ]
     return (
       <div className='ysynet-main-content'>
-        <SearchFormWarp />
-        <Table
-          loading={ this.state.loading}
-          scroll={{x: '100%'}}
+        <SearchFormWarp
+          types={types}
+          query={this.queryHandler} 
+        />
+        <RemoteTable
+          isJson
+          query={query}
+          url={profiLossRecord.CAUSTICEXCESSIVE_LIST}
           columns={columns}
-          bordered
-          dataSource={dataSource}
-          pagination={{
-            size: 'small',
-            showQuickJumper: true,
-            showSizeChanger: true
-          }}
+          rowKey={'id'}
+          ref="table"
+          scroll={{x: '130%'}}
+          style={{marginTop: 20}}
         />
       </div>
     )
   }
 }
-export default ProfiLossRecord;
+export default connect()(ProfiLossRecord);

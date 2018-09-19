@@ -22,7 +22,10 @@ class DetailsPutaway extends PureComponent{
     saveLoading: false
   }
   componentWillMount() {
+    console.log(this.props);
+    
     let infoCode = this.props.match.params.id;
+    
     infoCode = querystring.parse(infoCode);
     this.setState({
       acceptanceCode: infoCode.code,

@@ -496,13 +496,6 @@ export const getNavData = app => [
       path: '/drugStorage/checkDecrease/newInventory/details/:id',
       component: dynamicWrapper(app, ['checkDecrease/index'], () => import('../routes/DrugStorage/checkDecrease/newInventory/details')),
     },
-    // 药库 - 盘点损益 - 新建盘点 - 详情(已确认)
-    {
-      name: "新建盘点-详情(已确认)",
-      icon: 'setting',
-      path: '/drugStorage/checkDecrease/newInventory/detailsConfirm/:types',
-      component: dynamicWrapper(app, [], () => import('../routes/DrugStorage/checkDecrease/newInventory/detailsConfirm')),
-    },
     // 药库 - 盘点损益 - 盘点审核
     {
       name: "盘点审核",
@@ -514,15 +507,8 @@ export const getNavData = app => [
     {
       name: "盘点审核-详情(待审核)",
       icon: 'setting',
-      path: '/drugStorage/checkDecrease/inventoryAudit/details',
-      component: dynamicWrapper(app, [], () => import('../routes/DrugStorage/checkDecrease/inventoryAudit/details')),
-    },
-    // 药库 - 盘点损益 - 盘点审核 - 详情(已审核)
-    {
-      name: "盘点审核-详情(已审核)",
-      icon: 'setting',
-      path: '/drugStorage/checkDecrease/inventoryAudit/detailsConfirm',
-      component: dynamicWrapper(app, [], () => import('../routes/DrugStorage/checkDecrease/inventoryAudit/detailsConfirm')),
+      path: '/drugStorage/checkDecrease/inventoryAudit/details/:id',
+      component: dynamicWrapper(app, ['checkDecrease/index'], () => import('../routes/DrugStorage/checkDecrease/inventoryAudit/details')),
     },
     // 药库 - 盘点损益 - 盘后调整
     {
@@ -535,8 +521,8 @@ export const getNavData = app => [
     {
       name: "盘后调整-详情",
       icon: 'setting',
-      path: '/drugStorage/checkDecrease/afterAdjustment/details',
-      component: dynamicWrapper(app, [], () => import('../routes/DrugStorage/checkDecrease/afterAdjustment/details')),
+      path: '/drugStorage/checkDecrease/afterAdjustment/details/:id',
+      component: dynamicWrapper(app, ['checkDecrease/index'], () => import('../routes/DrugStorage/checkDecrease/afterAdjustment/details')),
     },
     // 药库 - 盘点损益 - 损益记录
     {
@@ -549,8 +535,8 @@ export const getNavData = app => [
     {
       name: "损益记录-详情",
       icon: 'setting',
-      path: '/drugStorage/checkDecrease/profiLossRecord/details',
-      component: dynamicWrapper(app, [], () => import('../routes/DrugStorage/checkDecrease/profiLossRecord/details')),
+      path: '/drugStorage/checkDecrease/profiLossRecord/details/:id',
+      component: dynamicWrapper(app, ['checkDecrease/index'], () => import('../routes/DrugStorage/checkDecrease/profiLossRecord/details')),
     },
 
     //药库 - 库存查询
@@ -607,14 +593,14 @@ export const getNavData = app => [
       name: "新建盘点",
       icon: 'setting',
       path: '/pharmacy/checkDecrease/newInventory',
-      component: dynamicWrapper(app, [], () => import('../routes/Pharmacy/checkDecrease/newInventory')),
+      component: dynamicWrapper(app, ['checkDecrease/index'], () => import('../routes/Pharmacy/checkDecrease/newInventory')),
     },
     // 药房 - 盘点损益 - 新建盘点 - 详情(待确认)
     {
       name: "新建盘点-详情(待确认)",
       icon: 'setting',
-      path: '/pharmacy/checkDecrease/newInventory/details',
-      component: dynamicWrapper(app, [], () => import('../routes/Pharmacy/checkDecrease/newInventory/details')),
+      path: '/pharmacy/checkDecrease/newInventory/details/:id',
+      component: dynamicWrapper(app, ['checkDecrease/index'], () => import('../routes/Pharmacy/checkDecrease/newInventory/details')),
     },
     // 药房 - 盘点损益 - 新建盘点 - 详情(已确认)
     {
@@ -628,14 +614,14 @@ export const getNavData = app => [
       name: "盘点审核",
       icon: 'setting',
       path: '/pharmacy/checkDecrease/inventoryAudit',
-      component: dynamicWrapper(app, [], () => import('../routes/Pharmacy/checkDecrease/inventoryAudit')),
+      component: dynamicWrapper(app, ['checkDecrease/index'], () => import('../routes/Pharmacy/checkDecrease/inventoryAudit')),
     },
     // 药房 - 盘点损益 - 盘点审核 - 详情(待审核)
     {
       name: "盘点审核-详情(待审核)",
       icon: 'setting',
-      path: '/pharmacy/checkDecrease/inventoryAudit/details',
-      component: dynamicWrapper(app, [], () => import('../routes/Pharmacy/checkDecrease/inventoryAudit/details')),
+      path: '/pharmacy/checkDecrease/inventoryAudit/details/:id',
+      component: dynamicWrapper(app, ['checkDecrease/index'], () => import('../routes/Pharmacy/checkDecrease/inventoryAudit/details')),
     },
     // 药房 - 盘点损益 - 盘点审核 - 详情(已审核)
     {
@@ -649,28 +635,28 @@ export const getNavData = app => [
       name: "盘后调整",
       icon: 'setting',
       path: '/pharmacy/checkDecrease/afterAdjustment',
-      component: dynamicWrapper(app, [], () => import('../routes/Pharmacy/checkDecrease/afterAdjustment')),
+      component: dynamicWrapper(app, ['checkDecrease/index'], () => import('../routes/Pharmacy/checkDecrease/afterAdjustment')),
     },
     // 药房 - 盘点损益 - 盘后调整 - 详情
     {
       name: "盘后调整-详情",
       icon: 'setting',
-      path: '/pharmacy/checkDecrease/afterAdjustment/details',
-      component: dynamicWrapper(app, [], () => import('../routes/Pharmacy/checkDecrease/afterAdjustment/details')),
+      path: '/pharmacy/checkDecrease/afterAdjustment/details/:id',
+      component: dynamicWrapper(app, ['checkDecrease/index'], () => import('../routes/Pharmacy/checkDecrease/afterAdjustment/details')),
     },
     // 药房 - 盘点损益 - 损益记录
     {
       name: "损益记录",
       icon: 'setting',
       path: '/pharmacy/checkDecrease/profiLossRecord',
-      component: dynamicWrapper(app, [], () => import('../routes/Pharmacy/checkDecrease/profiLossRecord')),
+      component: dynamicWrapper(app, ['checkDecrease/index'], () => import('../routes/Pharmacy/checkDecrease/profiLossRecord')),
     },
     // 药房 - 盘点损益 - 损益记录 - 详情
     {
       name: "损益记录-详情",
       icon: 'setting',
-      path: '/pharmacy/checkDecrease/profiLossRecord/details',
-      component: dynamicWrapper(app, [], () => import('../routes/Pharmacy/checkDecrease/profiLossRecord/details')),
+      path: '/pharmacy/checkDecrease/profiLossRecord/details/:id',
+      component: dynamicWrapper(app, ['checkDecrease/index'], () => import('../routes/Pharmacy/checkDecrease/profiLossRecord/details')),
     },
     /*****************药房 --药房管理 -- 开始***************************/
     {
@@ -940,8 +926,8 @@ export const getNavData = app => [
     {
       name: "拣货下架-详情",
       icon: 'setting',
-      path: '/pharmacy/outStorage/pickingUnderShelve/details',
-      component: dynamicWrapper(app, [], () => import('../routes/Pharmacy/outStorage/pickingUnderShelve/details')),
+      path: '/pharmacy/outStorage/pickingUnderShelve/details/:pickingOrderNo/:pickingStatus',
+      component: dynamicWrapper(app, ['drugStorage/outStorage'], () => import('../routes/Pharmacy/outStorage/pickingUnderShelve/details')),
     },
     // 药房-出库-新建出库
     {

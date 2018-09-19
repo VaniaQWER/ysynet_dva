@@ -39,6 +39,7 @@ class RemoteTable extends Component {
   }
   fetch = (params = {...this.props.query}, url = this.props.url,catchData={...this.props.catchData}) => {
     this.setState({ loading: true, searchParams: params });
+    this.props.fetchBefore && this.props.fetchBefore();
     if(url){
       let pagination = this.state.pagination;
       let dataMethod, contentType;
@@ -89,6 +90,7 @@ class RemoteTable extends Component {
           if(!params.pageNo) {
             pagination.current = 1;
           }
+          
           this.setState({
             loading: false,
             data: data.data.list || (Array.isArray(data.data.list) ? data.data.list : (Array.isArray(data.data) ? data.data : []) ) ,
@@ -121,9 +123,9 @@ class RemoteTable extends Component {
   render () {
     const { columns, rowKey, rowClassName, 
             rowSelection, scroll, footer,showHeader,title } = this.props;   
-
     return (
       <Table 
+        {...this.props}
         onRow={this.props.onRow || null}
         style={this.props.style}
         columns={columns || null}
@@ -131,8 +133,8 @@ class RemoteTable extends Component {
         bordered={true}
         size={this.props.size || 'small'}
         dataSource={this.props.data || this.state.data}
+        loading={this.props.loading || this.state.loading}
         pagination={this.state.pagination}
-        loading={this.state.loading}
         onChange={this.handleTableChange}
         rowClassName={rowClassName}
         title={title || null}

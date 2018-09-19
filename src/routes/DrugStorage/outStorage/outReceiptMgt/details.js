@@ -4,7 +4,7 @@
 * @Last Modified time: 2018-07-24 13:13:55 
  */
 import React, { PureComponent } from 'react';
-import { Table, Row, Col, Button, Tooltip} from 'antd';
+import { Table, Row, Col, Button, Tooltip, message} from 'antd';
 import {connect} from 'dva';
 import querystring from 'querystring';
 const columns = [
@@ -90,10 +90,28 @@ class DetailsOutput extends PureComponent{
       info: {},
       loading: false,
       id: info.id,
-      status: info.state
+      status: null
     }
   }
   componentDidMount() {
+    this.getDatail();
+  }
+  //不通过
+  onBan = () =>{
+    this.props.dispatch({
+      type: 'outStorage/rejectOutStore',
+      payload: {
+        backNo: this.state.id
+      },
+      callback: (data) => {
+        if(data.msg === 'success') {
+          message.success('操作成功');
+          this.getDatail();
+        }
+      }
+    })
+  }
+  getDatail = () => {
     this.setState({loading: true});
     this.props.dispatch({
       type: 'outStorage/outStoreDetailInfo',
@@ -101,13 +119,13 @@ class DetailsOutput extends PureComponent{
         backNo: this.state.id
       },
       callback: (data) => {
-        this.setState({info: data, loading: false});
+        this.setState({
+          info: data, 
+          loading: false,
+          status: data.status
+        });
       }
     })
-  }
-  //不通过
-  onBan = () =>{
-    
   }
   //确认
   onSubmit = () =>{
@@ -128,7 +146,8 @@ class DetailsOutput extends PureComponent{
         outStoreDetail
       },
       callback: (data) => {
-        this.props.history.go(-1);
+        message.success('操作成功');
+        this.getDatail();
       }
     })
   }
@@ -146,7 +165,7 @@ class DetailsOutput extends PureComponent{
               </h2>
             </Col>
             {
-              status === "1"? (
+              status === 1? (
                 <Col style={{textAlign:'right', float: 'right'}} span={6}>
                   <Button type='primary' className='button-gap' style={{marginRight: 8}} onClick={()=>this.onSubmit()}>复核通过</Button>
                   <Button onClick={()=>this.onBan()} >不通过</Button>
@@ -168,7 +187,7 @@ class DetailsOutput extends PureComponent{
                   <label>状态</label>
               </div>
               <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
-                <div className='ant-form-item-control'>{info.status || ''}</div>
+                <div className='ant-form-item-control'>{info.statusName || ''}</div>
               </div>
             </Col>
             <Col span={8}>
@@ -240,7 +259,7 @@ class DetailsOutput extends PureComponent{
             dataSource={detailVo || []}
             scroll={{x: '250%'}}
             columns={columns}
-            rowKey={'lot'}
+            rowKey={'batchNo'}
             pagination={false}
           />
         </div>

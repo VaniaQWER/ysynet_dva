@@ -29,11 +29,17 @@ class SearchForm extends PureComponent {
     e.preventDefault();
     this.props.form.validateFields((err, values) => {
       if (!err) {
+        let {status} = this.props
         const makingTime = values.makingTime === undefined || values.makingTime === null ? "" : values.makingTime;
         if(makingTime.length > 0) {
           values.checkStartTime = makingTime[0].format('YYYY-MM-DD HH:mm');
           values.checkEndTime = makingTime[1].format('YYYY-MM-DD HH:mm');
         };
+        let {filterStatus} = values;
+        if(filterStatus === '') {
+          values.filterStatus = status.map(item=>item.value).filter(item=>item !== '').join(',');
+        }
+        
         console.log(values, '查询条件');
         this.props.query(values);
       }
@@ -74,7 +80,7 @@ class SearchForm extends PureComponent {
           </Col>
           <Col span={8}>
             <FormItem label={'状态'} {...formItemLayout} style={{ display: this.state.display }}>
-              {getFieldDecorator('checkStatus')(
+              {getFieldDecorator('filterStatus')(
                 this.listRender(status)
               )}
             </FormItem>
@@ -201,7 +207,7 @@ class NewInventory extends PureComponent {
       payload: {ids},
       callback: (data) => {
         if(data.msg === 'success') {
-          this.ref.table.fetch(this.state.query);
+          this.refs.table.fetch(this.state.query);
         }else {
           message.error(data.msg);
           message.warning('删除失败！');
@@ -211,6 +217,13 @@ class NewInventory extends PureComponent {
         })
       }
     })
+  }
+  //新建
+  newAdd = () => {
+    this.setState({
+      visible: true
+    });
+    this.props.form.resetFields();
   }
   //单选框渲染
   radioRender = (list) => {
@@ -277,11 +290,12 @@ class NewInventory extends PureComponent {
           query={this.queryHandler} 
         />
         <div>
-          <Button type='primary' onClick={()=>this.setState({ visible: true })}><Icon type="plus" />新建</Button>
+          <Button type='primary' onClick={this.newAdd}><Icon type="plus" />新建</Button>
           <Button loading={deleteLoadig} style={{ marginLeft: 8 }} onClick={this.delete}>删除</Button>
         </div>
         <RemoteTable 
           query={query}
+          isJson
           url={common.CHECKBILL_LIST}
           columns={columns}
           rowKey={'id'}
@@ -294,7 +308,7 @@ class NewInventory extends PureComponent {
               this.setState({selected: selectedRowKeys, selectedRows: selectedRows})
             },
             getCheckboxProps: record => ({
-              disabled: record.checkStatus !== 1 || record.checkStatus !== 6
+              disabled: record.checkStatus !== 1
             }),
           }}
         />
@@ -312,7 +326,9 @@ class NewInventory extends PureComponent {
             <Row>
               <Col span={24}>
                 <FormItem label={'类型'} {...formItemLayoutAdd}>
-                  {getFieldDecorator('checkBillType')(
+                  {getFieldDecorator('checkBillType', {
+                    rules: [{ required: true, message: '请选择类型' }]
+                  })(
                     <RadioGroup>
                       {this.radioRender(types)}
                     </RadioGroup>
@@ -322,7 +338,9 @@ class NewInventory extends PureComponent {
               </Col>
               <Col span={24}>
                 <FormItem label={'子类型'} {...formItemLayoutAdd}>
-                  {getFieldDecorator('checkBillSubType')(
+                  {getFieldDecorator('checkBillSubType', {
+                    rules: [{ required: true, message: '请选择子类型' }]
+                  })(
                     <RadioGroup onChange={(e) => this.setState({ subType: e.target.value })}>
                       {this.radioRender(subTypes)}
                     </RadioGroup>
@@ -350,7 +368,7 @@ class NewInventory extends PureComponent {
               }
               <Col span={24}>
                 <FormItem label={'备注'} {...formItemLayoutAdd}>
-                  {getFieldDecorator('remark')(
+                  {getFieldDecorator('remarks')(
                     <Input style={{ width: 280 }} />
                   )}
                 </FormItem>

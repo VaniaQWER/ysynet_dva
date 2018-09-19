@@ -90,7 +90,7 @@ class AddMenuMgt extends PureComponent{
           payload: values,
           callback: (data) => {
             // message.success('添加成功！');
-            this.props.history.push('/sys/menu');
+            this.props.history.push('/sys/menu/menuMgt');
             /* 
               这里要重新获取菜单
             */
@@ -141,18 +141,22 @@ class AddMenuMgt extends PureComponent{
       this.setState({visible:false})
     }
   }
-
+  loop = (data) => {
+    if(data) {
+      return data.map((item) => {
+        if (item.children && item.children.length) {
+          return <TreeNode key={item.id} title={item.name}>{this.loop(item.children)}</TreeNode>;
+        }
+        return <TreeNode key={item.id} title={item.name} />;
+      });
+    }else {
+      return null;
+    }
+  }
   render(){
     const { getFieldDecorator } = this.props.form;
     const { visible , baseInfo , treeDataSource, spining } = this.state;
-    console.log(this.state.treeSelectedKeys,'treeSelectedKeys')
-    const loop = data => data?data.map((item) => {
-      if (item.children && item.children.length) {
-        return <TreeNode key={item.id} title={item.name}>{loop(item.children)}</TreeNode>;
-      }
-      return <TreeNode key={item.id} title={item.name} />;
-    }):null;
-
+    console.log(this.state.treeSelectedKeys,'treeSelectedKeys');
     return (
       <Spin spinning={spining}>  
         <div className='ysynet-main-content'>
@@ -201,6 +205,19 @@ class AddMenuMgt extends PureComponent{
             </Row>
             <Row>
               <Col span={8}>
+                <FormItem {...singleFormItemLayout} label={`图标`}>
+                  {
+                    getFieldDecorator(`icon`,{
+                      initialValue:baseInfo?baseInfo.icon:'',
+                    })(
+                      <Input />
+                    )
+                  }
+                </FormItem>
+              </Col>
+            </Row>
+            <Row>
+              <Col span={8}>
                 <FormItem {...singleFormItemLayout} label={`排序`}>
                   {
                     getFieldDecorator(`sort`,{
@@ -230,8 +247,8 @@ class AddMenuMgt extends PureComponent{
                         filterOption={(input, option) => option.props.children.indexOf(input) >= 0}
                         >
                         {
-                        DeptSelect.map((item,index)=>(
-                            <Option value={`${item.value}`} key={index}>{item.text}</Option>
+                          DeptSelect.map((item,index)=>(
+                            <Option value={`${item.value}`} key={item.value}>{item.text}</Option>
                           ))
                         }
                       </Select>
@@ -317,7 +334,7 @@ class AddMenuMgt extends PureComponent{
                 defaultExpandedKeys={['0-0-0']}
                 onSelect={this.onSelect}
               >
-                {loop(treeDataSource)}
+                {this.loop(treeDataSource)}
               </Tree>
             </Modal>
         </div>

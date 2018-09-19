@@ -32,7 +32,7 @@ const formItemLayout = {
 
 class SearchForm extends PureComponent{
   state = {
-    display: 'none'
+    display: 'none',
   }
   toggle = () => {
     const { display, expand } = this.state;
@@ -85,12 +85,12 @@ class SearchForm extends PureComponent{
                   initialValue: ''
                 })(
                   <Select
+                    placeholder="请选择"
                     className={'ysynet-formItem-width'}
                     showSearch
                     optionFilterProp="children"
                     filterOption={(input, option) => option.props.children.indexOf(input) >= 0}
                   >
-                    <Option value=''>全部</Option>
                     {
                       this.props.typeListDate.map((item, index) => <Option value={item.label} key={index}>{item.label}</Option>)
                     }
@@ -148,7 +148,7 @@ class ReplenishmentPlan extends PureComponent {
   componentDidMount = () => {
     // 状态下拉框
     this.props.dispatch({
-      type:'replenish/typelist',
+      type:'base/orderStatusOrorderType',
       payload: { type: 'plan_status' },
       callback:(data)=>{
         this.setState({ typeListDate: data });
@@ -233,7 +233,10 @@ class ReplenishmentPlan extends PureComponent {
             selectedRowKeys: this.state.selectedRowKeys,
             onChange: (selectedRowKeys, selectedRows) => {
               this.setState({ selectedRowKeys, selectedRows })
-            }
+            },
+            getCheckboxProps: record => ({
+              disabled: record.auditStatus !== 1
+            }),
           }}
         />
       </div>

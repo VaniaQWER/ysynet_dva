@@ -114,19 +114,10 @@ class Output extends PureComponent{
           <Button type='primary' className='button-gap'>
             <Link to={{pathname:`/addNewOutput`}}>新建出库</Link>
           </Button>
-          <Button onClick={this.delete}>删除</Button>
         </Row>
         <RemoteTable
           query={query}
           url={outStorage.OUTSTORELIST}
-          rowSelection={{
-            onChange:(selectedRowKeys,selectedRows)=>{
-              this.setState({selected: selectedRowKeys})
-            },
-            getCheckboxProps: (record) => ({
-              disabled: record.outStoreStatus !== 3
-            })
-          }}
           ref="tab"
           scroll={{x: '150%'}}
           columns={columns}

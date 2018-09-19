@@ -7,7 +7,7 @@
  * @file 系统管理--系统设置--菜单管理
  */
 import React, { PureComponent } from 'react';
-import { Row, Button,Table } from 'antd';
+import { Row, Button, Table, Icon } from 'antd';
 import querystring from 'querystring';
 import { Link } from 'dva/router';
 import { menuFormat } from '../../../../utils/utils';
@@ -53,6 +53,11 @@ class MenuMgt extends PureComponent{
       {
         title: '链接',
         dataIndex: 'href',
+      },
+      {
+        title: '图标',
+        dataIndex: 'icon',
+        render: (text) => <Icon type={text}/>
       },
       {
         title: '排序',

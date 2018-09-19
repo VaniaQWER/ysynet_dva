@@ -46,6 +46,11 @@ export default {
         message.error(data.msg);
       }
     },
+    //不通过出库单
+    *rejectOutStore({payload, callback}, {call}) {
+      const data = yield call(outStorageService.rejectOutStore, payload);
+      callback && callback(data);
+    },
     // 已申领部门
     *genDeptList({ payload,callback },{ call }){
       const data = yield call(outStorageService.genDeptList, payload);

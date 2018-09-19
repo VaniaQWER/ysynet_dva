@@ -131,12 +131,12 @@ class NewRecon extends PureComponent{
     changeFetchSelect = (value) => {
         let {query} = this.state;
         query = {
-        ...query,
-        hisDrugCodeList: value? [value] : []
+            ...query,
+            hisDrugCodeList: value? [value] : []
         };
         this.setState({
-        query,
-        value
+            query,
+            value
         });
     }
     
@@ -154,6 +154,8 @@ class NewRecon extends PureComponent{
                     this.setState({
                         submitLoading: false
                     });
+                    message.success('对账成功');
+                    this.props.history.go(-1);
                 }else {
                     message.error(data.msg);
                 }
