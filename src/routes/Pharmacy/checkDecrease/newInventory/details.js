@@ -16,11 +16,12 @@ class Details extends PureComponent {
       checkBillNo: this.props.match.params.id,
     },
     checkLoading: false,
-    dataSource: [],
+    dataSource: [],   
     selected: [],
     selectedRows: [],
     submitLoading: false,
-    expandedRowKeys: []
+    expandedRowKeys: [],    //展开key
+    first: true,    //是否第一次渲染
   }
   //获取详情表头
   getDetail = (cb) => {
@@ -41,12 +42,40 @@ class Details extends PureComponent {
       }
     });
   }
+  //校验
+  onCheck = () => {
+    let {selectedRows} = this.state;
+    let isNull = selectedRows.every(item => {   //是否为空
+      if(!item.practicalRepertory) {
+        message.error('实际库存不能为空');
+        return false;
+      };
+      if(!item.practicalBatch) {
+        message.error('实际批号不能为空');
+        return false;
+      };
+      if(!item.realProductTime) {
+        message.error('实际生产日期不能为空');
+        return false;
+      };
+      if(!item.validEndTime) {
+        message.error('实际有效期至不能为空');
+        return false;
+      };
+      return true;
+    });
+    let isLike = true;
+    // let childrenList = selectedRows.filter(item => !item.id);
+    
+    return isNull && isLike;
+  }
   // 提交
   confirm = () => {
     let {selectedRows} = this.state;
     if(selectedRows.length === 0) {
       return message.warning('至少选择一条数据');
     };
+    if(!this.onCheck()) return;
     this.setState({
       submitLoading: true
     });
@@ -102,6 +131,7 @@ class Details extends PureComponent {
         if(data.msg === 'success') {
           message.success('盘点成功');
           this.getDetail();
+          this.refs.table.fetch(this.state.query);
         }else {
           message.warning('盘点失败');
           message.error(data.msg);
@@ -132,7 +162,7 @@ class Details extends PureComponent {
   //新增批号 - 前端
   addBatch = (record, i) => {
     let {dataSource, expandedRowKeys} = this.state;
-    dataSource[i].children = [];
+    dataSource[i].children = dataSource[i].children || [];
     dataSource[i].children.push({
       ...record,
       uuid: new Date().getTime(),
@@ -145,7 +175,8 @@ class Details extends PureComponent {
       accountStoreNum: 0,
       practicalRepertory: 0
     });
-    expandedRowKeys.push(record.id);
+    expandedRowKeys.push(record.uuid);
+    expandedRowKeys = [...new Set(expandedRowKeys)];    //展开去重
     this.setState({
       dataSource: [...dataSource],
       expandedRowKeys: [...expandedRowKeys]
@@ -160,21 +191,30 @@ class Details extends PureComponent {
   }
   //table回调
   tableCallBack = (data) => {
-    this.getDetail(() => {
-      let {info} = this.state;
-      if(info.checkStatus === 2) {
-        data = data.map((item, i)=>{
-          item.practicalRepertory = item.accountStoreNum;
-          item.validEndTime = item.accountEndTime;
-          item.realProductTime = item.accountProductTime;
-          item.practicalBatch = item.accountBatchNo;
-          return item;
-        })
-      }
-      this.setState({
-        dataSource: data
+    if(this.state.first) {
+      this.getDetail(() => {
+        this.setTableData(data);
       });
-    })
+    }else {
+      this.setTableData(data);
+    };
+  }
+  setTableData = (data) => {
+    let {info} = this.state;
+    if(info.checkStatus === 2) {
+      data = data.map((item, i)=>{
+        item.practicalRepertory = item.accountStoreNum;
+        item.validEndTime = item.accountEndTime;
+        item.realProductTime = item.accountProductTime;
+        item.practicalBatch = item.accountBatchNo;
+        return item;
+      })
+    };
+    this.setState({
+      dataSource: data,
+      tableLoading: false,
+      first: false
+    });
   }
   //更改日期
   changeDataSource = (value, i, key, record) => {
@@ -198,6 +238,7 @@ class Details extends PureComponent {
       dataSource: [...dataSource]
     });
   }
+  //更改批号
   changePracticalBatch = (e, i, key, record) => {
     let {dataSource} = this.state;
     if(!record.id) {
@@ -252,12 +293,10 @@ class Details extends PureComponent {
   }
   //展开
   onExpandedRowsChange = (expandedRows) => {
-    console.log(expandedRows, 'expandedRows');
-    
-    // this.setState({expandedRows})
+    this.setState({expandedRows});
   }
   render() {
-    let {info, query, dataSource, submitLoading, expandedRowKeys} = this.state;
+    let {info, query, dataSource, submitLoading, expandedRowKeys, checkLoading, tableLoading} = this.state;
     let columns = [
       {
         title: '货位',
@@ -430,7 +469,7 @@ class Details extends PureComponent {
             {
               info.checkStatus === 1 ? 
               <Col span={12} style={{ textAlign: 'right' }}>
-                <Button type='primary' style={{marginRight: 10}} onClick={this.check}>盘点</Button>
+                <Button loading={checkLoading} type='primary' style={{marginRight: 10}} onClick={this.check}>盘点</Button>
               </Col> : null
             }
           </Row>
@@ -540,6 +579,12 @@ class Details extends PureComponent {
           </Row>
           <hr className="hr"/>
           <RetomeTable
+            loading={tableLoading}
+            fetchBefore={()=>{
+              this.setState({
+                tableLoading: true
+              });
+            }}
             ref={'table'}
             query={query}
             data={dataSource}
@@ -549,18 +594,12 @@ class Details extends PureComponent {
             rowKey={'uuid'}
             expandedRowKeys={expandedRowKeys}
             cb={this.tableCallBack}
-            onExpand={this.onExpandedRowsChange}
+            onExpandedRowsChange={this.onExpandedRowsChange}
             rowSelection={{
               selectedRowKeys: this.state.selected,
               onChange: (selectedRowKeys, selectedRows) => {
                 this.setState({selected: selectedRowKeys, selectedRows: selectedRows})
-              },
-              onSelect: (record, selected, selectedRows) => {
-                console.log(record, selected, selectedRows);
-              },
-              onSelectAll: (selected, selectedRows, changeRows) => {
-                console.log(selected, selectedRows, changeRows);
-              },
+              }
             }}
           />
         </div>

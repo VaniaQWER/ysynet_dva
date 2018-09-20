@@ -26,6 +26,8 @@ class BasicLayout extends PureComponent {
             let deptInfo = data.deptInfo;
             let { menuList } = deptInfo[0];
             let tree = menuFormat(menuList,true,1);
+            console.log(tree);
+            
             let id = window.sessionStorage.getItem('key');
             let deptName = window.sessionStorage.getItem('deptName');
             if(id && deptName) {
@@ -38,6 +40,8 @@ class BasicLayout extends PureComponent {
                     hasDept: true
                   });
                   let currMenuList = deptInfo.filter(item => item.deptId === id)[0].menuList;
+                  console.log(currMenuList, 'currMenuList');
+                  
                   let tree = menuFormat(currMenuList, true, 1 );
                   let menu = tree[0].children[0];
                   dispatch({
@@ -100,10 +104,10 @@ class BasicLayout extends PureComponent {
   menu = (list,deptId) => {
     return (
       <Menu 
-      selectable
-      onClick={this.handleClick}
-      defaultSelectedKeys={[deptId?deptId+"":""]}
-    >
+        selectable
+        onClick={this.handleClick}
+        defaultSelectedKeys={[deptId?deptId+"":""]}
+      >
       {
         list.map((item,index) =>{
           return <Menu.Item key={item.deptId} name={item.deptName} >{ item.deptName }</Menu.Item>
@@ -176,8 +180,9 @@ class BasicLayout extends PureComponent {
           <Header className={`${styles.subHeader}`}>
             <Tooltip title='返回' placement='bottom'>
               <a onClick={()=>this.props.history.go(-1)}>
-                <Icon type="arrow-left"  style={{ fontSize: 18, marginRight: 16 }}/>
+                <Icon type="arrow-left" theme="outlined" style={{ fontSize: 18, marginRight: 16 }}/>
               </a>
+              {/* <Icon type="arrow-left"/> */}
             </Tooltip>
             <span>{title}</span>
           </Header>

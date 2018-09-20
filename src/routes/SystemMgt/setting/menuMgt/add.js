@@ -156,7 +156,6 @@ class AddMenuMgt extends PureComponent{
   render(){
     const { getFieldDecorator } = this.props.form;
     const { visible , baseInfo , treeDataSource, spining } = this.state;
-    console.log(this.state.treeSelectedKeys,'treeSelectedKeys');
     return (
       <Spin spinning={spining}>  
         <div className='ysynet-main-content'>
