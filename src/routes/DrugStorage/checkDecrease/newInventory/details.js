@@ -28,7 +28,7 @@ class Details extends PureComponent {
     }
   }
   componentDidMount() {
-    this.getDetail()
+    this.getDetail();
   }
   //获取详情表头
   getDetail = (cb) => {
@@ -140,7 +140,18 @@ class Details extends PureComponent {
     this.setState({
       submitLoading: true
     });
-    let detailList = selectedRows.map(item => {
+    selectedRows = this.seekChildren(selectedRows).realSelectedRows; //包含children的二维数组
+    let includeChildren = [...selectedRows];//包含children的一维数组
+    selectedRows.map(item => {  
+      if(item.children && item.children.length) {
+        item.children.map(childItem => {
+          includeChildren.push(childItem);
+          return childItem;
+        });
+      };
+      return item;
+    });
+    let detailList = includeChildren.map(item => {
       return {
         accountBatchNo: item.accountBatchNo,
         accountEndTime: item.accountEndTime,
@@ -169,6 +180,7 @@ class Details extends PureComponent {
       callback: (data) => {
         if(data.msg === 'success') {
           message.success('提交成功');
+          this.getDetail();
           this.refs.table.fetch(this.state.query);
         }else {
           message.error('提交失败');

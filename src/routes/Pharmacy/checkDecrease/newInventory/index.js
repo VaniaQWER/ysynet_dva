@@ -2,7 +2,7 @@
  * @file 药库 - 盘点损益 - 新建盘点
  */
 import React, { PureComponent } from 'react';
-import { Form, Row, Col, DatePicker, Input, Select, Button, Icon, Modal, Radio, message } from 'antd';
+import { Form, Row, Col, DatePicker, Input, Select, Button, Icon, Modal, Checkbox, Radio, message } from 'antd';
 import { Link } from 'react-router-dom';
 import { formItemLayout } from '../../../../utils/commonStyles';
 import RemoteTable from '../../../../components/TableGrid';
@@ -13,7 +13,7 @@ const FormItem = Form.Item;
 const { RangePicker } = DatePicker;
 const { Option } = Select;
 const RadioGroup = Radio.Group;
-
+const CheckboxGroup = Checkbox.Group;
 class SearchForm extends PureComponent {
   state = {
     display: 'none'
@@ -120,7 +120,9 @@ class NewInventory extends PureComponent {
     types: [],
     status: [],
     subTypes: [],
-    deleteLoadig: false
+    deleteLoadig: false,
+    locTypeList: [],
+    checkValue: []
   }
   componentDidMount() {
     this.props.dispatch({
@@ -155,6 +157,17 @@ class NewInventory extends PureComponent {
           subTypes: data
         });
       }
+    });
+    this.props.dispatch({
+      type: 'base/orderStatusOrorderType',
+      payload: {
+        type: 'location_type'
+      },
+      callback: (data) => {
+        this.setState({
+          locTypeList: data
+        });
+      }
     })
   }
   //查询
@@ -172,26 +185,26 @@ class NewInventory extends PureComponent {
       }
       this.setState({ loading: true });
       
-      this.props.dispatch({
-        type: 'checkDecrease/createCheckbill',
-        payload: values,
-        callback: (data) => {
-          if(data.msg === 'success') {
-            this.setState({
-              loading: false,
-              visible: false,
-            });
-            this.refs.table.fetch(this.state.query);
-            message.success('新建成功！');
-          }else {
-            this.setState({
-              loading: false
-            });
-            message.error(data.msg);
-            message.warning('新建失败！');
-          }
-        }
-      })
+      // this.props.dispatch({
+      //   type: 'checkDecrease/createCheckbill',
+      //   payload: values,
+      //   callback: (data) => {
+      //     if(data.msg === 'success') {
+      //       this.setState({
+      //         loading: false,
+      //         visible: false,
+      //       });
+      //       this.refs.table.fetch(this.state.query);
+      //       message.success('新建成功！');
+      //     }else {
+      //       this.setState({
+      //         loading: false
+      //       });
+      //       message.error(data.msg);
+      //       message.warning('新建失败！');
+      //     }
+      //   }
+      // })
     })
   }
   //删除
@@ -232,13 +245,38 @@ class NewInventory extends PureComponent {
       return <Radio key={item.value} value={item.value}>{item.label}</Radio>
     })
   }
+  //多选框渲染
+  renderCheckbox = (list) => {
+    list = list.filter(item => item.value !== "");
+    return list.map(item => {
+      return <Col style={{marginBottom: 10}} key={item.value} span={8}>
+              <Checkbox key={item.value} value={item.value}>{item.label}</Checkbox>
+             </Col>
+    })
+  }
+  //多选框事件
+  changeCheckbox = (checkedValue) => {
+    console.log(checkedValue);
+    
+    let isCheckAll = checkedValue.some(item=>item === "");
+    if(isCheckAll) {
+      let checkValue = this.state.locTypeList.map(item=>item.value);
+      this.setState({
+        checkValue
+      });
+    }else {
+      this.setState({
+        checkValue: checkedValue
+      });
+    }
+  }
   render() {
     const { getFieldDecorator} = this.props.form;
     const formItemLayoutAdd = { 
       labelCol: { span: 6 }, 
       wrapperCol: { span: 18 } 
     };
-    const {status, types, query, subTypes, subType, deleteLoadig} = this.state;
+    const {status, types, query, checkValue, subTypes, subType, deleteLoadig, locTypeList} = this.state;
     const columns = [
       {
         title: '盘点单',
@@ -329,7 +367,7 @@ class NewInventory extends PureComponent {
                   {getFieldDecorator('checkBillType', {
                     rules: [{ required: true, message: '请选择类型' }]
                   })(
-                    <RadioGroup>
+                    <RadioGroup style={{width: '100%'}}>
                       {this.radioRender(types)}
                     </RadioGroup>
                   )}
@@ -341,10 +379,26 @@ class NewInventory extends PureComponent {
                   {getFieldDecorator('checkBillSubType', {
                     rules: [{ required: true, message: '请选择子类型' }]
                   })(
-                    <RadioGroup onChange={(e) => this.setState({ subType: e.target.value })}>
-                      {this.radioRender(subTypes)}
-                    </RadioGroup>
+                      <RadioGroup onChange={(e) => this.setState({ subType: e.target.value })}>
+                        {this.radioRender(subTypes)}
+                      </RadioGroup>
                   )}
+                </FormItem>
+              </Col>
+              <Col span={24}>
+                <FormItem label={'货位类别'} {...formItemLayoutAdd}>
+                  {/* {getFieldDecorator('locType', {
+                    rules: [{ required: true, message: '请选择货位类别' }]
+                  })( */}
+                    <CheckboxGroup value={checkValue} onChange={this.changeCheckbox} style={{ width: '100%', marginTop: 10 }}>
+                      <Row>
+                        <Col style={{marginBottom: 10}} span={8}>
+                          <Checkbox indeterminate={true} value={""}>全部</Checkbox>
+                        </Col>
+                        {this.renderCheckbox(locTypeList)}
+                      </Row>
+                    </CheckboxGroup>
+                  {/* )} */}
                 </FormItem>
               </Col>
               {

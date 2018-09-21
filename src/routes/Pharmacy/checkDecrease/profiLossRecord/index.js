@@ -128,7 +128,7 @@ class ProfiLossRecord extends PureComponent {
         dataIndex: 'causticExcessiveNo',
         width: 220,
         render: (text, record) => {
-          return <span><Link to={{ pathname: `/pharmacy/checkDecrease/profiLossRecord/details/${record.checkBillNo}`}}>{text}</Link></span>
+          return <span><Link to={{ pathname: `/pharmacy/checkDecrease/profiLossRecord/details/checkBillNo=${record.checkBillNo}&causticExcessiveNo=${record.checkBillNo}`}}>{text}</Link></span>
         }
       },
       {

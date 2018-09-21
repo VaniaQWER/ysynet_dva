@@ -6,14 +6,22 @@ import {Row, Col, Input, message, Tooltip} from 'antd';
 import {profiLossRecord} from '../../../../api/checkDecrease';
 import RetomeTable from '../../../../components/TableGrid';
 import {connect} from 'dva';
+import querystring from 'querystring';
 const {Search} = Input;
 class Details extends PureComponent {
-  state = {
-    info: {},
-    query: {
-      checkBillNo: this.props.match.params.id
-    },
+  constructor(props) {
+    super(props);
+    let info = this.props.match.params.id;
+    info = querystring.parse(info);
+    this.state = {
+      info: {},
+      query: {
+        checkBillNo: info.checkBillNo
+      },
+      causticExcessiveNo: info.causticExcessiveNo
+    }
   }
+  
   componentDidMount() {
     this.getDetail();
   }
@@ -21,7 +29,7 @@ class Details extends PureComponent {
     this.props.dispatch({
       type: 'checkDecrease/getCausticexcessive',
       payload: {
-        causticExcessiveNo: this.props.match.params.id
+        causticExcessiveNo: this.state.causticExcessiveNo
       },
       callback: (data) => {
         if(data.msg === 'success') {

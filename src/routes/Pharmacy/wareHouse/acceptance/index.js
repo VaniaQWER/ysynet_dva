@@ -166,7 +166,7 @@ class SearchFormWrapper extends PureComponent {
          </Col>
          <Col span={8} >
            <FormItem label={`状态`} {...formItemLayout}>
-             {getFieldDecorator('acceptanceStatus')(
+             {getFieldDecorator('auditStatus')(
               <Select 
                 showSearch
                 placeholder={'请选择'}

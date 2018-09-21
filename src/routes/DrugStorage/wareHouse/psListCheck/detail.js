@@ -12,6 +12,7 @@ import {Row, Col, Tooltip, Input, InputNumber, DatePicker, Button, Tabs, Table, 
 import {connect} from 'dva';
 import moment from 'moment';
 import querystring from 'querystring';
+import {difference} from 'lodash';
 
 const TabPane = Tabs.TabPane;
 
@@ -23,35 +24,53 @@ class PslistCheck extends PureComponent{
       selected: [],
       selectedRows: [],
       loading: true,
-      btnShow: info.state === '1'? true : false,
-      defaultActiveKey: info.state === '1'? '1' : '2',
+      btnShow: false,
+      defaultActiveKey: '1',
       id: info.id,
       detailInfo: {},
-      checkLoading: false
+      checkLoading: false,
+      expandedRowKeys: []
     }
   }
-  addBatch = (record) => {
-    let {detailInfo} = this.state;
-    detailInfo = JSON.parse(JSON.stringify(detailInfo));
-    let index;
-    detailInfo.unVerfiyList.map((item, i)=> {
-      if(item.id === record.id) {
-        index = i + 1;
-      };
-      return item;
-    });
+  //增加批号
+  addBatch = (record, i) => {
+    let {detailInfo, expandedRowKeys, selected} = this.state;
+    let {unVerfiyList} = detailInfo;
     
-    if(record.id === null) {
-      record.parentId = record.parentId;
-    }else {
-      record.parentId = record.id;
+    unVerfiyList[i].children = unVerfiyList[i].children || [];
+    record = {...record};
+    delete record.children;
+    let key = new Date().getTime();
+    unVerfiyList[i].children.push({
+      ...record,
+      parentId: record.id,
+      id: null,
+      key,
+      realReceiveQuantity: ''
+    });
+    detailInfo.unVerfiyList = unVerfiyList;
+    expandedRowKeys.push(record.key);
+    expandedRowKeys = [...new Set(expandedRowKeys)];
+    let isSelect = selected.some(item => {
+      if(item === record.key) {
+        return true;
+      };
+      return false;
+    });
+    if(isSelect) {
+      selected.push(key);
     }
-    record.id = null;
-    record.key = new Date().getTime();
-    record.realReceiveQuantity = '';
-    detailInfo.unVerfiyList.splice(index, 0, record);
-    this.setState({detailInfo})
+    this.setState({
+      detailInfo: {...detailInfo},
+      expandedRowKeys,
+      selected: [...selected]
+    });
   }
+  //删除
+  removeBatch = (record, i) =>{
+
+  }
+  //tabs切换
   tabsChange = (key) =>{
     let {detailInfo} = this.state;
     if(key === '2') {
@@ -61,46 +80,95 @@ class PslistCheck extends PureComponent{
       this.setState({btnShow: true});
     };
   }
-  rowChange = (selectedRowKeys, selectedRows) => {
-    this.setState({selected: selectedRowKeys, selectedRows: selectedRows})
+  //选中rows
+  changeSelectRow = (selectedRowKeys, selectedRows) => {
+    this.setState({ selectedRows: selectedRows});
+  }
+  //全选
+  selectAll = (selected, selectedRows) => {
+    if(selected) {
+      this.setState({
+        selected: this.seekChildren(selectedRows).realSelectedRowsKey
+      });
+    }else {
+      this.setState({ 
+        selected: [],
+        selectedRows: []
+      });
+    };
+  }
+  //展开
+  onExpandedRowsChange = (expandedRows) => {
+    this.setState({expandedRowKeys: expandedRows});
+  }
+  //选中
+  changeSelect = (selectedRows, isSelect) => {
+    let {selected} = this.state;
+    let {children} = selectedRows;
+    if(isSelect) {  //选中
+      selected.push(selectedRows.key);
+      if(children && children.length) {
+        children.map(item=>{
+          selected.push(item.key);
+          return item;
+        });
+      }
+    }else {
+      selected = difference(selected, [selectedRows.key]);
+      if(children && children.length) {
+        let childrenSelect = children.map(item=>item.key);
+        selected = difference(selected, childrenSelect);
+      }
+    };
+    this.setState({
+      selected: [...selected]
+    })
+  }
+  //寻找全选时的children
+  seekChildren = (selectedRows) => {
+    let {detailInfo} = this.state;
+    let dataSource = detailInfo.unVerfiyList;
+    let realSelectedRowsKey = selectedRows.map(item=>item.key);
+    let realSelectedRows = [];
+    for (let i = 0; i < selectedRows.length; i++) {
+      for (let j = 0; j < dataSource.length; j++) {
+        if(dataSource[j].key === selectedRows[i].key) {
+          realSelectedRows.push(dataSource[j]);
+          if(dataSource[j].children && dataSource[j].children.length) {
+            let childrenKey = dataSource[j].children.map(childItem=>childItem.key)
+            realSelectedRowsKey = [...realSelectedRowsKey, ...childrenKey]
+          }
+        }
+      }
+    };
+    return {
+      realSelectedRowsKey,
+      realSelectedRows
+    };
   }
   componentDidMount = () => {
     this.queryDetail();
   }
+  //验收
   saveCheck = () => {
     let {selectedRows, detailInfo} = this.state;
     if(selectedRows.length === 0) {
       message.error('至少选择一条数据');
       return;
     };
-    let isNull = selectedRows.every(item => {
-      if(!item.realReceiveQuantity){
-        message.error('实到数量不能为空');
-        return false;
-      };
-      if(!item.realProductTime){
-        message.error('生产日期不能为空');
-        return false;
-      };
-      if(!item.realValidEndDate){
-        message.error('有效期至不能为空');
-        return false;
-      };
-      if(!item.productBatchNo){
-        message.error('生产批号不能为空');
-        return false;
-      };
-      if(detailInfo.isShowTemprature === 1) {
-        if(!item.realAcceptanceTemperature){
-          message.error('验收温度不能为空');
-          return false;
-        };
-      }
-      return true;
-    });
-    if(!isNull) return;
+    if(!this.onCheck()) return;
     this.setState({checkLoading: true});
-
+    selectedRows = this.seekChildren(selectedRows).realSelectedRows; //包含children的二维数组
+    let includeChildren = [...selectedRows];//包含children的一维数组
+    selectedRows.map(item => {  
+      if(item.children && item.children.length) {
+        item.children.map(childItem => {
+          includeChildren.push(childItem);
+          return childItem;
+        });
+      };
+      return item;
+    });
     let detailList = selectedRows.map(item=>{
       let i = {
         realReceiveQuantiry: item.realReceiveQuantity,
@@ -134,6 +202,91 @@ class PslistCheck extends PureComponent{
       }
     })
   }
+  //校验
+  onCheck = () => {
+    let {selectedRows, detailInfo} = this.state;
+    selectedRows = {...selectedRows};
+    selectedRows = this.seekChildren(selectedRows).realSelectedRows; //包含children的二维数组
+    let includeChildren = [...selectedRows];//包含children的一维数组
+    selectedRows.map(item => {  
+      if(item.children && item.children.length) {
+        item.children.map(childItem => {
+          includeChildren.push(childItem);
+          return childItem;
+        });
+      };
+      return item;
+    });
+    let isNull = includeChildren.every(item => {
+      if(!item.realReceiveQuantity){
+        message.error('实到数量不能为空');
+        return false;
+      };
+      if(!item.realProductTime){
+        message.error('生产日期不能为空');
+        return false;
+      };
+      if(!item.realValidEndDate){
+        message.error('有效期至不能为空');
+        return false;
+      };
+      if(!item.productBatchNo){
+        message.error('生产批号不能为空');
+        return false;
+      };
+      if(detailInfo.isShowTemprature === 1) {
+        if(!item.realAcceptanceTemperature){
+          message.error('验收温度不能为空');
+          return false;
+        };
+      }
+      return true;
+    });
+    let isLike;
+    isLike = selectedRows.map(item => this.valueCheck(item));
+    isLike = isLike.every(item => item);
+    if(!isLike) {
+      message.warning('提交数据中存在药物批号一样，但是生产日期和有效期至不一样的数据');
+    };
+    return isNull && isLike;
+  }
+  //日期批号校验
+  valueCheck = (list) => {
+    let a = [];
+    a.push(list);
+    if(list.children && list.children.length) {
+      list.children.map(item => {
+        a.push(item);
+        return item;
+      });
+    };
+    var b = [];
+    b = a.map(item=>item.productBatchNo);
+    b = [...new Set(b)];
+    var c = [];
+    for (let i = 0; i < b.length; i++) {
+      c[i] = a.filter(item => item.productBatchNo === b[i]);
+    };
+    var d = [];
+    for (let i = 0; i < c.length; i++) {
+      d[i] = this.checkChildren(c[i]);
+    };
+    d = d.every(item => item);
+    return d;
+  }
+  checkChildren(list) {
+    var a = list.every((item, i) => {
+      if(i === list.length - 1) {
+        return true;
+      };
+      if(list[i].realProductTime === list[i + 1].realProductTime && list[i].realValidEndDate === list[i + 1].realValidEndDate) {
+        return true;
+      };
+      return false;
+    });
+    return a;
+  }
+  //获取详情
   queryDetail = () => {
     this.setState({loading: true});
     this.props.dispatch({ 
@@ -144,13 +297,15 @@ class PslistCheck extends PureComponent{
       callback: (data) => {
         this.setState({
           detailInfo: data,
-          loading: false
+          loading: false,
+          btnShow: data.auditStatus === 1? true : false,
+          defaultActiveKey: data.auditStatus === 1? '1' : '2',
         });
       }
     })
   }
   render(){
-    let {loading, defaultActiveKey, btnShow, detailInfo, checkLoading} = this.state;
+    let {loading, defaultActiveKey, expandedRowKeys, btnShow, detailInfo, checkLoading} = this.state;
     let {unVerfiyList, verifyList} = detailInfo;
     
     let columnsUnVerfiy = [
@@ -254,10 +409,11 @@ class PslistCheck extends PureComponent{
       {
         title: '操作',
         dataIndex: 'RN',
-        render: (text, record)=>{
-          return <a onClick={() => {
-            this.addBatch(record);
-          }}>增加验收批号</a>
+        render: (text, record, i)=>{
+          return record.id ? 
+                 <a onClick={this.addBatch.bind(this, record, i)}>增加验收批号</a> 
+                 : 
+                 <a onClick={this.removeBatch.bind(this, record, i)}>删除</a>
         }
       }
     ];
@@ -410,9 +566,16 @@ class PslistCheck extends PureComponent{
                 dataSource={unVerfiyList || []}
                 pagination={false}
                 rowKey={'key'}
+                expandedRowKeys={expandedRowKeys}
+                onExpandedRowsChange={this.onExpandedRowsChange}
                 rowSelection={{
                   selectedRowKeys: this.state.selected,
-                  onChange: this.rowChange
+                  onChange: this.changeSelectRow,
+                  onSelect: this.changeSelect,
+                  onSelectAll: this.selectAll,
+                  getCheckboxProps: record => ({
+                    disabled: record.id === null
+                  })
                 }}
               />
             </TabPane>
