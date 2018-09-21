@@ -36,10 +36,9 @@ const createMenu = menuList => {
             name={menu.name} 
             key={menu.href && menu.href[menu.href.length-1] === '/' ? menu.href.substring(0,menu.href.length-1): menu.href && menu.href[menu.href.length-1] !== '/'? menu.href :menu.id } 
             href={menu.href} 
-            id={menu.id} 
-            className='ysy-subMneu-Item'
+            id={menu.id}
           >
-            <Icon type={menu.icon} />
+            {/* <Icon type={menu.icon} /> */}
             <span> { menu.name } </span>
           </Menu.Item>
         )
@@ -137,6 +136,7 @@ class SiderMenu extends PureComponent{
     this.setState({selectedKeys, openKeys: newOpenKeys});
   }
   componentWillMount = () => {
+    
     this.changeActiveKeys();
     this.setSubTitle()
   }

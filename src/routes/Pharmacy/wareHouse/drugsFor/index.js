@@ -66,16 +66,6 @@ class DrugsFor extends PureComponent{
         width:150,
         dataIndex: 'createDate'
       },
-      {
-        title: '配货人',
-        width:100,
-        dataIndex: 'distributeUserName',
-      },
-      {
-        title: '配货时间',
-        width:150,
-        dataIndex: 'distributeDate'
-      }
     ];
     let {query} = this.state;
     return (

@@ -5,7 +5,6 @@
  */
 import React, { PureComponent } from 'react';
 import { Table ,Row, Col, Button, Modal, Spin, message , Tooltip} from 'antd';
-import querystring from 'querystring';
 import {connect} from 'dva';
 const Conform = Modal.confirm;
 const columns = [
@@ -46,7 +45,7 @@ const columns = [
   {
     title: '入库数量',
     width:150,
-    dataIndex: 'quantity'
+    dataIndex: 'inQuantity'
   },
   {
     title: '生产批号',
@@ -66,13 +65,12 @@ const columns = [
   {
     title: '货位',
     width:150,
-    dataIndex: 'storeLoc',
-    render:()=>`A1231`
+    dataIndex: 'storeLocName'
   },
   {
     title: '货位类型',
     width:150,
-    dataIndex: 'storeType'
+    dataIndex: 'storeTypeName'
   },
   {
     title: '批准文号',
@@ -98,12 +96,10 @@ class DetailsNewLibrary extends PureComponent{
   componentDidMount() {
     this.setState({loading: true});
     let {id} = this.props.match.params;
-    id = querystring.parse(id);
     this.props.dispatch({
       type: 'pharmacy/findStoreDetail',
       payload: {
-        inRoomCode: id.rCode,
-        dirstrbuteDeptCode: id.dCode
+        instoreCode: id
       },
       callback: (data) => {
         this.setState({
@@ -162,7 +158,7 @@ class DetailsNewLibrary extends PureComponent{
                     <label>出库单</label>
                 </div>
                 <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
-                  <div className='ant-form-item-control'>{info.outStoreCode || ''}
+                  <div className='ant-form-item-control'>{info.orderCode || ''}
                   </div>
                 </div>
             </Col>
@@ -171,7 +167,7 @@ class DetailsNewLibrary extends PureComponent{
                     <label>配货部门</label>
                 </div>
                 <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
-                  <div className='ant-form-item-control'>{info.acceptanceDept || ''}</div>
+                  <div className='ant-form-item-control'>{info.deptName || ''}</div>
                 </div>
             </Col>
           </Row>
@@ -181,7 +177,7 @@ class DetailsNewLibrary extends PureComponent{
                     <label>入库分类</label>
                 </div>
                 <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
-                  <div className='ant-form-item-control'>{info.inStoreName || ''}</div>
+                  <div className='ant-form-item-control'>{info.inStoreTypeName || ''}</div>
                 </div>
             </Col>
             <Col span={8}>

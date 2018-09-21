@@ -211,7 +211,7 @@ class ReplenishmentPlan extends PureComponent {
         )
       }, {
         title: '驳回原因',
-        dataIndex: 'remarks'
+        dataIndex: 'note'
       }
     ];
     return (

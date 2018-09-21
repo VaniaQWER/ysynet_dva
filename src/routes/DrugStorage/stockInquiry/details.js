@@ -41,7 +41,7 @@ class Details extends PureComponent{
             query: {
                 drugCode: info.dCode
             },
-            bigDrugCode: info.bCode,
+            hisDrugCode: info.bCode,
             info: {}
         }
     }
@@ -49,7 +49,7 @@ class Details extends PureComponent{
         this.props.dispatch({
             type: 'stockInquiry/repertoryDetail',
             payload: {
-                drugCode: this.state.bigDrugCode
+                hisDrugCode: this.state.hisDrugCode
             },
             callback: (data) => {
                 this.setState({info: data});

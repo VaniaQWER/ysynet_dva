@@ -143,11 +143,11 @@ class SearchFormWrapper extends PureComponent {
       values[key] = values[key] === undefined? "" : values[key]
     };
     if(values.shelfTime === "") {
-      values.startTime = "";
-      values.endTime = "";
+      values.receptionStartTime = "";
+      values.receptionEndTime = "";
     }else {
-      values.startTime = values.shelfTime[0].format('YYYY-MM-DD');
-      values.endTime = values.shelfTime[1].format('YYYY-MM-DD');
+      values.receptionStartTime = values.shelfTime[0].format('YYYY-MM-DD');
+      values.receptionEndTime = values.shelfTime[1].format('YYYY-MM-DD');
     };
     delete values.shelfTime;
     this.props.query(values);
@@ -172,14 +172,14 @@ class SearchFormWrapper extends PureComponent {
        <Row gutter={30}>
          <Col span={8}>
            <FormItem label={`单据号`} {...formItemLayout}>
-             {getFieldDecorator('shelfCode', {})(
+             {getFieldDecorator('distributeCode', {})(
               <Input placeholder='验收单'/>
              )}
            </FormItem>
          </Col>
          <Col span={8} >
            <FormItem label={`状态`} {...formItemLayout}>
-             {getFieldDecorator('shelfStatus')(
+             {getFieldDecorator('auditStatus')(
               <Select
                 
                 showSearch
@@ -194,7 +194,7 @@ class SearchFormWrapper extends PureComponent {
          </Col>
          <Col span={8} style={{display: display}}>
            <FormItem label={`类型`} {...formItemLayout}>
-            {getFieldDecorator('shelfType', {})(
+            {getFieldDecorator('type', {})(
               <Select 
                 showSearch
                 placeholder={'请选择'}

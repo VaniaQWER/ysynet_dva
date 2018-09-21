@@ -156,7 +156,7 @@ class PlanOrderDetail extends PureComponent{
                 <label>订单号</label>
               </div>
               <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
-                <div className='ant-form-item-control'>{ detailsData.planCode }</div>
+                <div className='ant-form-item-control'>{ detailsData.orderCode }</div>
               </div>
             </Col>
             <Col span={8}>

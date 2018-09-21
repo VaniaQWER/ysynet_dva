@@ -10,7 +10,7 @@ import { _local } from '../../api/local';
 export function ReplenishDelete(options) {
   return request(`${_local}/a/depot/depotplan/updateStatus`, {
     methods: 'POST',
-    type: 'formData',
+    type: 'json',
     body: options
   })
 }

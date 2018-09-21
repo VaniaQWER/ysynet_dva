@@ -167,7 +167,7 @@ class OutCatalogPurchase extends PureComponent{
       width: 180,
       render: (text,record) =>{
         return <span>
-          <Link to={{pathname: `/purchase/replenishment/outCatalogPurchase/detail${record.planCode}`}}>{text}</Link>
+          <Link to={{pathname: `/purchase/replenishment/outCatalogPurchase/detail/${record.planCode}`}}>{text}</Link>
         </span>  
       }
     },{

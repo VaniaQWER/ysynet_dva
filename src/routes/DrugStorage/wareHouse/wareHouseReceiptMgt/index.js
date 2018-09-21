@@ -9,6 +9,7 @@ import { formItemLayout } from '../../../../utils/commonStyles';
 import { Link } from 'react-router-dom';
 import RemoteTable from '../../../../components/TableGrid';
 import wareHouse from '../../../../api/drugStorage/wareHouse';
+import FetchSelect from '../../../../components/FetchSelect';
 import {connect} from 'dva';
 const FormItem = Form.Item;
 const Option = Select.Option;
@@ -26,15 +27,7 @@ class Putaway extends PureComponent{
   }
 
   queryHandler = (query) => {
-    // for (const key in query) {
-    //   if(query[key] === "") {
-    //     delete query[key]
-    //   }
-    // }
-    this.setState({ query: query }, ()=>{
-      // this.refs.tab.fetch();
-    });
-    
+    this.setState({ query: query });
   }
 
   //单行确认 
@@ -102,7 +95,8 @@ class Putaway extends PureComponent{
         <SearchForm 
           query={this.queryHandler}
          />
-        <RemoteTable
+        <RemoteTable  
+          isJson
           query={query}
           url={wareHouse.depotinstoreList}
           ref="tab"
@@ -120,115 +114,114 @@ export default Putaway;
 
 /* 搜索 - 表单 */
 class SearchFormWrapper extends PureComponent {
- state = {
-   display: 'none',
- }
+  state = {
+    display: 'none',
+    value: undefined
+  }
 
-componentDidMount = () => {
-  this.props.dispatch({
-    type: 'wareHouse/getsupplierList'
-  })
-}
+  toggle = () => {
+    const { display, expand } = this.state;
+    this.setState({
+      display: display === 'none' ? 'block' : 'none',
+      expand: !expand
+    })
+  }
+  handleSearch = (e) => {
+    e.preventDefault();
+    this.props.form.validateFields((err, values) => {
+      for (const key in values) {
+        values[key] = values[key] === undefined? "" : values[key]
+      };
+      if(values.time !== "" && values.time.length > 0) {
+        values.startTime = values.time[0].format('YYYY-MM-DD');
+        values.endTime = values.time[1].format('YYYY-MM-DD');
+      }else {
+        values.startTime = "";
+        values.endTime = "";
+      }
+      delete values.time;
+      values.supplierCodeList = this.state.value? [this.state.value] : [];
+      this.props.query(values);
+    });
+  }
+  //重置
+  handleReset = () => {
+    this.props.form.resetFields();
+    this.props.query({});
+  }
 
- toggle = () => {
-   const { display, expand } = this.state;
-   this.setState({
-     display: display === 'none' ? 'block' : 'none',
-     expand: !expand
-   })
- }
- handleSearch = (e) => {
-   e.preventDefault();
-   this.props.form.validateFields((err, values) => {
-     for (const key in values) {
-       values[key] = values[key] === undefined? "" : values[key]
-     };
-     if(values.time !== "" && values.time.length > 0) {
-       values.startTime = values.time[0].format('YYYY-MM-DD');
-       values.endTime = values.time[1].format('YYYY-MM-DD');
-     }else {
-       values.startTime = "";
-       values.endTime = "";
-     }
-     delete values.time;
-     this.props.query(values);
-   });
- }
- //重置
- handleReset = () => {
-   this.props.form.resetFields();
-   this.props.query({});
- }
-
- render() {
-  let {supplierList} = this.props;
-  supplierList = supplierList.map((item, i) => {
-    return <Option key={i} value={item.ctmaSupplierCode}>{item.ctmaSupplierName}</Option>
-  });
-  
-  const { display } = this.state;
-  const { getFieldDecorator } = this.props.form;
-  return (
-    <Form onSubmit={this.handleSearch}>
-      <Row gutter={30}>
-        <Col span={8}>
-          <FormItem label={`单号`} {...formItemLayout}>
-            {getFieldDecorator('inStoreCode', {})(
-            <Input placeholder='入库单/配送单/订单号'/>
-            )}
-          </FormItem>
-        </Col>
-        <Col span={8}>
-        <FormItem label={`供应商`} {...formItemLayout}>
-          {getFieldDecorator('supplierCode', {})(
-            <Select
+  render() {
+    let {value} = this.state;
+    
+    const { display } = this.state;
+    const { getFieldDecorator } = this.props.form;
+    return (
+      <Form onSubmit={this.handleSearch}>
+        <Row gutter={30}>
+          <Col span={8}>
+            <FormItem label={`单号`} {...formItemLayout}>
+              {getFieldDecorator('inStoreCode', {})(
+              <Input placeholder='入库单/配送单/订单号'/>
+              )}
+            </FormItem>
+          </Col>
+          <Col span={8}>
+          <FormItem label={`供应商`} {...formItemLayout}>
+            <FetchSelect
+              value={value}
+              url={wareHouse.SUPPLIER_LIST}
+              queryKey="ctmaSupplierName"
+              valueAndLabel={{
+                value: 'ctmaSupplierCode',
+                label: 'ctmaSupplierName'
+              }}
               allowClear
-              showSearch
               placeholder={'请选择'}
               optionFilterProp="children"
-              filterOption={(input, option) => option.props.children.indexOf(input) >= 0}
-              >
-                  {supplierList}
-            </Select>
-          )}
-        </FormItem>
-      </Col>
-      <Col span={8}>
-          <FormItem label={`入库时间`} {...formItemLayout}>
-            {getFieldDecorator('time', {})(
-            <RangePicker/>
-            )}
+              cb={(value) => {
+                this.setState({
+                  value
+                })
+              }}
+            />
           </FormItem>
         </Col>
-        <Col span={8} style={{display: display}}>
-          <FormItem label={`入库分类`} {...formItemLayout}>
-            {getFieldDecorator('inStoreType', {})(
-            <Select
-              allowClear
-              showSearch
-              placeholder={'请选择'}
-              optionFilterProp="children"
-              filterOption={(input, option) => option.props.children.indexOf(input) >= 0}
-              >
-                  <Option key="" value="">全部</Option>
-                  <Option key="01" value="01">采购入库</Option>
-                  <Option key="02" value="02">零库存入库</Option>
-                  <Option key="03" value="03">报告药入库</Option>
-                  <Option key="04" value="04">盘点入库</Option>
-            </Select>
-            )}
-          </FormItem>
-        </Col>
-        <Col span={8} style={{ float:'right',textAlign: 'right', marginTop: 4}} >
-          <Button type="primary" htmlType="submit">查询</Button>
-          <Button style={{marginLeft: 8}} onClick={this.handleReset}>重置</Button>
-          <a style={{marginLeft: 8, fontSize: 14}} onClick={this.toggle}>
-            {this.state.expand ? '收起' : '展开'} <Icon type={this.state.expand ? 'up' : 'down'} />
-          </a>
-        </Col>
-      </Row>
-    </Form>
-   )
- }
+        <Col span={8}>
+            <FormItem label={`入库时间`} {...formItemLayout}>
+              {getFieldDecorator('time', {})(
+              <RangePicker/>
+              )}
+            </FormItem>
+          </Col>
+          <Col span={8} style={{display: display}}>
+            <FormItem label={`入库分类`} {...formItemLayout}>
+              {getFieldDecorator('inStoreType', {})(
+              <Select
+                allowClear
+                showSearch
+                placeholder={'请选择'}
+                optionFilterProp="children"
+                filterOption={(input, option) => option.props.children.indexOf(input) >= 0}
+                >
+                    <Option key="" value="">全部</Option>
+                    <Option key="01" value="01">采购入库</Option>
+                    <Option key="02" value="02">零库存入库</Option>
+                    <Option key="03" value="03">报告药入库</Option>
+                    <Option key="04" value="04">盘点入库</Option>
+              </Select>
+              )}
+            </FormItem>
+          </Col>
+          <Col span={8} style={{ float:'right',textAlign: 'right', marginTop: 4}} >
+            <Button type="primary" htmlType="submit">查询</Button>
+            <Button style={{marginLeft: 8}} onClick={this.handleReset}>重置</Button>
+            <a style={{marginLeft: 8, fontSize: 14}} onClick={this.toggle}>
+              {this.state.expand ? '收起' : '展开'} <Icon type={this.state.expand ? 'up' : 'down'} />
+            </a>
+          </Col>
+        </Row>
+      </Form>
+    )
+  }
 }
 const SearchForm = connect(state=>state.wareHouse)(Form.create()(SearchFormWrapper)); 

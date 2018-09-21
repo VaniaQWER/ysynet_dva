@@ -295,7 +295,6 @@ class NewInventory extends PureComponent {
         </div>
         <RemoteTable 
           query={query}
-          isJson
           url={common.CHECKBILL_LIST}
           columns={columns}
           rowKey={'id'}

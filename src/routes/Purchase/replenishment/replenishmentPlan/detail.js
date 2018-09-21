@@ -8,7 +8,7 @@
   @file 补货计划 详情
 */
 import React, { PureComponent } from 'react';
-import { Table ,Row, Col,Tooltip, Button } from 'antd';
+import { Table ,Row, Col,Tooltip, Button, message } from 'antd';
 import { connect } from 'dva';
 import {Link} from 'react-router-dom';
 const columns = [
@@ -73,6 +73,10 @@ class ReplenishmentDetail extends PureComponent{
     detailsData: {}
   }
   componentDidMount = () => {
+    this.getDetail();
+  }
+  //详情
+  getDetail = () => {
     if (this.props.match.params.planCode) {
       let { planCode } = this.props.match.params;
       this.props.dispatch({
@@ -85,6 +89,33 @@ class ReplenishmentDetail extends PureComponent{
       });
     }
   }
+  //提交
+  submit = () => {
+    let {detailsData} = this.state;
+    let dataSource = detailsData.list.map(item => {
+      return {
+        bigDrugCode: item.bigDrugCode,
+        demandQuantity: item.demandQuantity,
+        drugCode: item.drugCode,
+        drugPrice: item.drugPrice,
+        supplierCode: item.supplierCode
+      }
+    });
+    this.props.dispatch({
+      type: 'base/submit',
+      payload: {
+        auditStatus: 2,
+        id: detailsData.id,
+        planType: detailsData.planType,
+        list: dataSource,
+        deptCode: detailsData.deptCode
+      },
+      callback: (data) => {
+        message.success('提交成功');
+        this.getDetail();
+      }
+    })
+  }
   render(){
     const { detailsData } = this.state;
     return (
@@ -94,7 +125,7 @@ class ReplenishmentDetail extends PureComponent{
             <h3>单据信息</h3>
             <div>
               <Link to={{pathname: `/editReplenishment/${this.props.match.params.planCode}`}}><Button type='default'>编辑</Button></Link>
-              <Button type='primary' style={{ marginLeft: 8 }}>提交</Button>
+              <Button type='primary' onClick={this.submit} style={{ marginLeft: 8 }}>提交</Button>
             </div>
           </div>
           <Row>
@@ -177,7 +208,7 @@ class ReplenishmentDetail extends PureComponent{
                   <label>驳回说明</label>
               </div>
               <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
-                <div className='ant-form-item-control'>{detailsData.remarks}</div>
+                <div className='ant-form-item-control'>{detailsData.note}</div>
               </div>
             </Col>
           </Row>
@@ -187,14 +218,10 @@ class ReplenishmentDetail extends PureComponent{
             title={()=>'产品信息'}
             scroll={{x: '130%'}}
             columns={columns}
-            rowKey={'batchNo'}
+            rowKey={'drugCode'}
             bordered
             dataSource={detailsData ? detailsData.list : []}
-            pagination={{
-              size: 'small',
-              showQuickJumper: true,
-              showSizeChanger: true
-            }}
+            pagination={false}
           />
         </div>
       </div>

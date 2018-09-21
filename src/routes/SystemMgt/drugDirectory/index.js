@@ -169,6 +169,10 @@ const columns = [{
   dataIndex: 'ctmmPackingUnit',
 },
 {
+  title: '药品编码',
+  dataIndex: 'hisDrugCode',
+},
+{
   title: '批准文号',
   dataIndex: 'approvalNo'
 }]

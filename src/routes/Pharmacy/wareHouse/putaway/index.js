@@ -164,14 +164,14 @@ class SearchFormWrapper extends PureComponent {
       <Row gutter={30}>
         <Col span={8}>
           <FormItem label={`单据号`} {...formItemLayout}>
-            {getFieldDecorator('acceptanceCode', {})(
+            {getFieldDecorator('distributeCode', {})(
             <Input placeholder='验收单'/>
             )}
           </FormItem>
         </Col>
         <Col span={8} >
           <FormItem label={`状态`} {...formItemLayout}>
-            {getFieldDecorator('acceptanceStatus')(
+            {getFieldDecorator('auditStatus')(
             <Select 
               showSearch
               placeholder={'请选择'}
@@ -185,7 +185,7 @@ class SearchFormWrapper extends PureComponent {
         </Col>
         <Col span={8} >
           <FormItem label={`类型`} {...formItemLayout}>
-            {getFieldDecorator('acceptanceType')(
+            {getFieldDecorator('type')(
             <Select 
               showSearch
               placeholder={'请选择'}

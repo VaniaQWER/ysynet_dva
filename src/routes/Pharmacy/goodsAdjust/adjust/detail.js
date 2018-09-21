@@ -87,7 +87,7 @@ class ReplenishmentDetail extends PureComponent{
   }
   render(){
     let {info, loading} = this.state;
-    let {list} = info;
+    let {roomLocAdjustDetailVoList} = info;
     return (
       <div className='fullCol fadeIn'>
         <div className='fullCol-fullChild'>
@@ -137,7 +137,7 @@ class ReplenishmentDetail extends PureComponent{
           <h3 style={{marginBottom: 15}}>产品信息</h3>
           <Table
             loading={loading}
-            dataSource={list || []}
+            dataSource={roomLocAdjustDetailVoList || []}
             bordered
             scroll={{x: '150%'}}
             columns={columns}

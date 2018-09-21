@@ -154,6 +154,11 @@ const columns = [
     width: 100
   },
   {
+    title: '药品编码',
+    dataIndex: 'hisDrugCode',
+    width: 120
+  },
+  {
     title: '批准文号',
     dataIndex: 'approvalNo',
   }

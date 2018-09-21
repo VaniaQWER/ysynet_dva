@@ -48,16 +48,6 @@ const columns = [
     title: '发起时间',
     dataIndex: 'createDate',
     width:150,
-  },
-  {
-    title: '配货人',
-    dataIndex: 'distributeUserName',
-    width:120,
-  },
-  {
-    title: '配货时间',
-    dataIndex: 'distributeDate',
-    width:120,
   }
 ];
 /* 搜索 - 表单 */

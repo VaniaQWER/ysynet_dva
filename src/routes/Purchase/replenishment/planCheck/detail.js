@@ -8,8 +8,9 @@
   @file 补货计划  计划审核 -- 详情
 */
 import React, { PureComponent } from 'react';
-import { Table ,Row, Col,Tooltip, Button, Modal } from 'antd';
+import { Table ,Row, Col,Tooltip, Button, Modal, Input, message } from 'antd';
 import { connect } from 'dva';
+const { TextArea } = Input;
 const columns = [
   {
     title: '通用名称',
@@ -79,7 +80,8 @@ const columns = [
 class PlanCheckDetail extends PureComponent{
   state = {
     detailsData: {},
-    loading: false
+    loading: false,
+    visible: false
   }
   componentDidMount = () => {
     let { planCode } = this.props.match.params;
@@ -107,16 +109,32 @@ class PlanCheckDetail extends PureComponent{
   }
   // 审核驳回
   reject = () =>{
-    const that = this;
-    Modal.confirm({
-      title: '驳回',
-      content: '是否确认驳回',
-      onOk(){
-        let values = {}
-        values.opType = '3'// 审核驳回
-        that.update(values);
-      }
-    })
+    this.setState({
+      visible: true
+    });
+  }
+  //驳回输入框
+  rejectInput = (e) => {
+    this.setState({
+      value: e.target.value
+    });
+  }
+  //确认驳回
+  handleOk = () => {
+    let {value} = this.state;
+    if(!value.trim()) {
+      return message.warning('驳回原因不能为空!');
+    };
+    let values = {};
+    values.opType = '3'// 审核驳回
+    values.note = value;
+    this.update(values);
+  }
+  handleCancel = () => {
+    this.setState({
+      visible: false,
+      value: ''
+    });
   }
   // 通过 驳回交互
   update = (values) =>{
@@ -133,7 +151,7 @@ class PlanCheckDetail extends PureComponent{
 
   }
   render(){
-    const { detailsData, loading } = this.state;
+    const { detailsData, loading, visible } = this.state;
     const { auditStatus } = this.props.match.params;
     return (
       <div className='fullCol fadeIn'>
@@ -174,6 +192,8 @@ class PlanCheckDetail extends PureComponent{
                 <div className='ant-form-item-control'>{ detailsData.statusName }</div>
               </div>
             </Col>
+            </Row>
+            <Row>
             <Col span={8}>
               <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
                   <label>发起人</label>
@@ -225,14 +245,6 @@ class PlanCheckDetail extends PureComponent{
                 <div className='ant-form-item-control'>{detailsData.sheveDate}</div>
               </div>
             </Col>
-            <Col span={8}>
-              <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
-                  <label>驳回说明</label>
-              </div>
-              <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
-                <div className='ant-form-item-control'>{detailsData.remarks}</div>
-              </div>
-            </Col>
           </Row>
         </div>
         <div className='detailCard'>
@@ -251,6 +263,24 @@ class PlanCheckDetail extends PureComponent{
             }}
           />
         </div>
+        <Modal
+          title="驳回说明"
+          visible={visible}
+          onOk={this.handleOk}
+          onCancel={this.handleCancel}
+          maskClosable={false}
+        >
+          <Row>
+            <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-3">
+              <label>说明</label>
+            </div>
+            <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-21">
+              <div className='ant-form-item-control'>
+                <TextArea onChange={this.rejectInput} rows={3} placeholder="输入驳回说明" />
+              </div>
+            </div>
+          </Row>
+        </Modal>
       </div>
     )
   }

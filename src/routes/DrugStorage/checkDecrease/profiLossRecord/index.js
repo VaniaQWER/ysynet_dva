@@ -163,7 +163,6 @@ class ProfiLossRecord extends PureComponent {
           query={this.queryHandler} 
         />
         <RemoteTable
-          isJson
           query={query}
           url={profiLossRecord.CAUSTICEXCESSIVE_LIST}
           columns={columns}

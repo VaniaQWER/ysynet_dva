@@ -7,21 +7,28 @@ import {checkDecrease} from '../../../../api/checkDecrease';
 import RetomeTable from '../../../../components/TableGrid';
 import {connect} from 'dva';
 import moment from 'moment';
+import {difference} from 'loadsh';
 const {Search} = Input;
 const monthFormat = 'YYYY-MM-DD';
 class Details extends PureComponent {
-  state = {
-    info: {},
-    query: {
-      checkBillNo: this.props.match.params.id,
-    },
-    checkLoading: false,
-    dataSource: [],   
-    selected: [],
-    selectedRows: [],
-    submitLoading: false,
-    expandedRowKeys: [],    //展开key
-    first: true,    //是否第一次渲染
+  constructor(props) {
+    super(props);
+    this.state = {
+      info: {},
+      query: {
+        checkBillNo: this.props.match.params.id,
+      },
+      checkLoading: false,
+      dataSource: [],   
+      selected: [],
+      selectedRows: [],
+      submitLoading: false,
+      expandedRowKeys: [],    //展开key
+      first: true,    //是否第一次渲染
+    }
+  }
+  componentDidMount() {
+    this.getDetail()
   }
   //获取详情表头
   getDetail = (cb) => {
@@ -45,8 +52,22 @@ class Details extends PureComponent {
   //校验
   onCheck = () => {
     let {selectedRows} = this.state;
-    let isNull = selectedRows.every(item => {   //是否为空
+    selectedRows = this.seekChildren(selectedRows).realSelectedRows;  //包含children的二维数组
+    let includeChildren = [...selectedRows];//包含children的一维数组
+    selectedRows.map(item => {  
+      if(item.children && item.children.length) {
+        item.children.map(childItem => {
+          includeChildren.push(childItem);
+          return childItem;
+        });
+      };
+      return item;
+    });
+    let isNull = includeChildren.every(item => {   //是否为空
       if(!item.practicalRepertory) {
+        if(item.practicalRepertory === 0) {
+          return true;
+        };
         message.error('实际库存不能为空');
         return false;
       };
@@ -64,10 +85,49 @@ class Details extends PureComponent {
       };
       return true;
     });
-    let isLike = true;
-    // let childrenList = selectedRows.filter(item => !item.id);
-    
+    let isLike;
+    isLike = selectedRows.map(item => this.valueCheck(item));
+    isLike = isLike.every(item => item);
+    if(!isLike) {
+      message.warning('提交数据中存在药物批号一样，但是生产日期和有效期至不一样的数据');
+    };
     return isNull && isLike;
+  }
+  //日期批号校验
+  valueCheck = (list) => {
+    let a = [];
+    a.push(list);
+    if(list.children && list.children.length) {
+      list.children.map(item => {
+        a.push(item);
+        return item;
+      });
+    };
+    var b = [];
+    b = a.map(item=>item.practicalBatch);
+    b = [...new Set(b)];
+    var c = [];
+    for (let i = 0; i < b.length; i++) {
+      c[i] = a.filter(item => item.practicalBatch === b[i]);
+    };
+    var d = [];
+    for (let i = 0; i < c.length; i++) {
+      d[i] = this.checkChildren(c[i]);
+    };
+    d = d.every(item => item);
+    return d;
+  }
+  checkChildren(list) {
+    var a = list.every((item, i) => {
+      if(i === list.length - 1) {
+        return true;
+      };
+      if(list[i].realProductTime === list[i + 1].realProductTime && list[i].validEndTime === list[i + 1].validEndTime) {
+        return true;
+      };
+      return false;
+    });
+    return a;
   }
   // 提交
   confirm = () => {
@@ -75,6 +135,7 @@ class Details extends PureComponent {
     if(selectedRows.length === 0) {
       return message.warning('至少选择一条数据');
     };
+    
     if(!this.onCheck()) return;
     this.setState({
       submitLoading: true
@@ -161,11 +222,12 @@ class Details extends PureComponent {
   }
   //新增批号 - 前端
   addBatch = (record, i) => {
-    let {dataSource, expandedRowKeys} = this.state;
+    let {dataSource, expandedRowKeys, selected} = this.state;
     dataSource[i].children = dataSource[i].children || [];
+    let uuid = new Date().getTime()
     dataSource[i].children.push({
       ...record,
-      uuid: new Date().getTime(),
+      uuid,
       children: null,
       pId: record.id,
       accountBatchNo: null,
@@ -175,12 +237,37 @@ class Details extends PureComponent {
       accountStoreNum: 0,
       practicalRepertory: 0
     });
-    expandedRowKeys.push(record.uuid);
+    expandedRowKeys.push(record.uuid); //添加默认展开
     expandedRowKeys = [...new Set(expandedRowKeys)];    //展开去重
+    let isSelect = selected.some(item => {
+      if(item === record.uuid) {
+        return true;
+      };
+      return false;
+    });
+    if(isSelect) {
+      selected.push(uuid);
+    }
     this.setState({
       dataSource: [...dataSource],
-      expandedRowKeys: [...expandedRowKeys]
+      expandedRowKeys: [...expandedRowKeys],
+      selected: [...selected]
     })
+  }
+  //删除批号
+  removeBatch = (record, i) => {
+    let {dataSource} = this.state;
+    let index;
+    dataSource.map((item, totalNum)=>{
+      if(record.pId === item.id) {
+        index = totalNum;
+      };
+      return item;
+    });
+    dataSource[index].children = dataSource[index].children.filter(item => item.uuid !== record.uuid);
+    this.setState({
+      dataSource: [...dataSource]
+    });
   }
   onSearch = (value) => {
     let {query} = this.state;
@@ -191,13 +278,7 @@ class Details extends PureComponent {
   }
   //table回调
   tableCallBack = (data) => {
-    if(this.state.first) {
-      this.getDetail(() => {
-        this.setTableData(data);
-      });
-    }else {
-      this.setTableData(data);
-    };
+    this.setTableData(data);
   }
   setTableData = (data) => {
     let {info} = this.state;
@@ -228,8 +309,6 @@ class Details extends PureComponent {
         return item;
       });
       dataSource[index].children[i][key] = value;
-    console.log(dataSource[index].children[i][key]);
-
     }else {
       dataSource[i][key] = value;
     };
@@ -293,7 +372,68 @@ class Details extends PureComponent {
   }
   //展开
   onExpandedRowsChange = (expandedRows) => {
-    this.setState({expandedRows});
+    this.setState({expandedRowKeys: expandedRows});
+  }
+  //选中
+  changeSelect = (selectedRows, isSelect) => {
+    let {selected} = this.state;
+    let children = selectedRows.children;
+    if(isSelect) {  //选中
+      selected.push(selectedRows.uuid);
+      if(children && children.length) {
+        children.map(item=>{
+          selected.push(item.uuid);
+          return item;
+        });
+      }
+    }else {
+      selected = difference(selected, [selectedRows.uuid]);
+      if(children && children.length) {
+        let childrenSelect = children.map(item=>item.uuid);
+        selected = difference(selected, childrenSelect);
+      }
+    };
+    this.setState({
+      selected: [...selected]
+    })
+  }
+  //选中rows
+  changeSelectRow = (selectedRowKeys, selectedRows) => {
+    this.setState({ selectedRows: selectedRows});
+  }
+  //全选
+  selectAll = (selected, selectedRows) => {
+    if(selected) {
+      this.setState({
+        selected: this.seekChildren(selectedRows).realSelectedRowsKey
+      });
+    }else {
+      this.setState({ 
+        selected: [],
+        selectedRows: []
+      });
+    };
+  }
+  //寻找全选时的children
+  seekChildren = (selectedRows) => {
+    let {dataSource} = this.state;
+    let realSelectedRowsKey = selectedRows.map(item=>item.uuid);
+    let realSelectedRows = [];
+    for (let i = 0; i < selectedRows.length; i++) {
+      for (let j = 0; j < dataSource.length; j++) {
+        if(dataSource[j].uuid === selectedRows[i].uuid) {
+          realSelectedRows.push(dataSource[j]);
+          if(dataSource[j].children && dataSource[j].children.length) {
+            let childrenUuid = dataSource[j].children.map(childItem=>childItem.uuid)
+            realSelectedRowsKey = [...realSelectedRowsKey, ...childrenUuid]
+          }
+        }
+      }
+    };
+    return {
+      realSelectedRowsKey,
+      realSelectedRows
+    };
   }
   render() {
     let {info, query, dataSource, submitLoading, expandedRowKeys, checkLoading, tableLoading} = this.state;
@@ -453,12 +593,16 @@ class Details extends PureComponent {
                       this.addBatch(record, i)
                     }}>新增批号
                    </a>
+          }else if(record.checkDetailStatus === 1){
+            return <a onClick={()=>{
+                        this.removeBatch(record, i);
+                      }}>删除
+                   </a>
           };
           return null;
         }
       })
-    }
-    //onClick={this.deleteCheckbill.bind(this, record)}
+    };
     return (
       <div className='fullCol fadeIn'>
         <div className='fullCol-fullChild'>
@@ -578,30 +722,45 @@ class Details extends PureComponent {
             }
           </Row>
           <hr className="hr"/>
-          <RetomeTable
-            loading={tableLoading}
-            fetchBefore={()=>{
-              this.setState({
-                tableLoading: true
-              });
-            }}
-            ref={'table'}
-            query={query}
-            data={dataSource}
-            url={checkDecrease.GET_LIST_BY_BILLNO}
-            scroll={{x: '250%'}}
-            columns={columns}
-            rowKey={'uuid'}
-            expandedRowKeys={expandedRowKeys}
-            cb={this.tableCallBack}
-            onExpandedRowsChange={this.onExpandedRowsChange}
-            rowSelection={{
-              selectedRowKeys: this.state.selected,
-              onChange: (selectedRowKeys, selectedRows) => {
-                this.setState({selected: selectedRowKeys, selectedRows: selectedRows})
-              }
-            }}
-          />
+          {
+            info.checkStatus ?  
+            info.checkStatus === 2? 
+            <RetomeTable
+              loading={tableLoading}
+              fetchBefore={()=>{
+                this.setState({
+                  tableLoading: true
+                });
+              }}
+              ref={'table'}
+              query={query}
+              data={dataSource}
+              url={checkDecrease.GET_LIST_BY_BILLNO}
+              scroll={{x: '250%'}}
+              columns={columns}
+              rowKey={'uuid'}
+              expandedRowKeys={expandedRowKeys}
+              cb={this.tableCallBack}
+              onExpandedRowsChange={this.onExpandedRowsChange}
+              rowSelection={{
+                selectedRowKeys: this.state.selected,
+                onChange: this.changeSelectRow,
+                onSelect: this.changeSelect,
+                onSelectAll: this.selectAll,
+                getCheckboxProps: record => ({
+                  disabled: record.id === null || record.checkDetailStatus === 2
+                })
+              }}
+            /> : <RetomeTable
+                  ref={'table'}
+                  query={query}
+                  url={checkDecrease.GET_LIST_BY_BILLNO}
+                  scroll={{x: '250%'}}
+                  columns={columns}
+                  rowKey={'uuid'}
+                  />
+            : null
+          }
         </div>
       </div>
     )

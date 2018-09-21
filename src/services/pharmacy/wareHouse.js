@@ -77,7 +77,7 @@ export function SubmitAgainMakeupDetail(options){
 }
 //药库 - 入库单详情
 export function findStorePage(options) {
-  return request(`${_local}/a/roomstore/findStoreDetail`, {
+  return request(`${_local}/a/common/instore/info`, {
     method: 'GET',
     type: 'formData',
     body: options

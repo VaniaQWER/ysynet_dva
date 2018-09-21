@@ -17,14 +17,14 @@ const Option = Select.Option;
 const columns = [
   {
    title: '入库单',
-   dataIndex: 'inRoomCode',
+   dataIndex: 'inStoreCode',
    width:150,
    render:(text, record)=>(<Link to={{pathname: `/pharmacy/wareHouse/newLibrary/details/rCode=${text}&dCode=${record.dirstrbuteDeptCode}`}}>{text}</Link>)
   },
   {
     title: '出库单',
     width:150,
-    dataIndex: 'outStoreCode',
+    dataIndex: 'orderCode',
   },
   {
     title: '申领单',
@@ -34,17 +34,17 @@ const columns = [
   {
     title: '入库分类',
     width:100,
-    dataIndex: 'inStoreName',
+    dataIndex: 'inStoreTypeName',
   },
   {
     title: '配货部门',
-    dataIndex: 'dirstrbuteDept',
+    dataIndex: 'deptName',
     width:100,
   },
   {
    title: '入库时间',
    width:120,
-   dataIndex: 'inStoreDate',
+   dataIndex: 'createDate',
   },
   {
     title: '备注',
@@ -70,11 +70,12 @@ class NewLibrary extends PureComponent{
         <div className='ysynet-main-content'>
           <SearchForm dispatch={this.props.dispatch} query={this.queryHandler} />
           <RemoteTable
+            isJson
             query={query}
             url={wareHouse.FIND_STORE_PAGE}
             scroll={{x: '150%'}}
             columns={columns}
-            rowKey={'inRoomCode'}
+            rowKey={'id'}
             style={{marginTop: 20}}
           /> 
         </div>
@@ -140,7 +141,7 @@ class SearchFormWrapper extends PureComponent {
         <Row gutter={30}>
           <Col span={8}>
             <FormItem label={`单号`} {...formItemLayout}>
-              {getFieldDecorator('code', {})(
+              {getFieldDecorator('inStoreCode', {})(
                 <Input placeholder='入库单/配送单/订单号'/>
               )}
             </FormItem>

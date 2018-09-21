@@ -99,18 +99,23 @@ class NewAdd extends PureComponent {
         drugCodeList: modalSelectedRows
       },
       callback: (data) => {
-        dataSource.push(data);
+        dataSource.push(...data);
         dataSource = dataSource.map((item) => {
           if(!item.id) {
             item.supplierCode = item.supplierList[0].ctmaSupplierCode;
           };
           return item;
-        })
+        });
+        let existDrugCodeList = dataSource.map((item) => item.drugCode);
         this.setState({
           dataSource: [...dataSource],
           btnLoading: false,
           visible: false,
-          modalSelected: []
+          modalSelected: [],
+          query: {
+            ...query,
+            existDrugCodeList
+          }
         })
       }
     })

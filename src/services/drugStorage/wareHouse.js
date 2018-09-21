@@ -32,8 +32,8 @@ export function getsupplierList(options) {     //供应商下拉框
 }
 
 export function getPutStorageInfo(options) {    //入库单详情
-  return request(`${_local}/a/depot/depotinstore/info`, {
-    method: 'POST',
+  return request(`${_local}/a/common/instore/info`, {
+    method: 'GET',
     type: 'formData',
     body: options
   })

@@ -87,7 +87,11 @@ class EditDrugDirectory extends PureComponent{
         let minUnit = data.filter(item => item.sort === 3);
         let packUnit = data.filter(item => item.sort === 1);
         let packageSpecification = data.filter(item => item.sort === 2);
-        minUnit = this.unitTransform(minUnit);
+        if(minUnit.length) {
+          minUnit = this.unitTransform(minUnit);
+        }else {
+          minUnit = '';
+        };
         packUnit = this.unitTransform(packUnit);
         packageSpecification = this.unitTransform(packageSpecification);
         this.setState({
@@ -100,6 +104,8 @@ class EditDrugDirectory extends PureComponent{
   }
 
   unitTransform(unitList) {
+    console.log(unitList);
+    
     let {bigUnit, conversionRate, smallUit} = unitList[0];
     return `${bigUnit} = ${conversionRate} ${smallUit}`;
   }
@@ -241,6 +247,14 @@ class EditDrugDirectory extends PureComponent{
               </div>
               <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
                 <div className='ant-form-item-control'>{fillBackData?fillBackData.approvalNo:''}</div>
+              </div>
+            </Col>
+            <Col span={8}>
+              <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
+                  <label>药品编码</label>
+              </div>
+              <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
+                <div className='ant-form-item-control'>{fillBackData?fillBackData.hisDrugCode:''}</div>
               </div>
             </Col>
             <Col span={8}>

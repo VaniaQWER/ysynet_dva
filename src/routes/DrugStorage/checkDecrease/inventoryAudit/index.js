@@ -198,7 +198,6 @@ class InventoryAudit extends PureComponent {
           query={this.queryHandler} 
         />
         <RemoteTable
-          isJson
           query={query}
           url={common.CHECKBILL_LIST}
           columns={columns}
