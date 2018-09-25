@@ -167,7 +167,7 @@ class RecallAndLocked extends PureComponent {
       {
         title: '召回及锁定单号',
         dataIndex: 'recallNo',
-        width: 180,
+        width: 280,
         render: (text, record) => 
         <span>
           <Link to={{pathname: `/drugStorage/outStorage/recallAndLocked/details/${text}/${record.recallStatus}`}}>{text}</Link>
@@ -175,42 +175,42 @@ class RecallAndLocked extends PureComponent {
        },
       {
         title: '状态',
-        width:100,
+        width: 112,
         dataIndex: 'recallStatusName',
       },
       {
         title: '类型',
-        width: 100,
+        width: 168,
         dataIndex: 'recallTypeName',
       },
       {
         title: '供应商',
-        width:100,
+        width: 224,
         dataIndex: 'supplierName',
       },
       {
         title: '发起人',
-        width:100,
+        width: 112,
         dataIndex: 'createUserName',
       },
       {
        title: '发起时间',
-       width:150,
+       width: 224,
        dataIndex: 'createDate',
       },
       {
         title: '审核人',
-        width:100,
+        width: 112,
         dataIndex: 'updateUserName',
       },
       {
        title: '审核时间',
-       width:150,
+       width: 224,
        dataIndex: 'updateDate',
       },
       {
         title: '原因',
-        width:150,
+        width: 280,
         dataIndex: 'remarks',
        }
     ];
@@ -232,7 +232,7 @@ class RecallAndLocked extends PureComponent {
           url={outStorage.ROOMRECALL_LIST}
           columns={columns}
           rowKey={'id'}
-          scroll={{ x: '130%' }}
+          scroll={{ x: 1784 }}
           style={{marginTop: 20}}
           rowSelection={{
             selectedRowKeys: this.state.selected,

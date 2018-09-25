@@ -113,11 +113,11 @@ class BaseMgt extends PureComponent{
       {
         title: '货位名称',
         dataIndex: 'storeLoc',
-        width: 100,
       },
       {
         title: '操作',
         dataIndex: 'RN',
+        width: 60,
         render: (text, record) => <Link to={{pathname: `/pharmacy/configMgt/baseMgt/drug/code=${record.deptCode}&loc=${record.storeLoc}`}}>药品</Link>
       }
     ];

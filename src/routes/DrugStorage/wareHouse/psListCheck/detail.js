@@ -68,16 +68,40 @@ class PslistCheck extends PureComponent{
   }
   //删除
   removeBatch = (record, i) =>{
-
+    let {detailInfo, expandedRowKeys} = this.state;
+    let {unVerfiyList} = detailInfo;
+    let index;
+    unVerfiyList.map((item, totalNum)=>{
+      if(record.parentId === item.id) {
+        index = totalNum;
+      };
+      return item;
+    });
+    
+    unVerfiyList[index].children = unVerfiyList[index].children.filter(item => item.key !== record.key);
+    if(!unVerfiyList[index].children.length) {
+      expandedRowKeys = expandedRowKeys.filter(item=>item !== unVerfiyList[index].key);
+    };
+    
+    detailInfo.unVerfiyList = unVerfiyList;
+    this.setState({
+      detailInfo: {...detailInfo},
+      expandedRowKeys
+    });
   }
   //tabs切换
   tabsChange = (key) =>{
-    let {detailInfo} = this.state;
     if(key === '2') {
-      this.setState({btnShow: false});
+      this.setState({
+        btnShow: false,
+        defaultActiveKey: key
+      });
     };
-    if(key === '1' && detailInfo.unVerfiyList !== undefined && detailInfo.unVerfiyList.length > 0) {
-      this.setState({btnShow: true});
+    if(key === '1') {
+      this.setState({
+        btnShow: true,
+        defaultActiveKey: key
+      });
     };
   }
   //选中rows
@@ -205,7 +229,7 @@ class PslistCheck extends PureComponent{
   //校验
   onCheck = () => {
     let {selectedRows, detailInfo} = this.state;
-    selectedRows = {...selectedRows};
+    selectedRows = [...selectedRows];
     selectedRows = this.seekChildren(selectedRows).realSelectedRows; //包含children的二维数组
     let includeChildren = [...selectedRows];//包含children的一维数组
     selectedRows.map(item => {  
@@ -556,7 +580,7 @@ class PslistCheck extends PureComponent{
           </Row>
         </div>
         <div className='detailCard'>
-          <Tabs defaultActiveKey={defaultActiveKey} onChange={this.tabsChange} tabBarExtraContent={ btnShow? <Button loading={checkLoading} type='primary' onClick={this.saveCheck}>确认验收</Button> : null}>
+          <Tabs activeKey={defaultActiveKey} onChange={this.tabsChange} tabBarExtraContent={ btnShow && unVerfiyList && unVerfiyList.length? <Button loading={checkLoading} type='primary' onClick={this.saveCheck}>确认验收</Button> : null}>
             <TabPane tab="待验收" key="1">
               <Table
                 bordered

@@ -18,37 +18,37 @@ const columns = [
   {
    title: '入库单',
    dataIndex: 'inStoreCode',
-   width:150,
+   width: 280,
    render:(text, record)=>(<Link to={{pathname: `/pharmacy/wareHouse/newLibrary/details/rCode=${text}&dCode=${record.dirstrbuteDeptCode}`}}>{text}</Link>)
   },
   {
     title: '出库单',
-    width:150,
+    width: 280,
     dataIndex: 'orderCode',
   },
   {
     title: '申领单',
-    width:150,
+    width: 280,
     dataIndex: 'applyCode',
   },
   {
     title: '入库分类',
-    width:100,
+    width: 112,
     dataIndex: 'inStoreTypeName',
   },
   {
     title: '配货部门',
     dataIndex: 'deptName',
-    width:100,
+    width: 168,
   },
   {
    title: '入库时间',
-   width:120,
+   width: 224,
    dataIndex: 'createDate',
   },
   {
     title: '备注',
-    width:100,
+    width: 280,
     dataIndex: 'remarks',
   }
 ];
@@ -73,7 +73,7 @@ class NewLibrary extends PureComponent{
             isJson
             query={query}
             url={wareHouse.FIND_STORE_PAGE}
-            scroll={{x: '150%'}}
+            scroll={{x: 1624}}
             columns={columns}
             rowKey={'id'}
             style={{marginTop: 20}}

@@ -58,7 +58,7 @@ class SpplementDocList extends PureComponent{
     const columns = [
       {
        title: '补登单号',
-       width:170,
+       width: 280,
        dataIndex: 'makeupCode',
        render: (text,record) =>{
         return <span>
@@ -68,43 +68,43 @@ class SpplementDocList extends PureComponent{
       },
       {
         title: '入库/出库单',
-        width:140,
+        width: 280,
         dataIndex: 'storeCode',
       },
       {
         title: '状态',
-        width:100,
+        width: 112,
         dataIndex: 'makeupStatusName',
       },
       {
         title: '部门',
-        width:150,
+        width: 168,
         dataIndex: 'deptName',
       },
       {
         title: '类型',
-        width:150,
+        width: 112,
         dataIndex: 'makeupTypeName',
       },
       {
         title: '补登人',
-        width:150,
+        width: 112,
         dataIndex: 'createUserName',
       },
       {
         title: '补登时间',
-        width:180,
+        width: 224,
         dataIndex: 'createDate',
         render:(text,record)=>text?text.substr(0,11):''
       },
       {
         title: '审核人',
-        width:150,
+        width: 112,
         dataIndex: 'reviewUserName',
       },
       {
         title: '审核时间',
-        width:180,
+        width: 224,
         dataIndex: 'reviewDate',
         render:(text,record)=>text?text.substr(0,11):''
       }
@@ -123,7 +123,7 @@ class SpplementDocList extends PureComponent{
           style={{marginTop: 20}}
           columns={columns}
           loading={this.state.loading}
-          scroll={{ x: '100%' }}
+          scroll={{ x: 1624 }}
           url={supplementDoc.list}
           rowSelection={{
             selectedRowKeys: this.state.selected, 

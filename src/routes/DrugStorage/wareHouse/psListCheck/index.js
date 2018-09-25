@@ -31,6 +31,7 @@ const columns = [
   {
    title: '配送单号',
    dataIndex: 'distributeCode',
+   width: 280,
    render: (text,record) =>{
      return <span>
         <Link to={{pathname: `/drugStorage/wareHouse/psListCheck/detail/id=${record.distributeCode}&state=${record.auditStatus}`}}>{text}</Link>
@@ -40,22 +41,27 @@ const columns = [
   {
     title: '订单号',
     dataIndex: 'orderCode',
+    width: 280,
   },
   {
     title: '供应商',
     dataIndex: 'supplierName',
+    width: 224,
   },
   {
     title: '状态',
-    dataIndex: 'statusName'
+    dataIndex: 'statusName',
+    width: 112,
   },
   {
     title: '类型',
     dataIndex: 'typeName',
+    width: 168,
   },
   {
     title: '收货地址',
     dataIndex: 'deptAddress',
+    width: 280,
     className: 'ellipsis',
       render:(text)=>(
         <Tooltip placement="topLeft" title={text}>{text}</Tooltip>
@@ -63,6 +69,7 @@ const columns = [
   },
   {
     title: '验收时间',
+    width: 168,
     dataIndex: 'receptionTime',
   }
 ];
@@ -237,7 +244,7 @@ class DistributionCheck extends PureComponent{
           ref="tab"
           url={wareHouse.depotdistributeList}
           columns={columns}
-          scroll={{ x: '100%' }}
+          scroll={{ x: 1512 }}
           rowKey={'id'}
         />
       </div>

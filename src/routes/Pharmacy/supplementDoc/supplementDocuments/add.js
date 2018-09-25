@@ -4,7 +4,7 @@
 * @Last Modified time: 2018-07-24 13:13:55 
  */
 import React, { PureComponent } from 'react';
-import { Table , Select , Col, Button, Icon, Modal , message, Input , Affix , Row , Tooltip, Spin, Form } from 'antd';
+import { Table , Select , Col, Button, Icon, Modal , message, InputNumber, Affix , Row , Tooltip, Spin, Form } from 'antd';
 import { Link } from 'react-router-dom';
 import { supplementDoc } from '../../../../api/pharmacy/wareHouse';
 import RemoteTable from '../../../../components/TableGrid';
@@ -62,7 +62,7 @@ const modalColumns = [
   {
     title: '包装规格',
     width: 100,
-    dataIndex: 'replanUnit',
+    dataIndex: 'packageSpecification',
   },
   {
     title: '生产厂家',
@@ -136,22 +136,31 @@ class AddSupplementDocuments extends PureComponent{
 
   //提交
   onSubmit = () =>{
-    const {  dataSource  } = this.state;
+    const {dataSource} = this.state;
     if( dataSource.length === 0 ){
       return message.warning('请至少添加一条数据');
-    }
+    };
+    let isNull = dataSource.every(item => {
+      if(!item.totalQuantity) {
+        message.warning('数量不能为空');
+        return false;
+      };
+      return true;
+    });
+    if(!isNull) return;
     Conform({
       content:"是否补登出库单",
       onOk:()=>{
         const { dispatch, history } = this.props;
         let postData = {}, List = [];
-        postData.makeupType=2;
+        postData.makeupType = 2;
         dataSource.map(item =>List.push({ 
-          lot: item.lot,
+          // lot: item.lot,
+          batchNo: item.batchNo,
           // productDate: item.productDate,
           totalQuantity: item.totalQuantity,
           // validEndDate: item.validEndDate,
-          drugCode: item.drugCode 
+          // drugCode: item.drugCode 
         }));
         postData.makeupinsertlist = List;
         console.log(postData,'postData')
@@ -207,51 +216,54 @@ class AddSupplementDocuments extends PureComponent{
   render(){
     const columns = [
       {
-       title: '数量',
-       width: 120,
-       dataIndex: 'totalQuantity',
-       render:(text,record,index) =>{
-        return <Input defaultValue={text || 1} onChange={(e)=>this.setRowInput(e.target.value,'totalQuantity',index)}/>
+        title: '数量',
+        width: 124,
+        dataIndex: 'totalQuantity',
+        render:(text,record,index) =>{
+          return <InputNumber 
+                  defaultValue={text || 1} 
+                  onChange={(e)=>this.setRowInput(e,'totalQuantity',index)}
+                 />
         }
       },
       {
         title: '单位',
-        width: 100,
+        width: 112,
         dataIndex: 'replanUnit',
       },
       {
         title: '货位',
-        width: 180,
-        dataIndex: 'locName',
+        width: 112,
+        dataIndex: 'goodsName',
       },
       {
         title: '可用库存',
-        width: 180,
+        width: 112,
         dataIndex: 'usableQuantity',
       },
       {
         title: '货位类型',
-        width: 180,
+        width: 112,
         dataIndex: 'positionTypeName',
       },
       {
         title: '通用名',
-        width: 180,
+        width: 168,
         dataIndex: 'ctmmGenericName',
       },
       {
         title: '规格',
-        width: 180,
+        width: 168,
         dataIndex: 'ctmmSpecification',
       },
       {
         title: '生产厂家',
-        width:150,
+        width: 224,
         dataIndex: 'ctmmManufacturerName',
       },
       {
         title: '包装规格',
-        width:150,
+        width: 168,
         dataIndex: 'packageSpecification',
         className:'ellipsis',
         render:(text)=>(
@@ -260,17 +272,17 @@ class AddSupplementDocuments extends PureComponent{
       },
       {
         title: '批准文号',
-        width:150,
+        width: 168,
         dataIndex: 'approvalNo',
       },
       {
         title: '生产日期',
-        width:150,
+        width: 168,
         dataIndex: 'productDate',
       },
       {
         title: '有效期至',
-        width:150,
+        width: 168,
         dataIndex: 'validEndDate',
       }
     ];
@@ -309,7 +321,7 @@ class AddSupplementDocuments extends PureComponent{
               dataSource={dataSource}
               title={()=>'产品信息'}
               bordered
-              scroll={{x: '200%'}}
+              scroll={{x: 1680}}
               columns={columns}
               rowKey={'drugCode'}
               style={{marginTop: 24}}
@@ -373,7 +385,7 @@ class AddSupplementDocuments extends PureComponent{
               url={supplementDoc.addProductList}
               scroll={{x: '180%'}}
               columns={modalColumns}
-              rowKey={'drugCode'}
+              rowKey={'id'}
               rowSelection={{
                 selectedRowKeys: this.state.modalSelected,
                 onChange: (selectedRowKeys, selectedRows) => {

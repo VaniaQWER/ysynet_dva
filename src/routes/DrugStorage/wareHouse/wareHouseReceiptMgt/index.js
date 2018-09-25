@@ -39,7 +39,7 @@ class Putaway extends PureComponent{
     const columns = [
       {
        title: '入库单',
-       width:170,
+       width: 280,
        dataIndex: 'inStoreCode',
        render: (text,record) =>{
         return <span>
@@ -49,37 +49,37 @@ class Putaway extends PureComponent{
       },
       {
         title: '配送单',
-        width:170,
+        width: 280,
         dataIndex: 'distributeCode',
       },
       {
         title: '订单',
-        width:170,
+        width: 280,
         dataIndex: 'orderCode',
       },
       {
         title: '状态',
-        width:100,
+        width: 112,
         dataIndex: 'auditStatuslName',
       },
       {
         title: '入库分类',
-        width:150,
+        width: 112,
         dataIndex: 'inStoreTypeName',
       },
       {
         title: '供应商',
-        width:150,
+        width: 224,
         dataIndex: 'ctmaSupplierName',
       },
       {
         title: '上架时间',
-        width:180,
+        width: 224,
         dataIndex: 'createDate'
       },
       {
         title: '操作',
-        width: 90,
+        width: 60,
         dataIndex: 'RN',
         render: (text, record) => 
           <span>
@@ -100,7 +100,7 @@ class Putaway extends PureComponent{
           query={query}
           url={wareHouse.depotinstoreList}
           ref="tab"
-          scroll={{x: '150%'}}
+          scroll={{x: 1796}}
           columns={columns}
           rowKey={'id'}
           style={{marginTop: 24}}

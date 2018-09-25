@@ -8,7 +8,7 @@ export default {
     userInfo: {
       
     },
-    currentMenuList: [],
+    currentMenuList: {},
     deptList: [],
     currentDept: {}
   },
@@ -17,8 +17,8 @@ export default {
       let { payload } = action;
       let deptList = [];
       payload.deptInfo.map(item => deptList.push({ deptId: item.deptId,deptName: item.deptName }));
-      let id = window.sessionStorage.getItem('key');
-      let deptName = window.sessionStorage.getItem('deptName');
+      let id = window.localStorage.getItem('key');
+      let deptName = window.localStorage.getItem('deptName');
       let dept;
       if(id && deptName) {
         dept = {
@@ -68,8 +68,8 @@ export default {
         callback && callback(data.data);
       }else {
         message.warning('会话失效，请重新登录');
-        window.sessionStorage.removeItem('key');
-        window.sessionStorage.removeItem('deptName');
+        window.localStorage.removeItem('key');
+        window.localStorage.removeItem('deptName');
         yield put(routerRedux.push('/login'));
         // if(callback) callback();
       }

@@ -912,7 +912,7 @@ export const getNavData = app => [
     {
       name: "受理配货-详情",
       icon: 'setting',
-      path: '/pharmacy/outStorage/acceptDistribution/details',
+      path: '/pharmacy/outStorage/acceptDistribution/details/:applyCode',
       component: dynamicWrapper(app, ['drugStorage/outStorage'], () => import('../routes/Pharmacy/outStorage/acceptDistribution/details')),
     },
     // 药房-出库-拣货下架

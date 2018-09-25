@@ -33,7 +33,7 @@ const columns = [
     {
     title: '对账单',
     dataIndex: 'balanceCode',
-    width: 250,
+    width: 280,
     render: (text) => (
         <span>
             <Link to={{ pathname: `/purchase/settlementMgt/dayStatements/details/${text}`}}>{text}</Link>
@@ -42,18 +42,19 @@ const columns = [
     }, {
         title: '状态',
         dataIndex: 'confirmStatusName',
-        width: 100
+        width: 112
     }, {
         title: '明细数量',
         dataIndex: 'detailCount',
-        width: 90
+        width: 112
     }, {
         title: '对账人',
         dataIndex: 'balanceUserName',
-        width: 100
+        width: 112
     }, {
         title: '对账完成时间',
         dataIndex: 'balanceEndTime',
+        width: 224,
     }]
 
 

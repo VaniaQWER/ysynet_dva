@@ -18,7 +18,7 @@ const columns = [
   {
     title: '申领号',
     dataIndex: 'applyCode',
-    width:180,
+    width: 280,
     render:(text,record)=>
     <span>
       <Link to={{pathname: `/drugStorage/outStorage/acceptDistribution/details/${record.applyCode}`}}>{text}</Link>
@@ -27,27 +27,27 @@ const columns = [
   {
    title: '申领部门',
    dataIndex: 'applyDeptName',
-   width:120,
+   width: 168,
   },
   {
     title: '状态',
     dataIndex: 'applyStatusName',
-    width:120,
+    width: 112,
   },
   {
     title: '类型',
     dataIndex: 'applyTypeName',
-    width:150
+    width: 168
   },
   {
     title: '发起人',
     dataIndex: 'createUserName',
-    width:120,
+    width: 112,
   },
   {
     title: '发起时间',
     dataIndex: 'createDate',
-    width:150,
+    width: 224  ,
   }
 ];
 /* 搜索 - 表单 */
@@ -65,7 +65,7 @@ class SearchFormWrapper extends PureComponent {
       type: 'outStorage/genDeptList',
       payload: { },
       callback: (data) =>{
-        this.setState({ deptOption: data });
+        this.setState({ deptOption: data || [] });
       }
     });
 
@@ -232,7 +232,7 @@ class Picking extends PureComponent{
           ref='table'
           query={query}
           url={outStorage.FINDDISTRIBUTE_LIST}
-          scroll={{x: '130%'}}
+          scroll={{x: 1064}}
           columns={columns}
           rowKey={'id'}
           style={{marginTop: 20}}

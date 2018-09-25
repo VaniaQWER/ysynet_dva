@@ -59,6 +59,7 @@ class RoleMgt extends PureComponent{
       {
         title: '操作',
         dataIndex: 'action',
+        width: 60,
         render: (text,record,index)=>{
           return <span>
             <Link to={{pathname:`/sys/role/roleMgt/edit/${record.id}`,state:record}}>编辑</Link>

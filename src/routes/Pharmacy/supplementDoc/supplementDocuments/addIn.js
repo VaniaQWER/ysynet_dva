@@ -4,7 +4,7 @@
 * @Last Modified time: 2018-07-24 13:13:55 
  */
 import React, { PureComponent } from 'react';
-import { Table , Select , Col, Button, Icon, Modal , message, Input , Affix , Row , Tooltip, Spin, Form ,DatePicker  } from 'antd';
+import { Table , Select , Col, Button, Icon, Modal , InputNumber, message, Input , Affix , Row , Tooltip, Spin, Form ,DatePicker  } from 'antd';
 import { Link } from 'react-router-dom';
 import { supplementDoc } from '../../../../api/pharmacy/wareHouse';
 import RemoteTable from '../../../../components/TableGrid';
@@ -47,7 +47,7 @@ const modalColumns = [
   {
     title: '包装规格',
     width: 100,
-    dataIndex: 'replanUnit',
+    dataIndex: 'packageSpecification',
   },
   {
     title: '生产厂家',
@@ -121,10 +121,30 @@ class AddSupplementDocuments extends PureComponent{
 
   //提交
   onSubmit = () =>{
-    const {  dataSource } = this.state;
+    const { dataSource } = this.state;
     if( dataSource.length === 0 ){
       return message.warning('请至少添加一条数据');
-    }
+    };
+    let isNull = dataSource.every(item => {
+      if(!item.totalQuantity) {
+        message.warning('数量不能为空！');
+        return false;
+      };
+      if(!item.lot) {
+        message.warning('生产批号不能为空！');
+        return false;
+      };
+      if(!item.productDate) {
+        message.warning('生产日期不能为空！');
+        return false;
+      };
+      if(!item.validEndDate) {
+        message.warning('有效期至不能为空！');
+        return false;
+      };
+      return true;
+    });
+    if(!isNull) return;
     Conform({
       content:"是否补登入库单",
       onOk:()=>{
@@ -183,60 +203,62 @@ class AddSupplementDocuments extends PureComponent{
 
   //单行设置datasource
   setRowInput = (val,field,index,isDate)=>{
-    console.log(val)
     let ds = this.state.dataSource.slice();
     if(!isDate){
       ds[index][field]=val
     }else{
-      debugger
       ds[index][field]=val
     }
-    console.log(ds)
-    this.setState({dataSource:ds})
+    this.setState({dataSource:ds});
   }
   render(){
     const columns = [
       {
-       title: '数量',
-       width: 120,
-       dataIndex: 'totalQuantity',
-       render:(text) =>{
-        return <Input defaultValue={text || 1} onChange={(e)=>this.setRowInput(e.target.value)}/>
-        }
+        title: '数量',
+        width: 120,
+        dataIndex: 'totalQuantity',
+        render:(text, record, index) =>{
+          return <InputNumber
+                  min={1}
+                  precision={0}
+                  defaultValue={text} 
+                  onChange={(e)=>this.setRowInput(e, 'totalQuantity', index)}
+                />
+          }
       },
       {
         title: '单位',
-        width: 100,
+        width: 112,
         dataIndex: 'replanUnit',
       },
       {
         title: '货位',
-        width: 180,
-        dataIndex: 'locName',
+        width: 112,
+        dataIndex: 'goosName',
       },
       {
         title: '货位类型',
-        width: 180,
+        width: 112,
         dataIndex: 'positionTypeName',
       },
       {
         title: '通用名',
-        width: 180,
+        width: 168,
         dataIndex: 'ctmmGenericName',
       },
       {
         title: '规格',
-        width: 180,
+        width: 168,
         dataIndex: 'ctmmSpecification',
       },
       {
         title: '生产厂家',
-        width:150,
+        width: 224,
         dataIndex: 'ctmmManufacturerName',
       },
       {
         title: '包装规格',
-        width:150,
+        width: 168,
         dataIndex: 'packageSpecification',
         className:'ellipsis',
         render:(text)=>(
@@ -245,26 +267,46 @@ class AddSupplementDocuments extends PureComponent{
       },
       {
         title: '生产批号',
-        width:150,
+        width: 168,
         dataIndex: 'lot',
         render:(text,record,index) =>{
-          return <Input format={'YYYY-MM-DD'} defaultValue={text} onChange={(e)=>this.setRowInput(e.target.value,'lot',index)}/>
+          return <Input defaultValue={text} onChange={(e)=>this.setRowInput(e.target.value,'lot',index)}/>
         }
       },
       {
         title: '生产日期',
-        width:150,
+        width: 168,
         dataIndex: 'productDate',
         render:(text,record,index) =>{
-          return <DatePicker format={'YYYY-MM-DD HH:ss:mm'} defaultValue={text?moment(text,'YYYY-MM-DD HH:ss:mm'):null} onChange={(date,datestr)=>this.setRowInput(datestr,'productDate',index,'isDate')}/>
+          return <DatePicker 
+                  format={'YYYY-MM-DD'}
+                  disabledDate={(startValue) => {
+                    if(!startValue || !record.validEndDate) {
+                      return false;
+                    };
+                    return startValue.valueOf() > moment(record.validEndDate, 'YYYY-MM-DD').valueOf();
+                  }}
+                  defaultValue={text?moment(text,'YYYY-MM-DD'):null} 
+                  onChange={(date,datestr)=>this.setRowInput(datestr,'productDate',index,'isDate')}
+                />
         }
       },
       {
         title: '有效期至',
-        width:150,
+        width: 168,
         dataIndex: 'validEndDate',
         render:(text,record,index) =>{
-          return <DatePicker format={'YYYY-MM-DD HH:ss:mm'} defaultValue={text?moment(text,'YYYY-MM-DD HH:ss:mm'):null} onChange={(date,datestr)=>this.setRowInput(datestr,'validEndDate',index,'isDate')}/>
+          return <DatePicker
+                  disabledDate={(endValue) => {
+                    if(!endValue || !record.productDate) {
+                      return false;
+                    };
+                    return endValue.valueOf() <= moment(record.productDate, 'YYYY-MM-DD').valueOf();
+                  }}
+                  format={'YYYY-MM-DD'} 
+                  defaultValue={text?moment(text,'YYYY-MM-DD'):null} 
+                  onChange={(date,datestr)=>this.setRowInput(datestr,'validEndDate',index,'isDate')}
+                 />
         }
       }
     ];
@@ -303,7 +345,7 @@ class AddSupplementDocuments extends PureComponent{
               dataSource={dataSource}
               title={()=>'产品信息'}
               bordered
-              scroll={{x: '200%'}}
+              scroll={{x: 1680}}
               columns={columns}
               rowKey={'drugCode'}
               style={{marginTop: 24}}

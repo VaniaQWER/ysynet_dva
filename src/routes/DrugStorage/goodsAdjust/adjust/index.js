@@ -33,29 +33,34 @@ class Putaway extends PureComponent{
   render(){
     const columns = [
       {
-       title: '移库单号',
-       dataIndex: 'locAdjustNo',
-       render: (text,record) =>{
-        return <span>
-           <Link to={{pathname: `/drugStorage/goodsAdjust/adjust/detail/${text}`}}>{text}</Link>
-         </span>
-        }
-      },
+        title: '移库单号',
+        dataIndex: 'locAdjustNo',
+        width: 280,
+        render: (text,record) =>{
+          return <span>
+            <Link to={{pathname: `/drugStorage/goodsAdjust/adjust/detail/${text}`}}>{text}</Link>
+          </span>
+          }
+        },
       {
         title: '状态',
         dataIndex: 'statusName',
+        width: 112,
       },
       {
         title: '部门',
         dataIndex: 'deptName',
+        width: 168,
       },
       {
         title: '移库人',
-        dataIndex: 'createName'
+        dataIndex: 'createName',
+        width: 112,
       },
       {
         title: '移库时间',
-        dataIndex: 'createDate'
+        dataIndex: 'createDate',
+        width: 224,
       }
     ];
     return (

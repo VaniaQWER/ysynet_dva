@@ -40,32 +40,32 @@ class Putaway extends PureComponent{
       {
         title: '验收单',
         dataIndex: 'distributeCode',
-        width:150,
+        width: 280,
         render:(text, record)=>(<Link to={{pathname: `/pharmacy/wareHouse/putaway/details/code=${text}&status=${record.auditStatus}`}}>{text}</Link>)
        },
       {
         title: '状态',
-        width:100,
+        width: 112,
         dataIndex: 'statusName',
       },
       {
         title: '类型',
-        width:100,
+        width: 168,
         dataIndex: 'typeName',
       },
       {
         title: '验收时间',
-        width:150,
+        width: 224,
         dataIndex: 'receptionTime'
       },
       {
         title: '上架时间',
-        width:150,
+        width: 224,
         dataIndex: 'upUserDate'
       },
       {
         title: '操作',
-        width:150,
+        width: 60,
         dataIndex: 'RN',
         render: (text, record) => 
           <span>

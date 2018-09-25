@@ -17,7 +17,7 @@ const columns = [
   {
     title: '申领号',
     dataIndex: 'applyCode',
-    width:120,
+    width: 280,
     render:(text,record)=>
     <span>
       <Link to={{pathname: `/pharmacy/outStorage/acceptDistribution/details/${record.applyCode}/${record.applyStatus}`}}>{text}</Link>
@@ -26,17 +26,17 @@ const columns = [
   {
    title: '申领部门',
    dataIndex: 'applyDeptName',
-   width:120,
+   width: 168,
   },
   {
     title: '状态',
     dataIndex: 'applyStatusName',
-    width:120,
+    width: 112,
   },
   {
     title: '类型',
     dataIndex: 'applyType',
-    width:150,
+    width: 168,
     render: (text, record, index) => {
       return text === '1' ? '申领': text === '2' ? '调拨': '' 
     }
@@ -44,22 +44,22 @@ const columns = [
   {
     title: '发起人',
     dataIndex: 'createUserName',
-    width:120,
+    width: 112,
   },
   {
     title: '发起时间',
     dataIndex: 'createDate',
-    width:150,
+    width: 224,
   },
   {
     title: '配货人',
     dataIndex: 'distributeUserName',
-    width:120,
+    width: 112,
   },
   {
     title: '配货时间',
     dataIndex: 'distributeDate',
-    width:120,
+    width: 224,
   }
 ];
 /* 搜索 - 表单 */
@@ -246,7 +246,7 @@ class Picking extends PureComponent{
           bordered
           ref='table'
           query={query}
-          scroll={{x: '100%'}}
+          scroll={{x: 1400}}
           columns={columns}
           rowKey={'id'}
           style={{marginTop: 20}}

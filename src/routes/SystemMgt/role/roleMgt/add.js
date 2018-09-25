@@ -7,29 +7,31 @@
  * @file 系统管理--角色管理--角色-新增
  */
 import React, { PureComponent } from 'react';
-import { Form, Row, Col, Input, Affix ,Button, Card , message} from 'antd';
+import { Form, Row, Col, Input, Button, message, Spin, Tree} from 'antd';
 import { connect } from 'dva';
 import { formItemLayout } from '../../../../utils/commonStyles';
 import { menuFormat } from '../../../../utils/utils';
-import { systemMgt } from '../../../../api/systemMgt';
-import RemoteTable from '../../../../components/TableGrid';
+import {difference} from 'lodash';
 const FormItem = Form.Item;
-
+const {TreeNode} = Tree;
 class AddRoleMgt extends PureComponent{
 
   state = {
     loading: false,
-    query:{}
+    dataSource: [],
+    checkedKeys: []
   }
 
    //提交表单
    onSubmit = () => {
     this.props.form.validateFieldsAndScroll((err,values)=>{
       if(!err){
-        console.log(values)
+        if(!this.state.checkedKeys.length) {
+          return message.warning('至少选择一个菜单');
+        }
         if(this.state.selectRowKeys&& this.state.selectRowKeys.length){
           console.log(this.state.selectRowKeys[0]);//获取上级菜单的key值
-          const menuIds = this.state.selectRowKeys;
+          const menuIds = this.state.checkedKeys;
           this.props.dispatch({
             type: 'systemRole/RoleSave',
             payload: { menuIds,...values},
@@ -45,30 +47,80 @@ class AddRoleMgt extends PureComponent{
       }
     })  
   }
+  
+  componentDidMount() {
+    this.props.dispatch({
+      type: 'systemRole/allMenuList',
+      callback: (data) => {
+        let dataSource = menuFormat(data, true);
+        this.setState({
+          dataSource,
+          loading: false
+        });
+      }
+    });
+  }
 
+  titleRender = (item) => {
+    return <p style={{margin: 0}}>
+            <span style={{width: 150, display: 'inline-block'}}>{item.name}</span>
+            <span>{item.href}</span>
+           </p>
+  }
+  //渲染树形菜单
+  renderTreeNodes = (data) => {
+    return data.map((item) => {
+      if (item.children) {
+        return (
+          <TreeNode title={this.titleRender(item)} key={item.id} dataRef={item}>
+            {this.renderTreeNodes(item.children)}
+          </TreeNode>
+        );
+      }
+      return <TreeNode title={this.titleRender(item)} key={item.id} dataRef={item} />;
+    });
+  }
+
+  onCheck = (checkedKey, e) => {
+    let {checkedKeys} = this.state;
+    let ids = this.getIds(e.node.props.dataRef);
+    if(e.checked) {  //选中push
+      checkedKeys = [...new Set([...checkedKeys, ...ids])];
+    }else {       //反选去除
+      checkedKeys = difference(checkedKeys, ids);
+    }
+    this.setState({checkedKeys});
+  }
+  getIds = (record) => {
+    let ids = []
+    ids.push(record.id);
+    if(record.children) {
+      idsTree(record.children)
+    }
+    function idsTree(tree) {
+      tree.map(item => {
+        ids.push(item.id);
+        if(item.children) {
+          idsTree(item.children)
+        };
+        return item;
+      })
+    };
+    return ids;
+  }
   //取消 - 提交表单
   goBack = () => {
     const { history } = this.props;
     history.push({pathname:'/sys/role/roleMgt'})
   }
-
-
   render(){
     const { getFieldDecorator } = this.props.form;
-    const { query } = this.state;
-    const columns = [
-      {
-        title: '菜单名称',
-        dataIndex: 'name',
-      },
-      {
-        title: '路径',
-        dataIndex: 'href',
-      }
-    ]
+    const { dataSource, loading, checkedKeys } = this.state;
     return (
-      <div>
-        <Card title='角色信息' style={{marginBottom: 24}}>
+      <div className="fullCol">
+        <div className='detailCard'>
+          <h3 style={{margin: 0}}>角色信息</h3>
+          <hr className="hr"/>
           <Form>
               <Row gutter={30}>
                 <Col span={8}>
@@ -96,44 +148,37 @@ class AddRoleMgt extends PureComponent{
                 </Col>
               </Row>
           </Form>
-        </Card>
-
-        <Card title='角色权限' className='detailCard'>
-          <RemoteTable 
-            ref='table'
-            query={query}
-            method='GET'
-            style={{marginTop: 20}}
-            columns={columns}
-            scroll={{ x: '100%' }}
-            url={systemMgt.MenuList}
-            rowSelection={{
-              onChange:(selectRowKeys, selectedRows)=>{
-                this.setState({selectRowKeys})
-              }
-            }}
-            rowKey='id'
-            cb={(dataList,data)=>{
-              menuFormat(data)
-            }}
-          />
-        </Card>
-
-        <Affix offsetBottom={0} className='affix'  style={{textAlign: 'right',marginLeft:'-16px',marginRight:'-16px'}}>
-          <Button
-            style={{float:'right',padding:20,margin:5}}
-            type="primary"
-            onClick={() => {this.onSubmit()}}
-          >
-            确认
-          </Button>
-          <Button
-            style={{float:'right',padding:20,margin:5}}
-            onClick={() => {this.goBack()}}
-          >
-            取消
-          </Button>
-        </Affix>
+        </div>
+        
+        <Spin spinning={loading}>
+          <div className='detailCard'>
+            <h3>角色权限</h3>
+            <hr className='hr'/>
+            <Tree
+              checkable
+              checkedKeys={dataSource.length > 0 ? checkedKeys : []}
+              checkStrictly
+              onCheck={this.onCheck}
+            >
+              {this.renderTreeNodes(dataSource)}
+            </Tree>
+            <div style={{textAlign: 'right'}}>
+              <Button
+                style={{padding: 20, margin: 5}}
+                type="primary"
+                onClick={() => {this.onSubmit()}}
+              >
+                确认
+              </Button>
+              <Button
+                style={{padding: 20, margin: 5}}
+                onClick={() => {this.goBack()}}
+              >
+                取消
+              </Button>
+            </div>
+          </div>
+        </Spin>
       </div>
     )
   }

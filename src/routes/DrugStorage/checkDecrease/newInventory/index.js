@@ -243,7 +243,7 @@ class NewInventory extends PureComponent {
       {
         title: '盘点单',
         dataIndex: 'checkBillNo',
-        width: 220,
+        width: 280,
         render: (text, record) => {
           return <span><Link to={{ pathname: `/drugStorage/checkDecrease/newInventory/details/${record.checkBillNo}`}}>{text}</Link></span>
         }
@@ -251,34 +251,42 @@ class NewInventory extends PureComponent {
       {
         title: '状态',
         dataIndex: 'checkStatusName',
+        width: 112,
       },
       {
         title: '盘点类型',
         dataIndex: 'checkBillTypeName',
+        width: 168,
       },
       {
         title: '盘点子类型',
         dataIndex: 'checkBillSubTypeName',
+        width: 168,
       },
       {
         title: '部门',
         dataIndex: 'checkBillDeptName',
+        width: 168,
       },
       {
         title: '盘点责任人',
         dataIndex: 'sheveUserName',
+        width: 112,
       },
       {
         title: '制单时间',
         dataIndex: 'createDate',
+        width: 224,
       },
       {
         title: '盘点时间',
         dataIndex: 'checkTime',
+        width: 224,
       },
       {
         title: '备注',
         dataIndex: 'remarks',
+        width: 280,
       }
     ];
     return (
@@ -299,7 +307,7 @@ class NewInventory extends PureComponent {
           columns={columns}
           rowKey={'id'}
           ref="table"
-          scroll={{x: '130%'}}
+          scroll={{x: 1784}}
           style={{marginTop: 20}}
           rowSelection={{
             selectedRowKeys: this.state.selected,

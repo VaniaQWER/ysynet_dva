@@ -11,12 +11,12 @@ const Conform = Modal.confirm;
 const columns = [
   {
     title: '通用名称',
-    width: 180,
+    width: 168,
     dataIndex: 'ctmmGenericName',
   },
   {
     title: '规格',
-    width: 180,
+    width: 168,
     dataIndex: 'ctmmSpecification',
     className:'ellipsis',
     render:(text)=>(
@@ -25,47 +25,48 @@ const columns = [
   },
   {
     title: '入库单号',
-    width: 180,
+    width: 280,
     dataIndex: 'inStoreCode',
   },
   {
     title: '包装规格',
-    width: 180,
+    width: 168,
     dataIndex: 'fmodal',
   },
   {
     title: '单位',
-    width: 100,
+    width: 112,
     dataIndex: 'replanUnit',
   },
   {
     title: '出库数量',
-    width: 100,
+    width: 112,
     dataIndex: 'backNum',
   },
   {
     title: '生产批号',
-    width: 150,
+    width: 224,
     dataIndex: 'batchNo',
   },
   {
     title: '生产日期',
-    width: 160,
+    width: 224,
     dataIndex: 'productDate',
   },
   {
     title: '有效期至',
-    width: 160,
+    width: 224,
     dataIndex: 'validEndDate',
   },
   {
     title: '生产厂家',
     dataIndex: 'ctmmManufacturerName',
-    width: 200
+    width: 280
   },
   {
     title: '批准文号',
     dataIndex: 'approvalNo',
+    width: 224
   }
 ];
 
@@ -159,6 +160,8 @@ class DetailsRefund extends PureComponent{
                   <div className='ant-form-item-control'>{ detailsData.backDpetName }</div>
                 </div>
             </Col>
+          </Row>
+          <Row>
             <Col span={8}>
                 <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
                     <label>退货人</label>
@@ -184,6 +187,8 @@ class DetailsRefund extends PureComponent{
                   <div className='ant-form-item-control'>{ detailsData.supplierName }</div>
                 </div>
             </Col>
+          </Row>
+          <Row>
             <Col span={8}>
                 <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
                     <label>复核人</label>
@@ -201,7 +206,6 @@ class DetailsRefund extends PureComponent{
                 </div>
             </Col>
           </Row>
-         
          <hr className='hr'/>
          <h3>产品信息</h3>
         <Table  

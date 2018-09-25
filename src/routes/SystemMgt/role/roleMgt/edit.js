@@ -133,7 +133,7 @@ class EditRoleMgt extends PureComponent{
     const {baseInfo, checkedKeys, dataSource, loading, saveLoading} = this.state;
     return (
       <div className='fullCol'>
-        <div className='fullCol-fullChild'>
+        <div className='detailCard'>
           <h3>
             基本信息
             <Button 
@@ -143,6 +143,7 @@ class EditRoleMgt extends PureComponent{
               loading={saveLoading}
             >保存</Button>
           </h3>
+          <hr className="hr"/>
           <Form>
               <Row gutter={30}>
                 <Col span={8}>

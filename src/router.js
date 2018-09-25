@@ -102,10 +102,11 @@ function RouterConfig({ history, app }) {
           <Route path="/newRecon" component={NewRecon}/>
           {/* <Route path="/home" component={Home}/> */}
           {/* <Route path="/app" render={props => <WorkplaceLayout {...props} {...passProps} />} /> */}
-          <Route path="/" render={props => <BasicLayout {...props} {...passProps} />} />
           <Route path="/" exact render={()=> (
                <Redirect to='/login' />
            )}/>
+          <Route path="/" render={props => <BasicLayout {...props} {...passProps} />} />
+          
 
         </Switch>
       </Router>

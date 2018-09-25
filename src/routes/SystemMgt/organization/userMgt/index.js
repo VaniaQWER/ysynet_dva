@@ -196,30 +196,32 @@ class UserMgt extends PureComponent{
       {
         title: '账号',
         dataIndex: 'loginName',
-        width: 150
+        width: 168
       },
       {
         title: '姓名',
         dataIndex: 'userName',
-        width: 100
+        width: 112
       },
       {
         title: '所属科室',
         dataIndex: 'hisCtDeptNme',
+        width: 168,
       },
       {
         title: '部门',
         dataIndex: 'deptName',
+        width: 168,
       },
       {
         title: '编辑人',
         dataIndex: 'updateUserName',
-        width: 100,
+        width: 168,
       },
       {
         title: '编辑时间',
         dataIndex: 'updateDate',
-        width: 180,
+        width: 224,
       },
       {
         title: '操作',
@@ -250,7 +252,7 @@ class UserMgt extends PureComponent{
           columns={columns}
           bordered
           query={query}
-          scroll={{ x: '120%' }}
+          scroll={{ x: 1138 }}
           url={systemMgt.FINDUSERLIST}
           rowKey={'loginName'}
         />

@@ -25,11 +25,11 @@ const formItemLayout = {
 }
 const columns = [
   {
-   title: '部门',
-   width: 120,
-   dataIndex: 'backNum',
-  render:(text) =>{
-    return <Input defaultValue={text || 1}/>
+    title: '退货数量',
+    width: 120,
+    dataIndex: 'backNum',
+    render:(text) =>{
+      return <Input defaultValue={text || 1}/>
     }
   },
   {
@@ -40,7 +40,7 @@ const columns = [
   {
     title: '单位',
     width: 100,
-    dataIndex: 'replanUnit',
+    dataIndex: 'unit',
   },
   {
     title: '通用名称',
@@ -139,7 +139,7 @@ const modalColumns = [
   {
     title: '包装单位',
     width: 100,
-    dataIndex: 'replanUnit',
+    dataIndex: 'unit',
   },
   {
     title: '批准文号',
@@ -226,16 +226,13 @@ class AddRefund extends PureComponent{
   
   //提交该出库单
   backStroage = () =>{
-    const {  selectedRows, detailsData } = this.state;
-    if( selectedRows.length === 0 ){
-      return message.warning('请至少勾选有一条数据');
-    }
+    const { dataSource, detailsData } = this.state;
     Conform({
       content:"是否确认退货",
       onOk:()=>{
         const { dispatch, history } = this.props;
         let postData = {}, backDrugList = [];
-        selectedRows.map(item => backDrugList.push({ backNum: item.backNum, drugCode: item.drugCode }));
+        dataSource.map(item => backDrugList.push({ backNum: item.backNum, drugCode: item.drugCode, batchNo: item.batchNo }));
         postData.backDrugList = backDrugList;
         postData.backcause = detailsData.backCause;
         console.log(postData,'postData')

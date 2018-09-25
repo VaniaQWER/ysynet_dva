@@ -192,11 +192,13 @@ class NewAddGoodsAdjust extends PureComponent{
     const columns = [
       {
         title: '通用名',
-        dataIndex: 'ctmmGenericName'
+        dataIndex: 'ctmmGenericName',
+        width: 168,
       },
       {
         title: '规格',
         dataIndex: 'ctmmSpecification',
+        width: 168,
         className:'ellipsis',
         render:(text)=>(
           <Tooltip placement="topLeft" title={text}>{text}</Tooltip>
@@ -204,11 +206,13 @@ class NewAddGoodsAdjust extends PureComponent{
       },
       {
         title: '生产厂家',
-        dataIndex: 'ctmmManufacturerName'
+        dataIndex: 'ctmmManufacturerName',
+        width: 224,
       },
       {
         title: '移动数量',
         dataIndex: 'adjustNum',
+        width: 112,
         render: (text, record, i) => {
           return <InputNumber
                   min={1}
@@ -222,23 +226,28 @@ class NewAddGoodsAdjust extends PureComponent{
       },
       {
         title: '移动单位',
-        dataIndex: 'replanUnit'
+        dataIndex: 'replanUnit',
+        width: 112,
       },
       {
         title: '原库存',
-        dataIndex: 'usableQuantity'
+        dataIndex: 'usableQuantity',
+        width: 112,
       },
       {
         title: '原货位',
-        dataIndex: 'goodsName'
+        dataIndex: 'goodsName',
+        width: 112,
       },
       {
         title: '原货位类型',
         dataIndex: 'positionTypeName',
+        width: 168,
       },
       {
         title: '目的货位',
         dataIndex: 'goalLocCode',
+        width: 112,
         render: (text, record, i) => {
           return <Select
                   style={{width: '100%'}}
@@ -259,18 +268,22 @@ class NewAddGoodsAdjust extends PureComponent{
       {
         title: '目的货位单位',
         dataIndex: 'targetUnit',
+        width: 112,
       },
       {
         title: '目的货位类型',
-        dataIndex: 'targetTypeName'
+        dataIndex: 'targetTypeName',
+        width: 168,
       },
       {
         title: '转换系数',
-        dataIndex: 'conversionRate'
+        dataIndex: 'conversionRate',
+        width: 112,
       },
       {
         title: '包装规格',
-        dataIndex: 'packageSpecification'
+        dataIndex: 'packageSpecification',
+        width: 112,
       }
     ];
     const modalColumns = [
@@ -336,7 +349,7 @@ class NewAddGoodsAdjust extends PureComponent{
             bordered
             rowKey='id'
             dataSource={dataSource}
-            scroll={{ x: '210%' }}
+            scroll={{ x: 1792 }}
             pagination={false}
             rowSelection={{
               selectedRowKeys: this.state.selected,

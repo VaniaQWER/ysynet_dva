@@ -7,28 +7,36 @@ import querystring from 'querystring';
 const columns = [
     {
         title: '生产批号',
-        dataIndex: 'lot'
+        dataIndex: 'lot',
+        width: 168,
     }, {
         title: '生产日期',
-        dataIndex: 'productDate'
+        dataIndex: 'productDate',
+        width: 168,
     }, {
         title: '有效期至',
         dataIndex: 'validEndDate',
+        width: 168,
     }, {
         title: '货位',
-        dataIndex: "storeLocName"
+        dataIndex: "storeLocName",
+        width: 112,
     }, {
         title: '货位类型',
         dataIndex: "storeType",
+        width: 168,
     }, {
         title: '单位',
         dataIndex: "unit",
+        width: 112,
     }, {
         title: '数量',
-        dataIndex: "usableQuantity"
+        dataIndex: "usableQuantity",
+        width: 112,
     }, {
         title: '供应商',
-        dataIndex: 'supplierName'
+        dataIndex: 'supplierName',
+        width: 224,
     }
 ]
 
@@ -125,6 +133,7 @@ class Details extends PureComponent{
                     <h3 style={{marginBottom: 16}}>库存信息</h3>
                     <RemoteTable
                         rowKey="id"
+                        scroll={{x: 1232}}
                         query={query}
                         url={drugStorage.getDetailList}
                         columns={columns}

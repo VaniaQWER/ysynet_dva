@@ -42,7 +42,7 @@ class Putaway extends PureComponent{
     const columns = [
       {
        title: '配送单',
-       width:150,
+       width: 280,
        dataIndex: 'distributeCode',
        render: (text, record) => 
        <span>
@@ -54,27 +54,27 @@ class Putaway extends PureComponent{
       },
       {
         title: '状态',
-        width:100,
+        width: 112,
         dataIndex: 'statusName'
       },
       {
         title: '类型',
-        width:100,
+        width: 168,
         dataIndex: 'typeName'
       },
       {
         title: '验收时间',
-        width:150,
+        width: 224,
         dataIndex: 'receptionTime',
       },
       {
         title: '上架时间',
-        width:180,
+        width: 224,
         dataIndex: 'upUserDate',
       },
       {
         title: '操作',
-        width: 90,
+        width: 60,
         dataIndex: 'RN',
         render: (text, record) => 
           <span>
@@ -91,7 +91,7 @@ class Putaway extends PureComponent{
           query={query}
           ref="tab"
           url={wareHouse.ROOMACCEPTANCE}
-          scroll={{x: '100%'}}
+          scroll={{x: 1068}}
           columns={columns}
           rowKey={'id'}
           style={{marginTop: 24}}

@@ -164,6 +164,9 @@ class SiderMenu extends PureComponent{
   }
   componentWillReceiveProps = (nextProps) => {
     this.changeActiveKeys();
+    if(this.props.users.currentMenuList.name && this.props.users.currentMenuList.name !== nextProps.users.currentMenuList.name && nextProps.users.currentMenuList.name) {
+      this.props.cb(nextProps.users.currentMenuList.children[0].children[0].name);
+    }
     if(!this.props.title){
       this.setSubTitle()
     }

@@ -182,7 +182,7 @@ class ReplenishmentPlan extends PureComponent {
       {
         title: '计划单号',
         dataIndex: 'planCode',
-        width: 200,
+        width: 280,
         render: (text, record) => {
           return <span>
             <Link to={{ pathname: `/purchase/replenishment/replenishmentPlan/detail/${record.planCode}` }}>{text}</Link>
@@ -190,28 +190,32 @@ class ReplenishmentPlan extends PureComponent {
         }
       }, {
         title: '状态',
-        dataIndex: 'statusName'
+        dataIndex: 'statusName',
+        width: 112,
       }, {
         title: '类型',
-        dataIndex: 'planTypeName'
+        dataIndex: 'planTypeName',
+        width: 168,
       }, {
         title: '发起人',
-        dataIndex: 'createUserName'
+        dataIndex: 'createUserName',
+        width: 168,
       }, {
         title: '发起时间',
         dataIndex: 'createDate',
-        width: 200
+        width: 224
       }, {
         title: '收货地址',
         dataIndex: 'receiveAddress',
-        width: 270,
+        width: 280,
         className: 'ellipsis',
         render: (text) => (
           <Tooltip placement="topLeft" title={text}>{text}</Tooltip>
         )
       }, {
         title: '驳回原因',
-        dataIndex: 'note'
+        dataIndex: 'note',
+        width: 280,
       }
     ];
     return (
@@ -224,7 +228,7 @@ class ReplenishmentPlan extends PureComponent {
         <RemoteTable
           query={this.state.query}
           columns={columns}
-          scroll={{ x: '100%' }}
+          scroll={{x: 1560}}
           style={{marginTop: 20}}
           ref='table'
           rowKey={'id'}

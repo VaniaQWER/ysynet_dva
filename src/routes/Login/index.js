@@ -48,11 +48,13 @@ class Login extends PureComponent{
           console.log(subChildren,'subChildren')
           let href = subChildren.children ? subChildren.children[0].href: subChildren.href;
           href =  href && href[href.length -1] === '/'? href.substring(0,href.length-1): href;
-          console.log(href,'href')
+          console.log(href,'href');
           this.props.dispatch({
             type: 'users/setCurrentMenu',
             payload: { menu : tree[0].children[0] },
-          })
+          });
+          window.localStorage.setItem('key', data.deptInfo[0].deptId);
+          window.localStorage.setItem('deptName', data.deptInfo[0].deptName);
           history.push({ pathname: href ? href: '/error' })
           // history.push({ pathname: '/subSystem' })
           // history.push({ pathname: '/sys/drugDirectory/directory' })

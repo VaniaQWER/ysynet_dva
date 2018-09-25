@@ -30,6 +30,7 @@ const columns = [
     {
     title: '结算单',
     dataIndex: 'settleBillNo',
+    width: 280,
     render: (text, record) => (
         <span>
             <Link to={{ pathname: `/purchase/settlementMgt/statements/details/${text}`}}>{text}</Link>
@@ -37,25 +38,24 @@ const columns = [
     )
     }, {
         title: '供应商',
-        dataIndex: 'ctmaSupplierName'
+        dataIndex: 'ctmaSupplierName',
+        width: 224,
     }, {
         title: '状态',
-        dataIndex: 'settleStatusName'
+        dataIndex: 'settleStatusName',
+        width: 112,
     }, {
         title: '结算总金额',
-        dataIndex: 'settleSumAmount',
-        render: (text,record,index) =>{
-            return (index*1500*1.5 + 2000)
-        }
+        dataIndex: 'settleSumAmount',        
+        width: 168,
     }, {
         title: '对账单数量',
         dataIndex: 'settleSumQty',
-        render: (text,record,index) =>{
-            return index %3 === 0 ? index + 2: index + 3
-        }
+        width: 112,
     }, {
         title: '结算时间',
-        dataIndex: 'settleDate'
+        dataIndex: 'settleDate',
+        width: 224,
     }]
 
 

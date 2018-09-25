@@ -248,7 +248,7 @@ class PlanOrder extends PureComponent{
     const columns = [{
       title: '订单号',
       dataIndex: 'orderCode',
-      width: 250,
+      width: 280,
       render: (text,record) =>{
         return <span>
           <Link to={{pathname: `/purchase/replenishment/planOrder/detail/${record.orderCode}`}}>{text}</Link>
@@ -257,25 +257,27 @@ class PlanOrder extends PureComponent{
     },{
       title: '订单状态',
       dataIndex: 'orderStatusName',
-      width: 90,
+      width: 112,
     },{
       title: '订单类型',
       dataIndex: 'orderTypeName',
-      width: 120
+      width: 168
     },{
       title: '供应商',
-      dataIndex: 'supplierName'
+      dataIndex: 'supplierName',
+      width: 168,
     },{
       title: '下单人',
       dataIndex: 'createUserName',
-      width: 140
+      width: 168
     },{
       title: '下单时间',
-      dataIndex: 'createDate'
+      dataIndex: 'createDate',
+      width: 224,
     },{
       title: '收货地址',
       dataIndex: 'receiveAddress',
-      width: 270,
+      width: 280,
       className: 'ellipsis',
         render:(text)=>(
           <Tooltip placement="topLeft" title={text}>{text}</Tooltip>
@@ -297,7 +299,7 @@ class PlanOrder extends PureComponent{
             isJson={true}
             query={query}
             ref='table'
-            scroll={{ x: '110%' }}
+            scroll={{ x: 1448 }}
             rowKey={'id'}
             url={replenishmentPlan.PURCHASEORDERLIST}
             rowSelection={{

@@ -11,7 +11,15 @@ class BasicLayout extends PureComponent {
   state = {
     collapsed: false,
     title: '',
-    hasDept: true
+    hasDept: true,
+    deptId: [this.props.users.currentDept.deptId]
+  }
+  componentWillReceiveProps(nextProps) {
+    if(this.props.users.currentDept.deptId !== nextProps.users.currentDept.deptId) {
+      this.setState({
+        deptId: [nextProps.users.currentDept.deptId],
+      });
+    }
   }
   componentWillMount = () =>{
     let { dispatch, users } = this.props;
@@ -26,9 +34,8 @@ class BasicLayout extends PureComponent {
             let deptInfo = data.deptInfo;
             let { menuList } = deptInfo[0];
             let tree = menuFormat(menuList,true,1);
-            
-            let id = window.sessionStorage.getItem('key');
-            let deptName = window.sessionStorage.getItem('deptName');
+            let id = window.localStorage.getItem('key');
+            let deptName = window.localStorage.getItem('deptName');
             if(id && deptName) {
               console.log('刷新');
               dispatch({
@@ -70,6 +77,7 @@ class BasicLayout extends PureComponent {
   }
   handleClick = (e) =>{
     let { dispatch, users, history } = this.props;
+    if(e.key === this.state.deptId[0]) return;
     let { deptInfo } = users.userInfo;
     let currMenuList = deptInfo.filter(item => item.deptId === e.key)[0].menuList;
     let tree = menuFormat(currMenuList, true, 1 );
@@ -79,8 +87,8 @@ class BasicLayout extends PureComponent {
         hasDept: false
       });
     }
-    window.sessionStorage.setItem('key', e.key);
-    window.sessionStorage.setItem('deptName', e.item.props.children);
+    window.localStorage.setItem('key', e.key);
+    window.localStorage.setItem('deptName', e.item.props.children);
     dispatch({
       type: 'users/setCurrentDept',
       payload: { id: e.key, deptName: e.item.props.children },
@@ -99,12 +107,13 @@ class BasicLayout extends PureComponent {
       }
     })
   }
-  menu = (list,deptId) => {
+  menu = (list) => {
+    let {deptId} = this.state;
     return (
       <Menu 
         selectable
         onClick={this.handleClick}
-        defaultSelectedKeys={[deptId?deptId+"":""]}
+        selectedKeys={deptId}
       >
       {
         list.map((item,index) =>{
@@ -152,7 +161,7 @@ class BasicLayout extends PureComponent {
               <Col span={4} style={{ paddingLeft: 16 }}>
                 {
                   currentDept.deptId &&
-                  <Dropdown overlay={this.menu(deptList,currentDept.deptId)} trigger={['click']}>
+                  <Dropdown overlay={this.menu(deptList)} trigger={['click']}>
                     <Tooltip title='子系统切换' placement='right'>
                       <span className="ant-dropdown-link">
                         {currentDept.deptName} <Icon type="down" style={{ marginLeft: 8 }}/>

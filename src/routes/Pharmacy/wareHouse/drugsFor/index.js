@@ -37,33 +37,33 @@ class DrugsFor extends PureComponent{
     const columns = [
       {
       title: '申领单',
-      width:150,
+      width: 280,
       dataIndex: 'applyCode',
       render:(text, record)=>(<Link to={{pathname: `/pharmacy/wareHouse/drugsFor/details/${record.applyCode}`}}>{text}</Link>)
       },
       {
         title: '申领部门',
-        width:100,
+        width: 168,
         dataIndex: 'applyDeptName',
       },
       {
         title: '配货部门',
-        width:100,
+        width: 168,
         dataIndex: 'distributeDeptName',
       },
       {
         title: '状态',
-        width:100,
+        width: 112,
         dataIndex: 'applyStatusName'
       },
       {
         title: '发起人',
-        width:100,
+        width: 112,
         dataIndex: 'createUserName',
       },
       {
         title: '发起时间',
-        width:150,
+        width: 224,
         dataIndex: 'createDate'
       },
     ];
@@ -80,7 +80,7 @@ class DrugsFor extends PureComponent{
           ref="tab"
           query={query}
           url={wareHouse.APPLYLIST}
-          scroll={{x: '120%'}}
+          scroll={{x: '100%'}}
           columns={columns}
           rowKey={'applyCode'}
           style={{marginTop: 24}}

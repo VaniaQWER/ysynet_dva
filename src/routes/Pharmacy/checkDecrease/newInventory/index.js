@@ -122,7 +122,9 @@ class NewInventory extends PureComponent {
     subTypes: [],
     deleteLoadig: false,
     locTypeList: [],
-    checkValue: []
+    checkValue: [],
+    indeterminate: false,
+    allChecked: false,
   }
   componentDidMount() {
     this.props.dispatch({
@@ -164,6 +166,7 @@ class NewInventory extends PureComponent {
         type: 'location_type'
       },
       callback: (data) => {
+        data = data.filter(item => item.value !== "");
         this.setState({
           locTypeList: data
         });
@@ -177,34 +180,38 @@ class NewInventory extends PureComponent {
   //新建
   handleOk = (e) => {
     e.preventDefault();
+    let {checkValue} = this.state;
+    this.props.form.setFieldsValue({
+      locType: checkValue
+    });
     this.props.form.validateFields((err, values) => {
       if(err) return;
       console.log(values);
       if(values.checkStartTime) {
         values.checkStartTime = values.checkStartTime.format('YYYY-MM-DD HH:mm');
-      }
+      };
       this.setState({ loading: true });
       
-      // this.props.dispatch({
-      //   type: 'checkDecrease/createCheckbill',
-      //   payload: values,
-      //   callback: (data) => {
-      //     if(data.msg === 'success') {
-      //       this.setState({
-      //         loading: false,
-      //         visible: false,
-      //       });
-      //       this.refs.table.fetch(this.state.query);
-      //       message.success('新建成功！');
-      //     }else {
-      //       this.setState({
-      //         loading: false
-      //       });
-      //       message.error(data.msg);
-      //       message.warning('新建失败！');
-      //     }
-      //   }
-      // })
+      this.props.dispatch({
+        type: 'checkDecrease/createCheckbill',
+        payload: values,
+        callback: (data) => {
+          if(data.msg === 'success') {
+            this.setState({
+              loading: false,
+              visible: false,
+            });
+            this.refs.table.fetch(this.state.query);
+            message.success('新建成功！');
+          }else {
+            this.setState({
+              loading: false
+            });
+            message.error(data.msg);
+            message.warning('新建失败！');
+          }
+        }
+      })
     })
   }
   //删除
@@ -256,19 +263,22 @@ class NewInventory extends PureComponent {
   }
   //多选框事件
   changeCheckbox = (checkedValue) => {
-    console.log(checkedValue);
-    
-    let isCheckAll = checkedValue.some(item=>item === "");
-    if(isCheckAll) {
-      let checkValue = this.state.locTypeList.map(item=>item.value);
-      this.setState({
-        checkValue
-      });
-    }else {
-      this.setState({
-        checkValue: checkedValue
-      });
-    }
+    let {locTypeList} = this.state;
+    this.setState({
+      indeterminate: checkedValue.length > 0 && !(checkedValue.length === locTypeList.length),
+      allChecked: checkedValue.length === locTypeList.length,
+      checkValue: checkedValue
+    });
+  }
+  //全选
+  changeCheckAll = (e) => {
+    let {locTypeList} = this.state;
+    locTypeList = locTypeList.map(item=>item.value);
+    this.setState({
+      checkValue: e.target.checked ? locTypeList : [],
+      indeterminate: false,
+      allChecked: e.target.checked,
+    });
   }
   render() {
     const { getFieldDecorator} = this.props.form;
@@ -276,12 +286,12 @@ class NewInventory extends PureComponent {
       labelCol: { span: 6 }, 
       wrapperCol: { span: 18 } 
     };
-    const {status, types, query, checkValue, subTypes, subType, deleteLoadig, locTypeList} = this.state;
+    const {status, types, query, checkValue, subTypes, subType, deleteLoadig, locTypeList, indeterminate, allChecked} = this.state;
     const columns = [
       {
         title: '盘点单',
         dataIndex: 'checkBillNo',
-        width: 220,
+        width: 280,
         render: (text, record) => {
           return <span><Link to={{ pathname: `/pharmacy/checkDecrease/newInventory/details/${record.checkBillNo}`}}>{text}</Link></span>
         }
@@ -289,36 +299,45 @@ class NewInventory extends PureComponent {
       {
         title: '状态',
         dataIndex: 'checkStatusName',
+        width: 112,
       },
       {
         title: '盘点类型',
         dataIndex: 'checkBillTypeName',
+        width: 168,
       },
       {
         title: '盘点子类型',
         dataIndex: 'checkBillSubTypeName',
+        width: 168,
       },
       {
         title: '部门',
         dataIndex: 'checkBillDeptName',
+        width: 112,
       },
       {
         title: '盘点责任人',
         dataIndex: 'sheveUserName',
+        width: 112,
       },
       {
         title: '制单时间',
         dataIndex: 'createDate',
+        width: 224,
       },
       {
         title: '盘点时间',
         dataIndex: 'checkTime',
+        width: 224,
       },
       {
         title: '备注',
         dataIndex: 'remarks',
+        width: 280,
       }
     ];
+
     return (
       <div className='ysynet-main-content'>
         <SearchFormWarp
@@ -338,7 +357,7 @@ class NewInventory extends PureComponent {
           columns={columns}
           rowKey={'id'}
           ref="table"
-          scroll={{x: '130%'}}
+          scroll={{x: 1680}}
           style={{marginTop: 20}}
           rowSelection={{
             selectedRowKeys: this.state.selected,
@@ -387,18 +406,20 @@ class NewInventory extends PureComponent {
               </Col>
               <Col span={24}>
                 <FormItem label={'货位类别'} {...formItemLayoutAdd}>
-                  {/* {getFieldDecorator('locType', {
+                  {getFieldDecorator('locType', {
                     rules: [{ required: true, message: '请选择货位类别' }]
-                  })( */}
-                    <CheckboxGroup value={checkValue} onChange={this.changeCheckbox} style={{ width: '100%', marginTop: 10 }}>
-                      <Row>
-                        <Col style={{marginBottom: 10}} span={8}>
-                          <Checkbox indeterminate={true} value={""}>全部</Checkbox>
-                        </Col>
-                        {this.renderCheckbox(locTypeList)}
-                      </Row>
-                    </CheckboxGroup>
-                  {/* )} */}
+                  })(
+                    <Row>
+                      <Col span={8}>
+                        <Checkbox indeterminate={indeterminate} onChange={this.changeCheckAll} checked={allChecked}>全部</Checkbox>
+                      </Col>
+                      <CheckboxGroup value={checkValue} onChange={this.changeCheckbox} style={{width: '100%'}}>
+                        <Row>
+                          {this.renderCheckbox(locTypeList)}
+                        </Row>
+                      </CheckboxGroup>
+                    </Row>
+                  )}
                 </FormItem>
               </Col>
               {

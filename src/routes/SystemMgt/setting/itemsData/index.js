@@ -165,27 +165,32 @@ class ItemsData extends PureComponent{
       {
         title: '键值',
         dataIndex: 'value',
+        width: 112,
       },
       {
         title: '标签',
         dataIndex: 'label',
+        width: 168,
       },
       {
         title: '类型',
         dataIndex: 'type',
+        width: 168,
       },
       {
         title: '排序',
         dataIndex: 'sort',
+        width: 60,
       },
       {
         title: '描述',
         dataIndex: 'description',
-       
+        width: 168,
       },
       {
         title: '操作',
         dataIndex: 'action',
+        width: 60,
         render: (text,record,index)=>{
           return <span>
             <a onClick={this.modify.bind(null,record,index)} style={{ marginRight: 8 }}>编辑</a>

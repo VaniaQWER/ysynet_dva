@@ -27,7 +27,7 @@ const formItemLayout = {
 const singleFormItemLayout = {
   labelCol: {
     xs: { span: 24 },
-    sm: { span: 6 },//5
+    sm: { span: 8 },//5
   },
   wrapperCol: {
     xs: { span: 24 },
@@ -141,6 +141,7 @@ const WrappSearchForm = Form.create()(SearchForm);
 const columns = [{
   title: '通用名称',
   dataIndex: 'ctmmGenericName',
+  width: 168,
   render: (text,record) =>{
     return <span>
             <Link to={{pathname: `/sys/drugDirectory/directory/edit/${record.bigDrugCode}/${record.medDrugType}`}}>{text}</Link>
@@ -149,11 +150,13 @@ const columns = [{
 },
 {
   title: '商品名',
-  dataIndex: 'ctmmTradeName'
+  dataIndex: 'ctmmTradeName',
+  width: 224,
 },
 {
   title: '规格',
   dataIndex: 'ctmmSpecification',
+  width: 168,
   className: 'ellipsis',
   render:(text)=>(
     <Tooltip placement="topLeft" title={text}>{text}</Tooltip>
@@ -162,19 +165,22 @@ const columns = [{
 {
   title: '剂型',
   dataIndex: 'ctmmDosageFormDesc',
-  width: 150
+  width: 168,
 },
 {
   title: '包装规格',
-  dataIndex: 'ctmmPackingUnit',
+  dataIndex: 'packageSpecification',
+  width: 112,
 },
 {
   title: '药品编码',
   dataIndex: 'hisDrugCode',
+  width: 224,
 },
 {
   title: '批准文号',
-  dataIndex: 'approvalNo'
+  dataIndex: 'approvalNo',
+  width: 224,
 }]
 
 class DrugDirectory extends PureComponent{
@@ -200,7 +206,9 @@ class DrugDirectory extends PureComponent{
         console.log(JSON.stringify(values),'values');
         dispatch({
           type: "drugDirectory/addMedicine",
-          payload: {hisCtMedicineMaterial: values},
+          payload: {
+            hisCtMedicineMaterial: values
+          },
           callback: () =>{
             this.setState({ addVisible: false, addLoading: false });
             this.refs.table.fetch(this.state.query);
@@ -221,12 +229,13 @@ class DrugDirectory extends PureComponent{
       ...columns,
       {
         title: '生产厂家',
-        dataIndex: 'ctmmManufacturerName'
+        dataIndex: 'ctmmManufacturerName',
+        width: 224,
       },
       {
         title: '状态',
         dataIndex: 'ctmmStatusCode',
-        width: 100,
+        width: 112,
         fixed: 'right',
         render: text => <Badge status={text==="0" ? "success" :"error"} text={text==="0" ? "启用" :"停用"}/>
       },
@@ -319,7 +328,7 @@ class DrugDirectory extends PureComponent{
               </FormItem>
               <FormItem {...singleFormItemLayout} label={`包装规格`}>
                 {
-                  getFieldDecorator(`ctpHdmsPackageDesc`,{
+                  getFieldDecorator(`ctpHdmsCheckinUnitDesc`,{
                     initialValue: '',
                     rules: [{ required: true,message: '请输入包装规格' }]
                   })(
@@ -329,7 +338,7 @@ class DrugDirectory extends PureComponent{
               </FormItem>
               <FormItem {...singleFormItemLayout} label={`最小发药单位`}>
                 {
-                  getFieldDecorator(`ctpHdmsCheckinUnitDesc`,{
+                  getFieldDecorator(`ctpHdmsBasicUnitDesc`,{
                     initialValue: '',
                     rules: [{ required: true,message: '请输入最小发药单位' }]
                   })(
@@ -356,7 +365,7 @@ class DrugDirectory extends PureComponent{
         bordered
         query={query}
         url={systemMgt.MEDICINEMATERIAL_LIST}
-        scroll={{x: '140%'}}
+        scroll={{x: 1624}}
         columns={IndexColumns}
         rowKey={'id'}
       />

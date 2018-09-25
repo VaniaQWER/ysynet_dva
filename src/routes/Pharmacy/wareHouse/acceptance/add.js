@@ -9,32 +9,32 @@ import {connect} from 'dva';
 const columns = [
   {
     title: '实到数量',
-    width:100,
+    width: 112,
     dataIndex: 'realReceiveQuantiry'
   },
   {
     title: '需求数量',
-    width:100,
+    width: 112,
     dataIndex: 'realDeliveryQuantiry'
   },
   {
     title: '单位',
-    width:150,
+    width: 112,
     dataIndex: 'replanUnit'
   },
   {
     title: '通用名',
-    width:100,
+    width: 168,
     dataIndex: 'ctmmGenericName'
   },
   {
     title: '商品名',
-    width:150,
+    width: 224,
     dataIndex: 'ctmmTradeName',
   },
   {
     title: '规格',
-    width:150,
+    width: 168,
     dataIndex: 'ctmmSpecification',
     className:'ellipsis',
     render: (text)=>(
@@ -43,43 +43,43 @@ const columns = [
   },
   {
     title: '剂型',
-    width:150,
+    width: 168,
     dataIndex: 'ctmmDosageFormDesc',
     
   },
   {
     title: '包装规格',
-    width:150,
+    width: 168,
     dataIndex: 'packageSpecification',
   },
   {
     title: '批准文号',
-    width:150,
+    width: 168,
     dataIndex: 'approvalNo',
   },
   {
     title: '生产厂家',
-    width:150,
+    width: 224,
     dataIndex: 'ctmmManufacturerName',
   },
   {
     title: '生产批号',
-    width:150,
+    width: 168,
     dataIndex: 'productBatchNo',
   },
   {
     title: '生产日期',
-    width:150,
+    width: 168,
     dataIndex: 'realProductTime',
   },
   {
     title: '有效期至',
-    width:150,
+    width: 224,
     dataIndex: 'realValidEndDate'
   },
   {
     title: '供应商',
-    width:150,
+    width: 224,
     dataIndex: 'supplierName',
   }
 ];
@@ -273,7 +273,7 @@ class AddNewAcceptance extends PureComponent{
               <Table
                 bordered
                 loading={loading}
-                scroll={{x: '200%'}}
+                scroll={{x: 2456}}
                 columns={columns}
                 dataSource={unVerfiyList || []}
                 pagination={false}
@@ -288,7 +288,7 @@ class AddNewAcceptance extends PureComponent{
               <Table
                 loading={loading}
                 bordered
-                scroll={{x: '250%'}}
+                scroll={{x: 2456}}
                 columns={columns}
                 dataSource={verifyList || []}
                 rowKey={'id'}

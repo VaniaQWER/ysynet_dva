@@ -49,34 +49,39 @@ class MenuMgt extends PureComponent{
       {
         title: '菜单名称',
         dataIndex: 'name',
+        width: 168
       },
       {
         title: '链接',
         dataIndex: 'href',
+        width: 280
       },
       {
         title: '图标',
         dataIndex: 'icon',
-        render: (text) => <Icon type={text}/>
+        width: 60,
+        render: (text) => text ? <Icon type={text}/> : null
       },
       {
         title: '排序',
         dataIndex: 'sort',
-        width: 80
+        width: 60
       },
       {
         title: '可见',
         dataIndex: 'isShow',
-        width: 80,
+        width: 60,
         render:(text,record,index)=>text==="1"?"是":"否",
       },
       {
         title: '部门类型',
         dataIndex: 'depType',
+        width: 168,
         render:(text,record,index)=>text?DeptFormat[text]:text
       },
       {
         title: '备注',
+        width: 280,
         dataIndex: 'remarks',
       },
       {
@@ -104,7 +109,7 @@ class MenuMgt extends PureComponent{
           dataSource={dataSource}
           style={{marginTop: 20}}
           columns={columns}
-          scroll={{ x: '130%' }}
+          scroll={{ x: 1166 }}
           rowKey='id'
         />
 

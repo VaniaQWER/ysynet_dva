@@ -18,37 +18,37 @@ const columns = [
   {
    title: '出库单',
    dataIndex: 'distributeCode',
-   width:150,
+   width: 280,
    render:(text, record)=>(<Link to={{pathname: `/pharmacy/wareHouse/acceptance/details/id=${record.distributeCode}&state=${record.auditStatus}`}}>{text}</Link>)
   },
   {
     title: '申领单',
-    width:150,
+    width: 280,
     dataIndex: 'applyCode',
   },
   {
     title: '配货部门',
-    width:100,
+    width: 168,
     dataIndex: 'deptName'
   },
   {
     title: '状态',
-    width:150,
+    width: 112,
     dataIndex: 'statusName',
   },
   {
     title: '发起人',
-    width:100,
+    width: 112,
     dataIndex: 'createName'
   },
   {
     title: '发起时间',
     dataIndex: 'createDate',
-    width:120
+    width: 224
   },
   {
    title: '验收时间',
-   width:120,
+   width: 224,
    dataIndex: 'receptionTime'
   }
 ];
@@ -85,7 +85,7 @@ class Acceptance extends PureComponent{
           query={query}
           ref="tab"
           url={wareHouse.CHECKACCEPT_LIST}
-          scroll={{x: '100%'}}
+          scroll={{x: 1400}}
           columns={columns}
           rowKey={'id'}
           style={{marginTop: 20}}
@@ -159,7 +159,7 @@ class SearchFormWrapper extends PureComponent {
        <Row gutter={30}>
          <Col span={8}>
            <FormItem label={`单据`} {...formItemLayout}>
-             {getFieldDecorator('acceptanceCode', {})(
+             {getFieldDecorator('distributeCode', {})(
               <Input placeholder='入库单/配送单/订单号'/>
              )}
            </FormItem>

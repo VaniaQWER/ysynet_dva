@@ -30,7 +30,7 @@ const columns = [
   {
     title: '通用名',
     dataIndex: 'ctmmGenericName',
-    width: 200,
+    width: 168,
     render: (text, record) => {
       return (
         <span>
@@ -41,11 +41,11 @@ const columns = [
   }, {
     title: '商品名',
     dataIndex: 'ctmmTradeName',
-    width: 200,
+    width: 224,
   }, {
     title: '规格',
     dataIndex: 'ctmmSpecification',
-    width: 200,
+    width: 168,
     className: 'ellipsis',
     render:(text)=>(
       <Tooltip placement="topLeft" title={text}>{text}</Tooltip>
@@ -53,31 +53,31 @@ const columns = [
   }, {
     title: '生产厂家',
     dataIndex: 'ctmmManufacturerName',
-    width: 200,
+    width: 224,
   }, {
     title: '包装规格',
     dataIndex: 'packageSpecification',
-    width: 200,
+    width: 112,
   }, {
     title: '单位',
     dataIndex: 'replanUnit',
-    width: 200,
+    width: 112,
   }, {
     title: '库存数量',
     dataIndex: 'totalStoreNum',
-    width: 100,
+    width: 112,
   }, {
     title: '可用库存',
-    width: 100,
+    width: 112,
     dataIndex: 'usableQuantity',
   }, {
     title: '剂型',
     dataIndex: 'ctmmDosageFormDesc',
-    width: 200,
+    width: 168,
   }, {
     title: '批准文号',
     dataIndex: 'approvalNo',
-    width: 200,
+    width: 168,
   }
 ];
 
@@ -171,7 +171,7 @@ class StockInquiry extends PureComponent {
           query={query}
           ref="tab"
           bordered={true}
-          scroll={{x: '200%'}}
+          scroll={{x: 1568}}
           columns={columns}
           rowKey="drugCode"
         />

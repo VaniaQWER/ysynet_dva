@@ -16,7 +16,7 @@ const columns = [
   {
    title: '出库单',
    dataIndex: 'backNo',
-   width:150,
+   width: 280,
    render:(text)=>(
     <Link to={{pathname: `/pharmacy/outStorage/output/details/${text}`}}>{text}</Link>
    )
@@ -24,26 +24,26 @@ const columns = [
   {
     title: '发药确认单',
     dataIndex: 'dispensingCode',
-    width:150
+    width: 280
    },
   {
     title: '内部药房',
-    width:150,
+    width: 168,
     dataIndex: 'innerDeptName'
   },
   {
     title: '外部药房',
-    width:150,
+    width: 168,
     dataIndex: 'outDeptName'
   },
   {
     title: '出库分类',
-    width:100,
+    width: 168,
     dataIndex: 'backTypeName'
   },
   {
    title: '发药时间',
-   width:100,
+   width: 224,
    dataIndex: 'dispensingDate'
   }
 ];
@@ -67,7 +67,7 @@ class Output extends PureComponent{
         <RetomeTable
           query={query}
           url={outStorage.BILLOUTSOTRE_LIST}
-          scroll={{x: '100%'}}
+          scroll={{x: 1288}}
           columns={columns}
           rowKey={'id'}
           style={{marginTop: 20}}

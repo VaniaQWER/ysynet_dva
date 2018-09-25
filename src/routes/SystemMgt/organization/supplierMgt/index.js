@@ -139,26 +139,32 @@ class UserMgt extends PureComponent{
       {
         title: '供应商名称',
         dataIndex: 'ctmaSupplierName',
+        width: 224,
       },
       {
         title: '内部编码',
         dataIndex: 'ctmaSupplierCode',
+        width: 168,
       },
       {
         title: '创建时间',
         dataIndex: 'createDate',
+        width: 224,
       },
       {
         title: '编辑人',
-        dataIndex: 'editMan',
+        dataIndex: 'updateUserName',
+        width: 112,
       },
       {
         title: '编辑时间',
         dataIndex: 'updateDate',
+        width: 224,
       },
       {
         title: '操作',
         dataIndex: 'action',
+        width: 60,
         render: (text,record,index)=>{
           return <span>
             <a onClick={this.modify.bind(null,record,index)} style={{ marginLeft: 8 }}>编辑</a>

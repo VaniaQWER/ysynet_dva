@@ -17,7 +17,7 @@ const columns = [
   {
     title: '召回/锁定单号',
     dataIndex: 'recallNo',
-    width:150,
+    width: 280,
     render: (text, record) => 
     <span>
       <Link to={{pathname: `/drugStorage/outStorage/recallAndLockedCheck/details/${text}/${record.recallStatus}`}}>{text}</Link>
@@ -25,43 +25,43 @@ const columns = [
    },
   {
     title: '状态',
-    width:100,
+    width: 112,
     dataIndex: 'recallStatusName',
   },
   {
     title: '类型',
-    width: 100,
+    width: 168,
     dataIndex: 'recallTypeName',
   },
   {
     title: '供应商',
-    width:100,
+    width: 224,
     dataIndex: 'supplierName',
   },
   {
     title: '发起人',
-    width:100,
+    width: 112,
     dataIndex: 'createUserName',
   },
   {
    title: '发起时间',
-   width:150,
+   width: 224,
    dataIndex: 'createDate',
   },
   {
     title: '审核人',
-    width:100,
+    width: 112,
     dataIndex: 'updateUserName',
   },
   {
     title: '审核时间',
-    width:150,
+    width: 224,
     dataIndex: 'updateDate',
   },
   {
     title: '原因',
     dataIndex: 'remarks',
-    width:150
+    width: 280
   }
 ];
 /* 搜索 - 表单 */
@@ -236,7 +236,7 @@ class RecallAndLockedCheck extends PureComponent{
             query={query}
             bordered
             url={outStorage.ROOMRECALL_LIST}
-            scroll={{x: '130%'}}
+            scroll={{x: 1784}}
             columns={columns}
             rowKey={'id'}
             style={{marginTop: 20}}

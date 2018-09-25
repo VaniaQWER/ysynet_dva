@@ -19,7 +19,7 @@ const columns = [
   {
    title: '出库单',
    dataIndex: 'backNo',
-   width:150,
+   width: 280,
    render:(text, record)=>
    <span>
       <Link to={{pathname: `/pharmacy/outStorage/newOut/details/id=${record.backNo}&state=${record.outStoreStatus}`}}>{text}</Link>
@@ -27,42 +27,42 @@ const columns = [
   },
   {
     title: '拣货单',
-    width:180,
+    width: 280,
     dataIndex: 'pickingNo',
   },
   {
     title: '出库分类',
-    width:100,
+    width: 112,
     dataIndex: 'backType',
   },
   {
     title: '状态',
-    width:100,
+    width: 112,
     dataIndex: 'status',
   },
   {
     title: '申领部门',
-    width:100,
+    width: 168,
     dataIndex: 'deptName'
   },
   {
     title: '发起人',
-    width:100,
+    width: 112,
     dataIndex: 'createUserName'
   },
   {
    title: '发起时间',
    dataIndex: 'createDate',
-   width:120
+   width: 224
   },
  {
   title: '复核人',
-  width:100,
+  width: 112,
   dataIndex: 'checkUserName'
  },
  {
   title: '复核时间',
-  width:160,
+  width: 224,
   dataIndex: 'checkDate'
  }
 ];
@@ -128,7 +128,7 @@ class Output extends PureComponent{
             })
           }}
           ref="tab"
-          scroll={{x: '150%'}}
+          scroll={{x: 1624}}
           columns={columns}
           rowKey={'id'}
           style={{marginTop: 20}}

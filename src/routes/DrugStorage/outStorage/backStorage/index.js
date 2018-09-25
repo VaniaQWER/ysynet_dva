@@ -18,7 +18,7 @@ const columns = [
   {
     title: '退货单',
     dataIndex: 'backNo',
-    width:150,
+    width: 280,
     render: (text, record) => 
     <span>
       <Link to={{pathname: `/drugStorage/outStorage/backStorage/details/${text}`}}>{text}</Link>
@@ -27,31 +27,31 @@ const columns = [
   {
     title: '来源部门',
     dataIndex: 'backDpetName',
-    width: 130,
+    width: 168,
    },
   {
     title: '退货原因  ',
     dataIndex: 'backCause',
-    width:150,
+    width: 280,
   },
   {
     title: '状态',
-    width:100,
+    width: 112,
     dataIndex: 'backStatusName',
   },
   {
     title: '供应商',
-    width:100,
+    width: 224,
     dataIndex: 'supplierName',
   },
   {
     title: '退货人',
-    width:100,
+    width: 112,
     dataIndex: 'createUserName',
   },
   {
    title: '退货时间',
-   width:150,
+   width: 224,
    dataIndex: 'createDate',
   }
 ];
@@ -206,7 +206,7 @@ class Refund extends PureComponent{
           query={query}
           bordered
           url={outStorage.FINDCOMMONBACK_LIST}
-          scroll={{x: '100%'}}
+          scroll={{x: 1416}}
           columns={columns}
           rowKey={'id'}
           style={{marginTop: 20}}

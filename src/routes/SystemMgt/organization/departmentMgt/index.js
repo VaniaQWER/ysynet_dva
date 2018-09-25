@@ -253,31 +253,38 @@ class DepartmentMgt extends PureComponent{
       {
         title: '部门名称',
         dataIndex: 'deptName',
+        width: 168,
       },
       {
         title: '科室名称',
         dataIndex: 'hisDeptName',
+        width: 168,
       },
       {
         title: '部门类型',
         dataIndex: 'deptType',
+        width: 168,
         render:(text,record,index)=>text?DeptFormat[text]:''
       },
       {
         title: '地址',
         dataIndex: 'deptLocation',
+        width: 280,
       },
       {
         title: '编辑人',
         dataIndex: 'updateUserId',
+        width: 112,
       },
       {
         title: '编辑时间',
         dataIndex: 'updateDate',
+        width: 224,
       },
       {
         title: '操作',
         dataIndex: 'action',
+        width: 100,
         render: (text,record,index)=>{
           return <span>
             <Link className='button-gap' to={{pathname:`/sys/organization/departmentMgt/edit/${record.id}`,state:record}}>编辑</Link>

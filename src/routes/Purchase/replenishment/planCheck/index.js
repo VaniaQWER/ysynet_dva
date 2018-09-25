@@ -201,7 +201,7 @@ class PlanCheck extends PureComponent{
     const columns = [{
       title: '计划单号',
       dataIndex: 'planCode',
-      width: 250,
+      width: 280,
       render: (text,record) =>{
         return <span>
           <Link to={{pathname: `/purchase/replenishment/planCheck/detail/${record.planCode}/${record.auditStatus}`}}>{text}</Link>
@@ -210,27 +210,31 @@ class PlanCheck extends PureComponent{
     },{
       title: '状态',
       dataIndex: 'statusName',
-      width: 100,
+      width: 112,
     },{
       title: '类型',
       dataIndex: 'planTypeName',
-      width: 100,
+      width: 168,
     },{
       title: '发起人',
       dataIndex: 'createUserName',
-    },{
+      width: 168,
+      },{
       title: '发起时间',
       dataIndex: 'createDate',
+      width: 224,
     },{
       title: '审核人',
       dataIndex: 'sheveUserName',
+      width: 112,
     },{
       title: '审核时间',
-      dataIndex: 'sheveDate'
+      dataIndex: 'sheveDate',
+      width: 224,
     },{
       title: '收货地址',
       dataIndex: 'receiveAddress',
-      width: 270,
+      width: 280,
       className: 'ellipsis',
         render:(text)=>(
           <Tooltip placement="topLeft" title={text}>{text}</Tooltip>
@@ -251,7 +255,7 @@ class PlanCheck extends PureComponent{
             columns={columns}
             url={replenishmentPlan.PLANLIST}
             bordered
-            scroll={{ x: '130%' }}
+            scroll={{ x: 1568 }}
             rowKey={'id'}
             rowSelection={{
               selectedRowKeys: this.state.selected,

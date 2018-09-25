@@ -81,10 +81,13 @@ class GoodsAllocation extends PureComponent{
         values.deptCode = this.props.match.params.id;
         if(values.positionType){
           values.positionType=Number(values.positionType);
-        }
+        };
+        values.id = this.state.record.id;
         this.props.dispatch({
           type:'Organization/OperSysDept',
-          payload:{goods:[values]},
+          payload:{
+            goods:[values],
+          },
           callback:(data)=>{
             this.onCancelModal();
             this.refs.tableGoods.fetch();
