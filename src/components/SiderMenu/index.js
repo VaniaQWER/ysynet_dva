@@ -210,8 +210,11 @@ class SiderMenu extends PureComponent{
             if (pathname !== href){
               this.props.cb(name);
               history.push({pathname: href})
-            }
-            else{
+              // 切换菜单  清除查询条件
+              this.props.dispatch({
+                type: 'base/clearQueryConditions'
+              });
+            } else{
               message.info('您正位于该页面')
             }
           }}

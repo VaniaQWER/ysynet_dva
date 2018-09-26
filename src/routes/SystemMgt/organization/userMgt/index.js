@@ -36,7 +36,7 @@ class SearchForm extends PureComponent{
     deptOptions: [], //所属科室
     departmentOptions: [] //所属部门
   }
-  componentWillMount = () =>{
+  componentDidMount = () =>{
     let { dispatch } = this.props;
     // 所属科室
     dispatch({
@@ -54,7 +54,10 @@ class SearchForm extends PureComponent{
         this.setState({ departmentOptions: data })
       }
     });
-
+    const { queryConditons: { loginName, name, deptIds, hisDeptIds} } = this.props.formProps.base;
+    this.props.form.setFieldsValue({
+      loginName, name, deptIds, hisDeptIds
+    })
   }
   toggle = () => {
     const { display, expand } = this.state;
@@ -69,6 +72,10 @@ class SearchForm extends PureComponent{
       if(!err){
         console.log(values,'查询数据');
         this.props.query(values)
+        this.props.formProps.dispatch({
+          type:'base/setQueryConditions',
+          payload: values
+        })
       }
     })
   }
@@ -189,9 +196,16 @@ class UserMgt extends PureComponent{
     const { history } = this.props;
     history.push({ pathname: '/sys/organization/userMgt/add' })
   }
+  _tableChange = values => (
+    this.props.dispatch({
+      type:'base/setQueryConditions',
+      payload: values
+    })
+  )
   render(){
     const { visible, query } = this.state;
     const { getFieldDecorator } = this.props.form;
+    console.log(this.props)
     const columns = [
       {
         title: '账号',
@@ -243,6 +257,7 @@ class UserMgt extends PureComponent{
         <WrapperForm 
           query={this.queryHandle}
           dispatch={this.props.dispatch}
+          formProps={{...this.props}}
         />
         <div style={{ marginBottom: 24 }}>
           <Button type='primary' icon='plus' onClick={this.add}>新增用户</Button>
@@ -255,6 +270,7 @@ class UserMgt extends PureComponent{
           scroll={{ x: 1138 }}
           url={systemMgt.FINDUSERLIST}
           rowKey={'loginName'}
+          onChange={this._tableChange}
         />
         <Modal
           title={'用户修改'}

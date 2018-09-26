@@ -14,7 +14,11 @@ import { message } from 'antd';
 export default {
   namespace: 'base',
   state:{
-    replenishDetailsInfo: {}
+    replenishDetailsInfo: {},
+    // 查询条件
+    queryConditons: {
+      
+    }
   },
   effects:{
     //基数药 - 验收 - 新增验收 - 搜索
@@ -220,10 +224,32 @@ export default {
         return message.error(data.msg)
       }
       if(callback) callback(data.data)
+    },
+    // 存储查询条件
+    *setQueryConditions({ payload },{ put }){
+      yield put({ type: 'queryConditions', payload: payload });
+    },
+    // 删除存储条件
+    *clearQueryConditions({ payload },{ put }){
+      yield put({ type: 'clearConditions' });
     }
   },
   reducers: {
-
+    queryConditions(state, action){
+      const key = window.location.href.split('#')[1]
+      return {
+        ...state,
+        queryConditons: {
+          key, ...state.queryConditions, ...action.payload
+        }
+      }
+    },
+    clearConditions(state, action){
+      return {
+        ...state,
+        queryConditons: {}
+      }
+    },
   },
   subscriptions: {
     

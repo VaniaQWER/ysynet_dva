@@ -32,8 +32,13 @@ class SearchForm extends PureComponent{
   }
   handleSearch = (e) => {
     e.preventDefault();
+    console.log(this.props.formProps)
     this.props.form.validateFields((err,values)=>{
       this.props.query(values)
+      this.props.formProps.dispatch({
+          type:'base/setQueryConditions',
+          payload: values
+      })
     })
   } 
   handleReset = ()=>{
@@ -182,6 +187,8 @@ class DrugDirectory extends PureComponent{
     loading: false,
     addLoading: false
   }
+
+
   //新增弹窗搜索
   searchModalInsert = (val) =>{
      this.refs.modalTableInsert.fetch({ctmmGenericName:val})
@@ -276,6 +283,13 @@ class DrugDirectory extends PureComponent{
       }
     })
   }
+  _tableChange = values => {
+    console.log(values)
+    this.props.dispatch({
+      type:'base/setQueryConditions',
+      payload: values
+    })
+  }
   render(){
     const { visible, loading, addVisible, addLoading , query} = this.state;
     const { getFieldDecorator } = this.props.form;
@@ -310,7 +324,7 @@ class DrugDirectory extends PureComponent{
     ];
     return (
     <div className='ysynet-main-content'>
-      <WrappSearchForm query={(data)=>this.refs.table.fetch(data)}/>
+      <WrappSearchForm query={(data)=>this.refs.table.fetch(data)} formProps={{...this.props}}/>
       <Row className='ant-row-bottom'>
         <Col>
           <Button type='primary' onClick={this.bitchEdit}>批量设置上下限</Button>
@@ -411,6 +425,7 @@ class DrugDirectory extends PureComponent{
           }
         }}
         rowKey='detailId'
+        onChange={this._tableChange}
       />
     </div>
     )
