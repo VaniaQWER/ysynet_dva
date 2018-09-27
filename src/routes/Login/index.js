@@ -15,15 +15,15 @@ class Login extends PureComponent{
       if(!err){
         this.setState({ loading: true });
         let { userName, password } = values;
-        this.userLogin(userName, password)
-        /* this.props.dispatch({
+        // this.userLogin(userName, password)
+        this.props.dispatch({
           type: 'users/EncryptPassword',
           payload: { password },
           callback: (data) =>{
             let newPassword = data.password;
             this.userLogin(userName,newPassword);
           }
-        }) */
+        }) 
       }
     })
   }
@@ -45,16 +45,18 @@ class Login extends PureComponent{
           console.log(tree,'ret');
           // console.log(JSON.stringify(tree))
           let subChildren = tree[0].children[0].children[0];
-          console.log(subChildren,'subChildren')
+          // console.log(subChildren,'subChildren')
           let href = subChildren.children ? subChildren.children[0].href: subChildren.href;
           href =  href && href[href.length -1] === '/'? href.substring(0,href.length-1): href;
-          console.log(href,'href');
           this.props.dispatch({
             type: 'users/setCurrentMenu',
             payload: { menu : tree[0].children[0] },
           });
           window.localStorage.setItem('key', data.deptInfo[0].deptId);
           window.localStorage.setItem('deptName', data.deptInfo[0].deptName);
+          // href = href.split('/');
+          // href.splice(2, 0, deptInfo[0].deptId);
+          // href = href.join('/');
           history.push({ pathname: href ? href: '/error' })
           // history.push({ pathname: '/subSystem' })
           // history.push({ pathname: '/sys/drugDirectory/directory' })

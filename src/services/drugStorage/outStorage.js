@@ -22,7 +22,7 @@ export function genDeptList(options) { // 已申领部门
 
 // 受理配货 详情
 export function distributeDetail(options) { // 配货单据详情
-  return request(`${_local}/a/common/pickingorderdetail/getPickingDetail`,{ 
+  return request(`${_local}/a/commondistribute/distributeDetail`,{ 
     method: 'GET',
     type: 'formData',
     body: options

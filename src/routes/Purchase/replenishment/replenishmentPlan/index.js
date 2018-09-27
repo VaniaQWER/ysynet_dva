@@ -11,10 +11,10 @@
 import React, { PureComponent } from 'react';
 import { Form, Row, Col, Button, Input, DatePicker, Select, Icon, message, Tooltip } from 'antd';
 import { Link } from 'react-router-dom';
-import moment from 'moment';
 import RemoteTable from '../../../../components/TableGrid';
 import { replenishmentPlan } from '../../../../api/replenishment/replenishmentPlan';
 import { connect } from 'dva';
+import moment from 'moment';
 
 const FormItem = Form.Item;
 const { RangePicker } = DatePicker;
@@ -30,9 +30,12 @@ const formItemLayout = {
   },
 };
 
+const monthFormat = 'YYYY-MM-DD';
+
 class SearchForm extends PureComponent{
   state = {
     display: 'none',
+    expand: false
   }
   toggle = () => {
     const { display, expand } = this.state;
@@ -40,6 +43,23 @@ class SearchForm extends PureComponent{
       display: display === 'none' ? 'block' : 'none',
       expand: !expand
     })
+  }
+  componentDidMount() {
+    let { queryConditons } = this.props.formProps.base;
+    if(queryConditons.startTime && queryConditons.endTime) {
+      queryConditons.createDate = [moment(queryConditons.startTime, monthFormat), moment(queryConditons.endTime, monthFormat)];
+    }else {
+      queryConditons.createDate = [];
+    };
+    //找出表单的name 然后set
+    let values = this.props.form.getFieldsValue();
+    values = Object.getOwnPropertyNames(values);
+    let value = {};
+    values.map(keyItem => {
+      value[keyItem] = queryConditons[keyItem];
+      return keyItem;
+    });
+    this.props.form.setFieldsValue(value);
   }
   handleSearch = e => {
     e.preventDefault();
@@ -49,17 +69,24 @@ class SearchForm extends PureComponent{
         if (createDate.length > 0) {
           values.startTime = createDate[0].format('YYYY-MM-DD');
           values.endTime = createDate[1].format('YYYY-MM-DD');
-        }
-        values.planType = '1';
-        console.log('搜索条件：', values);
-        this.props.query(values);
+        }else {
+          values.startTime = '';
+          values.endTime = '';
+        };
+        delete values.createDate;
+        this.props.formProps.dispatch({
+          type:'base/setQueryConditions',
+          payload: values
+        });
       }
     })
   }
   //重置
   handleReset = () => {
     this.props.form.resetFields();
-    this.props.query({ planType: '1' });
+    this.props.formProps.dispatch({
+      type:'base/clearQueryConditions'
+    });
   }
   render(){
     const { getFieldDecorator } = this.props.form;
@@ -102,9 +129,7 @@ class SearchForm extends PureComponent{
           <Col span={8} style={{ display: display }}>
             <FormItem {...formItemLayout} label={`发起时间`}>
               {
-                getFieldDecorator(`createDate`,{
-                  initialValue: [moment().subtract(30, 'days'), moment(new Date())]
-                })(
+                getFieldDecorator(`createDate`)(
                   <RangePicker className={'ysynet-formItem-width'}/>
                 )
               }
@@ -155,10 +180,6 @@ class ReplenishmentPlan extends PureComponent {
       }
     });
   }
-  queryHandle = query => {
-    this.refs.table.fetch(query);
-    this.setState({ query });
-  }
   delete = () => {
     if (this.state.selectedRows.length > 0) {
       const planCode = [];
@@ -176,6 +197,12 @@ class ReplenishmentPlan extends PureComponent {
     } else {
       message.warn("请至少添加一条数据！");
     }
+  }
+  _tableChange = values => {
+    this.props.dispatch({
+      type:'base/setQueryConditions',
+      payload: values
+    });
   }
   render() {
     const columns = [
@@ -218,15 +245,25 @@ class ReplenishmentPlan extends PureComponent {
         width: 280,
       }
     ];
+    let query = this.props.base.queryConditons;
+    query = {
+      ...query,
+      ...this.state.query
+    }
+    delete query.key;
     return (
       <div className='ysynet-main-content'>
-        <WrapperForm query={this.queryHandle} typeListDate={this.state.typeListDate} />
+        <WrapperForm
+          typeListDate={this.state.typeListDate} 
+          formProps={{...this.props}}
+        />
         <div className='ant-row-bottom'>
           <Button type='primary' onClick={() => this.props.history.push({ pathname: `/createReplenishment` })}>新建补货计划</Button>
           <Button type='default' onClick={this.delete} style={{ marginLeft: 8 }}>删除</Button>
         </div>
         <RemoteTable
-          query={this.state.query}
+          onChange={this._tableChange}
+          query={query}
           columns={columns}
           scroll={{x: 1560}}
           style={{marginTop: 20}}

@@ -31,13 +31,13 @@ const singleFormItemLayout = {
 
 class SearchForm extends PureComponent{
   state = {
-    display: 'block',
-    expand: true,
+    display: 'none',
+    expand: false,
     deptOptions: [], //所属科室
     departmentOptions: [] //所属部门
   }
   componentDidMount = () =>{
-    let { dispatch } = this.props;
+    let { dispatch } = this.props.formProps;
     // 所属科室
     dispatch({
       type: 'Organization/getAllDeptByCondition',
@@ -54,10 +54,8 @@ class SearchForm extends PureComponent{
         this.setState({ departmentOptions: data })
       }
     });
-    const { queryConditons: { loginName, name, deptIds, hisDeptIds} } = this.props.formProps.base;
-    this.props.form.setFieldsValue({
-      loginName, name, deptIds, hisDeptIds
-    })
+    const { queryConditons: {pageSize, pageNo, key, sortField, sortOrder, ...other} } = this.props.formProps.base;
+    this.props.form.setFieldsValue(other);
   }
   toggle = () => {
     const { display, expand } = this.state;
@@ -71,17 +69,18 @@ class SearchForm extends PureComponent{
     this.props.form.validateFields((err,values)=>{
       if(!err){
         console.log(values,'查询数据');
-        this.props.query(values)
         this.props.formProps.dispatch({
           type:'base/setQueryConditions',
           payload: values
-        })
+        });
       }
     })
   }
   handleReset = () => {
     this.props.form.resetFields();
-    this.props.query({});
+    this.props.formProps.dispatch({
+      type:'base/clearQueryConditions'
+    });
   }
   render(){
     const { getFieldDecorator } = this.props.form;
@@ -111,7 +110,7 @@ class SearchForm extends PureComponent{
               }
             </FormItem>
           </Col>
-          <Col span={8}>
+          <Col span={8} style={{ display: display }}>
             <FormItem {...formItemLayout} label={`所属科室`}>
               {
                 getFieldDecorator(`hisDeptIds`,{
@@ -151,7 +150,7 @@ class SearchForm extends PureComponent{
               }
             </FormItem>
           </Col>
-          <Col span={expand ? 16: 24} style={{ textAlign: 'right', marginTop: 4}} >
+          <Col span={8} style={{float: 'right', textAlign: 'right', marginTop: 4}} >
            <Button type="primary" htmlType="submit">查询</Button>
            <Button type='default' style={{marginLeft: 8}} onClick={this.handleReset}>重置</Button>
            <a style={{marginLeft: 8, fontSize: 14}} onClick={this.toggle}>
@@ -167,18 +166,13 @@ const WrapperForm = Form.create()(SearchForm);
 class UserMgt extends PureComponent{
   state = {
     loading: false,
-    visible: false,
-    query: {}
-  }
-  queryHandle = (query) =>{
-    this.refs.table.fetch(query);
-    this.setState({ query });
+    visible: false
   }
   // 重置密码
   resetPwd = (record,index) =>{
     this.props.dispatch({
       type: 'Organization/ResetPwd',
-      payload: { loginName: record.loginName },
+      payload: { id: record.id },
       callback: () =>{
         this.refs.table.fetch(this.state.query);
       }
@@ -193,19 +187,19 @@ class UserMgt extends PureComponent{
     })
   }
   add = () =>{
-    const { history } = this.props;
-    history.push({ pathname: '/sys/organization/userMgt/add' })
+    const { history, location } = this.props;
+    history.push({ pathname: `${location.pathname}/add` });
   }
-  _tableChange = values => (
+  _tableChange = values => {
     this.props.dispatch({
       type:'base/setQueryConditions',
       payload: values
     })
-  )
+  }
   render(){
-    const { visible, query } = this.state;
+    const {location} = this.props;
+    const { visible } = this.state;
     const { getFieldDecorator } = this.props.form;
-    console.log(this.props)
     const columns = [
       {
         title: '账号',
@@ -247,16 +241,16 @@ class UserMgt extends PureComponent{
             <Popconfirm title="是否确认重置该用户密码?" onConfirm={this.resetPwd.bind(null, record,index)} okText="是" cancelText="否">
               <a>重置密码</a>
             </Popconfirm>
-            <Link style={{ marginLeft: 8 }} to={{pathname: `/sys/organization/userMgt/edit/${record.loginName}`}}>{'编辑'}</Link>
+            <Link style={{ marginLeft: 8 }} to={{pathname: `${location.pathname}/edit/${record.loginName}`}}>{'编辑'}</Link>
           </span>
         }
       },
-    ]
+    ];
+    let query = this.props.base.queryConditons;
+    delete query.key;
     return (
       <div className='ysynet-main-content'>
         <WrapperForm 
-          query={this.queryHandle}
-          dispatch={this.props.dispatch}
           formProps={{...this.props}}
         />
         <div style={{ marginBottom: 24 }}>

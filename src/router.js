@@ -61,10 +61,15 @@ function getLayout(navData, path) {
 
 
 function RouterConfig({ history, app }) {
-  const navData = getNavData(app);
+  let navData = getNavData(app);
   //const WorkplaceLayout = getLayout(navData, 'WorkplaceLayout').component;
   const BasicLayout = getLayout(navData, 'BasicLayout').component;
-
+  // navData[0].children.map(item => {
+  //   item.path = item.path.split('/');
+  //   item.path.splice(2, 0, ':deptCode');
+  //   item.path = item.path.join('/');
+  //   return item;
+  // });
   const passProps = {
     app,
     navData,

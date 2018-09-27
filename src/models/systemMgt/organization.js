@@ -64,13 +64,9 @@ export default {
     /******   供应商管理  *****/
     *SupplierSave({ payload, callback },{ put, call }){
       const data = yield call(supplierMgtService.SupplierSave, payload);
-      console.log(data,'userLogin');
-      if (data.code === 200) {
-        message.success('操作成功！');
-        if (callback) callback();
-      } else {
-        message.error(data.msg);
-      }
+      if(typeof callback === 'function') {
+        callback(data);
+      };
     },
     *SupplierDelete({ payload, callback },{ put, call }){
       const data = yield call(supplierMgtService.SupplierDelete, payload);

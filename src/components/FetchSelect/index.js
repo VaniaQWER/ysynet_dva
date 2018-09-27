@@ -69,7 +69,9 @@ class FetchSelect extends React.Component {
  
   getValues = (value,option) => {
     let {cb} = this.props;
-    cb && cb(value,option);
+    if(typeof cb === 'function') {
+      cb && cb(value,option);
+    }
   }
   handleChange = (value) => {
     if(value === '') return;

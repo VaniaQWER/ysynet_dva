@@ -7,7 +7,7 @@
  * @file 系统管理--组织机构--供应商管理
  */
 import React, { PureComponent } from 'react';
-import { Form, Row, Col, Input, Button, Modal, DatePicker } from 'antd';
+import { Form, Row, Col, Input, Button, Modal, DatePicker, message } from 'antd';
 import { formItemLayout } from '../../../../utils/commonStyles';
 import { connect } from 'dva';
 import { systemMgt } from '../../../../api/systemMgt';
@@ -124,9 +124,14 @@ class UserMgt extends PureComponent{
           type:'Organization/SupplierSave',
           payload: values,
           callback:(data)=>{
-            console.log(data);
-            this.setState({ loading: false, visible: false });
-            this.refs.table.fetch();
+            if(data.code === 200 && data.msg === 'success') {
+              message.success('新建成功');
+              this.setState({ loading: false, visible: false });
+              this.refs.table.fetch();
+            }else {
+              this.setState({ loading: false });
+              message.error(data.msg);
+            };
           }
         })
       }

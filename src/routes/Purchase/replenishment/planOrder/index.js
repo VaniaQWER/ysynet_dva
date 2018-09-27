@@ -14,6 +14,7 @@ import { Link } from 'react-router-dom';
 import RemoteTable from '../../../../components/TableGrid';
 import { replenishmentPlan } from '../../../../api/replenishment/replenishmentPlan';
 import { connect } from 'dva';
+import moment from 'moment';
 const FormItem = Form.Item;
 const { RangePicker } = DatePicker;
 const { Option } = Select;
@@ -27,6 +28,7 @@ const formItemLayout = {
     sm: { span: 19 }
   },
 };
+const monthFormat = 'YYYY-MM-DD';
 class SearchForm extends PureComponent{
   state = {
     display: 'none',
@@ -34,7 +36,7 @@ class SearchForm extends PureComponent{
     orderStatus: [], // 订单状态
     orderTypeOptions: [] // 订单类型
   }
-  componentWillMount = () =>{
+  componentDidMount = () =>{
     let { dispatch } = this.props;
     // 供应商
     dispatch({
@@ -64,7 +66,25 @@ class SearchForm extends PureComponent{
         this.setState({ orderTypeOptions: data })
       }
     });
-
+    let { queryConditons } = this.props.formProps.base;
+    queryConditons = {...queryConditons}; //如果queryConditons 里面包含对象 那么必须深拷贝;
+    if(queryConditons.startTime && queryConditons.endTime) {
+      queryConditons.orderTime = [moment(queryConditons.startTime, monthFormat), moment(queryConditons.endTime, monthFormat)];
+    }else {
+      queryConditons.orderTime = [];
+    };
+    if(queryConditons.supplierCodeList) {
+      queryConditons.supplierCodeList = queryConditons.supplierCodeList[0];
+    };
+    //找出表单的name 然后set
+    let values = this.props.form.getFieldsValue();
+    values = Object.getOwnPropertyNames(values);
+    let value = {};
+    values.map(keyItem => {
+      value[keyItem] = queryConditons[keyItem];
+      return keyItem;
+    });
+    this.props.form.setFieldsValue(value);
   }
   toggle = () => {
     const { display, expand } = this.state;
@@ -81,19 +101,28 @@ class SearchForm extends PureComponent{
         if(orderTime.length){
           values.startTime = values.orderTime[0].format('YYYY-MM-DD');
           values.endTime = values.orderTime[1].format('YYYY-MM-DD');
-        }
+        }else {
+          values.startTime = '';
+          values.endTime = '';
+        };
+        if(!values.supplierCodeList){
+          values.supplierCodeList = [];
+        }else {
+          values.supplierCodeList = [values.supplierCodeList];
+        };
         delete values.orderTime;
-        if(values.supplierCodeList.length === 0){
-          delete values.supplierCodeList;
-        }
-        console.log(values, '查询条件');
-        this.props.query(values);
+        this.props.formProps.dispatch({
+          type:'base/setQueryConditions',
+          payload: values
+        });
       }
     })
   }
   handleReset = () => {
     this.props.form.resetFields();
-    this.props.query({});
+    this.props.formProps.dispatch({
+      type:'base/clearQueryConditions'
+    });
   }
   render(){
     const { getFieldDecorator } = this.props.form;
@@ -104,9 +133,7 @@ class SearchForm extends PureComponent{
           <Col span={8}>
             <FormItem {...formItemLayout} label={`订单号`}>
               {
-                getFieldDecorator(`orderCode`,{
-                  initialValue: ''
-                })(
+                getFieldDecorator(`orderCode`)(
                   <Input placeholder='请输入'/>
                 )
               }
@@ -115,11 +142,9 @@ class SearchForm extends PureComponent{
           <Col span={8}>
             <FormItem {...formItemLayout} label={`供应商`}>
               {
-                getFieldDecorator(`supplierCodeList`,{
-                  initialValue: []
-                })(
+                getFieldDecorator(`supplierCodeList`)(
                   <Select
-                    mode="multiple"
+                    placeholder='请输入'
                     showSearch
                     optionFilterProp="children"
                     filterOption={(input, option) => option.props.children.indexOf(input) >= 0}
@@ -133,12 +158,10 @@ class SearchForm extends PureComponent{
               }
             </FormItem>
           </Col>
-          <Col span={8}>
+          <Col span={8} style={{ display: display }}>
             <FormItem {...formItemLayout} label={`下单时间`}>
               {
-                getFieldDecorator(`orderTime`,{
-                  initialValue: ''
-                })(
+                getFieldDecorator(`orderTime`)(
                   <RangePicker format={'YYYY-MM-DD'}/>
                 )
               }
@@ -175,7 +198,7 @@ class SearchForm extends PureComponent{
               }
             </FormItem>
           </Col>
-          <Col span={expand ? 8: 24} style={{ textAlign: 'right', marginTop: 4}} >
+          <Col span={8} style={{float: 'right', textAlign: 'right', marginTop: 4}} >
            <Button type="primary" htmlType="submit">查询</Button>
            <Button type='default' style={{marginLeft: 8}} onClick={this.handleReset}>重置</Button>
            <a style={{marginLeft: 8, fontSize: 14}} onClick={this.toggle}>
@@ -194,11 +217,6 @@ class PlanOrder extends PureComponent{
     selected: [],
     selectedRows: [],
     loading: false,
-    query: {},
-  }
-  queryHandler = query => {
-    this.setState({ query });
-    this.refs.table.fetch(query);
   }
   //关闭订单
   closeOrder = () =>{
@@ -243,57 +261,70 @@ class PlanOrder extends PureComponent{
       return message.warning('选中的数据中存在状态非待审核的单据,请检查重新提交')
     }
   }
+  _tableChange = values => {
+    this.props.dispatch({
+      type:'base/setQueryConditions',
+      payload: values
+    })
+  }
   render(){
-    const { loading, query } = this.state;
-    const columns = [{
-      title: '订单号',
-      dataIndex: 'orderCode',
-      width: 280,
-      render: (text,record) =>{
-        return <span>
-          <Link to={{pathname: `/purchase/replenishment/planOrder/detail/${record.orderCode}`}}>{text}</Link>
-        </span>  
-      }
-    },{
-      title: '订单状态',
-      dataIndex: 'orderStatusName',
-      width: 112,
-    },{
-      title: '订单类型',
-      dataIndex: 'orderTypeName',
-      width: 168
-    },{
-      title: '供应商',
-      dataIndex: 'supplierName',
-      width: 168,
-    },{
-      title: '下单人',
-      dataIndex: 'createUserName',
-      width: 168
-    },{
-      title: '下单时间',
-      dataIndex: 'createDate',
-      width: 224,
-    },{
-      title: '收货地址',
-      dataIndex: 'receiveAddress',
-      width: 280,
-      className: 'ellipsis',
-        render:(text)=>(
-          <Tooltip placement="topLeft" title={text}>{text}</Tooltip>
-        )
-    },];
+    const { loading } = this.state;
+    const columns = [
+      {
+        title: '订单号',
+        dataIndex: 'orderCode',
+        width: 280,
+        render: (text,record) =>{
+          return <span>
+            <Link to={{pathname: `/purchase/replenishment/planOrder/detail/${record.orderCode}`}}>{text}</Link>
+          </span>  
+        }
+      },{
+        title: '订单状态',
+        dataIndex: 'orderStatusName',
+        width: 112,
+      },{
+        title: '订单类型',
+        dataIndex: 'orderTypeName',
+        width: 168
+      },{
+        title: '供应商',
+        dataIndex: 'supplierName',
+        width: 168,
+      },{
+        title: '下单人',
+        dataIndex: 'createUserName',
+        width: 168
+      },{
+        title: '下单时间',
+        dataIndex: 'createDate',
+        width: 224,
+      },{
+        title: '收货地址',
+        dataIndex: 'receiveAddress',
+        width: 280,
+        className: 'ellipsis',
+          render:(text)=>(
+            <Tooltip placement="topLeft" title={text}>{text}</Tooltip>
+          )
+      },
+    ];
+    let query = this.props.base.queryConditons;
+    console.log(query.supplierCodeList);
+    
+    delete query.key;
     return (
       <div className='ysynet-main-content'>
          <WrapperForm 
-            query={this.queryHandler}
             dispatch={this.props.dispatch}
+            formProps={{...this.props}}
           />
          <div className='ant-row-bottom'>
             <Button type='primary' onClick={this.sendOrder} disabled >发送订单</Button>
             <Button type='default' onClick={this.closeOrder} loading={loading} style={{ marginLeft: 8 }}>关闭订单</Button>
          </div>
          <RemoteTable 
+            onChange={this._tableChange}
             columns={columns}
             bordered
             isJson={true}

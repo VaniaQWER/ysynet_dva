@@ -19,7 +19,7 @@ const columns = [
    title: '入库单',
    dataIndex: 'inStoreCode',
    width: 280,
-   render:(text, record)=>(<Link to={{pathname: `/pharmacy/wareHouse/newLibrary/details/rCode=${text}&dCode=${record.dirstrbuteDeptCode}`}}>{text}</Link>)
+   render:(text, record)=>(<Link to={{pathname: `/pharmacy/wareHouse/newLibrary/details/${text}`}}>{text}</Link>)
   },
   {
     title: '出库单',

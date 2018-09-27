@@ -47,14 +47,14 @@ class SearchForm extends PureComponent{
     return (
       <Form className="ant-advanced-search-form" onSubmit={this.handleSearch}>
         <Row gutter={30}>
-          <Col span={6}>
+          <Col span={8}>
             <FormItem {...formItemLayout} label={`类型`}>
               {
                 getFieldDecorator(`type`,{
                   initialValue: ''
                 })(
                   <Select
-                    style={{ width: 240 }}
+                    style={{ width: '100%' }}
                     showSearch
                     optionFilterProp="children"
                     filterOption={(input, option) => option.props.children.indexOf(input) >= 0}
@@ -68,20 +68,20 @@ class SearchForm extends PureComponent{
               }
             </FormItem>
           </Col>
-          <Col span={6}>
+          <Col span={8}>
             <FormItem {...formItemLayout} label={`描述`}>
               {
                 getFieldDecorator(`description`,{
                   initialValue: ''
                 })(
-                  <Input placeholder='请输入' style={{ width: 240 }} />
+                  <Input placeholder='请输入' />
                 )
               }
             </FormItem>
           </Col>
-          <Col span={6} style={{ textAlign: 'right' }}>
+          <Col span={8} style={{ textAlign: 'right' }}>
             <Button type='primary' htmlType='submit'>查询</Button>
-            <Button type="default" onClick={this.handleReset} style={{ marginLeft: 10 }}>查询</Button>
+            <Button type="default" onClick={this.handleReset} style={{ marginLeft: 10 }}>重置</Button>
           </Col>
         </Row>
       </Form>

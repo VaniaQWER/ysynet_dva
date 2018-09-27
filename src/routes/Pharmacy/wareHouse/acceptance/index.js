@@ -64,10 +64,12 @@ class Acceptance extends PureComponent{
     }
   }
   queryHandler = (query) => {
-    for (const key in query) {
-      query[key] = query[key] === undefined? '' : query[key]
-    };
-    this.refs.tab.fetch(query);
+    this.setState({
+      query: {
+        ...this.state.query,
+        ...query
+      }
+    });
   }
   render(){
     let {query} = this.state;

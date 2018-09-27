@@ -118,7 +118,7 @@ class AddOutput extends PureComponent{
     this.setState({submitLoading: true});
     let listDetail = dataSource.map(item=>{
       return {
-        batch: item.lot,
+        batchNo: item.batchNo,
         drugCode: item.drugCode,
         outStoreNum: item.outStoreNum
       }
@@ -262,7 +262,7 @@ class AddOutput extends PureComponent{
       {
         title: '生产批号',
         width:150,
-        dataIndex: 'approvalNo',
+        dataIndex: 'lot',
       },
       {
         title: '生产日期',
@@ -287,7 +287,7 @@ class AddOutput extends PureComponent{
       {
         title: '批准文号',
         width:150,
-        dataIndex: 'lot',
+        dataIndex: 'approvalNo',
       }
     ];
     let {visible, selectedRowKeyModal, dataSource, type, dept, query, submitLoading, outStoreType} = this.state; 

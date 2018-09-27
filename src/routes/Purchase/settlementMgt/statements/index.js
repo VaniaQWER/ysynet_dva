@@ -2,17 +2,14 @@
  * @file 结算管理 - 结算单
  */
 import React, {PureComponent} from 'react';
-
 import {Link} from 'react-router-dom';
-
 import { Form, Row, Col, Input, Button, DatePicker } from 'antd';
-
 import {settlementMgt} from '../../../../api/purchase/purchase';
-
 import RemoteTable from '../../../../components/TableGrid/index';
-
+import moment from 'moment';
+import {connect} from 'dva';
 const FormItem = Form.Item;
-
+const monthFormat = 'YYYY-MM-DD';
 const { RangePicker } = DatePicker;
 
 const formItemLayout = {
@@ -60,9 +57,6 @@ const columns = [
 
 
 class SettlementMgt extends PureComponent {
-    state = {
-        query: {}
-    }
     handleSearch = (e) => {
         e.preventDefault();
         this.props.form.validateFields((err, values) => {
@@ -75,20 +69,39 @@ class SettlementMgt extends PureComponent {
                 values.endTime = '';
             };
             delete values.time;
-            this.setState({
-                query: values
+            this.props.dispatch({
+                type:'base/setQueryConditions',
+                payload: values
             });
         })
     }
     handleReset = (e) => {
         this.props.form.resetFields();
-        this.setState({
-            query: {}
+        this.props.dispatch({
+            type:'base/clearQueryConditions'
         });
+    }
+    componentDidMount() {
+        let { queryConditons } = this.props.base;
+        if(queryConditons.startTime && queryConditons.endTime) {
+            queryConditons.time = [moment(queryConditons.startTime, monthFormat), moment(queryConditons.endTime, monthFormat)];
+        }else {
+            queryConditons.time = [];
+        };
+        //找出表单的name 然后set
+        let values = this.props.form.getFieldsValue();
+        values = Object.getOwnPropertyNames(values);
+        let value = {};
+        values.map(keyItem => {
+            value[keyItem] = queryConditons[keyItem];
+            return keyItem;
+        });
+        this.props.form.setFieldsValue(value);
     }
     render() {
         let {getFieldDecorator} = this.props.form;
-        let {query} = this.state;
+        let query = this.props.base.queryConditons;
+        delete query.key;
         return (
             <div className="ysynet-main-content">
                 <Form onSubmit={this.handleSearch}>
@@ -127,4 +140,4 @@ class SettlementMgt extends PureComponent {
 
 const WrappedSettlementMgt = Form.create()(SettlementMgt);
 
-export default WrappedSettlementMgt;
+export default connect(state=>state)(WrappedSettlementMgt);

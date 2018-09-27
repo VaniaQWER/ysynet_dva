@@ -193,7 +193,7 @@ class PslistCheck extends PureComponent{
       };
       return item;
     });
-    let detailList = selectedRows.map(item=>{
+    let detailList = includeChildren.map(item=>{
       let i = {
         realReceiveQuantiry: item.realReceiveQuantity,
         productBatchNo: item.productBatchNo,

@@ -116,7 +116,7 @@ class DetailsOutput extends PureComponent{
     let outStoreDetail = detailVo.map(item => {
       return {
         backSumNum: item.backNum,
-        batch: item.lot,
+        batchNo: item.batchNo,
         drugCode: item.drugCode
       }
     });
@@ -168,7 +168,7 @@ class DetailsOutput extends PureComponent{
                   <label>状态</label>
               </div>
               <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
-                <div className='ant-form-item-control'>{info.status || ''}</div>
+                <div className='ant-form-item-control'>{info.statusName || ''}</div>
               </div>
             </Col>
             <Col span={8}>

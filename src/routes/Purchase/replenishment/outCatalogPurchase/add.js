@@ -134,6 +134,10 @@ class NewAdd extends PureComponent{
       if(!item.demandQuantity) {
         message.warning('需求数量不能为空');
         return false;
+      };
+      if(!item.planNo) {
+        message.warning('报告药申请单号不能为空');
+        return false;
       }
       return true
     });
@@ -221,7 +225,9 @@ class NewAdd extends PureComponent{
       width: 120,
       render: (text,record) =>{
         return (
-          <Input />
+          <Input onChange={(e) => {
+            record.planNo = e.target.value;
+          }}/>
         )
       }
     },{
@@ -231,7 +237,6 @@ class NewAdd extends PureComponent{
       render: (text,record,index)=>{
         return <InputNumber
                   defaultValue={text || 1}
-                  max={record.usableQuantity}
                   min={1}
                   precision={0}
                   onChange={(value)=>{
@@ -283,36 +288,34 @@ class NewAdd extends PureComponent{
     ]
     return (
       <div className='ysynet_newPage' style={{ padding: 24 }}>
-        <Affix offsetTop={0}>
-          <div>
-            <h2>新建计划</h2>
-            <hr className='hr'/>
-          </div>
-          <Row>
-            <Col span={6}>
-              <FormItem labelCol={{ span: 6 }} wrapperCol={{ span: 18 }} label={`采购部门`}>
-                <Select
-                  showSearch
-                  defaultValue={deptModules.length?deptModules[0].value:''}
-                  optionFilterProp="children"
-                  disabled={dataSource.length ? true: false}
-                  filterOption={(input, option) => option.props.children.indexOf(input) >= 0}
-                  onSelect={(value) => this.setState({ query: {...query, deptCode: value} })}
-                  style={{ width: 200 }}
-                >
-                  <Option value=''>请选择</Option>
-                  {
-                    deptModules.map((item,index)=> <Option key={index} value={item.id}>{ item.deptName }</Option>)
-                  }
-                </Select>
-              </FormItem>
-            </Col>
-            <Col span={8}>
-              <Button type='primary' icon='plus' onClick={this.addProduct}>添加产品</Button>
-              <Button type='default' onClick={this.delete} style={{ marginLeft: 8 }}>删除</Button>
-            </Col>
-          </Row>
-        </Affix>
+        <div>
+          <h2>新建计划</h2>
+          <hr className='hr'/>
+        </div>
+        <Row>
+          <Col span={6}>
+            <FormItem labelCol={{ span: 6 }} wrapperCol={{ span: 18 }} label={`采购部门`}>
+              <Select
+                showSearch
+                defaultValue={deptModules.length?deptModules[0].value:''}
+                optionFilterProp="children"
+                disabled={dataSource.length ? true: false}
+                filterOption={(input, option) => option.props.children.indexOf(input) >= 0}
+                onSelect={(value) => this.setState({ query: {...query, deptCode: value} })}
+                style={{ width: 200 }}
+              >
+                <Option value=''>请选择</Option>
+                {
+                  deptModules.map((item,index)=> <Option key={index} value={item.id}>{ item.deptName }</Option>)
+                }
+              </Select>
+            </FormItem>
+          </Col>
+          <Col span={8}>
+            <Button type='primary' icon='plus' onClick={this.addProduct}>添加产品</Button>
+            <Button type='default' onClick={this.delete} style={{ marginLeft: 8 }}>删除</Button>
+          </Col>
+        </Row>
         <Modal
           title={'添加产品'}
           visible={visible}

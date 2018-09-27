@@ -40,18 +40,28 @@ class SearchForm extends PureComponent{
     })
   }
 
+  componentDidMount() {
+    const { queryConditons: {pageSize, pageNo, key, sortField, sortOrder, ...other} } = this.props.formProps.base;
+    this.props.form.setFieldsValue(other);
+  }
+
   handleSearch = (e) =>{
     e.preventDefault();
     this.props.form.validateFields((err,values)=>{
       if(!err){
         console.log(values,'查询数据');
-        this.props.query(values)
+        this.props.formProps.dispatch({
+          type:'base/setQueryConditions',
+          payload: values
+        });
       }
     })
   }
   handleReset = () => {
     this.props.form.resetFields();
-    this.props.query({})
+    this.props.formProps.dispatch({
+      type:'base/clearQueryConditions'
+    });
   }
   render(){
     const { getFieldDecorator } = this.props.form;
@@ -118,7 +128,6 @@ class DepartmentMgt extends PureComponent{
 
   state = {
     loading: false,
-    query: {},
     queryDept:{},//科室table的query
     queryGoods:{},//货位table的query
     visible:false,
@@ -137,11 +146,6 @@ class DepartmentMgt extends PureComponent{
     
   }
 
-  //搜索列表
-  queryHandle = (data) =>{
-    console.log(data)
-    this.refs.table.fetch(data);
-  }
 
   //新增部门 - 打开弹窗
   add = ()=>{
@@ -246,7 +250,12 @@ class DepartmentMgt extends PureComponent{
     this.setState({goodsModalVisible:false });
     this.props.form.setFieldsValue({positionName:goodsModalSelectRowCache.positionName});
   }
-
+  _tableChange = values => {
+    this.props.dispatch({
+      type:'base/setQueryConditions',
+      payload: values
+    })
+  }
 
   render(){
     const columns = [
@@ -273,7 +282,7 @@ class DepartmentMgt extends PureComponent{
       },
       {
         title: '编辑人',
-        dataIndex: 'updateUserId',
+        dataIndex: 'updateUserName',
         width: 112,
       },
       {
@@ -317,12 +326,13 @@ class DepartmentMgt extends PureComponent{
         dataIndex: 'positionName',
       },
     ]
-    const { visible , modalTitle ,subModalVisible, hasStyle , goodsModalVisible , query , queryDept , queryGoods} = this.state;
+    const { visible , modalTitle ,subModalVisible, hasStyle , goodsModalVisible , queryDept , queryGoods} = this.state;
     const { getFieldDecorator } = this.props.form;
-
+    let query = this.props.base.queryConditons;
+    delete query.key;
     return (
       <div className='ysynet-main-content'>
-        <WrapperForm query={(data)=>this.queryHandle(data)}/>
+        <WrapperForm formProps={{...this.props}}/>
         <div>
           <Button type='primary' icon='plus' className='button-gap' onClick={this.add}>新增</Button>
         </div>
@@ -334,6 +344,7 @@ class DepartmentMgt extends PureComponent{
           columns={columns}
           scroll={{ x: '100%' }}
           url={systemMgt.DeptList}
+          onChange={this._tableChange}
           rowSelection={{
             onChange:(selectRowKeys, selectedRows)=>{
               this.setState({selectRowKeys})

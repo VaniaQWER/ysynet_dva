@@ -209,7 +209,7 @@ class DrugDirectory extends PureComponent{
             upperQuantity:values.upperQuantity||'',
             downQuantity:values.downQuantity||'',
             purchaseQuantity:values.purchaseQuantity||'',
-            id: item.id || ''
+            id: item.detailId || ''
           })
           return item 
         })

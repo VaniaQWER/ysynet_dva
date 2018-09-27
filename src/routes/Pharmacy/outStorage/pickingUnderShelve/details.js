@@ -4,7 +4,7 @@
 * @Last Modified time: 2018-07-24 13:13:55 
  */
 import React, { PureComponent } from 'react';
-import { Table ,Row, Col, Button, Modal ,Tabs , message , Input , Tooltip , Card} from 'antd';
+import { Table ,Row, Col, Button, Modal, Tabs, message , InputNumber, Tooltip , Card} from 'antd';
 import { connect } from 'dva';
 const TabPane = Tabs.TabPane; 
 const Conform = Modal.confirm;
@@ -28,7 +28,7 @@ class DetailsPickSoldOut extends PureComponent{
       let { pickingOrderNo, pickingStatus } = this.props.match.params;
       this.setState({ loading: true });
       this.props.dispatch({
-        type:'outStorage/distributeDetail',
+        type:'outStorage/getpickingDetail',
         payload: { pickingOrderNo },
         callback:(data)=>{
           this.setState({ 
@@ -43,42 +43,28 @@ class DetailsPickSoldOut extends PureComponent{
       });
     }
   }
-  onChange = (record, index, e) => {
-    let value = e.target.value;
-    let { leftDataSource } = this.state;
-    let newDataSource = [ ...leftDataSource ];
-      if (/^\d+$/.test(value)) {
-        if (value > record.allocationNum) {
-          e.target.value  = record.allocationNum;
-          newDataSource[index].amount = record.allocationNum;
-          return message.warn(`输入数值过大, 不能超过${record.allocationNum}`)
-        }
-        else{
-          newDataSource[index].amount = value;
-        }
-      } else {
-         return message.warn('请输入非0正整数')
-      }
-      this.setState({ leftDataSource: newDataSource });
-    }
   //确认拣货
   onSubmit = () =>{
+    let { selectedRows, detailsData } = this.state;
+    if(selectedRows.length === 0) {
+      return message.warning('至少选择一条数据');
+    };
+    console.log(detailsData);
+    
     Conform({
       content:"您确定要执行此操作？",
       onOk:()=>{
         message.success('操作成功！')
         const { history, dispatch } = this.props;
         let postData = {}, pickingDetail = [];
-        let { selectedRows, detailsData } = this.state;
         selectedRows.map(item => pickingDetail.push({
           drugCode: item.drugCode,
           id: item.id,
-          pickingNum: item.pickingNum,
-          pickingOrderNo: item.pickingOrderNo
+          pickingNum: item.amount ? item.amount : 1,
         }));
         postData.pickingDetail = pickingDetail;
-        postData.applyNo = detailsData.applyNo;
-        postData.pickingOrderNo = detailsData.pickingOrderNo;
+        postData.applyNo = detailsData.applyOrder;
+        postData.pickingOrderNo = detailsData.pickingOredr;
         dispatch({
           type: 'outStorage/finishPicking',
           payload: { ...postData },
@@ -116,7 +102,7 @@ class DetailsPickSoldOut extends PureComponent{
       {
         title: '生产批号',
         width: 150,
-        dataIndex: 'ph'
+        dataIndex: 'lot'
       },
       {
         title: '生产日期',
@@ -146,18 +132,21 @@ class DetailsPickSoldOut extends PureComponent{
       {
         title: '配货数量',
         width: 120,
-        fixed: 'right',
         dataIndex: 'allocationNum',
       },
       {
         title: '实际拣货数量',
         width: 150,
-        fixed: 'right',
         dataIndex: 'amount',
         render:(text,record,index)=>{
-          return <Input
+          return <InputNumber
+                    min={1}
+                    max={record.allocationNum}
+                    precision={0}
                     defaultValue={record.allocationNum ? record.allocationNum: 1} 
-                    onInput={this.onChange.bind(this, record, index)}
+                    onChange={(value) => {
+                      record.amount = value;
+                    }}
                   />
         }
       },
@@ -205,7 +194,7 @@ class DetailsPickSoldOut extends PureComponent{
                 <label>状态</label>
               </div>
               <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
-                <div className='ant-form-item-control'>{ detailsData.status }</div>
+                <div className='ant-form-item-control'>{ detailsData.statusName }</div>
               </div>
             </Col>
             <Col span={8}>

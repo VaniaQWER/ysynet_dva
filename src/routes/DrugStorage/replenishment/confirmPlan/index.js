@@ -71,9 +71,7 @@ class SearchForm extends PureComponent{
           <Col span={8} style={{ display: display }}>
             <FormItem {...formItemLayout} label={`申请时间`}>
               {
-                getFieldDecorator(`fstate`,{
-                  initialValue: [moment().subtract(30, 'days'), moment(new Date())]
-                })(
+                getFieldDecorator(`fstate`)(
                   <RangePicker />
                 )
               }

@@ -43,7 +43,7 @@ class AddUser extends PureComponent{
     modalSelectedRows: []
   }
   componentWillMount = () =>{
-    // this.setState({ loading: true })
+    this.setState({ loading: true })
     const { loginName } = this.props.match.params;
     this.props.dispatch({
       type: 'Organization/findUserInfo',
@@ -79,7 +79,11 @@ class AddUser extends PureComponent{
       payload: { userInfo },
       callback: () =>{
         this.setState({ btnLoading: false });
-        history.push({ pathname: '/sys/organization/userMgt' })
+        let {location} = this.props;
+        location.pathname = location.pathname.split('/');
+        location.pathname.length = 5;
+        location.pathname = location.pathname.join('/');
+        history.push({ pathname: location.pathname })
       } 
     })
   }

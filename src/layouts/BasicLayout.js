@@ -1,6 +1,6 @@
 import React, { PureComponent } from 'react';
 import { Route, Switch, Redirect } from 'dva/router';
-import { Layout, Icon, Row, Col, Tooltip, Menu, Dropdown, Spin } from 'antd';
+import { Layout, Icon, Row, Col, Tooltip, Menu, Dropdown, Spin,  } from 'antd';//Affix
 import { connect } from 'dva';
 import Profile from '../components/profile'
 import SiderMenu from '../components/SiderMenu';
@@ -36,6 +36,14 @@ class BasicLayout extends PureComponent {
             let tree = menuFormat(menuList,true,1);
             let id = window.localStorage.getItem('key');
             let deptName = window.localStorage.getItem('deptName');
+            // let id = this.props.location.pathname.split('/')[2];
+            // let deptName;
+            // data.deptInfo.map(item => {
+            //   if(item.deptId === id) {
+            //     deptName = item.deptName;
+            //   };
+            //   return item;
+            // });
             if(id && deptName) {
               console.log('刷新');
               dispatch({
@@ -46,7 +54,6 @@ class BasicLayout extends PureComponent {
                     hasDept: true
                   });
                   let currMenuList = deptInfo.filter(item => item.deptId === id)[0].menuList;
-                  
                   let tree = menuFormat(currMenuList, true, 1 );
                   let menu = tree[0].children[0];
                   dispatch({
@@ -70,6 +77,34 @@ class BasicLayout extends PureComponent {
       })
     }
   }
+  componentDidMount = () => {
+    // this.props.history.listen(({pathname}) => {
+    //   let {users} = this.props;
+    //   pathname = pathname.split('/');
+    //   let deptId = pathname[2];
+    //   if(deptId === undefined) return;
+    //   if(!users.currentDept.deptId || users.currentDept.deptId === deptId) return;
+    //   let deptName;
+    //   console.log(2);
+      
+    //   users.deptList.map(item => {
+    //     if(item.deptId === deptId) {
+    //       deptName = item.deptName
+    //     };
+    //     return item;
+    //   });
+    //   let e = {
+    //     item: {
+    //       props: {
+    //         children: ""
+    //       }
+    //     }
+    //   };
+    //   e.key = deptId;
+    //   e.item.props.children = deptName;
+    //   this.handleClick(e);
+    // })
+  }
   toggle = () => {
     this.setState({
       collapsed: !this.state.collapsed,
@@ -78,10 +113,19 @@ class BasicLayout extends PureComponent {
   handleClick = (e) =>{
     let { dispatch, users, history } = this.props;
     if(e.key === this.state.deptId[0]) return;
+    // 切换子系统  清除查询条件
+    this.props.dispatch({
+      type: 'base/clearQueryConditions'
+    });
     let { deptInfo } = users.userInfo;
     let currMenuList = deptInfo.filter(item => item.deptId === e.key)[0].menuList;
     let tree = menuFormat(currMenuList, true, 1 );
     let menu = tree[0].children[0];
+
+    // menu.children[0].children[0].href = menu.children[0].children[0].href.split('/');
+    // menu.children[0].children[0].href.splice(2, 0, e.key);
+    // menu.children[0].children[0].href = menu.children[0].children[0].href.join('/');
+
     if(menu.children[0].children[0].href === this.props.location.pathname) {      //如果切换时路由相同，必须重新渲染
       this.setState({
         hasDept: false
@@ -89,6 +133,8 @@ class BasicLayout extends PureComponent {
     }
     window.localStorage.setItem('key', e.key);
     window.localStorage.setItem('deptName', e.item.props.children);
+    console.log(e);
+    
     dispatch({
       type: 'users/setCurrentDept',
       payload: { id: e.key, deptName: e.item.props.children },
@@ -124,71 +170,79 @@ class BasicLayout extends PureComponent {
     )
   }
   render() {
-    const { getRouteData } = this.props;
+    const { getRouteData, location } = this.props;
     let { userInfo, currentDept, deptList } = this.props.users;
     const { title, hasDept } = this.state;
+    let pathname = location.pathname.split('/');
     return (
       <Layout>
-        <Sider
-          trigger={null}
-          collapsible
-          width={232}
-          collapsed={this.state.collapsed}
-          style={{
-            backgroundColor: '#fff'
-          }}
-        >
-          <SiderMenu 
-            history={this.props.history}
+        {/* <Affix offsetTop={0}> */}
+          <Sider
+            trigger={null}
+            collapsible
+            width={232}
             collapsed={this.state.collapsed}
-            title={this.state.title}
-            cb={(title)=> this.setState({ title })}
-          />
-          <div 
-            onClick={this.toggle} 
-            className={styles.triggerWrapp}
-            style={{ width: this.state.collapsed ? 80: 232 }}
+            style={{
+              backgroundColor: '#fff'
+            }}
           >
-            <Icon
-              className={styles.trigger}
-              type={this.state.collapsed ? 'menu-unfold' : 'menu-fold'}
-              />
-          </div>
-        </Sider>
+            <SiderMenu 
+              history={this.props.history}
+              collapsed={this.state.collapsed}
+              title={this.state.title}
+              cb={(title)=> this.setState({ title })}
+            />
+            <div 
+              onClick={this.toggle} 
+              className={styles.triggerWrapp}
+              style={{ width: this.state.collapsed ? 80: 232 }}
+            >
+              <Icon
+                className={styles.trigger}
+                type={this.state.collapsed ? 'menu-unfold' : 'menu-fold'}
+                />
+            </div>
+          </Sider>
+        {/* </Affix> */}
         <Content>
-          <Header className={`${styles.header}`} style={{ marginBottom: 3,padding: 0 }}>
-            <Row>
-              <Col span={4} style={{ paddingLeft: 16 }}>
-                {
-                  currentDept.deptId &&
-                  <Dropdown overlay={this.menu(deptList)} trigger={['click']}>
-                    <Tooltip title='子系统切换' placement='right'>
-                      <span className="ant-dropdown-link">
-                        {currentDept.deptName} <Icon type="down" style={{ marginLeft: 8 }}/>
-                      </span>
-                    </Tooltip>
-                  </Dropdown>
-                }
-              </Col>
-              <Col span={20} style={{textAlign: 'right'}}>
-                <div className={styles.profile}>
-                  {/* <div>
-                    <Tooltip title="子系统切换">
-                      <Icon type="sync" className={styles.icon} onClick={() => this.props.history.push({
-                        pathname: '/subSystem'
-                      })}/> 
-                    </Tooltip>
-                  </div> */}
-                  <Profile userName={userInfo.name}/>
-                </div>
-              </Col>
-            </Row>
-          </Header>
+          {/* <Affix offsetTop={0}> */}
+            <Header className={`${styles.header}`} style={{ marginBottom: 3,padding: 0 }}>
+              <Row>
+                <Col span={4} style={{ paddingLeft: 16 }}>
+                  {
+                    currentDept.deptId &&
+                    <Dropdown overlay={this.menu(deptList)} trigger={['click']}>
+                      <Tooltip title='子系统切换' placement='right'>
+                        <span className="ant-dropdown-link">
+                          {currentDept.deptName} <Icon type="down" style={{ marginLeft: 8 }}/>
+                        </span>
+                      </Tooltip>
+                    </Dropdown>
+                  }
+                </Col>
+                <Col span={20} style={{textAlign: 'right'}}>
+                  <div className={styles.profile}>
+                    {/* <div>
+                      <Tooltip title="子系统切换">
+                        <Icon type="sync" className={styles.icon} onClick={() => this.props.history.push({
+                          pathname: '/subSystem'
+                        })}/> 
+                      </Tooltip>
+                    </div> */}
+                    <Profile userName={userInfo.name}/>
+                  </div>
+                </Col>
+              </Row>
+            </Header>
+          {/* </Affix> */}
           <Header className={`${styles.subHeader}`}>
             <Tooltip title='返回' placement='bottom'>
-              <a onClick={()=>this.props.history.go(-1)}>
-                <Icon type="arrow-left" theme="outlined" style={{ fontSize: 18, marginRight: 16 }}/>
-              </a>
+              {
+                pathname.length > 5 && 
+                <a onClick={()=>this.props.history.go(-1)}>
+                  <Icon type="arrow-left" theme="outlined" style={{ fontSize: 18, marginRight: 16 }}/>
+                </a>
+              }
             </Tooltip>
             <span>{title}</span>
           </Header>

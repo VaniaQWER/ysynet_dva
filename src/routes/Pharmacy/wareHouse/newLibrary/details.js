@@ -99,7 +99,7 @@ class DetailsNewLibrary extends PureComponent{
     this.props.dispatch({
       type: 'pharmacy/findStoreDetail',
       payload: {
-        instoreCode: id
+        inStoreCode: id
       },
       callback: (data) => {
         this.setState({
@@ -136,7 +136,7 @@ class DetailsNewLibrary extends PureComponent{
 
   render(){
     let {info, loading} = this.state;
-    let {showVos} = info;
+    let {list} = info;
     return (
       <div className='ysynet-main-content' >
         <h3>单据信息 
@@ -193,7 +193,7 @@ class DetailsNewLibrary extends PureComponent{
                     <label>供应商</label>
                 </div>
                 <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
-                  <div className='ant-form-item-control'>{info.suppilerName || ''}</div>
+                  <div className='ant-form-item-control'>{info.ctmaSupplierName || ''}</div>
                 </div>
             </Col>
           </Row>
@@ -221,7 +221,7 @@ class DetailsNewLibrary extends PureComponent{
         <h3>产品信息</h3>
         <Table
           loading={loading}
-          dataSource={showVos || []}
+          dataSource={list || []}
           bordered
           scroll={{x: '200%'}}
           columns={columns}

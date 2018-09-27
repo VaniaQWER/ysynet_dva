@@ -4,7 +4,7 @@
 * @Last Modified time: 2018-07-24 13:13:55 
  */
 import React, { PureComponent } from 'react';
-import { Table , Col, Button, Icon, Modal , message, Input , Affix , Row , Tooltip, Spin, Form } from 'antd';
+import { Table , Col, Button, Icon, Modal , message, InputNumber, Input , Affix , Row , Tooltip, Spin, Form } from 'antd';
 import { outStorage } from '../../../../api/drugStorage/outStorage';
 import { Link } from 'react-router-dom';
 import RemoteTable from '../../../../components/TableGrid';
@@ -23,85 +23,7 @@ const formItemLayout = {
     sm: { span: 16 },//17
   },
 }
-const columns = [
-  {
-   title: '退库数量',
-   width: 120,
-   dataIndex: 'backNum',
-  render:(text) =>{
-    return <Input defaultValue={text || 1}/>
-    }
-  },
-  {
-    title: '当前库存',
-    width:120,
-    dataIndex: 'usableQuantity',
-  },
-  {
-    title: '单位',
-    width: 100,
-    dataIndex: 'unit',
-  },
-  {
-    title: '包装规格',
-    width:150,
-    dataIndex: 'packageSpecification',
-    className:'ellipsis',
-    render:(text)=>(
-      <Tooltip placement="topLeft" title={text}>{text}</Tooltip>
-    )
-  },
-  {
-    title: '通用名称',
-    width: 180,
-    dataIndex: 'ctmmGenericName',
-  },
-  {
-    title: '商品名称',
-    width: 180,
-    dataIndex: 'ctmmTradeName',
-  },
-  {
-    title: '规格',
-    width: 180,
-    dataIndex: 'ctmmSpecification',
-  },
-  {
-    title: '剂型',
-    width: 180,
-    dataIndex: 'ctmmDosageFormDesc',
-  },
-  {
-    title: '生产批号',
-    width:150,
-    dataIndex: 'batchNo',
-  },
-  {
-    title: '生产日期',
-    width:150,
-    dataIndex: 'productDate',
-  },
-  {
-    title: '有效期至',
-    width:150,
-    dataIndex: 'validEndDate',
-  },
-  {
-    title: '批准文号',
-    width:150,
-    dataIndex: 'approvalNo',
-  },
-  {
-    title: '生产厂家',
-    width:150,
-    dataIndex: 'ctmmManufacturerName',
-  },
-  {
-    title: '供应商',
-    width:150,
-    dataIndex: 'supplierName',
-  }
-];
+
 const modalColumns = [
   
   {
@@ -187,7 +109,7 @@ class AddRefund extends PureComponent{
       expand: !expand
     })
   }
-  componentWillMount = () =>{
+  componentDidMount = () =>{
     if(this.props.match.path === "/editPharmacyBackStoragePlan/:backNo") {
       let { backNo } = this.props.match.params;
       this.setState({spinLoading: true});
@@ -198,6 +120,7 @@ class AddRefund extends PureComponent{
           let { query } = this.state;
           let existDrugCodeList = data.list.map(item => item.drugCode);
           this.setState({ 
+            backCause: data.backCause,
             detailsData: data, 
             isEdit: true, 
             dataSource: data.list,
@@ -231,7 +154,7 @@ class AddRefund extends PureComponent{
   }
   //提交该出库单
   backStroage = () =>{
-    const {  dataSource, detailsData } = this.state;
+    const {  dataSource, backCause } = this.state;
     Conform({
       content:"是否确认退库",
       onOk:()=>{
@@ -239,7 +162,7 @@ class AddRefund extends PureComponent{
         let postData = {}, backDrugList = [];
         dataSource.map(item => backDrugList.push({ backNum: item.backNum, drugCode: item.drugCode, batchNo: item.batchNo }));
         postData.backDrugList = backDrugList;
-        postData.backcause = detailsData.backCause;
+        postData.backcause = backCause;
         console.log(postData,'postData')
         dispatch({
           type: 'base/submitBackStorage',
@@ -282,6 +205,92 @@ class AddRefund extends PureComponent{
     });
   }
   render(){
+    const columns = [
+      {
+      title: '退库数量',
+      width: 120,
+      dataIndex: 'backNum',
+      render:(text, record) =>{
+        return <InputNumber
+                min={1}
+                max={record.usableQuantity}
+                onChange={(value) => {
+                  record.backNum = value;
+                }}
+                defaultValue={text}
+               />
+        }
+      },
+      {
+        title: '当前库存',
+        width:120,
+        dataIndex: 'usableQuantity',
+      },
+      {
+        title: '单位',
+        width: 100,
+        dataIndex: 'unit',
+      },
+      {
+        title: '包装规格',
+        width:150,
+        dataIndex: 'packageSpecification',
+        className:'ellipsis',
+        render:(text)=>(
+          <Tooltip placement="topLeft" title={text}>{text}</Tooltip>
+        )
+      },
+      {
+        title: '通用名称',
+        width: 180,
+        dataIndex: 'ctmmGenericName',
+      },
+      {
+        title: '商品名称',
+        width: 180,
+        dataIndex: 'ctmmTradeName',
+      },
+      {
+        title: '规格',
+        width: 180,
+        dataIndex: 'ctmmSpecification',
+      },
+      {
+        title: '剂型',
+        width: 180,
+        dataIndex: 'ctmmDosageFormDesc',
+      },
+      {
+        title: '生产批号',
+        width:150,
+        dataIndex: 'batchNo',
+      },
+      {
+        title: '生产日期',
+        width:150,
+        dataIndex: 'productDate',
+      },
+      {
+        title: '有效期至',
+        width:150,
+        dataIndex: 'validEndDate',
+      },
+      {
+        title: '批准文号',
+        width:150,
+        dataIndex: 'approvalNo',
+      },
+      {
+        title: '生产厂家',
+        width:150,
+        dataIndex: 'ctmmManufacturerName',
+      },
+      {
+        title: '供应商',
+        width:150,
+        dataIndex: 'supplierName',
+      }
+    ];
     const { visible, isEdit, dataSource, query, spinLoading, display, detailsData } = this.state; 
     const { getFieldDecorator } = this.props.form;
     return (

@@ -141,6 +141,7 @@ class GoodsAllocation extends PureComponent{
       {
         title: '操作',
         dataIndex: 'action',
+        width: 60,
         render: (text,record,index)=>{
           return <span>
             <a onClick={()=>this.editModal(record)}>编辑</a>
@@ -248,7 +249,8 @@ class SearchForm extends PureComponent{
           values.positionType = Number(values.positionType)
         }else{
           delete values['positionType']
-        }
+        };
+        values.deptCode = this.props.deptCode;
         this.props.query(values)
       }
     })

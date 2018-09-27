@@ -94,7 +94,7 @@ class EditDrugDirectory extends PureComponent{
                   <label>包装规格</label>
               </div>
               <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-19">
-                <div className='ant-form-item-control'>{ baseData.ctmmSpecification ? baseData.ctmmSpecification: ''}</div>
+                <div className='ant-form-item-control'>{ baseData.packageSpecification ? baseData.packageSpecification: ''}</div>
               </div>
             </Col>
             <Col span={8}>

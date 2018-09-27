@@ -18,6 +18,7 @@ class Details extends PureComponent {
       query: {
         checkBillNo: this.props.match.params.id,
       },
+      tableLoading: false,
       checkLoading: false,
       dataSource: [],   
       selected: [],
@@ -447,8 +448,52 @@ class Details extends PureComponent {
       realSelectedRows
     };
   }
+  //表格渲染
+  tableRender = (columns) => {
+    let {info, tableLoading, query, dataSource, expandedRowKeys} = this.state;
+    if(info.checkStatus && info.checkStatus === 2) {
+      return <RetomeTable
+              loading={tableLoading}
+              fetchBefore={()=>{
+                this.setState({
+                  tableLoading: true
+                });
+              }}
+              ref={'table'}
+              query={query}
+              data={dataSource}
+              url={checkDecrease.GET_LIST_BY_BILLNO}
+              scroll={{x: '250%'}}
+              columns={columns}
+              rowKey={'uuid'}
+              expandedRowKeys={expandedRowKeys}
+              cb={this.tableCallBack}
+              onExpandedRowsChange={this.onExpandedRowsChange}
+              rowSelection={{
+                selectedRowKeys: this.state.selected,
+                onChange: this.changeSelectRow,
+                onSelect: this.changeSelect,
+                onSelectAll: this.selectAll,
+                getCheckboxProps: record => ({
+                  disabled: record.id === null || record.checkDetailStatus === 2
+                })
+              }}
+            />
+    };
+    if(info.checkStatus && info.checkStatus !== 2) {
+      return <RetomeTable
+              ref={'table'}
+              query={query}
+              url={checkDecrease.GET_LIST_BY_BILLNO}
+              scroll={{x: '250%'}}
+              columns={columns}
+              rowKey={'uuid'}
+             />
+    };
+    return null;
+  }
   render() {
-    let {info, query, dataSource, submitLoading, expandedRowKeys, checkLoading, tableLoading} = this.state;
+    let {info, submitLoading, checkLoading} = this.state;
     let columns = [
       {
         title: '货位',
@@ -734,7 +779,8 @@ class Details extends PureComponent {
             }
           </Row>
           <hr className="hr"/>
-          {
+          {this.tableRender(columns)}
+          {/* {
             info.checkStatus ?  
             info.checkStatus === 2? 
             <RetomeTable
@@ -772,7 +818,7 @@ class Details extends PureComponent {
                   rowKey={'uuid'}
                   />
             : null
-          }
+          } */}
         </div>
       </div>
     )

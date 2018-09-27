@@ -26,11 +26,7 @@ class AddRoleMgt extends PureComponent{
    onSubmit = () => {
     this.props.form.validateFieldsAndScroll((err,values)=>{
       if(!err){
-        if(!this.state.checkedKeys.length) {
-          return message.warning('至少选择一个菜单');
-        }
-        if(this.state.selectRowKeys&& this.state.selectRowKeys.length){
-          console.log(this.state.selectRowKeys[0]);//获取上级菜单的key值
+        if(this.state.checkedKeys && this.state.checkedKeys.length){
           const menuIds = this.state.checkedKeys;
           this.props.dispatch({
             type: 'systemRole/RoleSave',
@@ -88,7 +84,7 @@ class AddRoleMgt extends PureComponent{
       checkedKeys = [...new Set([...checkedKeys, ...ids])];
     }else {       //反选去除
       checkedKeys = difference(checkedKeys, ids);
-    }
+    };
     this.setState({checkedKeys});
   }
   getIds = (record) => {

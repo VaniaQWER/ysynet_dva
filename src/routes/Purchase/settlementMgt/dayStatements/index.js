@@ -2,16 +2,12 @@
  * @file 结算管理 - 日对账单
  */
 import React, {PureComponent} from 'react';
-
-import { Form, Row, Col, Input, Button, DatePicker, Select } from 'antd';
-
+import { Form, Row, Col, Input, Button, DatePicker, Select, Icon } from 'antd';
 import {Link} from 'react-router-dom';
-
 import {dayStatements} from '../../../../api/purchase/purchase';
-
 import RemoteTable from '../../../../components/TableGrid';
-
 import {connect} from 'dva';
+import moment from 'moment';
 
 const FormItem = Form.Item;
 
@@ -29,6 +25,9 @@ const formItemLayout = {
       sm: { span: 19 },
     },
 };
+
+const monthFormat = 'YYYY-MM-DD';
+
 const columns = [
     {
     title: '对账单',
@@ -60,8 +59,9 @@ const columns = [
 
 class Statements extends PureComponent{
     state = {
-        query: {},
-        status: []
+        status: [],
+        display: 'none',
+        expand: false
     }
     componentDidMount() {
         this.props.dispatch({
@@ -74,7 +74,22 @@ class Statements extends PureComponent{
                     status: data
                 });
             }
-        })
+        });
+        let { queryConditons } = this.props.base;
+        if(queryConditons.startTime && queryConditons.endTime) {
+            queryConditons.time = [moment(queryConditons.startTime, monthFormat), moment(queryConditons.endTime, monthFormat)];
+        }else {
+            queryConditons.time = [];
+        };
+        //找出表单的name 然后set
+        let values = this.props.form.getFieldsValue();
+        values = Object.getOwnPropertyNames(values);
+        let value = {};
+        values.map(keyItem => {
+            value[keyItem] = queryConditons[keyItem];
+            return keyItem;
+        });
+        this.props.form.setFieldsValue(value);
     }
     handleSearch = (e) => {
         e.preventDefault();
@@ -88,13 +103,17 @@ class Statements extends PureComponent{
                 values.endTime = '';
             };
             delete values.time;
-            this.setState({
-                query: values
+            this.props.dispatch({
+                type:'base/setQueryConditions',
+                payload: values
             });
         })
     }
     handleReset = (e) => {
         this.props.form.resetFields();
+        this.props.dispatch({
+            type:'base/clearQueryConditions'
+        });
     }
     statusRender = () => {
         let {status} = this.state;
@@ -102,9 +121,24 @@ class Statements extends PureComponent{
             return <Option key={item.value} value={item.value}>{item.label}</Option>
         })
     }
+    toggle = () => {
+        const { display, expand } = this.state;
+        this.setState({
+            display: display === 'none' ? 'block' : 'none',
+            expand: !expand
+        })
+    }
+    _tableChange = values => {
+        this.props.dispatch({
+            type:'base/setQueryConditions',
+            payload: values
+        });
+    }
     render() {
         let {getFieldDecorator} = this.props.form;
-        let {query} = this.state;
+        let {display, expand} = this.state;
+        let query = this.props.base.queryConditons;
+        delete query.key;
         return (
             <div className="ysynet-main-content">
                 <Form onSubmit={this.handleSearch}>
@@ -123,7 +157,7 @@ class Statements extends PureComponent{
                                 )}
                             </FormItem>
                         </Col>
-                        <Col span={8}>
+                        <Col span={8} style={{display: display}}>
                             <FormItem label={`状态`} {...formItemLayout}>
                                 {getFieldDecorator('balanceStatus', {})(
                                 <Select 
@@ -137,16 +171,20 @@ class Statements extends PureComponent{
                                 )}
                             </FormItem>
                         </Col>
-                        <Col span={12}>
-                            <Link to={{ pathname: `/NewRecon` }}><Button type="primary">生成对账</Button></Link>
-                        </Col>
-                        <Col span={12} style={{marginTop: 4, textAlign: 'right'}}>
+                        <Col span={8} style={{float: 'right', textAlign: 'right'}}>
                             <Button type="primary" htmlType="submit">查询</Button>
-                            <Button style={{marginLeft: 8}} onClick={this.handleReset}>重置</Button>
+                            <Button style={{margin: '0 8px'}} onClick={this.handleReset}>重置</Button>
+                            <a style={{fontSize: 14}} onClick={this.toggle}>
+                                {expand ? '收起' : '展开'} <Icon type={expand ? 'up' : 'down'} />
+                            </a>
+                        </Col>
+                        <Col span={24}>
+                            <Link to={{ pathname: `/NewRecon` }}><Button type="primary">生成对账</Button></Link>
                         </Col>
                     </Row>
                 </Form>
                 <RemoteTable
+                    onChange={this._tableChange}
                     isJson
                     rowKey="id"
                     query={query}
@@ -159,4 +197,4 @@ class Statements extends PureComponent{
     }
 };
 const WrappedStatements = Form.create()(Statements);
-export default connect()(WrappedStatements);
+export default connect(state=>state)(WrappedStatements);

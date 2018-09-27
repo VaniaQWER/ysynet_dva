@@ -81,7 +81,7 @@ class DetailsRefund extends PureComponent{
       dataSource: []
     }
   }
-  componentWillMount = () =>{
+  componentDidMount = () =>{
     if (this.props.match.params.backNo) {
       let { backNo } = this.props.match.params;
       this.setState({ spinning: true });
@@ -129,10 +129,13 @@ class DetailsRefund extends PureComponent{
         <Card>
           <div className='ysynet-details-flex-header'>
             <h3>单据信息</h3>
-            <div style={{ textAlign: 'right' }}>
-              <Link to={{pathname: `/editPharmacyBackStoragePlan/${this.props.match.params.backNo}`}}><Button type='default'>编辑</Button></Link>
-              <Button type='primary' onClick={this.backStroage} loading={loading} style={{ marginLeft: 8 }}>确认退货</Button>
-            </div>
+            {
+              detailsData.backStatus === 1 &&
+              <div style={{ textAlign: 'right' }}>
+                <Link to={{pathname: `/editPharmacyBackStoragePlan/${this.props.match.params.backNo}`}}><Button type='default'>编辑</Button></Link>
+                <Button type='primary' onClick={this.backStroage} loading={loading} style={{ marginLeft: 8 }}>确认退货</Button>
+              </div>
+            }
           </div>
           <Row>
             <Col span={8}>
@@ -159,6 +162,8 @@ class DetailsRefund extends PureComponent{
                   <div className='ant-form-item-control'>{ detailsData.backDpetName }</div>
                 </div>
             </Col>
+          </Row>
+          <Row>
             <Col span={8}>
                 <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
                     <label>退货人</label>
@@ -184,6 +189,8 @@ class DetailsRefund extends PureComponent{
                   <div className='ant-form-item-control'>{ detailsData.reviewUserName }</div>
                 </div>
             </Col>
+          </Row>
+          <Row>
             <Col span={8}>
                 <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
                     <label>复核时间</label>

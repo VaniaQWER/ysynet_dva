@@ -122,7 +122,7 @@ class PlanCheckDetail extends PureComponent{
   //确认驳回
   handleOk = () => {
     let {value} = this.state;
-    if(!value.trim()) {
+    if(!value || !value.trim()) {
       return message.warning('驳回原因不能为空!');
     };
     let values = {};

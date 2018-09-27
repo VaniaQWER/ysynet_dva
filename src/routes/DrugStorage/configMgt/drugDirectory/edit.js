@@ -9,11 +9,11 @@ import { connect } from 'dva';
 const supplyFormItemLayout = {
   labelCol: {
     xs: { span: 24 },
-    sm: { span: 3 },
+    sm: { span: 8 },
   },
   wrapperCol: {
     xs: { span: 24 },
-    sm: { span: 19 }
+    sm: { span: 16 }
   },
 }
 const formItemLayout ={
@@ -334,67 +334,79 @@ class EditDrugDirectory extends PureComponent{
     const formItemSupply = supplierList.map((k, index) => {
       return (
         <Col span={12} key={index}>
-          <FormItem {...supplyFormItemLayout} label={`供应商`}  key={k}>
-            {
-              medDrugType===1?
-              <span style={{marginRight: 24}}>{k.supplierName}</span>
-              :
-              getFieldDecorator(`supplier[${index}].supplierCode`,{
-                initialValue:k.supplierCode,
-                rules:[{
-                  required:true,message:"必填！"
-                }]
-              })(
-                
-                <Select style={{width: 150}}>
-                  {
-                    supplierSelect && supplierSelect.length?supplierSelect.map((item)=>(
-                      <Option key={item.ctmaSupplierCode} value={item.ctmaSupplierCode}>{item.ctmaSupplierName}</Option>
-                    )):null
-                  }
-                </Select>
-              )
-            }
-            价格&nbsp;:&nbsp;&nbsp;
-            <FormItem style={{display: 'inline-block'}} >
-              {
-                getFieldDecorator(`supplier[${index}].supplierPrice`,{
-                  initialValue: k.supplierPrice,
-                  rules:[{
-                    required:true,message:"必填！"
-                  }]
-                })(
-                  <Input type='number' style={{ width:120 ,marginRight: 8}} addonAfter='元'/>
-                )
-              }
-            </FormItem>
-            <FormItem style={{display: 'inline-block',marginRight:8}}>
-              {
-                getFieldDecorator(`supplier[${index}].whetherDefault`,{
-                  initialValue:k.whetherDefault
-                })(
-                  <RadioGroup onChange={(e)=>this.onChangeRadio(e,index)}>
-                    <Radio value={1} >设为默认</Radio>
-                  </RadioGroup>
-                )
-              }
-            </FormItem>
-            {supplierList.length > 1 && medDrugType===2 ? (
-                <Icon
-                  style={{marginRight:8}}
-                  className="dynamic-delete-button"
-                  type="minus-circle-o"
-                  onClick={() => this.removeSupply(index)}
-                />
-            ) : null}
-            { (supplierList.length-1 === index )  && medDrugType===2 ? (
-                <Icon
-                  className="dynamic-delete-button"
-                  type="plus-circle-o"
-                  onClick={() => this.addSupply(k)}
-                />
-            ) : null}
-          </FormItem>
+          <Row>
+            <Col span={8}>
+              <FormItem {...supplyFormItemLayout} label={`供应商`}  key={k}>
+                {
+                  medDrugType===1?
+                  <span style={{marginRight: 24}}>{k.supplierName}</span>
+                  :
+                  getFieldDecorator(`supplier[${index}].supplierCode`,{
+                    initialValue:k.supplierCode,
+                    rules:[{
+                      required:true,message:"必填！"
+                    }]
+                  })(
+                    
+                    <Select style={{width: '100%'}}>
+                      {
+                        supplierSelect && supplierSelect.length?supplierSelect.map((item)=>(
+                          <Option key={item.ctmaSupplierCode} value={item.ctmaSupplierCode}>{item.ctmaSupplierName}</Option>
+                        )):null
+                      }
+                    </Select>
+                  )
+                }
+              </FormItem>
+            </Col>
+            <Col span={8}>
+              <FormItem {...supplyFormItemLayout} style={{display: 'inline-block'}} label="价格" >
+                {
+                  getFieldDecorator(`supplier[${index}].supplierPrice`,{
+                    initialValue: k.supplierPrice,
+                    rules:[{
+                      required:true,message:"必填！"
+                    }]
+                  })(
+                    <Input type='number' style={{ width:120 ,marginRight: 8}} addonAfter='元'/>
+                  )
+                }
+              </FormItem>
+            </Col>
+            <Col span={6}>
+              <FormItem {...supplyFormItemLayout} style={{display: 'inline-block',marginRight:8}}>
+                {
+                  getFieldDecorator(`supplier[${index}].whetherDefault`,{
+                    initialValue:k.whetherDefault
+                  })(
+                    <RadioGroup onChange={(e)=>this.onChangeRadio(e,index)}>
+                      <Radio value={1} >设为默认</Radio>
+                    </RadioGroup>
+                  )
+                }
+              </FormItem>
+            </Col>
+            <Col span={2} style={{lineHeight: '40px'}}>
+              {supplierList.length > 1 && medDrugType===2 ? (
+                  <Icon
+                    style={{marginRight:8}}
+                    className="dynamic-delete-button"
+                    type="minus-circle-o"
+                    onClick={() => this.removeSupply(index)}
+                  />
+              ) : null}
+              { (supplierList.length-1 === index )  && medDrugType===2 ? (
+                  <Icon
+                    className="dynamic-delete-button"
+                    type="plus-circle-o"
+                    onClick={() => this.addSupply(k)}
+                  />
+              ) : null}
+            </Col>
+          </Row>
+          
+            
+            
         </Col>
       )
     });

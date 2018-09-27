@@ -14,6 +14,8 @@ import { Link } from 'react-router-dom';
 import RemoteTable from '../../../../components/TableGrid';
 import { replenishmentPlan } from '../../../../api/replenishment/replenishmentPlan';
 import { connect } from 'dva';
+import moment from 'moment';
+const monthFormat = 'YYYY-MM-DD';
 const FormItem = Form.Item;
 const { RangePicker } = DatePicker;
 const { Option } = Select;
@@ -34,7 +36,7 @@ class SearchForm extends PureComponent{
     plan_type: [],// 类型
     audit_plan_status: [] // 状态
   }
-  componentWillMount = () =>{
+  componentDidMount = () =>{
     const { dispatch } = this.props;
     //类型
     dispatch({
@@ -43,7 +45,7 @@ class SearchForm extends PureComponent{
       callback: (data) =>{
         this.setState({ plan_type: data })
       }
-    })
+    });
     //状态
     dispatch({
       type: 'base/orderStatusOrorderType',
@@ -51,7 +53,23 @@ class SearchForm extends PureComponent{
       callback: (data) =>{
         this.setState({ audit_plan_status: data })
       }
-    })
+    });
+    //回显搜索条件
+    let { queryConditons } = this.props.formProps.base;
+    if(queryConditons.startTime && queryConditons.endTime) {
+      queryConditons.orderTime = [moment(queryConditons.startTime, monthFormat), moment(queryConditons.endTime, monthFormat)];
+    }else {
+      queryConditons.orderTime = [];
+    };
+    //找出表单的name 然后set
+    let values = this.props.form.getFieldsValue();
+    values = Object.getOwnPropertyNames(values);
+    let value = {};
+    values.map(keyItem => {
+      value[keyItem] = queryConditons[keyItem];
+      return keyItem;
+    });
+    this.props.form.setFieldsValue(value);
   }
   toggle = () => {
     const { display, expand } = this.state;
@@ -66,21 +84,25 @@ class SearchForm extends PureComponent{
       if (!err) {
         const orderTime = values.orderTime === undefined ? '' : values.orderTime;
         if(orderTime.length){
-          values.startTime = values.orderTime[0].format('YYYY-MM-DD HH:mm');
-          values.endTime = values.orderTime[1].format('YYYY-MM-DD HH:mm');
-        }
+          values.startTime = values.orderTime[0].format(monthFormat);
+          values.endTime = values.orderTime[1].format(monthFormat);
+        }else {
+          values.startTime = '';
+          values.endTime = '';
+        };
         delete values.orderTime;
-        values.queryType = '2'; // 审核列表参数
-        console.log(values, '查询条件');
-        this.props.query(values);
+        this.props.formProps.dispatch({
+          type:'base/setQueryConditions',
+          payload: values
+        });
       }
     })
   }
   //重置
   handleReset = () => {
     this.props.form.resetFields();
-    this.props.query({
-      queryType: '2'
+    this.props.formProps.dispatch({
+      type:'base/clearQueryConditions'
     });
   }
   render(){
@@ -92,21 +114,18 @@ class SearchForm extends PureComponent{
           <Col span={8}>
             <FormItem {...formItemLayout} label={`计划单号`}>
               {
-                getFieldDecorator(`planCode`,{
-                  initialValue: ''
-                })(
+                getFieldDecorator(`planCode`)(
                   <Input placeholder='请输入'/>
                 )
               }
             </FormItem>
           </Col>
-          <Col span={8} style={{ display: display }}>
+          <Col span={8}>
             <FormItem {...formItemLayout} label={`状态`}>
               {
-                getFieldDecorator(`auditStatus`,{
-                  initialValue: ''
-                })(
+                getFieldDecorator(`auditStatus`)(
                   <Select
+                    placeholder='请输入'
                     allowClear={true}
                     showSearch
                     filterOption={(input, option) => option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0}
@@ -119,12 +138,10 @@ class SearchForm extends PureComponent{
               }
             </FormItem>
           </Col>
-          <Col span={8}>
+          <Col span={8} style={{ display: display }}>
             <FormItem {...formItemLayout} label={`发起时间`}>
               {
-                getFieldDecorator(`orderTime`,{
-                  initialValue: ''
-                })(
+                getFieldDecorator(`orderTime`)(
                   <RangePicker format={'YYYY-MM-DD'}/>
                 )
               }
@@ -133,10 +150,9 @@ class SearchForm extends PureComponent{
           <Col span={8} style={{ display: display }}>
             <FormItem {...formItemLayout} label={`类型`}>
               {
-                getFieldDecorator('planType',{
-                  initialValue: ''
-                })(
+                getFieldDecorator('planType')(
                   <Select
+                    placeholder='请输入'
                     allowClear={true}
                     showSearch
                     filterOption={(input, option) => option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0}
@@ -172,7 +188,6 @@ class PlanCheck extends PureComponent{
       queryType: '2'
     },
   }
-  
   queryHandle = (query) => {
     this.refs.table.fetch(query);
     this.setState({ query })
@@ -197,54 +212,62 @@ class PlanCheck extends PureComponent{
     })
   }
   render(){
-    const { query, loading } = this.state;
-    const columns = [{
-      title: '计划单号',
-      dataIndex: 'planCode',
-      width: 280,
-      render: (text,record) =>{
-        return <span>
-          <Link to={{pathname: `/purchase/replenishment/planCheck/detail/${record.planCode}/${record.auditStatus}`}}>{text}</Link>
-        </span>  
-      }
-    },{
-      title: '状态',
-      dataIndex: 'statusName',
-      width: 112,
-    },{
-      title: '类型',
-      dataIndex: 'planTypeName',
-      width: 168,
-    },{
-      title: '发起人',
-      dataIndex: 'createUserName',
-      width: 168,
+    const { loading } = this.state;
+    const columns = [
+      {
+        title: '计划单号',
+        dataIndex: 'planCode',
+        width: 280,
+        render: (text,record) =>{
+          return <span>
+            <Link to={{pathname: `/purchase/replenishment/planCheck/detail/${record.planCode}/${record.auditStatus}`}}>{text}</Link>
+          </span>  
+        }
       },{
-      title: '发起时间',
-      dataIndex: 'createDate',
-      width: 224,
-    },{
-      title: '审核人',
-      dataIndex: 'sheveUserName',
-      width: 112,
-    },{
-      title: '审核时间',
-      dataIndex: 'sheveDate',
-      width: 224,
-    },{
-      title: '收货地址',
-      dataIndex: 'receiveAddress',
-      width: 280,
-      className: 'ellipsis',
-        render:(text)=>(
-          <Tooltip placement="topLeft" title={text}>{text}</Tooltip>
-        )
-    }];
+        title: '状态',
+        dataIndex: 'statusName',
+        width: 112,
+      },{
+        title: '类型',
+        dataIndex: 'planTypeName',
+        width: 168,
+      },{
+        title: '发起人',
+        dataIndex: 'createUserName',
+        width: 168,
+        },{
+        title: '发起时间',
+        dataIndex: 'createDate',
+        width: 224,
+      },{
+        title: '审核人',
+        dataIndex: 'sheveUserName',
+        width: 112,
+      },{
+        title: '审核时间',
+        dataIndex: 'sheveDate',
+        width: 224,
+      },{
+        title: '收货地址',
+        dataIndex: 'receiveAddress',
+        width: 280,
+        className: 'ellipsis',
+          render:(text)=>(
+            <Tooltip placement="topLeft" title={text}>{text}</Tooltip>
+          )
+      }
+    ];
+    let query = this.props.base.queryConditons;
+    query = {
+      ...query,
+      ...this.state.query
+    }
+    delete query.key;
     return (
       <div className='ysynet-main-content'>
          <WrapperForm 
-          query={this.queryHandle}
           dispatch={this.props.dispatch}
+          formProps={{...this.props}}
         />
          <div className='ant-row-bottom'>
             <Button type='primary' onClick={this.bitchPass} loading={loading} style={{ marginLeft: 8 }}>批量通过</Button>

@@ -215,7 +215,7 @@ class DrugDirectory extends PureComponent{
             upperQuantity:values.upperQuantity||'',
             downQuantity:values.downQuantity||'',
             purchaseQuantity:values.purchaseQuantity||'',
-            id: item.id || ''
+            id: item.detailId || ''
           })
           return item 
         })
@@ -227,7 +227,7 @@ class DrugDirectory extends PureComponent{
           callback:(data)=>{
           this.setState({ loading: false, visible: false, selected:[],selectedRows: [] })
             message.success('操作成功');
-            this.props.table.fetch();
+            this.refs.table.fetch();
           }
         })
       }

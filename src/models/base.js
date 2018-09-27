@@ -236,11 +236,11 @@ export default {
   },
   reducers: {
     queryConditions(state, action){
-      const key = window.location.href.split('#')[1]
+      const key = window.location.href.split('#')[1];
       return {
         ...state,
         queryConditons: {
-          key, ...state.queryConditions, ...action.payload
+          key, ...state.queryConditons, ...action.payload
         }
       }
     },

@@ -130,10 +130,13 @@ class DetailsRefund extends PureComponent{
         <Card>
           <div className='ysynet-details-flex-header'>
             <h3>单据信息</h3>
-            <div style={{ textAlign: 'right' }}>
-              <Link to={{pathname: `/editBackStoragePlan/${this.props.match.params.backNo}`}}><Button type='default'>编辑</Button></Link>
-              <Button type='primary' onClick={this.backStroage} style={{ marginLeft: 8 }}>确认退货</Button>
-            </div>
+            {
+              detailsData.backStatus === 1 &&
+              <div style={{ textAlign: 'right' }}>
+                <Link to={{pathname: `/editBackStoragePlan/${this.props.match.params.backNo}`}}><Button type='default'>编辑</Button></Link>
+                <Button type='primary' onClick={this.backStroage} style={{ marginLeft: 8 }}>确认退货</Button>
+              </div>
+            }
           </div>
           <Row>
             <Col span={8}>

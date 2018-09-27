@@ -31,7 +31,7 @@ class Details extends PureComponent {
     this.getDetail()
   }
   //获取详情表头
-  getDetail = (cb) => {
+  getDetail = () => {
     this.props.dispatch({
       type: 'checkDecrease/getCheckbill',
       payload: {
@@ -41,7 +41,7 @@ class Details extends PureComponent {
         if(data.msg === 'success') {
           this.setState({
             info: data.data
-          }, cb);
+          });
         }else {
           message.error(data.msg);
           message.error('获取详情头部失败！');
@@ -291,6 +291,7 @@ class Details extends PureComponent {
         return item;
       })
     };
+    debugger
     this.setState({
       dataSource: data,
       tableLoading: false,

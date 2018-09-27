@@ -6,21 +6,30 @@ import { objCompare } from '../../utils/utils'
 class RemoteTable extends Component {
   constructor(props) {
     super(props)
-    this.defaultPageSize = window.screen.height >= 1080 ? 20 : 10
+    this.defaultPageSize = window.screen.height >= 1080 ? 20 : 10;
+    
     this.state = {
       data: [],
       pagination: {},
       loading: false,
       searchParams: {}
     }
+  };
+  componentDidMount() {
+    this.fetch();
   }
   componentWillReceiveProps = (nextProps) => {
     if ((nextProps.url !== this.props.url) || 
       (typeof nextProps.query === 'string' ? nextProps.query !== this.props.query : !objCompare(nextProps.query, this.props.query))) {
         this.fetch(nextProps.query, nextProps.url)
-    }
+    };
+    if(typeof this.props.cb !== typeof nextProps.cb && typeof nextProps.cb === 'function') {
+      nextProps.cb(this.state.data);
+    };
   }
+  
   handleTableChange = (pagination, filters, sorter) => {
+    const {onChange} = this.props;  
     const pager = this.state.pagination;
     
     pager.pageSize = pagination.pageSize;
@@ -29,19 +38,26 @@ class RemoteTable extends Component {
       pagination: pager,
     });
     const postData = Object.assign({}, this.state.searchParams, {
-      results: pagination.pageSize,
+      pageSize: pagination.pageSize,
       pageNo: pagination.current,
       sortField: sorter.field,
       sortOrder: sorter.order,
       ...filters
-    })
+    });
+    if (onChange && typeof onChange === 'function') {
+      onChange({
+        ...postData
+      })
+    }
     this.fetch(postData);
   }
   fetch = (params = {...this.props.query}, url = this.props.url,catchData={...this.props.catchData}) => {
-    this.setState({ loading: true, searchParams: params });
+    this.setState({loading: true, searchParams: params });
     this.props.fetchBefore && this.props.fetchBefore();
     if(url){
       let pagination = this.state.pagination;
+      pagination.current = params.pageNo ? params.pageNo : pagination.pageNo;
+      pagination.pageSize = params.pageSize ? params.pageSize : pagination.pageSize;
       let dataMethod, contentType;
       if(this.props.isJson) {
         dataMethod = JSON.stringify;
@@ -87,10 +103,10 @@ class RemoteTable extends Component {
           pagination.showQuickJumper = true;
           pagination.showTotal=(total, range) => `${range[0]}-${range[1]} 共 ${total} 条`;
           pagination.pageSize = pagination.pageSize ?  pagination.pageSize : ( this.props.pagesize || this.defaultPageSize );
+          
           if(!params.pageNo) {
             pagination.current = 1;
           }
-          
           this.setState({
             loading: false,
             data: data.data.list || (Array.isArray(data.data.list) ? data.data.list : (Array.isArray(data.data) ? data.data : []) ) ,
@@ -117,12 +133,9 @@ class RemoteTable extends Component {
       })
     }
   }
-  componentDidMount() {
-    this.fetch();
-  }
   render () {
     const { columns, rowKey, rowClassName, 
-            rowSelection, scroll, footer,showHeader,title } = this.props;   
+            rowSelection, scroll, footer,showHeader,title } = this.props; 
     return (
       <Table 
         {...this.props}

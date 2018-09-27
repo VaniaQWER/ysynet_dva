@@ -9,11 +9,12 @@
  * @file 药库 - 补货管理--目录外采购
  */
 import React, { PureComponent } from 'react';
-import { Form, Button, message, Tooltip, DatePicker, Select, Row, Col, Input  } from 'antd';
+import { Form, Button, message, Tooltip, DatePicker, Select, Row, Col, Input, Icon  } from 'antd';
 import { Link } from 'react-router-dom';
 import RemoteTable from '../../../../components/TableGrid';
 import { replenishmentPlan } from '../../../../api/replenishment/replenishmentPlan';
 import { connect } from 'dva';
+import moment from 'moment';
 const FormItem = Form.Item;
 const { RangePicker } = DatePicker;
 const { Option } = Select;
@@ -27,16 +28,34 @@ const formItemLayout = {
     sm: { span: 19 }
   },
 };
+const monthFormat = 'YYYY-MM-DD';
 
 class SearchForm extends PureComponent{
   state = {
-    fstateOptions: []// 状态下拉框
+    fstateOptions: [],// 状态下拉框
+    display: 'none',
+    expand: false,
   }
-  componentWillMount = () =>{
+  componentDidMount = () =>{
     this.genFstate();
+    let { queryConditons } = this.props.formProps.base;
+    if(queryConditons.startTime && queryConditons.endTime) {
+      queryConditons.createDate = [moment(queryConditons.startTime, monthFormat), moment(queryConditons.endTime, monthFormat)];
+    }else {
+      queryConditons.createDate = [];
+    };
+    //找出表单的name 然后set
+    let values = this.props.form.getFieldsValue();
+    values = Object.getOwnPropertyNames(values);
+    let value = {};
+    values.map(keyItem => {
+      value[keyItem] = queryConditons[keyItem];
+      return keyItem;
+    });
+    this.props.form.setFieldsValue(value);
   }
   genFstate = () =>{
-    const { dispatch } = this.props;
+    const { dispatch } = this.props.formProps;
     dispatch({
       type: 'base/orderStatusOrorderType',
       payload: { type : 'plan_status' },
@@ -53,21 +72,35 @@ class SearchForm extends PureComponent{
         if (createDate.length > 0) {
           values.startTime = createDate[0].format('YYYY-MM-DD');
           values.endTime = createDate[1].format('YYYY-MM-DD');
-        }
-        values.planType = '2';
-        console.log(values, '查询条件');
-        this.props.query(values);
+        }else {
+          values.startTime = '';
+          values.endTime = '';
+        };
+        delete values.createDate;
+        this.props.formProps.dispatch({
+          type:'base/setQueryConditions',
+          payload: values
+        });
       }
+    })
+  }
+  toggle = () => {
+    const { display, expand } = this.state;
+    this.setState({
+      display: display === 'none' ? 'block' : 'none',
+      expand: !expand
     })
   }
   //重置
   handleReset = () => {
     this.props.form.resetFields();
-    this.props.query({ queryType: '1',planType: '2' });
+    this.props.formProps.dispatch({
+      type:'base/clearQueryConditions'
+    });
   }
   render(){
     const { getFieldDecorator } = this.props.form;
-    const { fstateOptions } = this.state;
+    const { fstateOptions, display, expand } = this.state;
     return (
       <Form className="ant-advanced-search-form" onSubmit={this.handleSearch}>
         <Row gutter={30}>
@@ -85,10 +118,9 @@ class SearchForm extends PureComponent{
           <Col span={8}>
             <FormItem {...formItemLayout} label={`状态`}>
               {
-                getFieldDecorator(`auditStatus`,{
-                  initialValue: ''
-                })(
+                getFieldDecorator(`auditStatus`)(
                   <Select
+                    placeholder="请选择"
                     allowClear={true}
                     showSearch
                     filterOption={(input, option) => option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0}
@@ -101,7 +133,7 @@ class SearchForm extends PureComponent{
               }
             </FormItem>
           </Col>
-          <Col span={8}>
+          <Col span={8} style={{display: display}}>
             <FormItem {...formItemLayout} label={`发起时间`}>
               {
                 getFieldDecorator(`orderTime`,{
@@ -112,9 +144,12 @@ class SearchForm extends PureComponent{
               }
             </FormItem>
           </Col>
-          <Col span={24} style={{ textAlign: 'right', marginTop: 4}} >
+          <Col span={8} style={{float: 'right', textAlign: 'right', marginTop: 4}} >
            <Button type="primary" htmlType="submit">查询</Button>
-           <Button type='default' style={{marginLeft: 8}} onClick={this.handleReset}>重置</Button>
+           <Button type='default' style={{margin: '0 8px'}} onClick={this.handleReset}>重置</Button>
+           <a style={{fontSize: 14}} onClick={this.toggle}>
+             {expand ? '收起' : '展开'} <Icon type={expand ? 'up' : 'down'} />
+           </a>
          </Col>
         </Row>
       </Form>
@@ -133,92 +168,96 @@ class OutCatalogPurchase extends PureComponent{
       planType: '2'
     },
   }
-  queryHandle = (query) => {
-    this.refs.table.fetch(query);
-    this.setState({ query })
-  }
   delete = () =>{
-    const dataSource = this.state.dataSource;
-    const selected = this.state.selected;
-    if (selected.length === 0) {
+    let {selectedRows} = this.state;
+    if(selectedRows.length === 0) {
       message.warn('请至少选择一条数据')
-    } else {
-      this.setState({ loading: true });
-      let result = [];
-      dataSource.map( (item, index) => {
-        const a = selected.find( (value, index, arr) => {
-        return value === item.id;
-        })
-        if (typeof a === 'undefined') {
-            return result.push(item)
-        }
-        return null;
+    };
+    let list = selectedRows.map(item => item.planCode);
+    this.props.dispatch({
+      type:'replenish/ReplenishDelete',
+      payload: {list, opType: '1'},
+      callback:(data)=>{
+        this.refs.table.fetch();
+      }
+    });
+  }
+  _tableChange = values => {
+    this.props.dispatch({
+      type:'base/setQueryConditions',
+      payload: values
     })
-      setTimeout(()=>{
-        this.setState({dataSource: result,loading: false,selected:[],selectedRows: []});
-      },500)
-    }
   }
   render(){
-    const { query } = this.state;
-    const columns = [{
-      title: '计划单号',
-      dataIndex: 'planCode',
-      width: 280,
-      render: (text,record) =>{
-        return <span>
-          <Link to={{pathname: `/purchase/replenishment/outCatalogPurchase/detail/${record.planCode}`}}>{text}</Link>
-        </span>  
-      }
-    },{
-      title: '状态',
-      dataIndex: 'statusName',
-      width: 112,
-    },{
-      title: '类型',
-      dataIndex: 'planTypeName',
-      width: 168,
-    },{
-      title: '发起人',
-      dataIndex: 'createUserName',
-      width: 112,
-    },{
-      title: '发起时间',
-      dataIndex: 'createDate',
-      width: 224,
-    },{
-      title: '收货地址',
-      dataIndex: 'receiveAddress',
-      width: 280,
-      className: 'ellipsis',
-        render:(text)=>(
-          <Tooltip placement="topLeft" title={text}>{text}</Tooltip>
-        )
-    },];
+    const columns = [
+      {
+        title: '计划单号',
+        dataIndex: 'planCode',
+        width: 280,
+        render: (text,record) =>{
+          return <span>
+            <Link to={{pathname: `/purchase/replenishment/outCatalogPurchase/detail/${record.planCode}`}}>{text}</Link>
+          </span>  
+        }
+      },{
+        title: '状态',
+        dataIndex: 'statusName',
+        width: 112,
+      },{
+        title: '类型',
+        dataIndex: 'planTypeName',
+        width: 168,
+      },{
+        title: '发起人',
+        dataIndex: 'createUserName',
+        width: 112,
+      },{
+        title: '发起时间',
+        dataIndex: 'createDate',
+        width: 224,
+      },{
+        title: '收货地址',
+        dataIndex: 'receiveAddress',
+        width: 280,
+        className: 'ellipsis',
+          render:(text)=>(
+            <Tooltip placement="topLeft" title={text}>{text}</Tooltip>
+          )
+      },
+    ];
+    let query = this.props.base.queryConditons;
+    query = {
+      ...query,
+      ...this.state.query
+    }
     return (
       <div className='ysynet-main-content'>
-         <WrapperForm 
-          query={this.queryHandle}
+        <WrapperForm 
           dispatch={this.props.dispatch}
-          />
-         <div className='ant-row-bottom'>
-            <Button type='primary' onClick={()=>this.props.history.push({ pathname: `/createOutCatalogPurcahsePlan` })}>新建计划</Button>
-            <Button type='default' onClick={this.delete} style={{ marginLeft: 8 }}>删除</Button>
-         </div>
-         <RemoteTable
-            ref='table'
-            query={query}
-            url={replenishmentPlan.PLANLIST}
-            columns={columns}
-            scroll={{ x: 1176 }}
-            rowKey={'id'}
-            rowSelection={{
-              selectedRowKeys: this.state.selected,
-              onChange: (selectedRowKeys, selectedRows) => {
-                this.setState({selected: selectedRowKeys, selectedRows: selectedRows})
-              }
-            }}
-         />
+          formProps={{...this.props}}
+        />
+        <div className='ant-row-bottom'>
+          <Button type='primary' onClick={()=>this.props.history.push({ pathname: `/createOutCatalogPurcahsePlan` })}>新建计划</Button>
+          <Button type='default' onClick={this.delete} style={{ marginLeft: 8 }}>删除</Button>
+        </div>
+        <RemoteTable
+          ref='table'
+          query={query}
+          onChange={this._tableChange}
+          url={replenishmentPlan.PLANLIST}
+          columns={columns}
+          scroll={{ x: 1176 }}
+          rowKey={'id'}
+          rowSelection={{
+            selectedRowKeys: this.state.selected,
+            onChange: (selectedRowKeys, selectedRows) => {
+              this.setState({selected: selectedRowKeys, selectedRows: selectedRows})
+            },
+            getCheckboxProps: record => ({
+              disabled: record.auditStatus !== 1
+            }),
+          }}
+        />
       </div>
     )
   }

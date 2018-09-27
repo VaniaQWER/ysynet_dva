@@ -71,7 +71,7 @@ const columns = [
   {
     title: '货位',
     width: 200,
-    dataIndex: 'realPositionName',
+    dataIndex: 'storeLocName',
   },
   {
     title: '批准文号',
@@ -155,7 +155,7 @@ class ReplenishmentDetail extends PureComponent{
                   <label>入库时间</label>
               </div>
               <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
-                <div className='ant-form-item-control'>{data.updateDate || ''}</div>
+                <div className='ant-form-item-control'>{data.createDate || ''}</div>
               </div>
             </Col>
             <Col span={8}>

@@ -46,15 +46,24 @@ class SearchForm extends PureComponent{
       expand: !expand
     })
   }
+  componentDidMount() {
+    const { queryConditons: {pageSize, pageNo, key, sortField, sortOrder, ...other} } = this.props.formProps.base;
+    this.props.form.setFieldsValue(other);
+  }
   handleSearch = (e) => {
     e.preventDefault();
     this.props.form.validateFields((err, values) => {
-      this.props.query(values);
+      this.props.formProps.dispatch({
+        type:'base/setQueryConditions',
+        payload: values
+      });
     });
   }
   handleReset = () => {
     this.props.form.resetFields();
-    this.props.query({});
+    this.props.formProps.dispatch({
+      type:'base/clearQueryConditions'
+    });
   }
   render(){
     const { getFieldDecorator } = this.props.form;
@@ -84,7 +93,7 @@ class SearchForm extends PureComponent{
               }
             </FormItem>
           </Col>
-          <Col span={8}>
+          <Col span={8} style={{ display: display }}>
             <FormItem {...formItemLayout} label={`规格`}>
               {
                 getFieldDecorator(`ctmmSpecification`,{
@@ -124,7 +133,7 @@ class SearchForm extends PureComponent{
               }
             </FormItem>
           </Col>
-          <Col span={expand ? 8: 24} style={{ textAlign: 'right', marginTop: 4}} >
+          <Col span={8} style={{float: 'right', textAlign: 'right', marginTop: 4}} >
            <Button type="primary" htmlType="submit">查询</Button>
            <Button type='default' style={{marginLeft: 8}} onClick={this.handleReset}>重置</Button>
            <a style={{marginLeft: 8, fontSize: 14}} onClick={this.toggle}>
@@ -187,14 +196,9 @@ class DrugDirectory extends PureComponent{
   state = {
     addVisible: false,
     addLoading: false,
-    query: {}
-  }
-  queryHandler = (query) => {
-    this.setState({ query });
-    this.refs.table.fetch(query);
   }
   add = () =>{
-    this.setState({ addVisible: true })
+    this.setState({ addVisible: true });
   }
   save = (e) =>{
     e.preventDefault();
@@ -222,8 +226,26 @@ class DrugDirectory extends PureComponent{
     
     
   }
+  _tableChange = values => {
+    this.props.dispatch({
+      type:'base/setQueryConditions',
+      payload: values
+    })
+  }
+  validDay = (rule, value, callback) => {
+    let num = Number(value);
+    if (/^[0-9]+$/.test(num) && num !== 0) {
+      if (num > 99999999) {
+        callback(new Error('输入数值过大, 不能超过100000000'));
+      }else{
+        callback();
+      }
+    } else {
+      callback(new Error('请输入非0正整数！'));
+    }
+  }
   render(){
-    const { addVisible, addLoading, query } = this.state;
+    const { addVisible, addLoading } = this.state;
     const { getFieldDecorator } = this.props.form;
     const IndexColumns = [
       ...columns,
@@ -240,12 +262,16 @@ class DrugDirectory extends PureComponent{
         render: text => <Badge status={text==="0" ? "success" :"error"} text={text==="0" ? "启用" :"停用"}/>
       },
     ];
+    let query = this.props.base.queryConditons;
+    delete query.key;
     return (
     <div className='ysynet-main-content'>
-      <WrappSearchForm query={this.queryHandler}/>
+      <WrappSearchForm 
+        formProps={{...this.props}} 
+      />
       <Row className='ant-row-bottom'>
         <Col>
-          <Button type='primary' onClick={this.add} style={{ margin: '0 8px' }}>新增</Button>
+          <Button type='primary' onClick={this.add}>新增</Button>
         </Col>
       </Row>
       <Modal
@@ -348,11 +374,20 @@ class DrugDirectory extends PureComponent{
               </FormItem>
               <FormItem {...singleFormItemLayout} label={`1包装规格 = `}>
                 {
-                  getFieldDecorator(`ctpHdmsPackConvfacCode`,{
+                  getFieldDecorator(`ctpHdmsCheckInConvfacCode`,{
                     initialValue: '',
-                    rules: [{ required: true,message: '请输入转换系数' }]
+                    rules: [{ 
+                      required: true,
+                      message: '请输入转换系数',
+                      whitespace: true,
+                      validator: this.validDay
+                    }]
                   })(
-                    <Input placeholder='请输入' addonAfter='最小发药单位'/>
+                    <Input
+                      type="number"
+                      placeholder='请输入' 
+                      addonAfter='最小发药单位'
+                    />
                   )
                 }
               </FormItem>
@@ -361,6 +396,7 @@ class DrugDirectory extends PureComponent{
         </Form>
       </Modal>
       <RemoteTable
+        onChange={this._tableChange}
         ref='table'
         bordered
         query={query}
@@ -373,4 +409,4 @@ class DrugDirectory extends PureComponent{
     )
   }
 }
-export default connect()(Form.create()(DrugDirectory))
+export default connect(state=>state)(Form.create()(DrugDirectory))
