@@ -61,15 +61,18 @@ class Details extends PureComponent {
     const columns = [
       {
         title: '通用名',
-        dataIndex: 'ctmmGenericName'
+        dataIndex: 'ctmmGenericName',
+        width: 168
       },
       {
         title: '商品名',
         dataIndex: 'drugName',
+        width: 224
       },
       {
         title: '规格',
         dataIndex: 'ctmmSpecification',
+        width: 168,
         className:'ellipsis',
         render:(text)=>(
             <Tooltip placement="topLeft" title={text}>{text}</Tooltip>
@@ -78,31 +81,37 @@ class Details extends PureComponent {
       {
         title: '包装规格',
         dataIndex: 'packageSpecification',
-        width: 200,
+        width: 168,
       },
       {
         title: '生产厂家',
-        dataIndex: 'ctmmManufacturerName'
+        dataIndex: 'ctmmManufacturerName',
+        width: 280
       },
       {
         title: '批准文号',
         dataIndex: 'approvalNo',
+        width: 224
       },
       {
         title: '结算单位',
-        dataIndex: 'replanUnit'
+        dataIndex: 'replanUnit',
+        width: 112
       },
       {
         title: '结算数量',
-        dataIndex: 'settleQty'
+        dataIndex: 'settleQty',
+        width: 112
       },
       {
         title: '结算价格',
-        dataIndex: 'settlePrice'
+        dataIndex: 'settlePrice',
+        width: 168
       },
       {
         title: '结算金额',
-        dataIndex: 'settleAmount'
+        dataIndex: 'settleAmount',
+        width: 168
       },
       // {
       //   title: '结余单位',
@@ -229,7 +238,7 @@ class Details extends PureComponent {
             isJson={true}
             query={query}
             url={settlementMgt.DETAIL_LIST}
-            scroll={{x: '220%'}}
+            scroll={{x: 1792}}
             columns={columns}
             rowKey={'id'}
             style={{marginTop: 24}}

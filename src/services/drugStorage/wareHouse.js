@@ -24,7 +24,7 @@ export function putawayInfo(options) {
 };
 /* 入库管理 */
 export function getsupplierList(options) {     //供应商下拉框
-  return request(`${_local}/a/depot/supplier/list`, {    
+  return request(`${_local}/a/depot/supplier/all`, {    
     method: 'POST',
     type: 'formData',
     body: options

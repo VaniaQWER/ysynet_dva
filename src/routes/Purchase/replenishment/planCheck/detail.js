@@ -14,17 +14,17 @@ const { TextArea } = Input;
 const columns = [
   {
     title: '通用名称',
-    width: 180,
+    width: 168,
     dataIndex: 'ctmmGenericName',
   },
   {
     title: '商品名',
-    width: 150,
+    width: 224,
     dataIndex: 'ctmmTradeName',
   },
   {
     title: '规格',
-    width: 270,
+    width: 168,
     dataIndex: 'ctmmSpecification',
     className:'ellipsis',
     render:(text)=>(
@@ -33,26 +33,28 @@ const columns = [
   },
   {
     title: '剂型',
-    width: 150,
+    width: 168,
     dataIndex: 'ctmmDosageFormDesc',
   },
   {
     title: '包装规格',
-    width: 270,
+    width: 168,
     dataIndex: 'packageSpecification',
   },
   {
     title: '单位',
-    width: 90,
+    width: 60,
     dataIndex: 'replanUnit',
   },
   {
     title: '需求数量',
     dataIndex: 'demandQuantity',
+    width: 112,
   },
   {
     title: '价格',
     dataIndex: 'drugPrice',
+    width: 112,
     render: (text,reocrd) =>{
       return text === undefined || text === null ? '0': text
     }
@@ -60,20 +62,21 @@ const columns = [
   {
     title: '金额',
     dataIndex: 'totalPrice',
+    width: 168,
   },
   {
     title: '生产厂家',
-    width: 200,
+    width: 280,
     dataIndex: 'ctmmManufacturerName',
   },
   {
     title: '供应商',
-    width: 200,
+    width: 224,
     dataIndex: 'supplierName',
   },
   {
     title: '批准文号',
-    width: 180,
+    width: 224,
     dataIndex: 'approvalNo',
   },
 ];
@@ -81,7 +84,8 @@ class PlanCheckDetail extends PureComponent{
   state = {
     detailsData: {},
     loading: false,
-    visible: false
+    visible: false,
+    value: undefined,
   }
   componentDidMount = () => {
     let { planCode } = this.props.match.params;
@@ -151,7 +155,7 @@ class PlanCheckDetail extends PureComponent{
 
   }
   render(){
-    const { detailsData, loading, visible } = this.state;
+    const { detailsData, loading, visible, value } = this.state;
     const { auditStatus } = this.props.match.params;
     return (
       <div className='fullCol fadeIn'>
@@ -251,7 +255,7 @@ class PlanCheckDetail extends PureComponent{
           <Table
             bordered
             title={()=>'产品信息'}
-            scroll={{x: '180%'}}
+            scroll={{x: 2076}}
             columns={columns}
             loading={loading}
             dataSource={detailsData ? detailsData.list : []}
@@ -276,7 +280,7 @@ class PlanCheckDetail extends PureComponent{
             </div>
             <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-21">
               <div className='ant-form-item-control'>
-                <TextArea onChange={this.rejectInput} rows={3} placeholder="输入驳回说明" />
+                <TextArea value={value} onChange={this.rejectInput} rows={3} placeholder="输入驳回说明" />
               </div>
             </div>
           </Row>

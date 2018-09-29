@@ -40,7 +40,12 @@ class EditDepartmentMgt extends PureComponent {
     console.log(deptLocation);
     this.props.dispatch({
       type:'Organization/OperSysDept',
-      payload:{deptLocation,id:record.id,deptType:record.deptType,deptName:record.deptName},
+      payload:{
+        deptLocation,
+        id: record.id,
+        deptType: record.deptType,
+        deptName: record.deptName
+      },
       callback:(data)=>{
         console.log(data)
         this.props.history.push('/sys/organization/departmentMgt')

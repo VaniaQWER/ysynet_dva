@@ -72,14 +72,15 @@ class Output extends PureComponent{
   constructor(props) {
     super(props);
     this.state = {
-      query:{},
       selected: []
     }
   }
-  queryHandler = (query) => {
-    this.setState({query: query})
+  _tableChange = values => {
+    this.props.dispatch({
+      type:'base/setQueryConditions',
+      payload: values
+    });
   }
-
   //删除
   delete = () => {
     let {selected} = this.state;
@@ -106,16 +107,18 @@ class Output extends PureComponent{
     })
   }
   render(){
-    let {query} = this.state;
+    let query = this.props.base.queryConditons;
+    delete query.key;
     return (
       <div className='ysynet-main-content'>
-        <SearchForm dispatch={this.props.dispatch} query={this.queryHandler} />
+        <SearchForm formProps={{...this.props}} />
         <Row>
           <Button type='primary' className='button-gap'>
             <Link to={{pathname:`/addNewOutput`}}>新建出库</Link>
           </Button>
         </Row>
         <RemoteTable
+          onChange={this._tableChange}
           query={query}
           url={outStorage.OUTSTORELIST}
           ref="tab"
@@ -131,157 +134,169 @@ class Output extends PureComponent{
 export default connect(state=>state)(Output);
 /* 搜索 - 表单 */
 class SearchFormWrapper extends PureComponent {
- state = {
-   display: 'none',
-   status: [],
-   type: [],
-   dept: []
- }
- componentDidMount() {
-  this.props.dispatch({
-    type: 'base/orderStatusOrorderType',
-    payload: {
-      type: 'out_store_status'
-    },
-    callback: (data) => {
-      this.setState({status: data});
-    }
-  });
-  this.props.dispatch({
-    type: 'base/orderStatusOrorderType',
-    payload: {
-      type: 'out_store_type'
-    },
-    callback: (data) => {
-      this.setState({type: data});
-    }
-  });
-  this.props.dispatch({
-    type: 'base/findAllDepts',
-    callback: (data) => {
-      data.unshift({
-        id: '',
-        deptName: '全部'
-      })
-      this.setState({
-        dept: data
+  state = {
+    status: [],
+    type: [],
+    dept: []
+  }
+  componentDidMount() {
+    this.props.formProps.dispatch({
+      type: 'base/orderStatusOrorderType',
+      payload: {
+        type: 'out_store_status'
+      },
+      callback: (data) => {
+        this.setState({status: data});
+      }
+    });
+    this.props.formProps.dispatch({
+      type: 'base/orderStatusOrorderType',
+      payload: {
+        type: 'out_store_type'
+      },
+      callback: (data) => {
+        this.setState({type: data});
+      }
+    });
+    this.props.formProps.dispatch({
+      type: 'base/findAllDepts',
+      callback: (data) => {
+        data.unshift({
+          id: '',
+          deptName: '全部'
+        })
+        this.setState({
+          dept: data
+        });
+      }
+    });
+    let { queryConditons } = this.props.formProps.base;
+    //找出表单的name 然后set
+    let values = this.props.form.getFieldsValue();
+    values = Object.getOwnPropertyNames(values);
+    let value = {};
+    values.map(keyItem => {
+      value[keyItem] = queryConditons[keyItem];
+      return keyItem;
+    });
+    this.props.form.setFieldsValue(value);
+  }
+  toggle = () => {
+      this.props.formProps.dispatch({
+        type:'base/setShowHide'
       });
-    }
-  })
- }
- toggle = () => {
-   const { display, expand } = this.state;
-   this.setState({
-     display: display === 'none' ? 'block' : 'none',
-     expand: !expand
-   })
- }
- handleSearch = (e) => {
-  e.preventDefault();
-  this.props.form.validateFields((err, values) => {
-    let time = values.time === undefined ? '' : values.time;
-    if(time && time.length > 0) {
-      values.startTime = time[0].format('YYYY-MM-DD');
-      values.endTime = time[1].format('YYYY-MM-DD');
-    }else {
-      values.startTime = '';
-      values.endTime = '';
-    };
-    delete values.time;
-    console.log('搜索条件：', values);
-    this.props.query(values);
-  });
- }
+  }
+  handleSearch = (e) => {
+    e.preventDefault();
+    this.props.form.validateFields((err, values) => {
+      let time = values.time === undefined ? '' : values.time;
+      if(time && time.length > 0) {
+        values.startTime = time[0].format('YYYY-MM-DD');
+        values.endTime = time[1].format('YYYY-MM-DD');
+      }else {
+        values.startTime = '';
+        values.endTime = '';
+      };
+      console.log('搜索条件：', values);
+      this.props.formProps.dispatch({
+        type:'base/setQueryConditions',
+        payload: values
+      });
+    });
+  }
  //重置
- handleReset = () => {
-   this.props.form.resetFields();
-   this.props.query({});
- }
+  handleReset = () => {
+    this.props.form.resetFields();
+    this.props.formProps.dispatch({
+      type:'base/clearQueryConditions'
+    });
+  }
 
- dataRender = (data) => {
-   return data.map((item, i)=>{
-     return <Option key={i} value={item.value}>{item.label}</Option>
-   })
- }
+  dataRender = (data) => {
+    return data.map((item, i)=>{
+      return <Option key={i} value={item.value}>{item.label}</Option>
+    })
+  }
 
- render() {
-  let {display, status, type, dept} = this.state;
-  const { getFieldDecorator } = this.props.form;
-  status = this.dataRender(status);
-  type = this.dataRender(type);
-  dept = dept.map((item, i) => {
-    return <Option key={i} value={item.id}>{item.deptName}</Option>
-  });
-
-  return (
-    <Form onSubmit={this.handleSearch}>
-      <Row gutter={30}>
-        <Col span={8}>
-          <FormItem label={`申领部门`} {...formItemLayout}>
-            {getFieldDecorator('deptCode', {})(
-            <Select 
-              showSearch
-              placeholder={'请选择'}
-              optionFilterProp="children"
-              filterOption={(input, option) => option.props.children.indexOf(input) >= 0}
-              >
-              {dept}
-            </Select>
-            )}
-          </FormItem>
-        </Col>
-        <Col span={8}>
-          <FormItem label={`出库时间`} {...formItemLayout}>
-            {getFieldDecorator('time', {})(
-            <RangePicker/>
-            )}
-          </FormItem>
-        </Col>
-        <Col span={8} style={{display: display}}>
-          <FormItem label={`出库分类`} {...formItemLayout}>
-            {getFieldDecorator('backType')(
-            <Select 
-              showSearch
-              placeholder={'请选择'}
-              optionFilterProp="children"
-              filterOption={(input, option) => option.props.children.indexOf(input) >= 0}
-              >
-              {type}
-            </Select>
-            )}
-          </FormItem>
-        </Col>
-        <Col span={8} style={{display: display}}>
-          <FormItem label={`单据号`} {...formItemLayout}>
-            {getFieldDecorator('orderNo')(
-            <Input placeholder='出库单/拣货单'/>
-            )}
-          </FormItem>
-        </Col>
-        <Col span={8} style={{display: display}}>
-          <FormItem label={`状态`} {...formItemLayout}>
-            {getFieldDecorator('backStatus')(
-            <Select 
-              showSearch
-              placeholder={'请选择'}
-              optionFilterProp="children"
-              filterOption={(input, option) => option.props.children.indexOf(input) >= 0}
-              >
-              {status}
-            </Select>
-            )}
-          </FormItem>
-        </Col>
-        <Col span={8} style={{ textAlign: 'right', marginTop: 4}} >
-          <Button type="primary" htmlType="submit">查询</Button>
-          <Button style={{marginLeft: 8}} onClick={this.handleReset}>重置</Button>
-          <a style={{marginLeft: 8, fontSize: 14}} onClick={this.toggle}>
-            {this.state.expand ? '收起' : '展开'} <Icon type={this.state.expand ? 'up' : 'down'} />
-          </a>
-        </Col>
-      </Row>
-    </Form>
-  )
- }
+  render() {
+    let {status, type, dept} = this.state;
+    const { getFieldDecorator } = this.props.form;
+    status = this.dataRender(status);
+    type = this.dataRender(type);
+    dept = dept.map((item, i) => {
+      return <Option key={i} value={item.id}>{item.deptName}</Option>
+    });
+    const {display} = this.props.formProps.base;
+    const expand = display === 'block';
+    return (
+      <Form onSubmit={this.handleSearch}>
+        <Row gutter={30}>
+          <Col span={8}>
+            <FormItem label={`申领部门`} {...formItemLayout}>
+              {getFieldDecorator('deptCode', {})(
+              <Select 
+                showSearch
+                placeholder={'请选择'}
+                optionFilterProp="children"
+                filterOption={(input, option) => option.props.children.indexOf(input) >= 0}
+                >
+                {dept}
+              </Select>
+              )}
+            </FormItem>
+          </Col>
+          <Col span={8}>
+            <FormItem label={`出库时间`} {...formItemLayout}>
+              {getFieldDecorator('time', {})(
+              <RangePicker/>
+              )}
+            </FormItem>
+          </Col>
+          <Col span={8} style={{display: display}}>
+            <FormItem label={`出库分类`} {...formItemLayout}>
+              {getFieldDecorator('backType')(
+              <Select 
+                showSearch
+                placeholder={'请选择'}
+                optionFilterProp="children"
+                filterOption={(input, option) => option.props.children.indexOf(input) >= 0}
+                >
+                {type}
+              </Select>
+              )}
+            </FormItem>
+          </Col>
+          <Col span={8} style={{display: display}}>
+            <FormItem label={`单据号`} {...formItemLayout}>
+              {getFieldDecorator('orderNo')(
+              <Input placeholder='出库单/拣货单'/>
+              )}
+            </FormItem>
+          </Col>
+          <Col span={8} style={{display: display}}>
+            <FormItem label={`状态`} {...formItemLayout}>
+              {getFieldDecorator('backStatus')(
+              <Select 
+                showSearch
+                placeholder={'请选择'}
+                optionFilterProp="children"
+                filterOption={(input, option) => option.props.children.indexOf(input) >= 0}
+                >
+                {status}
+              </Select>
+              )}
+            </FormItem>
+          </Col>
+          <Col span={8} style={{ textAlign: 'right', marginTop: 4}} >
+            <Button type="primary" htmlType="submit">查询</Button>
+            <Button style={{marginLeft: 8}} onClick={this.handleReset}>重置</Button>
+            <a style={{marginLeft: 8, fontSize: 14}} onClick={this.toggle}>
+              {expand ? '收起' : '展开'} <Icon type={expand ? 'up' : 'down'} />
+            </a>
+          </Col>
+        </Row>
+      </Form>
+    )
+  }
 }
 const SearchForm = Form.create()(SearchFormWrapper);

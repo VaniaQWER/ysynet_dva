@@ -14,7 +14,6 @@ import { Link } from 'react-router-dom';
 import RemoteTable from '../../../../components/TableGrid';
 import { replenishmentPlan } from '../../../../api/replenishment/replenishmentPlan';
 import { connect } from 'dva';
-import moment from 'moment';
 const FormItem = Form.Item;
 const { RangePicker } = DatePicker;
 const { Option } = Select;
@@ -28,22 +27,14 @@ const formItemLayout = {
     sm: { span: 19 }
   },
 };
-const monthFormat = 'YYYY-MM-DD';
 
 class SearchForm extends PureComponent{
   state = {
     fstateOptions: [],// 状态下拉框
-    display: 'none',
-    expand: false,
   }
   componentDidMount = () =>{
     this.genFstate();
     let { queryConditons } = this.props.formProps.base;
-    if(queryConditons.startTime && queryConditons.endTime) {
-      queryConditons.createDate = [moment(queryConditons.startTime, monthFormat), moment(queryConditons.endTime, monthFormat)];
-    }else {
-      queryConditons.createDate = [];
-    };
     //找出表单的name 然后set
     let values = this.props.form.getFieldsValue();
     values = Object.getOwnPropertyNames(values);
@@ -76,7 +67,6 @@ class SearchForm extends PureComponent{
           values.startTime = '';
           values.endTime = '';
         };
-        delete values.createDate;
         this.props.formProps.dispatch({
           type:'base/setQueryConditions',
           payload: values
@@ -85,11 +75,9 @@ class SearchForm extends PureComponent{
     })
   }
   toggle = () => {
-    const { display, expand } = this.state;
-    this.setState({
-      display: display === 'none' ? 'block' : 'none',
-      expand: !expand
-    })
+    this.props.formProps.dispatch({
+      type:'base/setShowHide'
+    });
   }
   //重置
   handleReset = () => {
@@ -100,7 +88,9 @@ class SearchForm extends PureComponent{
   }
   render(){
     const { getFieldDecorator } = this.props.form;
-    const { fstateOptions, display, expand } = this.state;
+    const { fstateOptions } = this.state;
+    const {display} = this.props.formProps.base;
+    const expand = display === 'block';
     return (
       <Form className="ant-advanced-search-form" onSubmit={this.handleSearch}>
         <Row gutter={30}>
@@ -193,6 +183,7 @@ class OutCatalogPurchase extends PureComponent{
       {
         title: '计划单号',
         dataIndex: 'planCode',
+        fixed: 'left',
         width: 280,
         render: (text,record) =>{
           return <span>
@@ -229,7 +220,9 @@ class OutCatalogPurchase extends PureComponent{
     query = {
       ...query,
       ...this.state.query
-    }
+    };
+    delete query.key;
+    delete query.orderTime;
     return (
       <div className='ysynet-main-content'>
         <WrapperForm 

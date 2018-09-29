@@ -9,6 +9,7 @@ import { Form, Row, Col, Button, Icon, Select , Input , DatePicker} from 'antd';
 import { Link } from 'react-router-dom'
 import { formItemLayout } from '../../../../utils/commonStyles';
 import RemoteTable from '../../../../components/TableGrid';
+import {outStorage} from '../../../../api/drugStorage/outStorage';
 import { connect } from 'dva';
 const RangePicker = DatePicker.RangePicker;
 const FormItem = Form.Item;
@@ -70,8 +71,8 @@ class SearchFormWrapper extends PureComponent {
     apply_type_options: [], //配货类别
     common_distribute_status: [] // 配货状态
   }
-  componentWillMount = () =>{
-    const { dispatch } = this.props;
+  componentDidMount = () =>{
+    const { dispatch } = this.props.formProps;
     // 查询已经申领过的部门
     dispatch({
       type: 'outStorage/genDeptList',
@@ -101,14 +102,21 @@ class SearchFormWrapper extends PureComponent {
         this.setState({ common_distribute_status: data })
       }
     });
-
+    let { queryConditons } = this.props.formProps.base;
+    //找出表单的name 然后set
+    let values = this.props.form.getFieldsValue();
+    values = Object.getOwnPropertyNames(values);
+    let value = {};
+    values.map(keyItem => {
+      value[keyItem] = queryConditons[keyItem];
+      return keyItem;
+    });
+    this.props.form.setFieldsValue(value);
   }
   toggle = () => {
-    const { display, expand } = this.state;
-    this.setState({
-      display: display === 'none' ? 'block' : 'none',
-      expand: !expand
-    })
+    this.props.formProps.dispatch({
+      type:'base/setShowHide'
+    });
   }
   handleSearch = e => {
     e.preventDefault();
@@ -119,21 +127,26 @@ class SearchFormWrapper extends PureComponent {
           values.startTime = values.Time[0].format('YYYY-MM-DD');
           values.endTime = values.Time[1].format('YYYY-MM-DD');
         }
-        delete values.Time;
-        console.log(values, '查询条件');
-        this.props.query(values);
+        this.props.formProps.dispatch({
+          type:'base/setQueryConditions',
+          payload: values
+        });;
       }
     })
   }
   //重置
   handleReset = () => {
     this.props.form.resetFields();
-    this.props.query({});
+    this.props.formProps.dispatch({
+      type:'base/clearQueryConditions'
+    });
   }
  
   render() {
-    const { display, deptOption, apply_type_options, common_distribute_status } = this.state;
+    const { deptOption, apply_type_options, common_distribute_status } = this.state;
     const { getFieldDecorator } = this.props.form;
+    const {display} = this.props.formProps.base;
+    const expand = display === 'block';
     return (
       <Form onSubmit={this.handleSearch}>
         <Row gutter={30}>
@@ -212,7 +225,7 @@ class SearchFormWrapper extends PureComponent {
             <Button type="primary" htmlType="submit">查询</Button>
             <Button style={{marginLeft: 8}} onClick={this.handleReset}>重置</Button>
             <a style={{marginLeft: 8, fontSize: 14}} onClick={this.toggle}>
-              {this.state.expand ? '收起' : '展开'} <Icon type={this.state.expand ? 'up' : 'down'} />
+              {expand ? '收起' : '展开'} <Icon type={expand ? 'up' : 'down'} />
             </a>
           </Col>
         </Row>
@@ -225,25 +238,31 @@ class Picking extends PureComponent{
   constructor(props) {
     super(props);
     this.state = {
-      query:{},
+      query:{
+        queryType: 2
+      },
     }
   }
-
-  queryHandler = (query) => {
-    this.setState({ query:query });
-    this.refs.table.fetch(query);
+  _tableChange = values => {
+    this.props.dispatch({
+      type:'base/setQueryConditions',
+      payload: values
+    });
   }
-
   render(){
-    const { query } = this.state;
+    let query = this.props.base.queryConditons;
+    query = {...query, ...this.state.query};
+    delete query.key;
+    delete query.Time;
     return (
       <div className='ysynet-main-content'>
         <SearchForm 
-          query={this.queryHandler}
-          dispatch={this.props.dispatch} 
+          formProps={{...this.props}}
         />
         <RemoteTable
+          onChange={this._tableChange}
           bordered
+          url={outStorage.FINDDISTRIBUTE_LIST}
           ref='table'
           query={query}
           scroll={{x: 1400}}

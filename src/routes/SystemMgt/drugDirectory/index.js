@@ -36,19 +36,22 @@ const singleFormItemLayout = {
 }
 
 class SearchForm extends PureComponent{
-  state = {
-    display: 'none'
-  }
   toggle = () => {
-    const { display, expand } = this.state;
-    this.setState({
-      display: display === 'none' ? 'block' : 'none',
-      expand: !expand
-    })
+    this.props.formProps.dispatch({
+      type:'base/setShowHide'
+    });
   }
   componentDidMount() {
-    const { queryConditons: {pageSize, pageNo, key, sortField, sortOrder, ...other} } = this.props.formProps.base;
-    this.props.form.setFieldsValue(other);
+    let { queryConditons } = this.props.formProps.base;
+    //找出表单的name 然后set
+    let values = this.props.form.getFieldsValue();
+    values = Object.getOwnPropertyNames(values);
+    let value = {};
+    values.map(keyItem => {
+      value[keyItem] = queryConditons[keyItem];
+      return keyItem;
+    });
+    this.props.form.setFieldsValue(value);
   }
   handleSearch = (e) => {
     e.preventDefault();
@@ -66,8 +69,9 @@ class SearchForm extends PureComponent{
     });
   }
   render(){
-    const { getFieldDecorator } = this.props.form;
-    const { display, expand } = this.state;
+    const {getFieldDecorator} = this.props.form;
+    const {display} = this.props.formProps.base;
+    const expand = display === 'block';
     return (
       <Form className="ant-advanced-search-form" onSubmit={this.handleSearch}>
         <Row gutter={30}>
@@ -197,7 +201,7 @@ class DrugDirectory extends PureComponent{
     addVisible: false,
     addLoading: false,
   }
-  add = () =>{
+  add = () => {
     this.setState({ addVisible: true });
   }
   save = (e) =>{

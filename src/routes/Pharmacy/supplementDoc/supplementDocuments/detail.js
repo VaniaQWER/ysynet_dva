@@ -12,19 +12,17 @@ const columns = [
   {
     title: '数量',
     width: 100,
-    dataIndex: 'num',
-    render:(text,record)=>"24"
+    dataIndex: 'makeipQuantity',
   },
   {
     title: '单位',
     width: 100,
-    dataIndex: 'unit1',
-    render:(text)=>'箱'
+    dataIndex: 'replanUnit',
   },
   {
     title: '包装规格',
     width: 270,
-    dataIndex: 'replanUnit',
+    dataIndex: 'packageSpecification',
     className:'ellipsis',
     render:(text)=>(
       <Tooltip placement="topLeft" title={text}>{text}</Tooltip>
@@ -48,7 +46,7 @@ const columns = [
   {
     title: '生产厂家',
     width: 200,
-    dataIndex: 'productCompany',
+    dataIndex: 'ctmmManufacturerName',
   },
   {
     title: '生产批号',
@@ -190,6 +188,7 @@ class ReplenishmentDetail extends PureComponent{
         </div>
         <div className='detailCard'>
           <Table
+            bordered
             title={()=>'产品信息'}
             style={{marginTop: 20}}
             columns={columns}

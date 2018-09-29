@@ -81,7 +81,7 @@ class DetailsRefund extends PureComponent{
       dataSource: []
     }
   }
-  componentWillMount = () =>{
+  componentDidMount = () =>{
     if (this.props.match.params.backNo) {
       let { backNo } = this.props.match.params;
       this.setState({ spinning: true });
@@ -131,7 +131,7 @@ class DetailsRefund extends PureComponent{
           <div className='ysynet-details-flex-header'>
             <h3>单据信息</h3>
             {
-              detailsData.backStatus === 1 &&
+              detailsData.backStatus === 3 &&
               <div style={{ textAlign: 'right' }}>
                 <Link to={{pathname: `/editBackStoragePlan/${this.props.match.params.backNo}`}}><Button type='default'>编辑</Button></Link>
                 <Button type='primary' onClick={this.backStroage} style={{ marginLeft: 8 }}>确认退货</Button>

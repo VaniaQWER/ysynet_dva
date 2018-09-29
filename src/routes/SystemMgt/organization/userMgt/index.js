@@ -31,7 +31,6 @@ const singleFormItemLayout = {
 
 class SearchForm extends PureComponent{
   state = {
-    display: 'none',
     expand: false,
     deptOptions: [], //所属科室
     departmentOptions: [] //所属部门
@@ -54,15 +53,21 @@ class SearchForm extends PureComponent{
         this.setState({ departmentOptions: data })
       }
     });
-    const { queryConditons: {pageSize, pageNo, key, sortField, sortOrder, ...other} } = this.props.formProps.base;
-    this.props.form.setFieldsValue(other);
+    let { queryConditons } = this.props.formProps.base;
+    //找出表单的name 然后set
+    let values = this.props.form.getFieldsValue();
+    values = Object.getOwnPropertyNames(values);
+    let value = {};
+    values.map(keyItem => {
+      value[keyItem] = queryConditons[keyItem];
+      return keyItem;
+    });
+    this.props.form.setFieldsValue(value);
   }
   toggle = () => {
-    const { display, expand } = this.state;
-    this.setState({
-      display: display === 'none' ? 'block' : 'none',
-      expand: !expand
-    })
+    this.props.formProps.dispatch({
+      type:'base/setShowHide'
+    });
   }
   handleSearch = (e) =>{
     e.preventDefault();
@@ -84,7 +89,9 @@ class SearchForm extends PureComponent{
   }
   render(){
     const { getFieldDecorator } = this.props.form;
-    const { display, expand, deptOptions, departmentOptions } = this.state;
+    const { deptOptions, departmentOptions } = this.state;
+    const {display} = this.props.formProps.base;
+    const expand = display === 'block';
     return (
       <Form className="ant-advanced-search-form" onSubmit={this.handleSearch}>
         <Row gutter={30}>

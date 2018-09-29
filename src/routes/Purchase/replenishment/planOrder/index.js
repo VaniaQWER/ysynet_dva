@@ -14,7 +14,6 @@ import { Link } from 'react-router-dom';
 import RemoteTable from '../../../../components/TableGrid';
 import { replenishmentPlan } from '../../../../api/replenishment/replenishmentPlan';
 import { connect } from 'dva';
-import moment from 'moment';
 const FormItem = Form.Item;
 const { RangePicker } = DatePicker;
 const { Option } = Select;
@@ -28,10 +27,8 @@ const formItemLayout = {
     sm: { span: 19 }
   },
 };
-const monthFormat = 'YYYY-MM-DD';
 class SearchForm extends PureComponent{
   state = {
-    display: 'none',
     supplierList: [],
     orderStatus: [], // 订单状态
     orderTypeOptions: [] // 订单类型
@@ -68,11 +65,6 @@ class SearchForm extends PureComponent{
     });
     let { queryConditons } = this.props.formProps.base;
     queryConditons = {...queryConditons}; //如果queryConditons 里面包含对象 那么必须深拷贝;
-    if(queryConditons.startTime && queryConditons.endTime) {
-      queryConditons.orderTime = [moment(queryConditons.startTime, monthFormat), moment(queryConditons.endTime, monthFormat)];
-    }else {
-      queryConditons.orderTime = [];
-    };
     if(queryConditons.supplierCodeList) {
       queryConditons.supplierCodeList = queryConditons.supplierCodeList[0];
     };
@@ -87,11 +79,9 @@ class SearchForm extends PureComponent{
     this.props.form.setFieldsValue(value);
   }
   toggle = () => {
-    const { display, expand } = this.state;
-    this.setState({
-      display: display === 'none' ? 'block' : 'none',
-      expand: !expand
-    })
+    this.props.formProps.dispatch({
+      type:'base/setShowHide'
+    });
   }
   handleSearch = e => {
     e.preventDefault();
@@ -110,7 +100,6 @@ class SearchForm extends PureComponent{
         }else {
           values.supplierCodeList = [values.supplierCodeList];
         };
-        delete values.orderTime;
         this.props.formProps.dispatch({
           type:'base/setQueryConditions',
           payload: values
@@ -126,7 +115,9 @@ class SearchForm extends PureComponent{
   }
   render(){
     const { getFieldDecorator } = this.props.form;
-    const { display, expand, supplierList, orderStatus, orderTypeOptions } = this.state;
+    const { supplierList, orderStatus, orderTypeOptions } = this.state;
+    const {display} = this.props.formProps.base;
+    const expand = display === 'block';
     return (
       <Form className="ant-advanced-search-form" onSubmit={this.handleSearch}>
         <Row gutter={30}>
@@ -272,6 +263,7 @@ class PlanOrder extends PureComponent{
     const columns = [
       {
         title: '订单号',
+        fixed: 'left',
         dataIndex: 'orderCode',
         width: 280,
         render: (text,record) =>{
@@ -310,8 +302,8 @@ class PlanOrder extends PureComponent{
       },
     ];
     let query = this.props.base.queryConditons;
-    console.log(query.supplierCodeList);
-    
+    query = {...query};
+    delete query.orderTime;
     delete query.key;
     return (
       <div className='ysynet-main-content'>

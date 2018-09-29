@@ -15,15 +15,26 @@ const { Option } = Select;
 const RadioGroup = Radio.Group;
 const CheckboxGroup = Checkbox.Group;
 class SearchForm extends PureComponent {
-  state = {
-    display: 'none'
-  }
   toggle = () => {
-    const { display, expand } = this.state;
-    this.setState({
-      display: display === 'none' ? 'block' : 'none',
-      expand: !expand
-    })
+    this.props.formProps.dispatch({
+      type:'base/setShowHide'
+    });
+  }
+  componentDidMount() {
+    let { queryConditons } = this.props.formProps.base;
+    queryConditons = {...queryConditons};
+    if(queryConditons.filterStatus && queryConditons.filterStatus.length > 1) {
+      queryConditons.filterStatus = "";
+    };
+    //找出表单的name 然后set
+    let values = this.props.form.getFieldsValue();
+    values = Object.getOwnPropertyNames(values);
+    let value = {};
+    values.map(keyItem => {
+      value[keyItem] = queryConditons[keyItem];
+      return keyItem;
+    });
+    this.props.form.setFieldsValue(value);
   }
   handleSearch = e => {
     e.preventDefault();
@@ -39,15 +50,18 @@ class SearchForm extends PureComponent {
         if(filterStatus === '') {
           values.filterStatus = status.map(item=>item.value).filter(item=>item !== '').join(',');
         }
-        
-        console.log(values, '查询条件');
-        this.props.query(values);
+        this.props.formProps.dispatch({
+          type:'base/setQueryConditions',
+          payload: values
+        });
       }
     })
   }
   handleReset = () => {
     this.props.form.resetFields();
-    this.props.query({});
+    this.props.formProps.dispatch({
+      type:'base/clearQueryConditions'
+    });
   }
   listRender = (list) => {
     return <Select placeholder="请选择">
@@ -61,6 +75,8 @@ class SearchForm extends PureComponent {
   render() {
     const { getFieldDecorator } = this.props.form;
     let {status, types} = this.props;
+    const {display} = this.props.formProps.base;
+    const expand = display === 'block';
     return(
       <Form onSubmit={this.handleSearch}>
         <Row gutter={30}>
@@ -79,14 +95,14 @@ class SearchForm extends PureComponent {
             </FormItem>
           </Col>
           <Col span={8}>
-            <FormItem label={'状态'} {...formItemLayout} style={{ display: this.state.display }}>
+            <FormItem style={{ display }} label={'状态'} {...formItemLayout}>
               {getFieldDecorator('filterStatus')(
                 this.listRender(status)
               )}
             </FormItem>
           </Col>
           <Col span={8}>
-            <FormItem label={'类型'} {...formItemLayout} style={{ display: this.state.display }}>
+            <FormItem style={{ display }} label={'类型'} {...formItemLayout}>
               {getFieldDecorator('checkBillType')(
                 this.listRender(types)
               )}
@@ -98,7 +114,7 @@ class SearchForm extends PureComponent {
             <Button type="primary" htmlType="submit">查询</Button>
             <Button style={{ marginLeft: 8 }} onClick={this.handleReset}>重置</Button>
             <a style={{ marginLeft: 8, fontSize: 14 }} onClick={this.toggle}>
-              {this.state.expand ? '收起' : '展开'} <Icon type={this.state.expand ? 'up' : 'down'} />
+              {expand ? '收起' : '展开'} <Icon type={expand ? 'up' : 'down'} />
             </a>
           </Col>
         </Row>
@@ -110,7 +126,6 @@ const SearchFormWarp = Form.create()(SearchForm);
 
 class NewInventory extends PureComponent {
   state = {
-    query: {},
     loading: false,
     visible: false,
     selected: [],
@@ -174,8 +189,11 @@ class NewInventory extends PureComponent {
     })
   }
   //查询
-  queryHandler = query => {
-    this.setState({ query });
+  _tableChange = values => {
+    this.props.dispatch({
+      type:'base/setQueryConditions',
+      payload: values
+    });
   }
   //新建
   handleOk = (e) => {
@@ -286,7 +304,7 @@ class NewInventory extends PureComponent {
       labelCol: { span: 6 }, 
       wrapperCol: { span: 18 } 
     };
-    const {status, types, query, checkValue, subTypes, subType, deleteLoadig, locTypeList, indeterminate, allChecked} = this.state;
+    const {status, types, checkValue, subTypes, subType, deleteLoadig, locTypeList, indeterminate, allChecked} = this.state;
     const columns = [
       {
         title: '盘点单',
@@ -337,20 +355,23 @@ class NewInventory extends PureComponent {
         width: 280,
       }
     ];
-
+    let query = this.props.base.queryConditons;
+    query = {...query};
+    delete query.key;
+    delete query.makingTime;
     return (
       <div className='ysynet-main-content'>
         <SearchFormWarp
           status={status}
           types={types}
-          dispatch={this.props.dispatch} 
-          query={this.queryHandler} 
+          formProps={{...this.props}} 
         />
         <div>
           <Button type='primary' onClick={this.newAdd}><Icon type="plus" />新建</Button>
           <Button loading={deleteLoadig} style={{ marginLeft: 8 }} onClick={this.delete}>删除</Button>
         </div>
         <RemoteTable 
+          onChange={this._tableChange}
           query={query}
           isJson
           url={common.CHECKBILL_LIST}
@@ -455,4 +476,4 @@ class NewInventory extends PureComponent {
     )
   }
 }
-export default connect()(Form.create()(NewInventory));
+export default connect(state=>state)(Form.create()(NewInventory));

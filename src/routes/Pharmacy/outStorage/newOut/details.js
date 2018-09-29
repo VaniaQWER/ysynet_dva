@@ -4,7 +4,7 @@
 * @Last Modified time: 2018-07-24 13:13:55 
  */
 import React, { PureComponent } from 'react';
-import { Table, Row, Col, Button, Tooltip} from 'antd';
+import { Table, Row, Col, Button, Tooltip, message} from 'antd';
 import {connect} from 'dva';
 import querystring from 'querystring';
 const columns = [
@@ -90,10 +90,13 @@ class DetailsOutput extends PureComponent{
       info: {},
       loading: false,
       id: info.id,
-      status: info.state
+      banLoading: false
     }
   }
   componentDidMount() {
+    this.getDetail();
+  }
+  getDetail = () => {
     this.setState({loading: true});
     this.props.dispatch({
       type: 'outStorage/outStoreDetailInfo',
@@ -101,13 +104,33 @@ class DetailsOutput extends PureComponent{
         backNo: this.state.id
       },
       callback: (data) => {
-        this.setState({info: data, loading: false});
+        this.setState({
+          info: data, 
+          loading: false,
+        });
       }
     })
   }
   //不通过
   onBan = () =>{
-    
+    this.setState({
+      banLoading: true
+    });
+    this.props.dispatch({
+      type: 'outStorage/rejectOutStore',
+      payload: {
+        backNo: this.state.id
+      },
+      callback: (data) => {
+        if(data.code === 200 && data.msg === 'success') {
+          message.error('操作成功');
+          this.getDetail();
+        }else {
+          message.error(data.msg);
+        }
+          this.setState({ banLoading: false });
+      }
+    })
   }
   //确认
   onSubmit = () =>{
@@ -134,7 +157,7 @@ class DetailsOutput extends PureComponent{
   }
 
   render(){
-    let {info, loading, status} = this.state;
+    let {info, loading, banLoading} = this.state;
     let {detailVo} = info;
     return (
       <div className='fullCol fadeIn'>
@@ -146,10 +169,10 @@ class DetailsOutput extends PureComponent{
               </h2>
             </Col>
             {
-              status === "1"? (
+              info.status && info.status === 1? (
                 <Col style={{textAlign:'right', float: 'right'}} span={6}>
                   <Button type='primary' className='button-gap' style={{marginRight: 8}} onClick={()=>this.onSubmit()}>复核通过</Button>
-                  <Button onClick={()=>this.onBan()} >不通过</Button>
+                  <Button loading={banLoading} onClick={()=>this.onBan()} >不通过</Button>
                 </Col>
               ) : null
             }

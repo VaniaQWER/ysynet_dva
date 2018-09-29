@@ -18,13 +18,12 @@ const Option = Select.Option;
 /* 搜索 - 表单 */
 class SearchFormWrapper extends PureComponent {
   state = {
-    display: 'none',
     deptOptions: [], // 申领部门
     picking_status: [], //拣货状态
     picking_type: []// 拣货类型
   }
-  componentWillMount = () =>{
-    const { dispatch } = this.props;
+  componentDidMount = () =>{
+    const { dispatch } = this.props.formProps;
     // 申领部门
     dispatch({
       type: 'outStorage/findApplyDepts',
@@ -32,7 +31,7 @@ class SearchFormWrapper extends PureComponent {
       callback: (data) => {
         this.setState({ deptOptions: data })
       }
-    })
+    });
 
     // 拣货状态
     dispatch({
@@ -49,14 +48,22 @@ class SearchFormWrapper extends PureComponent {
       callback: (data) =>{
         this.setState({ picking_type: data })
       }
-    })
+    });
+    let { queryConditons } = this.props.formProps.base;
+    //找出表单的name 然后set
+    let values = this.props.form.getFieldsValue();
+    values = Object.getOwnPropertyNames(values);
+    let value = {};
+    values.map(keyItem => {
+      value[keyItem] = queryConditons[keyItem];
+      return keyItem;
+    });
+    this.props.form.setFieldsValue(value);
   }
   toggle = () => {
-    const { display, expand } = this.state;
-    this.setState({
-      display: display === 'none' ? 'block' : 'none',
-      expand: !expand
-    })
+    this.props.formProps.dispatch({
+      type:'base/setShowHide'
+    });
   }
   handleSearch = e => {
     e.preventDefault();
@@ -66,22 +73,31 @@ class SearchFormWrapper extends PureComponent {
         if(Time.length > 0) {
           values.startTime = values.Time[0].format('YYYY-MM-DD');
           values.endTime = values.Time[1].format('YYYY-MM-DD');
-        }
-        delete values.Time;
+        }else {
+          values.startTime = '';
+          values.endTime = '';
+        };
         console.log(values, '查询条件');
-        this.props.query(values);
+        this.props.formProps.dispatch({
+          type:'base/setQueryConditions',
+          payload: values
+        });
       }
     })
   }
   //重置
   handleReset = () => {
     this.props.form.resetFields();
-    this.props.query({});
+    this.props.formProps.dispatch({
+      type:'base/clearQueryConditions'
+    });
   }
  
   render() {
-    const { display, deptOptions, picking_status, picking_type } = this.state;
+    const { deptOptions, picking_status, picking_type } = this.state;
     const { getFieldDecorator } = this.props.form;
+    const {display} = this.props.formProps.base;
+    const expand = display === 'block';
     return (
      <Form onSubmit={this.handleSearch}>
         <Row gutter={30}>
@@ -160,7 +176,7 @@ class SearchFormWrapper extends PureComponent {
             <Button type="primary" htmlType="submit">查询</Button>
             <Button style={{marginLeft: 8}} onClick={this.handleReset}>重置</Button>
             <a style={{marginLeft: 8, fontSize: 14}} onClick={this.toggle}>
-              {this.state.expand ? '收起' : '展开'} <Icon type={this.state.expand ? 'up' : 'down'} />
+              {expand ? '收起' : '展开'} <Icon type={expand ? 'up' : 'down'} />
             </a>
           </Col>
         </Row>
@@ -175,15 +191,15 @@ class PickSoldOut extends PureComponent{
     super(props);
     this.state = {
       loading: false,
-      query:{},
       messageError:"",
       selectedRowKeys:[]
     }
   }
-
-  queryHandler = (query) => {
-    this.setState({ query:query });
-    this.refs.table.fetch(query);
+  _tableChange = values => {
+    this.props.dispatch({
+      type:'base/setQueryConditions',
+      payload: values
+    });
   }
 
   //单行确认 
@@ -192,7 +208,6 @@ class PickSoldOut extends PureComponent{
   }
 
   render(){
-    const { query } = this.state;
     const columns = [
       {
         title: '拣货单',
@@ -246,13 +261,17 @@ class PickSoldOut extends PureComponent{
           </span>  
       }
     ];
+    let query = this.props.base.queryConditons;
+    query = {...query};
+    delete query.Time;
+    delete query.key;
     return (
       <div className='ysynet-main-content'>
         <SearchForm 
-          query={this.queryHandler}
-          dispatch={this.props.dispatch} 
+          formProps={{...this.props}}
         />
         <RemoteTable
+          onChange={this._tableChange}
           bordered
           ref='table'
           query={query}

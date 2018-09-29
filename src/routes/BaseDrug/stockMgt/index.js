@@ -2,9 +2,9 @@ import React , {PureComponent} from 'react';
 
 import { Link } from 'react-router-dom'
 
-import { Form, Row, Col, Button, Select, Tooltip } from 'antd';
-
-// import {connect} from 'dva';
+import { Form, Row, Col, Button, Tooltip } from 'antd';
+//Select
+import {connect} from 'dva';
 import FetchSelect from '../../../components/FetchSelect/index';
 
 import RemoteTable from '../../../components/TableGrid';
@@ -13,110 +13,117 @@ import {stockMgt} from '../../../api/baseDrug/stockMgt';
 
 import goodsAdjust from '../../../api/drugStorage/goodsAdjust';
 
-const FormItem = Form.Item;
-const {Option} = Select;
+// const FormItem = Form.Item;
+// const {Option} = Select;
 
-const formItemLayout = {
-  labelCol: {
-    xs: { span: 24 },
-    sm: { span: 5 },
-  },
-  wrapperCol: {
-    xs: { span: 24 },
-    sm: { span: 19 },
-  },
- };
+// const formItemLayout = {
+//   labelCol: {
+//     xs: { span: 24 },
+//     sm: { span: 5 },
+//   },
+//   wrapperCol: {
+//     xs: { span: 24 },
+//     sm: { span: 19 },
+//   },
+//  };
 
 const columns = [
-{
-  title: '通用名',
-  dataIndex: 'ctmmGenericName',
-  width: 200,
-  render: (text, record) => {
-    return (
-      <span>
-        <Link to={{pathname: `/baseDrug/stockMgt/stockInquiry/details/dCode=${record.drugCode}&bCode=${record.bigDrugCode}`}}>{text}</Link>
-      </span>  
+  {
+    title: '通用名',
+    dataIndex: 'ctmmGenericName',
+    width: 200,
+    render: (text, record) => {
+      return (
+        <span>
+          <Link to={{pathname: `/baseDrug/stockMgt/stockInquiry/details/dCode=${record.drugCode}&bCode=${record.bigDrugCode}`}}>{text}</Link>
+        </span>  
+      )
+    }
+  }, {
+    title: '商品名',
+    dataIndex: 'ctmmTradeName',
+    width: 200,
+  }, {
+    title: '规格',
+    dataIndex: 'ctmmSpecification',
+    width: 200,
+    className: 'ellipsis',
+    render:(text)=>(
+      <Tooltip placement="topLeft" title={text}>{text}</Tooltip>
     )
+  }, {
+    title: '生产厂家',
+    dataIndex: 'ctmmManufacturerName',
+    width: 200,
+  }, {
+    title: '包装规格',
+    dataIndex: 'packageSpecification',
+    width: 200,
+  }, {
+    title: '单位',
+    dataIndex: 'replanUnit',
+    width: 200,
+  }, {
+    title: '数量',
+    dataIndex: 'usableQuantity',
+    width: 200,
+  }, {
+    title: '剂型',
+    dataIndex: 'ctmmDosageFormDesc',
+    width: 200,
+  }, {
+    title: '批准文号',
+    dataIndex: 'approvalNo',
+    width: 200,
   }
-}, {
-  title: '商品名',
-  dataIndex: 'ctmmTradeName',
-  width: 200,
-}, {
-  title: '规格',
-  dataIndex: 'ctmmSpecification',
-  width: 200,
-  className: 'ellipsis',
-  render:(text)=>(
-    <Tooltip placement="topLeft" title={text}>{text}</Tooltip>
-  )
-}, {
-  title: '生产厂家',
-  dataIndex: 'ctmmManufacturerName',
-  width: 200,
-}, {
-  title: '包装规格',
-  dataIndex: 'packageSpecification',
-  width: 200,
-}, {
-  title: '单位',
-  dataIndex: 'replanUnit',
-  width: 200,
-}, {
-  title: '数量',
-  dataIndex: 'usableQuantity',
-  width: 200,
-}, {
-  title: '剂型',
-  dataIndex: 'ctmmDosageFormDesc',
-  width: 200,
-}, {
-  title: '批准文号',
-  dataIndex: 'approvalNo',
-  width: 200,
-},];
+];
 
 
 class StockInquiry extends PureComponent {
   state = {
-    query: {
-      hisDrugCodeList: [],
-      deptCode: ''
-    },
     value: undefined
+  }
+  componentDidMount() {
+    let { queryConditons } = this.props.base;
+    //找出表单的name 然后set
+    let values = this.props.form.getFieldsValue();
+    values = Object.getOwnPropertyNames(values);
+    let value = {};
+    values.map(keyItem => {
+      value[keyItem] = queryConditons[keyItem];
+      return keyItem;
+    });
+    this.props.form.setFieldsValue(value);
   }
   handleSearch = (e) => {
     e.preventDefault();
     this.props.form.validateFields((err, values) => {
-      values.deptCode = values.deptCode === undefined? "" : values.deptCode;
-      let {query, value} = this.state;
-      this.setState({
-        query: {
-          ...query,
-          deptCode: values.deptCode,
-          hisDrugCodeList: value? [value] : [],
-        }
+      values.hisDrugCodeList = this.state.value ? [this.state.value] : [];
+
+      this.props.dispatch({
+        type:'base/setQueryConditions',
+        payload: values
       });
     });
   }
   //重置
   handleReset = () => {
     this.props.form.resetFields();
-    let {query, value} = this.state;
-    if(!value) return;
-    this.setState({
-      value: undefined,
-      query: {
-        ...query,
-        hisDrugCodeList: []
-      }
-    })
+    this.props.dispatch({
+      type:'base/clearQueryConditions'
+    });
   }
-
+  _tableChange = values => {
+    this.props.dispatch({
+      type:'base/setQueryConditions',
+      payload: values
+    });
+  }
   render() {
-    const { getFieldDecorator } = this.props.form;
-    const {query, value} = this.state;
+    // const { getFieldDecorator } = this.props.form;
+    const {value} = this.state;
+    let query = this.props.base.queryConditons;
+    delete query.key;
     return (
       <div className='ysynet-main-content'>
         <Form onSubmit={this.handleSearch}>
@@ -145,7 +152,7 @@ class StockInquiry extends PureComponent {
               </div>
             </Col>
             <Col span={8}>
-              <FormItem label={`药品类型`} {...formItemLayout}>
+              {/* <FormItem label={`药品类型`} {...formItemLayout}>
                 {getFieldDecorator('deptCode')(
                   <Select placeholder="请选择">
                     <Option value="全部">全部</Option>
@@ -153,7 +160,7 @@ class StockInquiry extends PureComponent {
                     <Option value="营养类">营养类</Option>
                   </Select>
                 )}
-              </FormItem>
+              </FormItem> */}
             </Col>
             <Col span={8} style={{ textAlign: 'right', marginTop: 4}} >
               <Button type="primary" htmlType="submit">查询</Button>
@@ -162,6 +169,7 @@ class StockInquiry extends PureComponent {
           </Row>
         </Form>
         <RemoteTable
+          onChange={this._tableChange}
           url={stockMgt.BASE_MEDICINE_LIST}
           isJson={true}
           showHeader={true}
@@ -178,4 +186,4 @@ class StockInquiry extends PureComponent {
 }
 
 const WrappedStockInquiry = Form.create()(StockInquiry);
-export default WrappedStockInquiry;
+export default connect(state=>state)(WrappedStockInquiry);

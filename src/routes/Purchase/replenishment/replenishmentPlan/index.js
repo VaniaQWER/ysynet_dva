@@ -14,7 +14,6 @@ import { Link } from 'react-router-dom';
 import RemoteTable from '../../../../components/TableGrid';
 import { replenishmentPlan } from '../../../../api/replenishment/replenishmentPlan';
 import { connect } from 'dva';
-import moment from 'moment';
 
 const FormItem = Form.Item;
 const { RangePicker } = DatePicker;
@@ -30,27 +29,15 @@ const formItemLayout = {
   },
 };
 
-const monthFormat = 'YYYY-MM-DD';
 
 class SearchForm extends PureComponent{
-  state = {
-    display: 'none',
-    expand: false
-  }
   toggle = () => {
-    const { display, expand } = this.state;
-    this.setState({
-      display: display === 'none' ? 'block' : 'none',
-      expand: !expand
-    })
+    this.props.formProps.dispatch({
+      type:'base/setShowHide'
+    });
   }
   componentDidMount() {
     let { queryConditons } = this.props.formProps.base;
-    if(queryConditons.startTime && queryConditons.endTime) {
-      queryConditons.createDate = [moment(queryConditons.startTime, monthFormat), moment(queryConditons.endTime, monthFormat)];
-    }else {
-      queryConditons.createDate = [];
-    };
     //找出表单的name 然后set
     let values = this.props.form.getFieldsValue();
     values = Object.getOwnPropertyNames(values);
@@ -73,7 +60,6 @@ class SearchForm extends PureComponent{
           values.startTime = '';
           values.endTime = '';
         };
-        delete values.createDate;
         this.props.formProps.dispatch({
           type:'base/setQueryConditions',
           payload: values
@@ -90,7 +76,8 @@ class SearchForm extends PureComponent{
   }
   render(){
     const { getFieldDecorator } = this.props.form;
-    const { display, expand } = this.state;
+    const {display} = this.props.formProps.base;
+    const expand = display === 'block';
     return (
       <Form className="ant-advanced-search-form" onSubmit={this.handleSearch}>
         <Row gutter={30}>
@@ -209,6 +196,7 @@ class ReplenishmentPlan extends PureComponent {
       {
         title: '计划单号',
         dataIndex: 'planCode',
+        fixed: 'left',
         width: 280,
         render: (text, record) => {
           return <span>
@@ -250,6 +238,7 @@ class ReplenishmentPlan extends PureComponent {
       ...query,
       ...this.state.query
     }
+    delete query.createDate;
     delete query.key;
     return (
       <div className='ysynet-main-content'>

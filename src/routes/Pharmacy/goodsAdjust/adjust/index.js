@@ -8,21 +8,17 @@ import {DatePicker, Form, Input, Row, Col, Button, } from 'antd';
 import { formItemLayout } from '../../../../utils/commonStyles';
 import RemoteTable from '../../../../components/TableGrid/index';
 import { Link } from 'react-router-dom';
+import {connect} from 'dva';
 import goodsAdjust from '../../../../api/pharmacy/goodsAdjust';
 const FormItem = Form.Item;
 const { RangePicker } = DatePicker;
 class Putaway extends PureComponent{
 
-  constructor(props) {
-    super(props);
-    this.state = {
-      loading: false,
-      query:{},
-    }
-  }
-
-  queryHandler = (query) => {
-    this.setState({query: query});
+  _tableChange = values => {
+    this.props.dispatch({
+      type:'base/setQueryConditions',
+      payload: values
+    });
   }
 
   render(){
@@ -58,14 +54,19 @@ class Putaway extends PureComponent{
         width: 224,
       }
     ];
+    let query = this.props.base.queryConditons;
+    query = {...query};
+    delete query.key;
+    delete query.time;
     return (
       <div className='ysynet-main-content'>
-        <SearchForm query={this.queryHandler} />
+        <SearchForm formProps={{...this.props}} />
         <div className='ant-row-bottom'>
           <Button type='primary' onClick={()=>this.props.history.push({ pathname: `/pharmacyAddGoodsAdjust` })}>新建调整</Button>
         </div>
         <RemoteTable
-          query={this.state.query}
+          onChange={this._tableChange}
+          query={query}
           url={goodsAdjust.goodsList}
           scroll={{x: '100%'}}
           columns={columns}
@@ -76,11 +77,23 @@ class Putaway extends PureComponent{
     )
   }
 }
-export default Putaway;
+export default connect(state=>state)(Putaway);
 
 /* 搜索 - 表单 */
 class SearchFormWrapper extends PureComponent {
 
+  componentDidMount() {
+    let { queryConditons } = this.props.formProps.base;
+    //找出表单的name 然后set
+    let values = this.props.form.getFieldsValue();
+    values = Object.getOwnPropertyNames(values);
+    let value = {};
+    values.map(keyItem => {
+      value[keyItem] = queryConditons[keyItem];
+      return keyItem;
+    });
+    this.props.form.setFieldsValue(value);
+  }
   handleSearch = (e) => {
     e.preventDefault();
     this.props.form.validateFields((err, values) => {
@@ -92,14 +105,18 @@ class SearchFormWrapper extends PureComponent {
         values.startTime = '';
         values.endTime = '';
       };
-      delete values.time;
-      this.props.query(values);
+      this.props.formProps.dispatch({
+        type:'base/setQueryConditions',
+        payload: values
+      });
     });
   }
   //重置
   handleReset = () => {
     this.props.form.resetFields();
-    this.props.query({});
+    this.props.formProps.dispatch({
+      type:'base/clearQueryConditions'
+    });
   }
 
   render() {

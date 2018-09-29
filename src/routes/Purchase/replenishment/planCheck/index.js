@@ -14,8 +14,6 @@ import { Link } from 'react-router-dom';
 import RemoteTable from '../../../../components/TableGrid';
 import { replenishmentPlan } from '../../../../api/replenishment/replenishmentPlan';
 import { connect } from 'dva';
-import moment from 'moment';
-const monthFormat = 'YYYY-MM-DD';
 const FormItem = Form.Item;
 const { RangePicker } = DatePicker;
 const { Option } = Select;
@@ -32,7 +30,6 @@ const formItemLayout = {
 
 class SearchForm extends PureComponent{
   state = {
-    display: 'none',
     plan_type: [],// 类型
     audit_plan_status: [] // 状态
   }
@@ -56,11 +53,6 @@ class SearchForm extends PureComponent{
     });
     //回显搜索条件
     let { queryConditons } = this.props.formProps.base;
-    if(queryConditons.startTime && queryConditons.endTime) {
-      queryConditons.orderTime = [moment(queryConditons.startTime, monthFormat), moment(queryConditons.endTime, monthFormat)];
-    }else {
-      queryConditons.orderTime = [];
-    };
     //找出表单的name 然后set
     let values = this.props.form.getFieldsValue();
     values = Object.getOwnPropertyNames(values);
@@ -72,11 +64,9 @@ class SearchForm extends PureComponent{
     this.props.form.setFieldsValue(value);
   }
   toggle = () => {
-    const { display, expand } = this.state;
-    this.setState({
-      display: display === 'none' ? 'block' : 'none',
-      expand: !expand
-    })
+    this.props.formProps.dispatch({
+      type:'base/setShowHide'
+    });
   }
   handleSearch = e => {
     e.preventDefault();
@@ -84,13 +74,12 @@ class SearchForm extends PureComponent{
       if (!err) {
         const orderTime = values.orderTime === undefined ? '' : values.orderTime;
         if(orderTime.length){
-          values.startTime = values.orderTime[0].format(monthFormat);
-          values.endTime = values.orderTime[1].format(monthFormat);
+          values.startTime = values.orderTime[0].format('YYYY-MM-DD');
+          values.endTime = values.orderTime[1].format('YYYY-MM-DD');
         }else {
           values.startTime = '';
           values.endTime = '';
         };
-        delete values.orderTime;
         this.props.formProps.dispatch({
           type:'base/setQueryConditions',
           payload: values
@@ -107,7 +96,9 @@ class SearchForm extends PureComponent{
   }
   render(){
     const { getFieldDecorator } = this.props.form;
-    const { display, expand, plan_type, audit_plan_status } = this.state;
+    const { plan_type, audit_plan_status } = this.state;
+    const {display} = this.props.formProps.base;
+    const expand = display === 'block';
     return (
       <Form className="ant-advanced-search-form" onSubmit={this.handleSearch}>
         <Row gutter={30}>
@@ -188,9 +179,11 @@ class PlanCheck extends PureComponent{
       queryType: '2'
     },
   }
-  queryHandle = (query) => {
-    this.refs.table.fetch(query);
-    this.setState({ query })
+  _tableChange = values => {
+    this.props.dispatch({
+      type:'base/setQueryConditions',
+      payload: values
+    });
   }
   bitchPass = () =>{
     let { selected, selectedRows,query } = this.state;
@@ -217,6 +210,7 @@ class PlanCheck extends PureComponent{
       {
         title: '计划单号',
         dataIndex: 'planCode',
+        fixed: 'left',
         width: 280,
         render: (text,record) =>{
           return <span>
@@ -262,6 +256,7 @@ class PlanCheck extends PureComponent{
       ...query,
       ...this.state.query
     }
+    delete query.orderTime;
     delete query.key;
     return (
       <div className='ysynet-main-content'>

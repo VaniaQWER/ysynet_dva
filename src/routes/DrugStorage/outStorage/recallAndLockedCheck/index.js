@@ -67,27 +67,33 @@ const columns = [
 /* 搜索 - 表单 */
 class SearchFormWrapper extends PureComponent {
   state = {
-    display: 'none',
     recall_status_options: []
   }
-  componentWillMount = () =>{
-    const { dispatch } = this.props;
+  componentDidMount = () =>{
+    const { dispatch } = this.props.formProps;
     dispatch({
       type: 'base/orderStatusOrorderType',
       payload: { type: 'recall_status' },
       callback: (data) =>{
-        let res = data.filter(item => item.value === '1' || item.value === '2' || item.value === '4');
-        this.props.defaultQuery({ recallStatus: res[0].value });
+        let res = data.filter(item => item.value === '' || item.value === '1' || item.value === '2' || item.value === '4');
         this.setState({ recall_status_options: res });
       }
     });
+    let { queryConditons } = this.props.formProps.base;
+    //找出表单的name 然后set
+    let values = this.props.form.getFieldsValue();
+    values = Object.getOwnPropertyNames(values);
+    let value = {};
+    values.map(keyItem => {
+      value[keyItem] = queryConditons[keyItem];
+      return keyItem;
+    });
+    this.props.form.setFieldsValue(value);
   }
   toggle = () => {
-    const { display, expand } = this.state;
-    this.setState({
-      display: display === 'none' ? 'block' : 'none',
-      expand: !expand
-    })
+    this.props.formProps.dispatch({
+      type:'base/setShowHide'
+    });
   }
   handleSearch = e => {
     e.preventDefault();
@@ -95,23 +101,31 @@ class SearchFormWrapper extends PureComponent {
       if (!err) {
         const makingTime = values.makingTime === undefined || values.makingTime === null ? "" : values.makingTime;
         if (makingTime.length > 0) {
-          values.startTime = makingTime[0].format('YYYY-MM-DD HH:mm');
-          values.endTime = makingTime[1].format('YYYY-MM-DD HH:mm');
-        }
-        delete values.makingTime;
-        console.log(values, '查询条件');
-        this.props.query(values);
+          values.startTime = makingTime[0].format('YYYY-MM-DD');
+          values.endTime = makingTime[1].format('YYYY-MM-DD');
+        }else {
+          values.startTime = '';
+          values.endTime = '';
+        };
+        this.props.formProps.dispatch({
+          type:'base/setQueryConditions',
+          payload: values
+        });
       }
     })
   }
   handleReset = () => {
     this.props.form.resetFields();
-    this.props.query({});
+    this.props.formProps.dispatch({
+      type:'base/clearQueryConditions'
+    });
   }
  
   render() {
     const { recall_status_options } = this.state;
     const { getFieldDecorator } = this.props.form;
+    const {display} = this.props.formProps.base;
+    const expand = display === 'block';
     return (
       <Form onSubmit={this.handleSearch}>
         <Row gutter={30}>
@@ -142,7 +156,7 @@ class SearchFormWrapper extends PureComponent {
               )}
             </FormItem>
           </Col>
-          <Col span={8} style={{ display: this.state.display }}>
+          <Col span={8} style={{ display }}>
             <FormItem label={'原因'} {...formItemLayout}>
               {getFieldDecorator('remarks',{
                 initialValue: ''
@@ -152,14 +166,14 @@ class SearchFormWrapper extends PureComponent {
             </FormItem>
           </Col>
           <Col span={8}>
-            <FormItem label={'发起时间'} {...formItemLayout}>
+            <FormItem style={{ display }} label={'发起时间'} {...formItemLayout}>
               {getFieldDecorator('makingTime')(
-                <RangePicker showTime={{ format: 'HH:mm' }} format={'YYYY-MM-DD HH:mm'} style={{ width: 313 }} />
+                <RangePicker format={'YYYY-MM-DD'} />
               )}
             </FormItem>
           </Col>
           <Col span={8}>
-            <FormItem label={'供应商'} {...formItemLayout} style={{ display: this.state.display }}>
+            <FormItem label={'供应商'} {...formItemLayout} style={{ display }}>
               {getFieldDecorator('supplierName', {
                 initialValue: ''
               })(
@@ -173,7 +187,7 @@ class SearchFormWrapper extends PureComponent {
             <Button type="primary" htmlType="submit">查询</Button>
             <Button style={{ marginLeft: 8 }} onClick={this.handleReset}>重置</Button>
             <a style={{ marginLeft: 8, fontSize: 14 }} onClick={this.toggle}>
-              {this.state.expand ? '收起' : '展开'} <Icon type={this.state.expand ? 'up' : 'down'} />
+              {expand ? '收起' : '展开'} <Icon type={expand ? 'up' : 'down'} />
             </a>
           </Col>
         </Row>
@@ -187,17 +201,15 @@ class RecallAndLockedCheck extends PureComponent{
   constructor(props) {
     super(props);
     this.state = {
-      query:{},
       selected: [],
       selectedRows: []
     }
   }
-  defaultQuery = (query) =>{
-    this.setState({ query: query });
-  }
-  queryHandler = (query) => {
-    this.setState({ query:query });
-
+  _tableChange = values => {
+    this.props.dispatch({
+      type:'base/setQueryConditions',
+      payload: values
+    });
   }
   bitchPass = () =>{
     let { selectedRows, query } = this.state;
@@ -217,37 +229,35 @@ class RecallAndLockedCheck extends PureComponent{
 
   }
   render(){
-    const { query } = this.state;
+    let query = this.props.base.queryConditons;
+    query = {...query};
+    delete query.makingTime;
+    delete query.key;
+    
     return (
       <div className='ysynet-main-content'>
         <SearchForm
-          defaultQuery={(query)=>this.defaultQuery(query)}
-          query={this.queryHandler} 
-          dispatch={this.props.dispatch}  
+          formProps={{...this.props}}
         />
         <Row>
           <Button type='primary' className='button-gap'onClick={this.bitchPass} > 批量通过</Button>
         </Row>
-        {
-          query.recallStatus 
-          &&
-          <RemoteTable
-            ref='table'
-            query={query}
-            bordered
-            url={outStorage.ROOMRECALL_LIST}
-            scroll={{x: 1784}}
-            columns={columns}
-            rowKey={'id'}
-            style={{marginTop: 20}}
-            rowSelection={{
-              selectedRowKeys: this.state.selected,
-              onChange: (selectedRowKeys, selectedRows) => {
-                this.setState({selected: selectedRowKeys, selectedRows: selectedRows})
-              }
-            }}
-          /> 
-        }
+        <RemoteTable
+          ref='table'
+          query={query}
+          bordered
+          url={outStorage.ROOMRECALL_LIST}
+          scroll={{x: 1784}}
+          columns={columns}
+          rowKey={'id'}
+          style={{marginTop: 20}}
+          rowSelection={{
+            selectedRowKeys: this.state.selected,
+            onChange: (selectedRowKeys, selectedRows) => {
+              this.setState({selected: selectedRowKeys, selectedRows: selectedRows})
+            }
+          }}
+        /> 
       </div>
     )
   }

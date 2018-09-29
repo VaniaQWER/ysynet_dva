@@ -222,13 +222,16 @@ class NewAdd extends PureComponent {
     const columns = [
       {
         title: '通用名称',
-        dataIndex: 'ctmmGenericName'
+        dataIndex: 'ctmmGenericName',
+        width: 168
       }, {
         title: '商品名',
-        dataIndex: 'ctmmTradeName'
+        dataIndex: 'ctmmTradeName',
+        width: 224
       }, {
         title: '规格',
         dataIndex: 'ctmmSpecification',
+        width: 168,
         className: 'ellipsis',
         render: (text) => (
           <Tooltip placement="topLeft" title={text}>{text}</Tooltip>
@@ -236,21 +239,27 @@ class NewAdd extends PureComponent {
       }, {
         title: '剂型',
         dataIndex: 'ctmmDosageFormDesc',
-        width: 150
+        width: 168
       }, {
         title: '生产厂家',
-        dataIndex: 'ctmmManufacturerName'
+        dataIndex: 'ctmmManufacturerName',
+        width: 224,
+        className: 'ellipsis',
+        render: (text) => (
+          <Tooltip placement="topLeft" title={text}>{text}</Tooltip>
+        )
       }, {
         title: '供应商',
         dataIndex: 'supplierCode',
-        width: 240,
+        width: 224,
         render: (text, record, i) => {
           let {supplierList} = record;
           let supplier = supplierList.map(item=>{
             return <Option key={item.ctmaSupplierCode} value={item.ctmaSupplierCode}>{item.ctmaSupplierName}</Option>
           });
           return (
-            <Select 
+            <Select
+              style={{width: '100%'}}
               onSelect={(value)=>{
                 let {dataSource} = this.state;
                 dataSource = JSON.parse(JSON.stringify(dataSource));
@@ -269,7 +278,6 @@ class NewAdd extends PureComponent {
                 
               }} 
               defaultValue={text} 
-              style={{ width: 210 }}
             >
               {supplier}
             </Select>
@@ -278,15 +286,15 @@ class NewAdd extends PureComponent {
       }, {
         title: '包装规格',
         dataIndex: 'packageSpecification',
-        width: 100,
+        width: 168,
       }, {
         title: '单位',
         dataIndex: 'replanUnit',
-        width: 150,
+        width: 60,
       }, {
         title: '需求数量',
         dataIndex: 'demandQuantity',
-        width: 120,
+        width: 130,
         render: (text, record, i) => {
           return <InputNumber
                     defaultValue={text}
@@ -300,54 +308,66 @@ class NewAdd extends PureComponent {
       }, {
         title: '当前库存',
         dataIndex: 'usableQuantity',
+        width: 112
       }, {
         title: '库存上限',
-        dataIndex: 'upperQuantity'
+        dataIndex: 'upperQuantity',
+        width: 112
       }, {
         title: '库存下限',
-        dataIndex: 'downQuantity'
+        dataIndex: 'downQuantity',
+        width: 112
       }, {
         title: '参考价格',
         dataIndex: 'drugPrice',
+        width: 112
       }, {
         title: '金额',
         dataIndex: 'totalPrice',
-        
+        width: 168
       }, {
         title: '批准文号',
         dataIndex: 'approvalNo',
-        width: 150,
+        width: 224,
       }
     ];
     const modalColumns = [
       {
         title: '通用名称',
-        dataIndex: 'ctmmGenericName'
+        dataIndex: 'ctmmGenericName',
+        width: 168
       }, {
         title: '商品名',
-        dataIndex: 'ctmmTradeName'
+        dataIndex: 'ctmmTradeName',
+        width: 224
       }, {
         title: '规格',
-        dataIndex: 'ctmmSpecification'
+        dataIndex: 'ctmmSpecification',
+        width: 168
       }, {
         title: '当前库存',
         dataIndex: 'totalStoreNum',
-        width: 100,
+        width: 112,
       }, {
         title: '剂型',
         dataIndex: 'ctmmDosageFormDesc',
-        width: 150
+        width: 168
       }, {
         title: '包装规格',
         dataIndex: 'packageSpecification',
-        width: 150
+        width: 168
       }, {
         title: '生产厂家',
-        dataIndex: 'ctmmManufacturerName'
+        dataIndex: 'ctmmManufacturerName',
+        width: 224,
+        className: 'ellipsis',
+        render: (text) => (
+          <Tooltip placement="topLeft" title={text}>{text}</Tooltip>
+        )
       }, {
         title: '批准文号',
         dataIndex: 'approvalNo',
-        width: 150,
+        width: 224,
       },
     ];
     return (
@@ -406,7 +426,7 @@ class NewAdd extends PureComponent {
             title={'添加产品'}
             visible={visible}
             width={1100}
-            style={{ top: 20 }}
+            style={{height: 630, top: 20 }}
             onCancel={() => this.setState({ visible: false, modalSelected: [] })}
             footer={[
               <Button key="submit" type="primary" loading={btnLoading} onClick={this.handleOk}>确认</Button>,
@@ -431,7 +451,7 @@ class NewAdd extends PureComponent {
                 ref="table"
                 modalLoading={modalLoading}
                 columns={modalColumns}
-                scroll={{ x: '150%' }}
+                scroll={{ x: 1504 }}
                 rowKey='drugCode'
                 rowSelection={{
                   selectedRowKeys: this.state.modalSelected,
@@ -450,7 +470,7 @@ class NewAdd extends PureComponent {
               bordered
               columns={columns}
               dataSource={dataSource}
-              scroll={{ x: '200%' }}
+              scroll={{ x: 2404 }}
               rowKey='drugCode'
               rowSelection={{
                 selectedRowKeys: this.state.selected,

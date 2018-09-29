@@ -50,6 +50,9 @@ class EditDrugDirectory extends PureComponent{
     scatteredSelect:[],//预拆零货位
     advanceSelect:[],//拆零发药货位
     replanUnitZN:'',//存储补货单位的中文。然后赋值给指示货位的补货指示货位的存储单位
+    minUnit: '',
+    packUnit: '',
+    fullUnit: '',
   }
 
   componentDidMount(){
@@ -61,8 +64,27 @@ class EditDrugDirectory extends PureComponent{
       callback:(data)=>{
         console.log(data)
         const fillBackData = data.data;
+        let minUnit = '',
+            packUnit = '',
+            fullUnit = '';
+        fillBackData.listTransforsVo = fillBackData.listTransforsVo.map(item => {
+          let unit = this.getMaPInfo(fillBackData.listTransforsVo, item.sort);
+          if(item.sort === 1) {
+            fullUnit = unit;
+          };
+          if(item.sort === 2) {
+            packUnit = unit;
+          };
+          if(item.sort === 3) {
+            minUnit = unit;
+          };
+          return item;
+        })
         this.setState({
-          fillBackData
+          fillBackData,
+          minUnit,
+          packUnit,
+          fullUnit
         })
          //获取补货单位下拉框
           this.props.dispatch({
@@ -221,7 +243,7 @@ class EditDrugDirectory extends PureComponent{
 
   render(){
 
-    const { fillBackData , replanUnitSelect ,replanUnitZN , replanSelect ,dispensingSelect , scatteredSelect,advanceSelect  } =this.state;
+    const { fillBackData ,minUnit, packUnit, fullUnit, replanUnitSelect ,replanUnitZN , replanSelect ,dispensingSelect , scatteredSelect,advanceSelect  } =this.state;
     const { getFieldDecorator , getFieldValue } = this.props.form;
     getFieldDecorator('keys', { initialValue: fillBackData?fillBackData.customUnit?fillBackData.customUnit:[]:[] });
     const keys = getFieldValue('keys');
@@ -391,7 +413,7 @@ class EditDrugDirectory extends PureComponent{
                     <label>最小发药单位</label>
                   </div>
                   <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
-                    <div className='ant-form-item-control'>{fillBackData?this.getMaPInfo(fillBackData.listTransforsVo,3) :''}</div>
+                    <div className='ant-form-item-control'>{minUnit}</div>
                   </div>
                 </Col>
                 <Col span={10}>
@@ -399,7 +421,7 @@ class EditDrugDirectory extends PureComponent{
                   <label>包装规格</label>
                 </div>
                 <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
-                  <div className='ant-form-item-control'>{fillBackData?this.getMaPInfo(fillBackData.listTransforsVo,2) :''}</div>
+                  <div className='ant-form-item-control'>{packUnit}</div>
                 </div>
                 </Col>
                 <Col span={10}>
@@ -407,7 +429,7 @@ class EditDrugDirectory extends PureComponent{
                     <label>整包装单位</label>
                   </div>
                   <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
-                    <div className='ant-form-item-control'>{fillBackData?this.getMaPInfo(fillBackData.listTransforsVo,1) :''}</div>
+                    <div className='ant-form-item-control'>{fullUnit}</div>
                   </div>
                 </Col>
                 <Col span={10}>

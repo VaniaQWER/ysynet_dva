@@ -28,11 +28,7 @@ export default {
     *getsupplierList({ payload, callback }, {put, call}) {
       const data = yield call(wareHouse.getsupplierList, payload);
       if(data.code === 200) {
-        yield put({
-          type: "setsupplierList",
-          payload: data.data.list
-        });
-        callback && callback();
+        callback && callback(data.data);
       }else {
         message.error(data.msg);
       }

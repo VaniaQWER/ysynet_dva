@@ -209,7 +209,7 @@ class NewAdd extends PureComponent {
                  />
         }
       }, {
-        title: '药房库存',
+        title: '药库库存',
         dataIndex: 'usableQuantity',
       }, {
         title: '库存上限',

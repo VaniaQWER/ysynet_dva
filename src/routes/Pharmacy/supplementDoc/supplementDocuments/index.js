@@ -4,7 +4,7 @@
 * @Last Modified time: 17:40:15 
  */
 import React, { PureComponent } from 'react';
-import { DatePicker , Form, Input ,Select , Row, Col, Button  , message  ,Modal } from 'antd';
+import { DatePicker , Form, Input ,Select , Row, Col, Button, Icon, message  ,Modal } from 'antd';
 import { formItemLayout } from '../../../../utils/commonStyles';
 import { Link } from 'react-router-dom';
 import { supplementDoc } from '../../../../api/pharmacy/wareHouse';
@@ -22,11 +22,12 @@ class SpplementDocList extends PureComponent{
     selectedRows: [],
     loading: false,
     dataSource: [],
-    query:{},
   }
-
-  queryHandler = (query) => {
-    this.setState({ query:query })
+  _tableChange = values => {
+    this.props.dispatch({
+      type:'base/setQueryConditions',
+      payload: values
+    });
   }
   delete = () =>{
     const selected = this.state.selected;
@@ -54,7 +55,11 @@ class SpplementDocList extends PureComponent{
   }
 
   render(){
-    const { query } = this.state;
+    let query = this.props.base.queryConditons;
+    query = {...query};
+    delete query.key;
+    delete query.Time;
+    delete query.reviewTime;
     const columns = [
       {
        title: '补登单号',
@@ -111,13 +116,14 @@ class SpplementDocList extends PureComponent{
     ];
     return (
       <div className='ysynet-main-content'>
-        <SearchForm query={this.queryHandler} />
+        <SearchForm formProps={{...this.props}} />
         <div className='ant-row-bottom'>
           <Button type='primary' onClick={()=>this.props.history.push({ pathname: `/AddSupplementDoc` })}>补登出库单</Button>
           <Button type='default' onClick={()=>this.props.history.push({ pathname: `/AddInSupplementDoc` })} style={{ marginLeft: 8 }}>补登入库单</Button>
           <Button type='default' onClick={this.delete} style={{ marginLeft: 8 }}>删除</Button>
         </div>
          <RemoteTable 
+          onChange={this._tableChange}
           ref='table'
           query={query}
           style={{marginTop: 20}}
@@ -147,119 +153,142 @@ class SearchFormWrapper extends PureComponent {
     type:[]
   }
 
- componentDidMount = () =>{
-  this.props.dispatch({
-    type:'base/orderStatusOrorderType',
-    payload: { type : 'makeup_status' },
-    callback:(data)=>{
-      this.setState({
-        fstate:data
-      })
-    }
-  })
-  this.props.dispatch({
-    type:'base/orderStatusOrorderType',
-    payload: { type : 'makeup_type' },
-    callback:(data)=>{
-      this.setState({
-        type:data
-      })
-    }
-  })
- } 
- handleSearch = (e) => {
-   e.preventDefault();
-   this.props.form.validateFields((err, values) => {
-     if(values.Time){
-      values.startTime = moment(values.Time[0]).format('YYYY-MM-DD');
-      values.endTime = moment(values.Time[1]).format('YYYY-MM-DD');
-      delete values['Time']
-     }
-     if(values.reviewTime){
-      values.reviewstartTime = moment(values.reviewTime[0]).format('YYYY-MM-DD');
-      values.reviewendTime = moment(values.reviewTime[1]).format('YYYY-MM-DD');
-      delete values['reviewTime']
-     }
-     this.props.query(values);
-   });
- }
- //重置
- handleReset = () => {
-   this.props.form.resetFields();
-   this.props.query({});
- }
+  componentDidMount = () =>{
+    this.props.formProps.dispatch({
+      type:'base/orderStatusOrorderType',
+      payload: { type : 'makeup_status' },
+      callback:(data)=>{
+        this.setState({
+          fstate:data
+        })
+      }
+    });
+    this.props.formProps.dispatch({
+      type:'base/orderStatusOrorderType',
+      payload: { type : 'makeup_type' },
+      callback:(data)=>{
+        this.setState({
+          type:data
+        })
+      }
+    });
+    let { queryConditons } = this.props.formProps.base;
+    //找出表单的name 然后set
+    let values = this.props.form.getFieldsValue();
+    values = Object.getOwnPropertyNames(values);
+    let value = {};
+    values.map(keyItem => {
+      value[keyItem] = queryConditons[keyItem];
+      return keyItem;
+    });
+    this.props.form.setFieldsValue(value);
+  } 
+  toggle = () => {
+    this.props.formProps.dispatch({
+      type:'base/setShowHide'
+    });
+  }
+  handleSearch = (e) => {
+    e.preventDefault();
+    this.props.form.validateFields((err, values) => {
+      if(values.Time && values.Time.length){
+        values.startTime = moment(values.Time[0]).format('YYYY-MM-DD');
+        values.endTime = moment(values.Time[1]).format('YYYY-MM-DD');
+      };
+      if(values.reviewTime && values.Time.length){
+        values.reviewstartTime = moment(values.reviewTime[0]).format('YYYY-MM-DD');
+        values.reviewendTime = moment(values.reviewTime[1]).format('YYYY-MM-DD');
+      };
+      this.props.formProps.dispatch({
+        type:'base/setQueryConditions',
+        payload: values
+      });
+    });
+  }
+  //重置
+  handleReset = () => {
+    this.props.form.resetFields();
+    this.props.formProps.dispatch({
+      type:'base/clearQueryConditions'
+    });
+  }
 
- render() {
-   const { getFieldDecorator } = this.props.form;
-   const { type , fstate } = this.state;
-   return (
-     <Form onSubmit={this.handleSearch}>
-       <Row gutter={30}>
-         <Col span={8}>
-           <FormItem label={`单据号`} {...formItemLayout}>
-             {getFieldDecorator('makeupCode', {})(
-              <Input placeholder='补登单据/入库/出库单号'/>
-             )}
-           </FormItem>
-         </Col>
-       
-        <Col span={8}>
-           <FormItem label={`补登时间`} {...formItemLayout}>
-             {getFieldDecorator('Time', {})(
-              <RangePicker/>
-             )}
-           </FormItem>
-         </Col>
-         <Col span={8}>
-           <FormItem label={`审核时间`} {...formItemLayout}>
-             {getFieldDecorator('reviewTime', {})(
-              <RangePicker/>
-             )}
-           </FormItem>
-         </Col>
-         <Col span={8}>
-            <FormItem {...formItemLayout} label={`状态`}>
-              {
-                getFieldDecorator(`makeupStatus`,{
-                  initialValue: ''
-                })(
-                  <Select >
-                    {
-                      fstate && fstate.length ?
-                      fstate.map(item=>(
-                        <Option key={item.value} value={item.value}>{item.label}</Option>
-                      )):null
-                    }
-                  </Select>
-                )
-              }
-            </FormItem>
-          </Col>
+  render() {
+    const { getFieldDecorator } = this.props.form;
+    const { type , fstate } = this.state;
+    const {display} = this.props.formProps.base;
+    const expand = display === 'block';
+    return (
+      <Form onSubmit={this.handleSearch}>
+        <Row gutter={30}>
           <Col span={8}>
-            <FormItem {...formItemLayout} label={`类型`}>
-              {
-                getFieldDecorator('makeupType',{
-                  initialValue: ''
-                })(
-                  <Select >
-                    {
-                      type && type.length ?
-                      type.map(item=>(
-                        <Option key={item.value} value={item.value}>{item.label}</Option>
-                      )):null
-                    }
-                  </Select>
-                )
-              }
+            <FormItem label={`单据号`} {...formItemLayout}>
+              {getFieldDecorator('makeupCode', {})(
+                <Input placeholder='补登单据/入库/出库单号'/>
+              )}
             </FormItem>
           </Col>
-         <Col span={8} style={{ float:'right',textAlign: 'right', marginTop: 4}} >
-           <Button type="primary" htmlType="submit">查询</Button>
-           <Button style={{marginLeft: 8}} onClick={this.handleReset}>重置</Button>
-         </Col>
-       </Row>
-     </Form>
-   )
- }
+        
+          <Col span={8}>
+            <FormItem label={`补登时间`} {...formItemLayout}>
+              {getFieldDecorator('Time', {})(
+                <RangePicker/>
+              )}
+            </FormItem>
+          </Col>
+          <Col style={{display}} span={8}>
+            <FormItem label={`审核时间`} {...formItemLayout}>
+              {getFieldDecorator('reviewTime', {})(
+                <RangePicker/>
+              )}
+            </FormItem>
+          </Col>
+          <Col style={{display}} span={8}>
+              <FormItem {...formItemLayout} label={`状态`}>
+                {
+                  getFieldDecorator(`makeupStatus`,{
+                    initialValue: ''
+                  })(
+                    <Select >
+                      {
+                        fstate && fstate.length ?
+                        fstate.map(item=>(
+                          <Option key={item.value} value={item.value}>{item.label}</Option>
+                        )):null
+                      }
+                    </Select>
+                  )
+                }
+              </FormItem>
+            </Col>
+            <Col style={{display}} span={8}>
+              <FormItem {...formItemLayout} label={`类型`}>
+                {
+                  getFieldDecorator('makeupType',{
+                    initialValue: ''
+                  })(
+                    <Select >
+                      {
+                        type && type.length ?
+                        type.map(item=>(
+                          <Option key={item.value} value={item.value}>{item.label}</Option>
+                        )):null
+                      }
+                    </Select>
+                  )
+                }
+              </FormItem>
+            </Col>
+          <Col span={8} style={{ float:'right',textAlign: 'right', marginTop: 4}} >
+            <Button type="primary" htmlType="submit">查询</Button>
+            <Button style={{margin: '0 8px'}} onClick={this.handleReset}>重置</Button>
+            <a style={{fontSize: 14}} onClick={this.toggle}>
+              {expand ? '收起' : '展开'} <Icon type={expand ? 'up' : 'down'} />
+            </a>
+          </Col>
+        </Row>
+      </Form>
+    )
+  }
 }
 const SearchForm = connect(state=>state)(Form.create()(SearchFormWrapper)); 

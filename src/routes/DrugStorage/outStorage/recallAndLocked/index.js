@@ -15,14 +15,12 @@ class SearchForm extends PureComponent {
     recall_status_options: []
   }
   toggle = () => {
-    const { display, expand } = this.state;
-    this.setState({
-      display: display === 'none' ? 'block' : 'none',
-      expand: !expand
-    })
+    this.props.formProps.dispatch({
+      type:'base/setShowHide'
+    });
   }
-  componentWillMount = () =>{
-    const { dispatch } = this.props;
+  componentDidMount = () =>{
+    const { dispatch } = this.props.formProps;
     dispatch({
       type: 'base/orderStatusOrorderType',
       payload: { type: 'recall_status' },
@@ -30,6 +28,16 @@ class SearchForm extends PureComponent {
         this.setState({ recall_status_options: data });
       }
     });
+    let { queryConditons } = this.props.formProps.base;
+    //找出表单的name 然后set
+    let values = this.props.form.getFieldsValue();
+    values = Object.getOwnPropertyNames(values);
+    let value = {};
+    values.map(keyItem => {
+      value[keyItem] = queryConditons[keyItem];
+      return keyItem;
+    });
+    this.props.form.setFieldsValue(value);
   }
   handleSearch = e => {
     e.preventDefault();
@@ -37,22 +45,30 @@ class SearchForm extends PureComponent {
       if (!err) {
         const makingTime = values.makingTime === undefined || values.makingTime === null ? "" : values.makingTime;
         if (makingTime.length > 0) {
-          values.startTime = makingTime[0].format('YYYY-MM-DD HH:mm');
-          values.endTime = makingTime[1].format('YYYY-MM-DD HH:mm');
-        }
-        delete values.makingTime;
-        console.log(values, '查询条件');
-        this.props.query(values);
+          values.startTime = makingTime[0].format('YYYY-MM-DD');
+          values.endTime = makingTime[1].format('YYYY-MM-DD');
+        }else {
+          values.startTime = '';
+          values.endTime = '';
+        };
+        this.props.formProps.dispatch({
+          type:'base/setQueryConditions',
+          payload: values
+        });
       }
     })
   }
   handleReset = () => {
     this.props.form.resetFields();
-    this.props.query({});
+    this.props.formProps.dispatch({
+      type:'base/clearQueryConditions'
+    });
   }
   render() {
     const { recall_status_options } = this.state;
     const { getFieldDecorator } = this.props.form;
+    const {display} = this.props.formProps.base;
+    const expand = display === 'block';
     return (
       <Form onSubmit={this.handleSearch}>
         <Row gutter={30}>
@@ -75,7 +91,7 @@ class SearchForm extends PureComponent {
             </FormItem>
           </Col>
           <Col span={8}>
-            <FormItem label={'状态'} {...formItemLayout} style={{ display: this.state.display }}>
+            <FormItem label={'状态'} {...formItemLayout} style={{ display }}>
               {getFieldDecorator('recallStatus', {
                 initialValue: ''
               })(
@@ -93,14 +109,14 @@ class SearchForm extends PureComponent {
             </FormItem>
           </Col>
           <Col span={8}>
-            <FormItem label={'发起时间'} {...formItemLayout}>
+            <FormItem style={{ display }} label={'发起时间'} {...formItemLayout}>
               {getFieldDecorator('makingTime')(
-                <RangePicker showTime={{ format: 'HH:mm' }} format={'YYYY-MM-DD HH:mm'} style={{ width: 313 }} />
+                <RangePicker format={'YYYY-MM-DD'} />
               )}
             </FormItem>
           </Col>
           <Col span={8}>
-            <FormItem label={'供应商'} {...formItemLayout} style={{ display: this.state.display }}>
+            <FormItem label={'供应商'} {...formItemLayout} style={{ display }}>
               {getFieldDecorator('supplierName', {
                 initialValue: ''
               })(
@@ -110,11 +126,11 @@ class SearchForm extends PureComponent {
           </Col>
           <Col span={8}>
           </Col>
-          <Col span={8} style={{ textAlign: 'right', marginTop: 4 }}>
+          <Col span={8} style={{float: 'right', textAlign: 'right', marginTop: 4 }}>
             <Button type="primary" htmlType="submit">查询</Button>
             <Button style={{ marginLeft: 8 }} onClick={this.handleReset}>重置</Button>
             <a style={{ marginLeft: 8, fontSize: 14 }} onClick={this.toggle}>
-              {this.state.expand ? '收起' : '展开'} <Icon type={this.state.expand ? 'up' : 'down'} />
+              {expand ? '收起' : '展开'} <Icon type={expand ? 'up' : 'down'} />
             </a>
           </Col>
         </Row>
@@ -126,16 +142,11 @@ const SearchFormWarp = Form.create()(SearchForm);
 
 class RecallAndLocked extends PureComponent {
   state = {
-    query: {},
     loading: false,
     visible: false,
     selected: [],
     selectedRows: [],
     display: 'none'
-  }
-  queryHandler = query => {
-    this.setState({ query });
-    // this.refs.table.fetch(query);
   }
   delete = () =>{
     const { selectedRows, query } = this.state;
@@ -161,8 +172,14 @@ class RecallAndLocked extends PureComponent {
     })
     
   }
+  _tableChange = values => {
+    this.props.dispatch({
+      type:'base/setQueryConditions',
+      payload: values
+    });
+  }
   render() {
-    const { query, loading } = this.state;
+    const { loading } = this.state;
     const columns = [
       {
         title: '召回及锁定单号',
@@ -214,11 +231,12 @@ class RecallAndLocked extends PureComponent {
         dataIndex: 'remarks',
        }
     ];
+    let query = this.props.base.queryConditons;
+    delete query.key;
     return (
       <div className='ysynet-main-content'>
         <SearchFormWarp 
-          query={this.queryHandler} 
-          dispatch={this.props.dispatch}
+          formProps={{...this.props}}
         />
         <div>
           <Button type='primary'><Link to={{pathname:`/AddNewReCallOrLocked/recall`}}>新建召回</Link></Button>
@@ -226,6 +244,7 @@ class RecallAndLocked extends PureComponent {
           <Button style={{ marginLeft: 10 }} onClick={this.delete} loading={loading}>删除</Button>
         </div>
         <RemoteTable
+          onChange={this._tableChange}
           ref='table'
           query={query}
           bordered

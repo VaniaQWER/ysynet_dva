@@ -8,27 +8,27 @@ import {connect} from 'dva';
 const columns = [
   {
     title: '发药确认单',
-    width:100,
+    width: 168,
     dataIndex: 'dispensingNo'
   },
   {
     title: '出库单',
     dataIndex: 'backNo',
-    width: 180
+    width: 168
   },
   {
     title: '通用名',
-    width:100,
+    width: 168,
     dataIndex: 'ctmmGenericName'
   },
   {
     title: '商品名',
-    width:150,
+    width: 224,
     dataIndex: 'ctmmTradeName',
   },
   {
     title: '规格',
-    width:150,
+    width: 168,
     dataIndex: 'ctmmSpecification',
     className:'ellipsis',
     render: (text)=>(
@@ -37,67 +37,67 @@ const columns = [
   },
   {
     title: '生产厂家',
-    width:180,
+    width: 280,
     dataIndex: 'ctmmManufacturerName',
   },
   {
     title: '批准文号',
-    width:150,
+    width: 168,
     dataIndex: 'approvalNo',
   },
   {
     title: '供应商',
-    width:150,
+    width: 224,
     dataIndex: 'supplierName',
   },
   {
     title: '包装规格',
-    width:150,
+    width: 168,
     dataIndex: 'packageSpecification',
   },
   {
     title: '发药单位',
-    width:150,
+    width: 112,
     dataIndex: 'replanUnit',
   },
   {
     title: '发药数量',
-    width:150,
+    width: 112,
     dataIndex: 'oEORIDispDrugQuantity',
   },
   {
     title: '出库数量',
-    width:150,
+    width: 112,
     dataIndex: 'backSumNum',
   },
   {
     title: '出库货位类别',
-    width:150,
+    width: 168,
     dataIndex: 'outStoreName',
   },
   {
     title: '生产批号',
-    width:150,
+    width: 168,
     dataIndex: 'lot',
   },
   {
     title: '参考价格',
-    width:150,
+    width: 112,
     dataIndex: 'drugPrice',
   },
   {
     title: '参考金额',
-    width:150,
+    width: 112,
     dataIndex: 'totalAmount',
   },
   {
     title: '生产日期',
-    width:150,
+    width: 168,
     dataIndex: 'productDate',
   },
   {
     title: '有效期至',
-    width:150,
+    width: 168,
     dataIndex: 'validEndDate'
   },
 ];
@@ -224,7 +224,7 @@ class NewRecon extends PureComponent{
                     query={query}
                     isJson
                     url={dayStatements.GENERATOR_DAILY_LIST}
-                    scroll={{x: '230%'}}
+                    scroll={{x: 2968}}
                     columns={columns}
                     rowKey={'id'}
                     cb={(list, data) => {

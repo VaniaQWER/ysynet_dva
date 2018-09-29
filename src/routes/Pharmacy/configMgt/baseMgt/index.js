@@ -32,12 +32,22 @@ class SearchForm extends PureComponent{
   handleSearch = (e) => {
     e.preventDefault();
     this.props.form.validateFields((err, values) => {
-      this.props.query(values);
+      if(values.deptCodeList) {
+        values.deptCodeList = [values.deptCodeList]
+      }else {
+        values.deptCodeList = [];
+      }
+      this.props.formProps.dispatch({
+        type:'base/setQueryConditions',
+        payload: values
+      });
     });
   }
   handleReset = () => {
     this.props.form.resetFields();
-    this.props.query({});
+    this.props.formProps.dispatch({
+      type:'base/clearQueryConditions'
+    });
   }
 
   baseListRender = () => {
@@ -47,14 +57,28 @@ class SearchForm extends PureComponent{
     })
   }
   componentDidMount() {
-    this.props.dispatch({
+    this.props.formProps.dispatch({
       type: 'configMgt/findBaseMedicineDeptlist',
       callback: (data) => {
         this.setState({
           baseList: data
         });
       }
-    })
+    });
+    let { queryConditons } = this.props.formProps.base;
+    //找出表单的name 然后set
+    queryConditons = {...queryConditons};
+    if(queryConditons.deptCodeList) {
+      queryConditons.deptCodeList = queryConditons.deptCodeList[0];
+    };
+    let values = this.props.form.getFieldsValue();
+    values = Object.getOwnPropertyNames(values);
+    let value = {};
+    values.map(keyItem => {
+      value[keyItem] = queryConditons[keyItem];
+      return keyItem;
+    });
+    this.props.form.setFieldsValue(value);
   }
   render(){
     const { getFieldDecorator } = this.props.form;
@@ -64,8 +88,8 @@ class SearchForm extends PureComponent{
           <Col span={8}>
             <FormItem {...formItemLayout} label={`基数药部门`}>
               {
-                getFieldDecorator(`ctmmDesc`)(
-                  <Select placeholder="请选择">
+                getFieldDecorator(`deptCodeList`)(
+                  <Select allowClear placeholder="请选择">
                     {this.baseListRender()}
                   </Select>
                 )
@@ -75,7 +99,7 @@ class SearchForm extends PureComponent{
           <Col span={8}>
             <FormItem {...formItemLayout} label={`货位`}>
               {
-                getFieldDecorator(`ctmmDosageFormDesc`,{
+                getFieldDecorator(`storeLocName`,{
                   initialValue: ''
                 })(
                   <Input placeholder='请输入' />
@@ -97,14 +121,14 @@ class BaseMgt extends PureComponent{
   state = {
     addVisible: false,
     addLoading: false,
-    query: {},
   }
-  queryHandler = (query) => {
-    this.setState({ query });
-    this.refs.table.fetch(query);
+  _tableChange = values => {
+    this.props.dispatch({
+      type:'base/setQueryConditions',
+      payload: values
+    });
   }
   render(){
-    const { query } = this.state;
     const IndexColumns = [
       {
         title: '部门名称',
@@ -121,10 +145,16 @@ class BaseMgt extends PureComponent{
         render: (text, record) => <Link to={{pathname: `/pharmacy/configMgt/baseMgt/drug/code=${record.deptCode}&loc=${record.storeLoc}`}}>药品</Link>
       }
     ];
+    let query = this.props.base.queryConditons;
+    query = {...query};
+    delete query.key;
+    delete query.display;
     return (
     <div className='ysynet-main-content'>
-      <WrappSearchForm dispatch={this.props.dispatch} query={this.queryHandler}/>
+      <WrappSearchForm formProps={{...this.props}}/>
       <RemoteTable
+        onChange={this._tableChange}
+        isJson
         ref='table'
         query={query}
         url={baseMgt.FIND_CARDINAL_MADICINE}
@@ -136,4 +166,4 @@ class BaseMgt extends PureComponent{
     )
   }
 }
-export default connect()(BaseMgt)
+export default connect(state=>state)(BaseMgt)

@@ -102,7 +102,6 @@ class UserMgt extends PureComponent{
   }
   // 修改
   modify = (record,index) =>{
-    console.log(record,index,'modify');
     // let Fields = {
     //   deptName:'供应商名称',
     // };
@@ -117,8 +116,6 @@ class UserMgt extends PureComponent{
         if (this.state.isEdit) {
           values.id = record.id;
         }
-        console.log(values,'values')
-        console.log(record,'record')
         this.setState({ loading: true });
         this.props.dispatch({
           type:'Organization/SupplierSave',
@@ -126,7 +123,7 @@ class UserMgt extends PureComponent{
           callback:(data)=>{
             if(data.code === 200 && data.msg === 'success') {
               message.success('新建成功');
-              this.setState({ loading: false, visible: false });
+              this.setState({ loading: false, visible: false, record: {} });
               this.refs.table.fetch();
             }else {
               this.setState({ loading: false });
@@ -176,7 +173,7 @@ class UserMgt extends PureComponent{
           </span>
         }
       },
-    ]
+    ];
     return (
       <div className='ysynet-main-content'>
         <WrapperForm query={this.queryHandle}/>
@@ -193,13 +190,14 @@ class UserMgt extends PureComponent{
           url={systemMgt.SupplierList}
         />
         <Modal
+          destroyOnClose
           title={editTitle}
           width={488}
           visible={visible}
-          onCancel={()=>this.setState({ visible: false })}
+          onCancel={()=>this.setState({ visible: false, record: {} })}
           footer={[
             <Button key="submit" htmlType='submit' type='primary' onClick={this.save} loading={this.state.loading}>确认</Button>,
-            <Button key="back"  type='default' onClick={()=>{ this.setState({ visible: false }); this.props.form.resetFields(); }}>取消</Button>
+            <Button key="back"  type='default' onClick={()=>{ this.setState({ visible: false, record: {} }); this.props.form.resetFields(); }}>取消</Button>
           ]}
         >
           <Form onSubmit={this.onSubmit}>

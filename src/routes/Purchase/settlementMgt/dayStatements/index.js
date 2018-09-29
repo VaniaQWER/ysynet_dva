@@ -7,7 +7,6 @@ import {Link} from 'react-router-dom';
 import {dayStatements} from '../../../../api/purchase/purchase';
 import RemoteTable from '../../../../components/TableGrid';
 import {connect} from 'dva';
-import moment from 'moment';
 
 const FormItem = Form.Item;
 
@@ -26,7 +25,6 @@ const formItemLayout = {
     },
 };
 
-const monthFormat = 'YYYY-MM-DD';
 
 const columns = [
     {
@@ -60,8 +58,6 @@ const columns = [
 class Statements extends PureComponent{
     state = {
         status: [],
-        display: 'none',
-        expand: false
     }
     componentDidMount() {
         this.props.dispatch({
@@ -76,11 +72,6 @@ class Statements extends PureComponent{
             }
         });
         let { queryConditons } = this.props.base;
-        if(queryConditons.startTime && queryConditons.endTime) {
-            queryConditons.time = [moment(queryConditons.startTime, monthFormat), moment(queryConditons.endTime, monthFormat)];
-        }else {
-            queryConditons.time = [];
-        };
         //找出表单的name 然后set
         let values = this.props.form.getFieldsValue();
         values = Object.getOwnPropertyNames(values);
@@ -102,7 +93,6 @@ class Statements extends PureComponent{
                 values.startTime = '';
                 values.endTime = '';
             };
-            delete values.time;
             this.props.dispatch({
                 type:'base/setQueryConditions',
                 payload: values
@@ -122,11 +112,9 @@ class Statements extends PureComponent{
         })
     }
     toggle = () => {
-        const { display, expand } = this.state;
-        this.setState({
-            display: display === 'none' ? 'block' : 'none',
-            expand: !expand
-        })
+        this.props.dispatch({
+            type:'base/setShowHide'
+        });
     }
     _tableChange = values => {
         this.props.dispatch({
@@ -136,8 +124,11 @@ class Statements extends PureComponent{
     }
     render() {
         let {getFieldDecorator} = this.props.form;
-        let {display, expand} = this.state;
+        const {display} = this.props.base;
+        const expand = display === 'block';
         let query = this.props.base.queryConditons;
+        query = {...query};
+        delete query.time;
         delete query.key;
         return (
             <div className="ysynet-main-content">

@@ -12,6 +12,7 @@ class BasicLayout extends PureComponent {
     collapsed: false,
     title: '',
     hasDept: true,
+    pathname: '',
     deptId: [this.props.users.currentDept.deptId]
   }
   componentWillReceiveProps(nextProps) {
@@ -78,32 +79,52 @@ class BasicLayout extends PureComponent {
     }
   }
   componentDidMount = () => {
-    // this.props.history.listen(({pathname}) => {
-    //   let {users} = this.props;
-    //   pathname = pathname.split('/');
-    //   let deptId = pathname[2];
-    //   if(deptId === undefined) return;
-    //   if(!users.currentDept.deptId || users.currentDept.deptId === deptId) return;
-    //   let deptName;
-    //   console.log(2);
+    this.props.history.listen(({pathname}) => {
+      if(!pathname) {
+        this.setState({
+          pathname
+        });
+        return;
+      };
+      const lastPathname = this.state.pathname.split('/');
+      const newPathname = pathname.split('/');
+      if(lastPathname[2] !== newPathname[2] || lastPathname[3] !== newPathname[3]) {
+        // 浏览器前进后退时如果切换了菜单  清除查询条件并重置显示隐藏
+        this.props.dispatch({
+          type: 'base/clearQueryConditions'
+        });
+        this.props.dispatch({
+          type: 'base/restoreShowHide'
+        });
+        this.setState({
+          pathname
+        });
+      } 
+      // let {users} = this.props;
+      // pathname = pathname.split('/');
+      // let deptId = pathname[2];
+      // if(deptId === undefined) return;
+      // if(!users.currentDept.deptId || users.currentDept.deptId === deptId) return;
+      // let deptName;
+      // console.log(2);
       
-    //   users.deptList.map(item => {
-    //     if(item.deptId === deptId) {
-    //       deptName = item.deptName
-    //     };
-    //     return item;
-    //   });
-    //   let e = {
-    //     item: {
-    //       props: {
-    //         children: ""
-    //       }
-    //     }
-    //   };
-    //   e.key = deptId;
-    //   e.item.props.children = deptName;
-    //   this.handleClick(e);
-    // })
+      // users.deptList.map(item => {
+      //   if(item.deptId === deptId) {
+      //     deptName = item.deptName
+      //   };
+      //   return item;
+      // });
+      // let e = {
+      //   item: {
+      //     props: {
+      //       children: ""
+      //     }
+      //   }
+      // };
+      // e.key = deptId;
+      // e.item.props.children = deptName;
+      // this.handleClick(e);
+    })
   }
   toggle = () => {
     this.setState({
@@ -113,9 +134,12 @@ class BasicLayout extends PureComponent {
   handleClick = (e) =>{
     let { dispatch, users, history } = this.props;
     if(e.key === this.state.deptId[0]) return;
-    // 切换子系统  清除查询条件
+    // 切换子系统  清除查询条件并重置显示隐藏
     this.props.dispatch({
       type: 'base/clearQueryConditions'
+    });
+    this.props.dispatch({
+      type: 'base/restoreShowHide'
     });
     let { deptInfo } = users.userInfo;
     let currMenuList = deptInfo.filter(item => item.deptId === e.key)[0].menuList;

@@ -64,26 +64,31 @@ class Details extends PureComponent {
       {
         title: '对账反馈',
         dataIndex: 'feedBackRemark',
+        width: 112
       },{
         title: '发药确认单',
-        dataIndex: 'dispensingNo'
+        dataIndex: 'dispensingNo',
+        width: 168
       },
       {
         title: '出库单',
         dataIndex: 'backNo',
-        width: 230
+        width: 168
       },
       {
         title: '通用名',
-        dataIndex: 'ctmmGenericName'
+        dataIndex: 'ctmmGenericName',
+        width: 168
       },
       {
         title: '商品名',
         dataIndex: 'ctmmTradeName',
+        width: 224
       },
       {
         title: '规格',
         dataIndex: 'ctmmSpecification',
+        width: 168,
         className:'ellipsis',
         render:(text)=>(
             <Tooltip placement="topLeft" title={text}>{text}</Tooltip>
@@ -91,55 +96,68 @@ class Details extends PureComponent {
       },
       {
         title: '生产厂家',
-        dataIndex: 'ctmmManufacturerName'
+        dataIndex: 'ctmmManufacturerName',
+        width: 280
       },
       {
         title: '批准文号',
         dataIndex: 'approvalNo',
+        width: 224
       },
       {
         title: '包装规格',
         dataIndex: 'packageSpecification',
+        width: 168
       },
       {
         title: '发药单位',
-        dataIndex: 'replanUnit'
+        dataIndex: 'replanUnit',
+        width: 112
       },
       {
         title: '发药数量',
-        dataIndex: 'oEORIDispDrugQuantity'
+        dataIndex: 'oEORIDispDrugQuantity',
+        width: 112
       },
       {
         title: '出库数量',
-        dataIndex: 'backSumNum'
+        dataIndex: 'backSumNum',
+        width: 112
       },
       {
         title: '出库货位类别',
-        dataIndex: 'outStoreName'
+        dataIndex: 'outStoreName',
+        width: 168
       },
       {
         title: '生产批号',
-        dataIndex: 'lot'
+        dataIndex: 'lot',
+        width: 168
       },
       {
-       title: '参考价格',
-       dataIndex: 'drugPrice'
+        title: '参考价格',
+        dataIndex: 'drugPrice',
+        width: 112
       },
       {
         title: '参考金额',
-        dataIndex: 'totalAmount'
+        dataIndex: 'totalAmount',
+        width: 112
       },
       {
         title: '生产日期',
-        dataIndex: 'productDate'
+        dataIndex: 'productDate',
+        width: 168
       },
       {
         title: '有效期至',
-        dataIndex: 'validEndDate'
+        dataIndex: 'validEndDate',
+        width: 168
       },
       {
         title: '发药时间',
-        dataIndex: 'dispensingDate'
+        dataIndex: 'dispensingDate',
+        width: 168
       }, 
     ];
     return (
@@ -225,7 +243,7 @@ class Details extends PureComponent {
             isJson={true}
             query={query}
             url={dayStatements.DAILY_DETAIL_LIST}
-            scroll={{x: '320%'}}
+            scroll={{x: 3080}}
             columns={columns}
             rowKey={'id'}
             style={{marginTop: 24}}

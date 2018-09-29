@@ -9,8 +9,8 @@ import { formItemLayout } from '../../../../utils/commonStyles';
 import { Link } from 'react-router-dom';
 import RemoteTable from '../../../../components/TableGrid';
 import wareHouse from '../../../../api/drugStorage/wareHouse';
-import FetchSelect from '../../../../components/FetchSelect';
 import {connect} from 'dva';
+
 const FormItem = Form.Item;
 const Option = Select.Option;
 const { RangePicker } = DatePicker;
@@ -20,14 +20,16 @@ class Putaway extends PureComponent{
     super(props);
     this.state = {
       loading: false,
-      query:{},
       messageError:"",
       selectedRowKeys:[]
     }
   }
 
-  queryHandler = (query) => {
-    this.setState({ query: query });
+  _tableChange = values => {
+    this.props.dispatch({
+      type:'base/setQueryConditions',
+      payload: values
+    });
   }
 
   //单行确认 
@@ -40,6 +42,7 @@ class Putaway extends PureComponent{
       {
        title: '入库单',
        width: 280,
+       fixed: 'left',
        dataIndex: 'inStoreCode',
        render: (text,record) =>{
         return <span>
@@ -81,6 +84,7 @@ class Putaway extends PureComponent{
         title: '操作',
         width: 60,
         dataIndex: 'RN',
+        fixed: 'right',
         render: (text, record) => 
           <span>
             <Popconfirm title="确定打印吗？" okText="是" cancelText="否"  onConfirm={()=>this.confirmOk(record)}>
@@ -89,18 +93,22 @@ class Putaway extends PureComponent{
           </span>  
       }
     ];
-    const {query} = this.state;
+    let query = this.props.base.queryConditons;
+    query = {...query};
+    delete query.time;
+    delete query.key;
     return (
       <div className='ysynet-main-content'>
         <SearchForm 
-          query={this.queryHandler}
+          formProps={{...this.props}}
          />
         <RemoteTable  
+          onChange={this._tableChange}
           isJson
           query={query}
           url={wareHouse.depotinstoreList}
           ref="tab"
-          scroll={{x: 1796}}
+          scroll={{x: 1568}}
           columns={columns}
           rowKey={'id'}
           style={{marginTop: 24}}
@@ -110,21 +118,53 @@ class Putaway extends PureComponent{
   }
 }
 // export default connect(state=>state.wareHouse)(Putaway);
-export default Putaway;
+export default connect(state=>state)(Putaway);
 
 /* 搜索 - 表单 */
 class SearchFormWrapper extends PureComponent {
   state = {
-    display: 'none',
-    value: undefined
+    types: [],
+    supplierList: []
   }
-
+  componentDidMount() {
+    this.props.formProps.dispatch({
+      type: 'base/orderStatusOrorderType',
+      payload: {
+        type: 'in_store_type'
+      },
+      callback: (data) => {
+        this.setState({
+          types: data
+        });
+      }
+    });
+    this.props.formProps.dispatch({
+      type: 'wareHouse/getsupplierList',
+      callback: (data) => {
+        this.setState({
+          supplierList: data
+        });
+      }
+    });
+    let { queryConditons } = this.props.formProps.base;
+    queryConditons = {...queryConditons};
+    if(queryConditons.supplierCodeList) {
+      queryConditons.supplierCodeList = queryConditons.supplierCodeList[0];
+    };
+    //找出表单的name 然后set
+    let values = this.props.form.getFieldsValue();
+    values = Object.getOwnPropertyNames(values);
+    let value = {};
+    values.map(keyItem => {
+      value[keyItem] = queryConditons[keyItem];
+      return keyItem;
+    });
+    this.props.form.setFieldsValue(value);
+  }
   toggle = () => {
-    const { display, expand } = this.state;
-    this.setState({
-      display: display === 'none' ? 'block' : 'none',
-      expand: !expand
-    })
+    this.props.formProps.dispatch({
+      type:'base/setShowHide'
+    });
   }
   handleSearch = (e) => {
     e.preventDefault();
@@ -139,22 +179,32 @@ class SearchFormWrapper extends PureComponent {
         values.startTime = "";
         values.endTime = "";
       }
-      delete values.time;
-      values.supplierCodeList = this.state.value? [this.state.value] : [];
-      this.props.query(values);
+      values.supplierCodeList = values.supplierCodeList? [values.supplierCodeList] : [];
+      this.props.formProps.dispatch({
+        type:'base/setQueryConditions',
+        payload: values
+      });
     });
   }
   //重置
   handleReset = () => {
     this.props.form.resetFields();
-    this.props.query({});
+    this.props.formProps.dispatch({
+      type:'base/clearQueryConditions'
+    });
   }
 
   render() {
-    let {value} = this.state;
-    
-    const { display } = this.state;
+    let { types, supplierList } = this.state;
     const { getFieldDecorator } = this.props.form;
+    const {display} = this.props.formProps.base;
+    const expand = display === 'block';
+    types = types.map(item => {
+      return <Option key={item.value} value={item.value}>{item.label}</Option>
+    });
+    supplierList = supplierList.map(item => {
+      return <Option key={item.ctmaSupplierCode} value={item.ctmaSupplierCode}>{item.ctmaSupplierName}</Option>
+    });
     return (
       <Form onSubmit={this.handleSearch}>
         <Row gutter={30}>
@@ -167,26 +217,20 @@ class SearchFormWrapper extends PureComponent {
           </Col>
           <Col span={8}>
           <FormItem label={`供应商`} {...formItemLayout}>
-            <FetchSelect
-              value={value}
-              url={wareHouse.SUPPLIER_LIST}
-              queryKey="ctmaSupplierName"
-              valueAndLabel={{
-                value: 'ctmaSupplierCode',
-                label: 'ctmaSupplierName'
-              }}
-              allowClear
-              placeholder={'请选择'}
-              optionFilterProp="children"
-              cb={(value) => {
-                this.setState({
-                  value
-                })
-              }}
-            />
+            {getFieldDecorator('supplierCodeList', {})(
+                <Select
+                  allowClear
+                  showSearch
+                  placeholder={'请选择'}
+                  optionFilterProp="children"
+                  filterOption={(input, option) => option.props.children.indexOf(input) >= 0}
+                  >
+                    {supplierList}
+                </Select>
+              )}
           </FormItem>
         </Col>
-        <Col span={8}>
+        <Col span={8} style={{display: display}}>
             <FormItem label={`入库时间`} {...formItemLayout}>
               {getFieldDecorator('time', {})(
               <RangePicker/>
@@ -196,19 +240,15 @@ class SearchFormWrapper extends PureComponent {
           <Col span={8} style={{display: display}}>
             <FormItem label={`入库分类`} {...formItemLayout}>
               {getFieldDecorator('inStoreType', {})(
-              <Select
-                allowClear
-                showSearch
-                placeholder={'请选择'}
-                optionFilterProp="children"
-                filterOption={(input, option) => option.props.children.indexOf(input) >= 0}
-                >
-                    <Option key="" value="">全部</Option>
-                    <Option key="01" value="01">采购入库</Option>
-                    <Option key="02" value="02">零库存入库</Option>
-                    <Option key="03" value="03">报告药入库</Option>
-                    <Option key="04" value="04">盘点入库</Option>
-              </Select>
+                <Select
+                  allowClear
+                  showSearch
+                  placeholder={'请选择'}
+                  optionFilterProp="children"
+                  filterOption={(input, option) => option.props.children.indexOf(input) >= 0}
+                  >
+                    {types}
+                </Select>
               )}
             </FormItem>
           </Col>
@@ -216,7 +256,7 @@ class SearchFormWrapper extends PureComponent {
             <Button type="primary" htmlType="submit">查询</Button>
             <Button style={{marginLeft: 8}} onClick={this.handleReset}>重置</Button>
             <a style={{marginLeft: 8, fontSize: 14}} onClick={this.toggle}>
-              {this.state.expand ? '收起' : '展开'} <Icon type={this.state.expand ? 'up' : 'down'} />
+              {expand ? '收起' : '展开'} <Icon type={expand ? 'up' : 'down'} />
             </a>
           </Col>
         </Row>
@@ -224,4 +264,4 @@ class SearchFormWrapper extends PureComponent {
     )
   }
 }
-const SearchForm = connect(state=>state.wareHouse)(Form.create()(SearchFormWrapper)); 
+const SearchForm = Form.create()(SearchFormWrapper); 

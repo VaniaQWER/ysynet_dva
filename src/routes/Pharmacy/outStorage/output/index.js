@@ -10,6 +10,7 @@ import RetomeTable from '../../../../components/TableGrid';
 import outStorage from '../../../../api/pharmacy/outStorage';
 import { Link } from 'react-router-dom';
 import { formItemLayout } from '../../../../utils/commonStyles';
+import {connect} from 'dva';
 const RangePicker = DatePicker.RangePicker;
 const FormItem = Form.Item;
 const columns = [
@@ -49,22 +50,22 @@ const columns = [
 ];
 
 class Output extends PureComponent{
-
-  constructor(props) {
-    super(props);
-    this.state = {
-      query:{},
-    }
-  }
-  queryHandler = (query) => {
-    this.setState({ query:query })
+  _tableChange = values => {
+    this.props.dispatch({
+      type:'base/setQueryConditions',
+      payload: values
+    });
   }
   render(){
-    let {query} = this.state;
+    let query = this.props.base.queryConditons;
+    query = {...query};
+    delete query.key;
+    delete query.assetName;
     return (
       <div  className='ysynet-main-content'>
-        <SearchForm query={this.queryHandler} />
+        <SearchForm formProps={{...this.props}} />
         <RetomeTable
+          onChange={this._tableChange}
           query={query}
           url={outStorage.BILLOUTSOTRE_LIST}
           scroll={{x: 1288}}
@@ -76,48 +77,64 @@ class Output extends PureComponent{
     )
   }
 }
-export default Output;
+export default connect(state=>state)(Output);
 /* 搜索 - 表单 */
 class SearchFormWrapper extends PureComponent {
- handleSearch = (e) => {
-   e.preventDefault();
-   this.props.form.validateFields((err, values) => {
-     
-     this.props.query(values);
-   });
- }
- //重置
- handleReset = () => {
-   this.props.form.resetFields();
-   this.props.query({});
- }
+  handleSearch = (e) => {
+    e.preventDefault();
+    this.props.form.validateFields((err, values) => {
+      this.props.formProps.dispatch({
+        type:'base/setQueryConditions',
+        payload: values
+      });
+    });
+  }
+  componentDidMount() {
+    let { queryConditons } = this.props.formProps.base;
+    //找出表单的name 然后set
+    let values = this.props.form.getFieldsValue();
+    values = Object.getOwnPropertyNames(values);
+    let value = {};
+    values.map(keyItem => {
+      value[keyItem] = queryConditons[keyItem];
+      return keyItem;
+    });
+    this.props.form.setFieldsValue(value);
+  }
+  //重置
+  handleReset = () => {
+    this.props.form.resetFields();
+    this.props.formProps.dispatch({
+      type:'base/clearQueryConditions'
+    });
+  }
 
- render() {
-   const { getFieldDecorator } = this.props.form;
-   return (
-     <Form onSubmit={this.handleSearch}>
-       <Row gutter={30}>
-         <Col span={8}>
-           <FormItem label={`单据`} {...formItemLayout}>
-              {getFieldDecorator('parameter', {})(
-                <Input placeholder="出库单/发药确认单"/>
+  render() {
+    const { getFieldDecorator } = this.props.form;
+    return (
+      <Form onSubmit={this.handleSearch}>
+        <Row gutter={30}>
+          <Col span={8}>
+            <FormItem label={`单据`} {...formItemLayout}>
+                {getFieldDecorator('parameter', {})(
+                  <Input placeholder="出库单/发药确认单"/>
+                )}
+            </FormItem>
+          </Col>
+          <Col span={8}>
+            <FormItem label={`发药时间`} {...formItemLayout}>
+              {getFieldDecorator('assetName', {})(
+                <RangePicker/>
               )}
-           </FormItem>
-         </Col>
-         <Col span={8}>
-           <FormItem label={`发药时间`} {...formItemLayout}>
-             {getFieldDecorator('assetName', {})(
-              <RangePicker/>
-             )}
-           </FormItem>
-         </Col>
-         <Col span={8} style={{float:'right', textAlign: 'right', marginTop: 4}} >
-           <Button type="primary" htmlType="submit">查询</Button>
-           <Button style={{marginLeft: 8}} onClick={this.handleReset}>重置</Button>
-         </Col>
-       </Row>
-     </Form>
-   )
- }
+            </FormItem>
+          </Col>
+          <Col span={8} style={{float:'right', textAlign: 'right', marginTop: 4}} >
+            <Button type="primary" htmlType="submit">查询</Button>
+            <Button style={{marginLeft: 8}} onClick={this.handleReset}>重置</Button>
+          </Col>
+        </Row>
+      </Form>
+    )
+  }
 }
 const SearchForm = Form.create()(SearchFormWrapper);

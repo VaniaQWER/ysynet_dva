@@ -28,8 +28,11 @@ class DrugsFor extends PureComponent{
     }
   }
 
-  queryHandler = (query) => {
-    this.refs.tab.fetch(query);
+  _tableChange = values => {
+    this.props.dispatch({
+      type:'base/setQueryConditions',
+      payload: values
+    });
   }
 
   render(){
@@ -66,16 +69,20 @@ class DrugsFor extends PureComponent{
         dataIndex: 'createDate'
       },
     ];
-    let {query} = this.state;
+    let query = this.props.base.queryConditons;
+    query = {...query, ...this.state.query};
+    delete query.key;
+    delete query.time;
     return (
       <div className='ysynet-main-content'>
-        <SearchForm query={this.queryHandler} />
+        <SearchForm formProps={{...this.props}} />
         <Row>
           <Button type='primary' className='button-gap'>
             <Link to={{pathname:`/baseAddDrugsApply`}}>新建申领</Link>
           </Button>
         </Row>
         <RemoteTable
+          onChange={this._tableChange}
           ref="tab"
           query={query}
           url={wareHouse.APPLYLIST}
@@ -88,16 +95,15 @@ class DrugsFor extends PureComponent{
     )
   }
 }
-export default DrugsFor;
+export default connect(state=>state)(DrugsFor);
 
 /* 搜索 - 表单 */
 class SearchFormWrapper extends PureComponent {
   state = {
-    display: 'none',
     status: []
   }
   componentDidMount() {
-    this.props.dispatch({
+    this.props.formProps.dispatch({
       type: 'base/orderStatusOrorderType',
       payload: {
         type: 'apply_status'
@@ -107,14 +113,22 @@ class SearchFormWrapper extends PureComponent {
           status: data
         });
       }
-    })
+    });
+    let { queryConditons } = this.props.formProps.base;
+    //找出表单的name 然后set
+    let values = this.props.form.getFieldsValue();
+    values = Object.getOwnPropertyNames(values);
+    let value = {};
+    values.map(keyItem => {
+      value[keyItem] = queryConditons[keyItem];
+      return keyItem;
+    });
+    this.props.form.setFieldsValue(value);
   }
   toggle = () => {
-    const { display, expand } = this.state;
-    this.setState({
-      display: display === 'none' ? 'block' : 'none',
-      expand: !expand
-    })
+    this.props.formProps.dispatch({
+      type:'base/setShowHide'
+    });
   }
   handleSearch = (e) => {
     e.preventDefault();
@@ -126,22 +140,28 @@ class SearchFormWrapper extends PureComponent {
         values.startTime = '';
         values.endTime = '';
       }
-      delete values.time;
-      values.queryType = '1';
-      this.props.query(values);
+      this.props.formProps.dispatch({
+        type:'base/setQueryConditions',
+        payload: values
+      });
     });
   }
   //重置
   handleReset = () => {
-    this.props.form.resetFields()
+    this.props.form.resetFields();
+    this.props.formProps.dispatch({
+      type:'base/clearQueryConditions'
+    });
   }
 
   render() {
-    let { display, status } = this.state;
+    let { status } = this.state;
     const { getFieldDecorator } = this.props.form;
     status = status.map(item=>{
       return <Option key={item.value} value={item.value}>{item.label}</Option>
     });
+    const {display} = this.props.formProps.base;
+    const expand = display === 'block';
     return (
       <Form onSubmit={this.handleSearch}>
         <Row gutter={30}>
@@ -177,7 +197,7 @@ class SearchFormWrapper extends PureComponent {
             <Button type="primary" htmlType="submit">查询</Button>
             <Button style={{marginLeft: 8}} onClick={this.handleReset}>重置</Button>
             <a style={{marginLeft: 8, fontSize: 14}} onClick={this.toggle}>
-              {this.state.expand ? '收起' : '展开'} <Icon type={this.state.expand ? 'up' : 'down'} />
+              {expand ? '收起' : '展开'} <Icon type={expand ? 'up' : 'down'} />
             </a>
           </Col>
         </Row>
@@ -185,4 +205,4 @@ class SearchFormWrapper extends PureComponent {
    )
  }
 }
-const SearchForm = connect(state=>state)(Form.create()(SearchFormWrapper));
+const SearchForm = Form.create()(SearchFormWrapper);

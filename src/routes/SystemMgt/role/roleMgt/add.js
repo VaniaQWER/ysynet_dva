@@ -27,7 +27,8 @@ class AddRoleMgt extends PureComponent{
     this.props.form.validateFieldsAndScroll((err,values)=>{
       if(!err){
         if(this.state.checkedKeys && this.state.checkedKeys.length){
-          const menuIds = this.state.checkedKeys;
+          let menuIds = this.state.checkedKeys;
+          menuIds.push('1');//添加功能菜单ID;
           this.props.dispatch({
             type: 'systemRole/RoleSave',
             payload: { menuIds,...values},

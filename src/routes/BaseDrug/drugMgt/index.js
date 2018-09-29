@@ -19,29 +19,42 @@ const formItemLayout = {
 };
 
 class SearchForm extends PureComponent{
-  state = {
-    display: 'none'
-  }
   toggle = () => {
-    const { display, expand } = this.state;
-    this.setState({
-      display: display === 'none' ? 'block' : 'none',
-      expand: !expand
-    })
+    this.props.formProps.dispatch({
+      type:'base/setShowHide'
+    });
+  }
+  componentDidMount() {
+    let { queryConditons } = this.props.formProps.base;
+    //找出表单的name 然后set
+    let values = this.props.form.getFieldsValue();
+    values = Object.getOwnPropertyNames(values);
+    let value = {};
+    values.map(keyItem => {
+      value[keyItem] = queryConditons[keyItem];
+      return keyItem;
+    });
+    this.props.form.setFieldsValue(value);
   }
   handleSearch = (e) => {
     e.preventDefault();
     this.props.form.validateFields((err,values)=>{
-      this.props.query(values)
+      this.props.formProps.dispatch({
+        type:'base/setQueryConditions',
+        payload: values
+      });
     })
   } 
   handleReset = ()=>{
     this.props.form.resetFields();
-    this.props.query()
+    this.props.formProps.dispatch({
+      type:'base/clearQueryConditions'
+    });
   }
   render(){
     const { getFieldDecorator } = this.props.form;
-    const { display, expand } = this.state;
+    const {display} = this.props.formProps.base;
+    const expand = display === 'block';
     return (
       <Form className="ant-advanced-search-form" onSubmit={this.handleSearch}>
         <Row gutter={30}>
@@ -67,7 +80,7 @@ class SearchForm extends PureComponent{
               }
             </FormItem>
           </Col>
-          <Col span={8}>
+          <Col span={8} style={{ display: display }}>
             <FormItem {...formItemLayout} label={`规格`}>
               {
                 getFieldDecorator(`ctmmSpecification`,{
@@ -108,7 +121,7 @@ class SearchForm extends PureComponent{
               }
             </FormItem>
           </Col>
-          <Col span={expand ? 8: 24} style={{ textAlign: 'right', marginTop: 4}} >
+          <Col span={8} style={{float: 'right', textAlign: 'right', marginTop: 4}} >
            <Button type="primary" htmlType="submit">查询</Button>
            <Button type='default' style={{marginLeft: 8}} onClick={this.handleReset}>重置</Button>
            <a style={{marginLeft: 8, fontSize: 14}} onClick={this.toggle}>
@@ -165,7 +178,6 @@ const columns = [
 
 class DrugDirectory extends PureComponent{
   state = {
-    query:{},
     selected: [],
     selectedRows: [],
     visible: false,
@@ -221,8 +233,14 @@ class DrugDirectory extends PureComponent{
       [stateName]: value? value : 0
     });
   }
+  _tableChange = values => {
+    this.props.dispatch({
+      type:'base/setQueryConditions',
+      payload: values
+    });
+  }
   render(){
-    const {visible, loading, query, min, max} = this.state;
+    const {visible, loading, min, max} = this.state;
     const { getFieldDecorator } = this.props.form;
     const IndexColumns = [
       ...columns,
@@ -252,9 +270,12 @@ class DrugDirectory extends PureComponent{
         }
       },
     ];
+    let query = this.props.base.queryConditons;
+    query = {...query};
+    delete query.key;
     return (
     <div className='ysynet-main-content'>
-      <WrappSearchForm query={(data)=>this.refs.table.fetch(data)}/>
+      <WrappSearchForm formProps={{...this.props}}/>
       <Row className='ant-row-bottom'>
         <Col>
           <Button type='primary' onClick={this.bitchEdit}>批量设置上下限</Button>
@@ -327,6 +348,7 @@ class DrugDirectory extends PureComponent{
         </Form>
       </Modal>
       <RemoteTable 
+        onChange={this._tableChange}
         ref='table'
         query={query}
         style={{marginTop: 20}}

@@ -16,9 +16,9 @@ export default {
   state:{
     replenishDetailsInfo: {},
     // 查询条件
-    queryConditons: {
-      
-    }
+    queryConditons: {},
+    //搜索栏显示隐藏
+    display: 'none'    
   },
   effects:{
     //基数药 - 验收 - 新增验收 - 搜索
@@ -250,6 +250,18 @@ export default {
         queryConditons: {}
       }
     },
+    setShowHide(state, action) {
+      return {
+        ...state,
+        display: state.display === 'none' ? 'block' : 'none'
+      }
+    },
+    restoreShowHide(state, action) {
+      return {
+        ...state,
+        display: 'none'
+      };
+    }
   },
   subscriptions: {
     

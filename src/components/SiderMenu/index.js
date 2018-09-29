@@ -202,6 +202,9 @@ switchMenu = (item) => {
     this.props.dispatch({
       type: 'base/clearQueryConditions'
     });
+    this.props.dispatch({
+      type: 'base/restoreShowHide'
+    });
   }else {
     message.info('您正位于该页面')
   }

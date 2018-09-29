@@ -92,6 +92,7 @@ export const getMenuData  = (key, menuList) => {
 export const menuFormat = (menuData,returnToggle,returnIndex) => {
     let menuIndex = returnIndex ? 1: 2;
     let menuList = returnIndex ? JSON.parse(JSON.stringify( menuData )) : menuData;
+    
     for (let i=0; i<menuList.length; i++) {
       menuList[i].parentIds = menuList[i].parentIds.split(',')
       menuList[i].parentIds.pop();
@@ -105,12 +106,11 @@ export const menuFormat = (menuData,returnToggle,returnIndex) => {
       return a.parentIds.length - b.parentIds.length;
     })
     let max = menuList[menuList.length - 1].parentIds.length;
-
     function genRoot(keyNodes, target) {
       for (let i=0; i<target.length; i++) {
         if (target[i].id === keyNodes.parentId) {
           target[i].children = target[i].children || [];
-          target[i].children = [ ...target[i].children, keyNodes ]
+          target[i].children = [ ...target[i].children, keyNodes ];
         } else if (target[i].children){
           genRoot(keyNodes, target[i].children)
         }

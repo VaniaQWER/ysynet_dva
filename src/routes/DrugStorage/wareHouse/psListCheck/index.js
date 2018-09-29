@@ -12,7 +12,6 @@ import { Form, Input, Row, Col, Select, Button, Tooltip, Icon } from 'antd';
 import { Link } from 'react-router-dom';
 import wareHouse from '../../../../api/drugStorage/wareHouse';
 import RemoteTable from '../../../../components/TableGrid';
-import FetchSelect from '../../../../components/FetchSelect';
 import {connect} from 'dva';
 
 const FormItem = Form.Item;
@@ -76,13 +75,12 @@ const columns = [
 
 class SearchForm extends PureComponent{
   state = {
-    display: 'none',
     type: [],
     status: [],
-    value: undefined
+    supplierList: []
   }
   componentDidMount = () => {
-    this.props.dispatch({
+    this.props.formProps.dispatch({
       type: 'base/orderStatusOrorderType',
       payload: {
         type: 'audit_status'
@@ -92,7 +90,14 @@ class SearchForm extends PureComponent{
       }
     });
 
-    this.props.dispatch({
+    this.props.formProps.dispatch({
+      type: 'wareHouse/getsupplierList',
+      callback: (data)=>{
+        this.setState({supplierList: data})
+      }
+    });
+
+    this.props.formProps.dispatch({
       type: 'base/orderStatusOrorderType',
       payload: {
         type: 'depot_type'
@@ -101,25 +106,37 @@ class SearchForm extends PureComponent{
         this.setState({type: data})
       }
     });
+    let { queryConditons } = this.props.formProps.base;
+    queryConditons = {...queryConditons};
+    if(queryConditons.supplierCodeList) {
+      queryConditons.supplierCodeList = queryConditons.supplierCodeList[0];
+    };
+    //找出表单的name 然后set
+    let values = this.props.form.getFieldsValue();
+    values = Object.getOwnPropertyNames(values);
+    let value = {};
+    values.map(keyItem => {
+      value[keyItem] = queryConditons[keyItem];
+      return keyItem;
+    });
+    this.props.form.setFieldsValue(value);
   }
   handleSearch = (e) => {
     e.preventDefault();
     this.props.form.validateFields((err, values) => {
       if(!err) {
-        for (const key in values) {
-          values[key] = values[key] === undefined? "" : values[key];
-        }
-        values.supplierCodeList = this.state.value? [this.state.value] : [];
-        this.props.query(values);
+        values.supplierCodeList = values.supplierCodeList? [values.supplierCodeList] : [];
+        this.props.formProps.dispatch({
+          type:'base/setQueryConditions',
+          payload: values
+        });
       };
     });
   }
   toggle = () => {
-    const { display, expand } = this.state;
-    this.setState({
-      display: display === 'none' ? 'block' : 'none',
-      expand: !expand
-    })
+    this.props.formProps.dispatch({
+      type:'base/setShowHide'
+    });
   }
   listRender = (list) => {
     return list.map(item => {
@@ -128,9 +145,14 @@ class SearchForm extends PureComponent{
   }
   render(){
     const { getFieldDecorator } = this.props.form;
-    let { display, expand, type, status, value } = this.state;
+    let { type, status, supplierList } = this.state;
     type = this.listRender(type);
     status = this.listRender(status);
+    supplierList = supplierList.map(item=>{
+      return <Option key={item.ctmaSupplierCode} value={item.ctmaSupplierCode}>{item.ctmaSupplierName}</Option>
+    });
+    const {display} = this.props.formProps.base;
+    const expand = display === 'block';
     return (
       <Form className="ant-advanced-search-form" onSubmit={this.handleSearch}>
         <Row gutter={30}>
@@ -145,23 +167,19 @@ class SearchForm extends PureComponent{
           </Col>
           <Col span={8}>
             <FormItem {...formItemLayout} label={`供应商`}>
-                <FetchSelect
-                  value={value}
-                  url={wareHouse.SUPPLIER_LIST}
-                  queryKey="ctmaSupplierName"
-                  valueAndLabel={{
-                    value: 'ctmaSupplierCode',
-                    label: 'ctmaSupplierName'
-                  }}
-                  allowClear
-                  placeholder={'请选择'}
-                  optionFilterProp="children"
-                  cb={(value) => {
-                    this.setState({
-                      value
-                    })
-                  }}
-                />
+                {
+                  getFieldDecorator(`supplierCodeList`)(
+                    <Select 
+                      allowClear
+                      showSearch
+                      placeholder={'请选择'}
+                      optionFilterProp="children"
+                      filterOption={(input, option) => option.props.children.indexOf(input) >= 0}
+                    >
+                      {supplierList}
+                    </Select>
+                  )
+                }
             </FormItem>
           </Col>
           <Col span={8} style={{ display: display }}>
@@ -210,7 +228,7 @@ class SearchForm extends PureComponent{
     )
   }
 }
-const WrapperForm = connect(state=>state.wareHouse)(Form.create()(SearchForm));
+const WrapperForm = Form.create()(SearchForm);
 
 class DistributionCheck extends PureComponent{
   state = {
@@ -220,21 +238,16 @@ class DistributionCheck extends PureComponent{
     data: []
   }
 
-  queryHandler = (queryValue) => {
-    let {query} = this.state;
-    this.setState({
-      query: {
-        ...query,
-        ...queryValue
-      }
-    });
-    // this.ref.table.fetch(query)
-  }
   render(){
-    let {query} = this.state;
+    let query = this.props.base.queryConditons;
+    query = {
+      ...query,
+      ...this.state.query
+    }
+    delete query.key;
     return (
       <div className='ysynet-main-content'>
-        <WrapperForm query={this.queryHandler} />
+        <WrapperForm formProps={{...this.props}} query={this.queryHandler} />
         <div className='ant-row-bottom'>
           <Button type='primary' onClick={()=>this.props.history.push({ pathname: `/AddNewCheck` })}>新建验收</Button>
         </div>
@@ -251,4 +264,4 @@ class DistributionCheck extends PureComponent{
     )
   }
 }
-export default DistributionCheck;
+export default connect(state=>state)(DistributionCheck);

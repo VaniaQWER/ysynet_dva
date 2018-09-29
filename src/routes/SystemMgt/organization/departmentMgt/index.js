@@ -29,20 +29,23 @@ const singleFormItemLayout = {
 
 class SearchForm extends PureComponent{
  
-  state = {
-    display: 'none'
-  }
   toggle = () => {
-    const { display, expand } = this.state;
-    this.setState({
-      display: display === 'none' ? 'block' : 'none',
-      expand: !expand
-    })
+    this.props.formProps.dispatch({
+      type:'base/setShowHide'
+    });
   }
 
   componentDidMount() {
-    const { queryConditons: {pageSize, pageNo, key, sortField, sortOrder, ...other} } = this.props.formProps.base;
-    this.props.form.setFieldsValue(other);
+    let { queryConditons } = this.props.formProps.base;
+    //找出表单的name 然后set
+    let values = this.props.form.getFieldsValue();
+    values = Object.getOwnPropertyNames(values);
+    let value = {};
+    values.map(keyItem => {
+      value[keyItem] = queryConditons[keyItem];
+      return keyItem;
+    });
+    this.props.form.setFieldsValue(value);
   }
 
   handleSearch = (e) =>{
@@ -65,7 +68,8 @@ class SearchForm extends PureComponent{
   }
   render(){
     const { getFieldDecorator } = this.props.form;
-    const { display, expand } = this.state;
+    const {display} = this.props.formProps.base;
+    const expand = display === 'block';
     
     return (
       <Form className="ant-advanced-search-form" onSubmit={this.handleSearch}>
@@ -163,7 +167,9 @@ class DepartmentMgt extends PureComponent{
         const { subModalSelectRowCache , goodsModalSelectRowCache } = this.state;
         values.openDeptCode = subModalSelectRowCache.ctdCode;//ctdCode为编码 
         if(values.deptType===5){//选择基数药的时候获取选中的Id
-          values.parentId = goodsModalSelectRowCache.id;
+          values.parentId = goodsModalSelectRowCache.deptCode;
+          values.id = goodsModalSelectRowCache.id;
+          values.positionType = 5;
         }
         delete values['openDeptName'] ;
         console.log(JSON.stringify(values))
@@ -220,7 +226,7 @@ class DepartmentMgt extends PureComponent{
    /*====================== 新增货位 弹窗 ======================*/
   //新增货位-选择货位 - 打开弹窗
   showGoodsModal = () => {
-    this.setState({goodsModalVisible:true})
+    this.setState({goodsModalVisible:true});
   }
   //搜索货位弹窗
   searchGoodsModal = () => {
@@ -319,7 +325,7 @@ class DepartmentMgt extends PureComponent{
     const goodsModalCol = [
       {
         title: '部门名称',
-        dataIndex: 'deptCode',
+        dataIndex: 'deptName',
       },
       {
         title: '货位名称',
@@ -417,6 +423,7 @@ class DepartmentMgt extends PureComponent{
         </Modal>
         {/* 新增部门 - 科室 - 弹窗  */}
         <Modal
+          destroyOnClose
           visible={subModalVisible} 
           title='科室'     
           onOk={this.onSubmitSubModal}
@@ -448,6 +455,7 @@ class DepartmentMgt extends PureComponent{
 
         {/* 新增部门 - 货位 - 弹窗  */}
         <Modal
+          destroyOnClose
           visible={goodsModalVisible} 
           title='货位'     
           onOk={this.onSubmitGoodsModal}
