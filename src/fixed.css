@@ -440,3 +440,58 @@ td:hover .editable-cell-icon {
 .fixHeight .ant-col-8{
   height:35px
 }
+/*  空表格图片覆盖 */
+.ant-table-empty .ant-table-placeholder{
+  color:#fff;
+}
+.ant-table-empty .ant-table-placeholder:after{
+  content:"";
+  display:block;
+  position:relative;
+  left:0;
+  top:0;
+  width: 100%;
+  min-height:300px;
+  background:#fff url('./assets/emptyTable.jpg') no-repeat center;
+
+}
+@media(min-width:1920px){
+  .ant-table-empty .ant-table-placeholder:after{
+    content:"";
+    display:block;
+    position:relative;
+    left:0;
+    top:0;
+    width: 100%;
+    min-height:612px;
+    background:#fff url('./assets/emptyTable.jpg') no-repeat center;
+  
+  }
+}
+@media(min-width:1680px){
+  .ant-table-empty .ant-table-placeholder:after{
+    content:"";
+    display:block;
+    position:relative;
+    left:0;
+    top:0;
+    width: 100%;
+    min-height:582px;
+    background:#fff url('./assets/emptyTable.jpg') no-repeat center;
+  
+  }
+}
+@media(min-width:1440px){
+  .ant-table-empty .ant-table-placeholder:after{
+    content:"";
+    display:block;
+    position:relative;
+    left:0;
+    top:0;
+    width: 100%;
+    min-height:432px;
+    background:#fff url('./assets/emptyTable.jpg') no-repeat center;
+  }
+}
+
+
