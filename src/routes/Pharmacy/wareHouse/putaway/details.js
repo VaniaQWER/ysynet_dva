@@ -4,7 +4,7 @@
 * @Last Modified time: 2018-07-24 13:13:55 
  */
 import React, { PureComponent } from 'react';
-import {Table, Row, Col, InputNumber, Select, Button, Tabs, Card, message, Tooltip} from 'antd';
+import {Table, Row, Col, InputNumber, Select, Button, Tabs, message, Tooltip} from 'antd';
 import {connect} from 'dva';
 import querystring from 'querystring';
 const Option = Select.Option;
@@ -125,17 +125,17 @@ class DetailsPutaway extends PureComponent{
     const notColumns = [
       {
         title: '指示货位',
-        width:100,
+        width: 112,
         dataIndex: 'actualStore',
       },
       {
         title: '货位类型',
-        width:150,
+        width: 112,
         dataIndex: 'storeType',
       },
       {
         title: '实际货位',
-        width:150,
+        width: 180,
         dataIndex: 'realReceiveStore',
         render: (text, record) => {
           return <Select
@@ -155,12 +155,12 @@ class DetailsPutaway extends PureComponent{
       },
       {
         title: '指示数量',
-        width:150,
+        width: 112,
         dataIndex: 'realReceiveQuantiry',
       },
       {
         title: '实际上架数量',
-        width:150,
+        width: 168,
         dataIndex: 'realNum',
         render: (text, record) => {
           return <InputNumber
@@ -181,17 +181,17 @@ class DetailsPutaway extends PureComponent{
       },
       {
         title: '单位',
-        width:150,
+        width: 60,
         dataIndex: 'replanUnit'
       },
       {
         title: '通用名',
-        width:150,
+        width: 168,
         dataIndex: 'ctmmGenericName'
       },
       {
         title: '规格',
-        width:150,
+        width: 168,
         dataIndex: 'ctmmSpecification',
         className:'ellipsis',
         render:(text)=>(
@@ -200,69 +200,73 @@ class DetailsPutaway extends PureComponent{
       },
       {
         title: '包装规格',
-        width:150,
+        width: 168,
         dataIndex: 'packageSpecification',
       },
       {
         title: '生产厂家',
-        width:150,
+        width: 224,
         dataIndex: 'ctmmManufacturerName',
+        className: 'ellipsis',
+        render:(text)=>(
+          <Tooltip placement="topLeft" title={text}>{text}</Tooltip>
+        )
       },
       {
         title: '生产批号',
-        width:150,
+        width: 168,
         dataIndex: 'productBatchNo',
       },
       {
         title: '生产日期',
-        width:150,
+        width: 168,
         dataIndex: 'realProductTime',
       },
       {
         title: '有效期至',
-        width:150,
+        width: 168,
         dataIndex: 'realValidEndDate',
       }
     ];
     const hasColumns = [
       {
         title: '指示货位',
-        width:100,
+        width: 112,
         dataIndex: 'actualStore',
       },
       {
         title: '货位类型',
-        width:150,
+        width: 112,
         dataIndex: 'storeType',
       },
       {
         title: '实际货位',
-        width:150,
+        width: 112,
         dataIndex: 'realReceiveStoreName',
       },
       {
         title: '指示数量',
-        width:150,
+        width: 112,
         dataIndex: 'realReceiveQuantiry',
       },
       {
         title: '实际上架数量',
-        width:150,
+        width: 168,
         dataIndex: 'realNum',
       },
       {
         title: '单位',
-        width:150,
+        width: 60,
         dataIndex: 'replanUnit'
       },
       {
         title: '通用名',
-        width:150,
+        width: 168,
         dataIndex: 'ctmmGenericName'
       },
       {
         title: '规格',
-        width:150,
+        width: 168,
         dataIndex: 'ctmmSpecification',
         className:'ellipsis',
         render:(text)=>(
@@ -271,104 +275,106 @@ class DetailsPutaway extends PureComponent{
       },
       {
         title: '包装规格',
-        width:150,
+        width: 168,
         dataIndex: 'packageSpecification',
       },
       {
         title: '生产厂家',
-        width:150,
+        width: 224,
         dataIndex: 'ctmmManufacturerName',
+        className:'ellipsis',
+        render:(text)=>(
+          <Tooltip placement="topLeft" title={text}>{text}</Tooltip>
+        )
       },
       {
         title: '生产批号',
-        width:150,
+        width: 168,
         dataIndex: 'productBatchNo',
       },
       {
         title: '生产日期',
-        width:150,
+        width: 168,
         dataIndex: 'realProductTime',
       },
       {
         title: '有效期至',
-        width:150,
+        width: 168,
         dataIndex: 'realValidEndDate',
       }
     ];
     return (
-      <div className='fadeIn ysynet-content'>
-        <Card>
-          <h3>单据信息 
-            <Button style={{float:'right'}} onClick={()=>this.onPrint()} >打印</Button>
-          </h3>
-          <Row>
-            <Col span={8}>
-              <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
-                  <label>验收单</label>
+      <div style={{padding: '0 16px'}} className='fadeIn ysynet-content'>
+        <h3>单据信息 
+          <Button style={{float:'right'}} onClick={()=>this.onPrint()} >打印</Button>
+        </h3>
+        <Row>
+          <Col span={8}>
+            <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
+                <label>验收单</label>
+            </div>
+            <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
+              <div className='ant-form-item-control'>{info.distributeCode || ''}</div>
+            </div>
+          </Col>
+          <Col span={8}>
+            <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
+                <label>状态</label>
+            </div>
+            <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
+              <div className='ant-form-item-control'>{info.statusName || ''}</div>
+            </div>
+          </Col>
+          <Col span={8}>
+            <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
+                <label>验收时间</label>
+            </div>
+            <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
+              <div className='ant-form-item-control'>{info.receptionTime || ''}
               </div>
-              <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
-                <div className='ant-form-item-control'>{info.distributeCode || ''}</div>
-              </div>
-            </Col>
-            <Col span={8}>
-              <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
-                  <label>状态</label>
-              </div>
-              <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
-                <div className='ant-form-item-control'>{info.statusName || ''}</div>
-              </div>
-            </Col>
-            <Col span={8}>
-              <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
-                  <label>验收时间</label>
-              </div>
-              <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
-                <div className='ant-form-item-control'>{info.receptionTime || ''}
-                </div>
-              </div>
-            </Col>
-          </Row>
-          <Row>
-            <Col span={8}>
-              <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
-                  <label>上架时间</label>
-              </div>
-              <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
-                <div className='ant-form-item-control'>{info.upUserDate || ''}</div>
-              </div>
-            </Col>
-          </Row>
-          <hr className='hr'/>
-          <Tabs onChange={this.changeTabs} activeKey={defaultActive} tabBarExtraContent={defaultActive === "1" && listwsj && listwsj.length > 0 ? <Button loading={saveLoading} onClick={this.onSubmit} type="primary">确认上架</Button> : null}>
-            <TabPane tab="待上架" key="1">
-              <Table
-                loading={loading}
-                dataSource={listwsj}
-                bordered
-                scroll={{x: '200%'}}
-                columns={notColumns}
-                rowKey={'id'}
-                pagination={false}
-                rowSelection={{
-                  onChange: (selectedRowKeys, selectedRow) => {
-                    this.setState({selectedRowKeys, selectedRow});
-                  }
-                }}
-              />
-            </TabPane>
-            <TabPane tab="已上架" key="2">
-              <Table
-                loading={loading}
-                dataSource={listysj}
-                bordered
-                scroll={{x: '200%'}}
-                columns={hasColumns}
-                rowKey={'drugCode'}
-                pagination={false}
-              />
-            </TabPane>
-          </Tabs>
-        </Card>
+            </div>
+          </Col>
+        </Row>
+        <Row>
+          <Col span={8}>
+            <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
+                <label>上架时间</label>
+            </div>
+            <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
+              <div className='ant-form-item-control'>{info.upUserDate || ''}</div>
+            </div>
+          </Col>
+        </Row>
+        <hr className='hr'/>
+        <Tabs onChange={this.changeTabs} activeKey={defaultActive} tabBarExtraContent={defaultActive === "1" && listwsj && listwsj.length > 0 ? <Button loading={saveLoading} onClick={this.onSubmit} type="primary">确认上架</Button> : null}>
+          <TabPane tab="待上架" key="1">
+            <Table
+              loading={loading}
+              dataSource={listwsj}
+              bordered
+              scroll={{x: 1964}}
+              columns={notColumns}
+              rowKey={'id'}
+              pagination={false}
+              rowSelection={{
+                onChange: (selectedRowKeys, selectedRow) => {
+                  this.setState({selectedRowKeys, selectedRow});
+                }
+              }}
+            />
+          </TabPane>
+          <TabPane tab="已上架" key="2">
+            <Table
+              loading={loading}
+              dataSource={listysj}
+              bordered
+              scroll={{x: 1916}}
+              columns={hasColumns}
+              rowKey={'drugCode'}
+              pagination={false}
+            />
+          </TabPane>
+        </Tabs>
       </div>
     )
   }

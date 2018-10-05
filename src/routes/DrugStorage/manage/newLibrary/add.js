@@ -73,6 +73,10 @@ const columns = [
     title: '生产厂家',
     width:150,
     dataIndex: 'productCompany',
+    className: 'ellipsis',
+    render:(text)=>(
+      <Tooltip placement="topLeft" title={text}>{text}</Tooltip>
+    )
   }
 ];
 class AddNewLibrary extends PureComponent{

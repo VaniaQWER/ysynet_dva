@@ -5,13 +5,12 @@
  */
 
 import React, { PureComponent } from 'react';
-import { Form, Row, Col, Button, Input, DatePicker } from 'antd';
+import { Form, Row, Col, Button, Input } from 'antd';
 import RetomeTable from '../../../../components/TableGrid';
 import outStorage from '../../../../api/pharmacy/outStorage';
 import { Link } from 'react-router-dom';
 import { formItemLayout } from '../../../../utils/commonStyles';
 import {connect} from 'dva';
-const RangePicker = DatePicker.RangePicker;
 const FormItem = Form.Item;
 const columns = [
   {
@@ -60,7 +59,6 @@ class Output extends PureComponent{
     let query = this.props.base.queryConditons;
     query = {...query};
     delete query.key;
-    delete query.assetName;
     return (
       <div  className='ysynet-main-content'>
         <SearchForm formProps={{...this.props}} />
@@ -119,13 +117,6 @@ class SearchFormWrapper extends PureComponent {
                 {getFieldDecorator('parameter', {})(
                   <Input placeholder="出库单/发药确认单"/>
                 )}
-            </FormItem>
-          </Col>
-          <Col span={8}>
-            <FormItem label={`发药时间`} {...formItemLayout}>
-              {getFieldDecorator('assetName', {})(
-                <RangePicker/>
-              )}
             </FormItem>
           </Col>
           <Col span={8} style={{float:'right', textAlign: 'right', marginTop: 4}} >

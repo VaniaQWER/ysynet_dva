@@ -20,9 +20,6 @@ class Putaway extends PureComponent{
     super(props);
     this.state = {
       loading: false,
-      query:{
-        shelfStatus: 2
-      },
       messageError:"",
       selectedRowKeys:[],
     }
@@ -87,7 +84,6 @@ class Putaway extends PureComponent{
     let query = this.props.base.queryConditons;
     query = {
       ...query,
-      ...this.state.query
     };
     delete query.shelfTime;
     delete query.key;

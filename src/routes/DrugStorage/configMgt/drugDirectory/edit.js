@@ -51,6 +51,9 @@ class EditDrugDirectory extends PureComponent{
     medDrugType:null,//1 目录内 2 目录外 
     keys:[],
     supplierList:[],//供应商循环数据
+    minUnit: '', 
+    packUnit: '', 
+    fullUnit: ''
   }
 
   componentDidMount(){
@@ -59,9 +62,25 @@ class EditDrugDirectory extends PureComponent{
       type:'drugStorageConfigMgt/GetDrugInfo',
       payload:{id:this.props.match.params.id},
       callback:(data)=>{
+        let {minUnit, packUnit, fullUnit} = this.state;
+        let {listTransforsVo} = data.data;
+        listTransforsVo.forEach(item => {
+          if(item.sort === 1) {
+            fullUnit = this.getMaPInfo(listTransforsVo, item.sort);
+          };
+          if(item.sort === 2) {
+            packUnit = this.getMaPInfo(listTransforsVo, item.sort);
+          };
+          if(item.sort === 3) {
+            minUnit = this.getMaPInfo(listTransforsVo, item.sort);
+          };
+        });
         this.setState({
           fillBackData:data.data,
           medDrugType:data.data.medDrugType,
+          minUnit, 
+          packUnit, 
+          fullUnit
         })
         if(data.data.supplier && data.data.supplier.length&&data.data.medDrugType===2){//目录外 
           this.setState({
@@ -100,11 +119,13 @@ class EditDrugDirectory extends PureComponent{
         this.setState({supplierSelect:data.data})
       }
     })
-
     //获取补货指示h货位
     this.props.dispatch({
       type:'drugStorageConfigMgt/getGoodsTypeInfo',
-      payload:{positionType:'1'},
+      payload:{
+        positionType: '1',
+        deptCode: this.props.users.currentDept.deptId
+      },
       callback:(data)=>{
         this.setState({goodsTypeSelect:data.data})
       }
@@ -261,7 +282,7 @@ class EditDrugDirectory extends PureComponent{
   )
 
   render(){
-    const {supplierList , fillBackData , replanUnitSelect , goodsTypeSelect , supplierSelect , medDrugType} =this.state;
+    const {supplierList , fillBackData , replanUnitSelect , goodsTypeSelect , supplierSelect , medDrugType, minUnit, packUnit, fullUnit} =this.state;
     const { getFieldDecorator , getFieldValue } = this.props.form;
     getFieldDecorator('keys', { initialValue: fillBackData?fillBackData.customUnit?fillBackData.customUnit:[]:[] });
     const keys = getFieldValue('keys');
@@ -512,7 +533,7 @@ class EditDrugDirectory extends PureComponent{
                     <label>最小发药单位</label>
                   </div>
                   <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
-                    <div className='ant-form-item-control'> {fillBackData?this.getMaPInfo(fillBackData.listTransforsVo,3) :''}</div>
+                    <div className='ant-form-item-control'> {minUnit}</div>
                   </div>
                 </Col>
                 <Col span={10}>
@@ -520,7 +541,7 @@ class EditDrugDirectory extends PureComponent{
                   <label>包装规格</label>
                 </div>
                 <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
-                  <div className='ant-form-item-control'>{fillBackData?this.getMaPInfo(fillBackData.listTransforsVo,2) :''}</div>
+                  <div className='ant-form-item-control'>{packUnit}</div>
                 </div>
                 </Col>
                 <Col span={10}>
@@ -528,7 +549,7 @@ class EditDrugDirectory extends PureComponent{
                     <label>整包装单位</label>
                   </div>
                   <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
-                    <div className='ant-form-item-control'>{fillBackData?this.getMaPInfo(fillBackData.listTransforsVo,1) :''}</div>
+                    <div className='ant-form-item-control'>{fullUnit}</div>
                   </div>
                 </Col>
                 <Col span={10}>

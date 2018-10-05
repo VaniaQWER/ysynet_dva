@@ -16,17 +16,17 @@ import {connect} from 'dva';
 const columns = [
   {
     title: '通用名',
-    width: 180,
+    width: 168,
     dataIndex: 'ctmmGenericName'
   },
   {
     title: '商品名',
-    width: 150,
+    width: 224,
     dataIndex: 'ctmmTradeName',
   },
   {
     title: '规格',
-    width: 270,
+    width: 168,
     dataIndex: 'ctmmSpecification',
     className:'ellipsis',
     render:(text)=>(
@@ -35,53 +35,57 @@ const columns = [
   },
   {
     title: '剂型',
-    width: 150,
+    width: 168,
     dataIndex: 'ctmmDosageFormDesc',
   },
   {
     title: '包装规格',
-    width: 150,
+    width: 168,
     dataIndex: 'packageSpecification',
   },
   {
     title: '单位',
-    width: 150,
+    width: 60,
     dataIndex: 'replanUnit',
   },
   {
     title: '入库数量',
     dataIndex: 'inQuantity',
-    width: 80,
+    width: 112,
   },
   {
     title: '生产批号',
-    width: 180,
+    width: 168,
     dataIndex: 'lot',
   },
   {
     title: '生产日期',
-    width: 200,
+    width: 168,
     dataIndex: 'productDate',
   },
   {
     title: '有效期至',
-    width: 200,
+    width: 168,
     dataIndex: 'validEndDate',
   },
   {
     title: '货位',
-    width: 200,
+    width: 112,
     dataIndex: 'storeLocName',
   },
   {
     title: '批准文号',
-    width: 200,
+    width: 224,
     dataIndex: 'approvalNo',
   },
   {
     title: '生产厂家',
-    width: 200,
+    width: 224,
     dataIndex: 'ctmmManufacturerName',
+    className:'ellipsis',
+    render:(text)=>(
+      <Tooltip placement="topLeft" title={text}>{text}</Tooltip>
+    )
   }
 ];
 
@@ -181,7 +185,7 @@ class ReplenishmentDetail extends PureComponent{
           <Table
             bordered
             dataSource={list}
-            scroll={{x: '130%'}}
+            scroll={{x: 2132}}
             columns={columns}
             rowKey={'batchNo'}
             pagination={false}

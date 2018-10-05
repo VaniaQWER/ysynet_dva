@@ -13,17 +13,17 @@ import { connect } from 'dva';
 const columns = [
   {
     title: '通用名称',
-    width: 180,
+    width: 168,
     dataIndex: 'ctmmGenericName',
   },
   {
     title: '商品名称',
-    width: 150,
+    width: 224,
     dataIndex: 'ctmmTradeName',
   },
   {
     title: '规格',
-    width: 270,
+    width: 168,
     dataIndex: 'ctmmSpecification',
     className:'ellipsis',
     render:(text)=>(
@@ -32,37 +32,41 @@ const columns = [
   },
   {
     title: '剂型',
-    width: 150,
+    width: 168,
     dataIndex: 'ctmmDosageFormDesc',
   },
   {
     title: '包装规格',
-    width: 150,
+    width: 168,
     dataIndex: 'packageSpecification',
   },
   {
     title: '单位',
-    width: 80,
+    width: 60,
     dataIndex: 'replanUnit',
   },
   {
     title: '需求数量',
     dataIndex: 'demandQuantity',
-    width: 90,
+    width: 112,
   },
   {
     title: '生产厂家',
-    width: 200,
+    width: 224,
     dataIndex: 'ctmmManufacturerName',
+    className: 'ellipsis',
+    render:(text)=>(
+      <Tooltip placement="topLeft" title={text}>{text}</Tooltip>
+    )
   },
   {
     title: '供应商',
-    width: 200,
+    width: 224,
     dataIndex: 'supplierName',
   },
   {
     title: '批准文号',
-    width: 180,
+    width: 224,
     dataIndex: 'approvalNo',
   },
 ];
@@ -187,7 +191,7 @@ class OutCatalogPurchase extends PureComponent{
           <Table
             bordered
             title={()=>'产品信息'}
-            scroll={{x: '130%'}}
+            scroll={{x: 1740}}
             columns={columns}
             rowKey={'id'}
             dataSource={detailsData ? detailsData.list : []}

@@ -41,6 +41,8 @@ class Login extends PureComponent{
           // 正式数据
           let deptInfo = data.deptInfo;
           let { menuList } = deptInfo[0];
+          console.log(menuList, 'menuList');
+          
           let tree = menuFormat(menuList, true, 1) ;
           console.log(tree,'ret');
           // console.log(JSON.stringify(tree))
@@ -52,8 +54,8 @@ class Login extends PureComponent{
             type: 'users/setCurrentMenu',
             payload: { menu : tree[0].children[0] },
           });
-          window.localStorage.setItem('key', data.deptInfo[0].deptId);
-          window.localStorage.setItem('deptName', data.deptInfo[0].deptName);
+          window.sessionStorage.setItem('key', data.deptInfo[0].deptId);
+          window.sessionStorage.setItem('deptName', data.deptInfo[0].deptName);
           // href = href.split('/');
           // href.splice(2, 0, deptInfo[0].deptId);
           // href = href.join('/');

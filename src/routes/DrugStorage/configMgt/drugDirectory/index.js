@@ -305,16 +305,20 @@ class DrugDirectory extends PureComponent{
       {
         title: '生产厂家',
         dataIndex: 'ctmmManufacturerName',
-        width: 280,
+        width: 224,
+        className: 'ellipsis',
+        render:(text)=>(
+          <Tooltip placement="topLeft" title={text}>{text}</Tooltip>
+        )
       },
       {
         title: '库存上限',
-        dataIndex: 'downQuantity',
+        dataIndex: 'upperQuantity',
         width: 112
       },
       {
        title: '库存下限',
-       dataIndex: 'upperQuantity',
+       dataIndex: 'downQuantity',
        width: 112
       },
       {

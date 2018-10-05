@@ -336,14 +336,17 @@ class PslistCheck extends PureComponent{
       {
         title: '通用名称',
         dataIndex: 'ctmmGenericName',
+        width: 168
       },
       {
         title: '商品名',
-        dataIndex: 'ctmmTradeName'
+        dataIndex: 'ctmmTradeName',
+        width: 224
       },
       {
         title: '规格',
         dataIndex: 'ctmmSpecification',
+        width: 168,
         className:'ellipsis',
         render:(text)=>(
           <Tooltip placement="topLeft" title={text}>{text}</Tooltip>
@@ -351,15 +354,22 @@ class PslistCheck extends PureComponent{
       },
       {
         title: '生产厂家',
-        dataIndex: 'ctmmManufacturerName'
+        dataIndex: 'ctmmManufacturerName',
+        className:'ellipsis',
+        render:(text)=>(
+          <Tooltip placement="topLeft" title={text}>{text}</Tooltip>
+        ),
+        width: 224
       },
       {
         title: '单位',
         dataIndex: 'unit',
+        width: 60
       },
       {
         title: '配送数量',
-        dataIndex: 'realDeliveryQuantiry'
+        dataIndex: 'realDeliveryQuantiry',
+        width: 112
       },
       {
         title: '实到数量',
@@ -374,7 +384,8 @@ class PslistCheck extends PureComponent{
                     }} 
                     defaultValue={text}
                   />
-        }
+        },
+        width: 120
       },
       {
         title: '生产批号',
@@ -386,7 +397,8 @@ class PslistCheck extends PureComponent{
                   }} 
                   defaultValue={text}
                   />
-        }
+        },
+        width: 168
       },
       {
         title: '生产日期',
@@ -399,7 +411,8 @@ class PslistCheck extends PureComponent{
                   }}
                   defaultValue={moment(text, 'YYYY-MM-DD')}
                 />
-        }
+        },
+        width: 168
       },
       {
         title: '有效期至',
@@ -412,27 +425,33 @@ class PslistCheck extends PureComponent{
                   }}
                   defaultValue={moment(text, 'YYYY-MM-DD')}
                 />
-        }
+        },
+        width: 168
       },
       {
         title: '包装规格',
         dataIndex: 'packageSpecification',
+        width: 168
       },
       {
         title: '剂型',
         dataIndex: 'ctmmDosageFormDesc',
+        width: 168
       },
       {
         title: '供应商',
-        dataIndex: 'supplierName'
+        dataIndex: 'supplierName',
+        width: 224
       },
       {
         title: '批准文号',
-        dataIndex: 'approvalNo'
+        dataIndex: 'approvalNo',
+        width: 168
       },
       {
         title: '操作',
         dataIndex: 'RN',
+        width: 60,
         render: (text, record, i)=>{
           return record.id ? 
                  <a onClick={this.addBatch.bind(this, record, i)}>增加验收批号</a> 
@@ -445,10 +464,12 @@ class PslistCheck extends PureComponent{
       {
         title: '通用名称',
         dataIndex: 'ctmmGenericName',
+        width: 168
       },
       {
         title: '商品名',
         dataIndex: 'ctmmTradeName',
+        width: 224
       },
       {
         title: '规格',
@@ -456,57 +477,74 @@ class PslistCheck extends PureComponent{
         className:'ellipsis',
         render:(text)=>(
           <Tooltip placement="topLeft" title={text}>{text}</Tooltip>
-        )
+        ),
+        width: 168
       },
       {
         title: '生产厂家',
-        dataIndex: 'ctmmManufacturerName'
+        dataIndex: 'ctmmManufacturerName',
+        width: 224,
+        className:'ellipsis',
+        render:(text)=>(
+          <Tooltip placement="topLeft" title={text}>{text}</Tooltip>
+        ),
       },
       {
         title: '单位',
         dataIndex: 'replanUnit',
+        width: 60,
       },
       {
         title: '配送数量',
-        dataIndex: 'realDeliveryQuantiry'
+        dataIndex: 'realDeliveryQuantiry',
+        width: 112,
       },  
       {
         title: '实到数量',
-        dataIndex: 'realReceiveQuantiry'
+        dataIndex: 'realReceiveQuantiry',
+        width: 112,
       },
       {
         title: '生产批号',
-        dataIndex: 'productBatchNo'
+        dataIndex: 'productBatchNo',
+        width: 168,
       },
       {
         title: '生产日期',
-        dataIndex: 'realProductTime'
+        dataIndex: 'realProductTime',
+        width: 168,
       },
       {
         title: '有效期至',
-        dataIndex: 'realValidEndDate'
+        dataIndex: 'realValidEndDate',
+        width: 168,
       },
       {
         title: '包装规格',
         dataIndex: 'packageSpecification',
+        width: 168,
       },
       {
         title: '剂型',
         dataIndex: 'ctmmDosageFormDesc',
+        width: 168,
       },
       {
         title: '供应商',
-        dataIndex: 'supplierName'
+        dataIndex: 'supplierName',
+        width: 168,
       },
       {
         title: '批准文号',
-        dataIndex: 'approvalNo'
+        dataIndex: 'approvalNo',
+        width: 168,
       }
     ];
     if(detailInfo.isShowTemprature === 1) {
       columnsVerify.splice(10, 0, {
         title: '验收温度',
-        dataIndex: 'realAcceptanceTemperature'
+        dataIndex: 'realAcceptanceTemperature',
+        width: 112,
       });
       columnsUnVerfiy.splice(10, 0, {
         title: '验收温度',
@@ -520,7 +558,8 @@ class PslistCheck extends PureComponent{
                   defaultValue={text || '' } 
                   addonAfter={`℃`}
                 />
-        }
+        },
+        width: 168,
       });
     };
     
@@ -585,7 +624,7 @@ class PslistCheck extends PureComponent{
               <Table
                 bordered
                 loading={loading}
-                scroll={{x: '250%'}}
+                scroll={{x: 2536}}
                 columns={columnsUnVerfiy}
                 dataSource={unVerfiyList || []}
                 pagination={false}
@@ -607,7 +646,7 @@ class PslistCheck extends PureComponent{
               <Table
                 loading={loading}
                 bordered
-                scroll={{x: '250%'}}
+                scroll={{x: 2356}}
                 columns={columnsVerify || []}
                 dataSource={verifyList}
                 rowKey={'key'}

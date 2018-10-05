@@ -134,14 +134,18 @@ class PslistAdd extends PureComponent{
       {
         title: '通用名称',
         dataIndex: 'ctmmGenericName',
+        width: 168,    
+        fixed: 'left',    
       },
       {
         title: '商品名',
-        dataIndex: 'ctmmTradeName'
+        dataIndex: 'ctmmTradeName',
+        width: 224,
       },
       {
         title: '规格',
         dataIndex: 'ctmmSpecification',
+        width: 168,
         className:'ellipsis',
         render:(text)=>(
           <Tooltip placement="topLeft" title={text}>{text}</Tooltip>
@@ -149,19 +153,27 @@ class PslistAdd extends PureComponent{
       },
       {
         title: '生产厂家',
-        dataIndex: 'ctmmManufacturerName'
+        dataIndex: 'ctmmManufacturerName',
+        width: 224,
+        className:'ellipsis',
+        render:(text)=>(
+          <Tooltip placement="topLeft" title={text}>{text}</Tooltip>
+        )
       },
       {
         title: '单位',
         dataIndex: 'unit',
+        width: 60,
       },
       {
         title: '配送数量',
-        dataIndex: 'realDeliveryQuantiry'
+        dataIndex: 'realDeliveryQuantiry',
+        width: 112,
       },
       {
         title: '实到数量',
         dataIndex: 'realReceiveQuantity',
+        width: 112,
         render: (text,record,index)=>{
           return <InputNumber 
                     onChange={(value)=>{
@@ -177,6 +189,7 @@ class PslistAdd extends PureComponent{
       {
         title: '生产批号',
         dataIndex: 'productBatchNo',
+        width: 224,
         render: (text,record,index)=>{
           return <Input 
                   onChange={(e)=>{
@@ -189,6 +202,7 @@ class PslistAdd extends PureComponent{
       {
         title: '生产日期',
         dataIndex: 'realProductTime',
+        width: 200,
         render: (text,record,index)=> {
           return <DatePicker
                   disabledDate={(current) => current && current > moment(record.realValidEndDate)}
@@ -202,6 +216,7 @@ class PslistAdd extends PureComponent{
       {
         title: '有效期至',
         dataIndex: 'realValidEndDate',
+        width: 200,
         render: (text,record,index)=> {
           return <DatePicker
                   disabledDate={(current) => current && current < moment(record.realProductTime)}
@@ -215,22 +230,28 @@ class PslistAdd extends PureComponent{
       {
         title: '包装规格',
         dataIndex: 'packageSpecification',
+        width: 168,
       },
       {
         title: '剂型',
         dataIndex: 'ctmmDosageFormDesc',
+        width: 168,
       },
       {
         title: '供应商',
-        dataIndex: 'supplierName'
+        dataIndex: 'supplierName',
+        width: 168,
       },
       {
         title: '批准文号',
-        dataIndex: 'approvalNo'
+        dataIndex: 'approvalNo',
+        width: 224,
       },
       {
         title: '操作',
+        width: 180,
         dataIndex: 'RN',
+        fixed: 'right',
         render: (text, record)=>{
           return <a onClick={() => {
             this.addBatch(record);
@@ -242,14 +263,17 @@ class PslistAdd extends PureComponent{
       {
         title: '通用名称',
         dataIndex: 'ctmmGenericName',
+        width: 168
       },
       {
         title: '商品名',
         dataIndex: 'ctmmTradeName',
+        width: 224
       },
       {
         title: '规格',
         dataIndex: 'ctmmSpecification',
+        width: 168,
         className:'ellipsis',
         render:(text)=>(
           <Tooltip placement="topLeft" title={text}>{text}</Tooltip>
@@ -257,53 +281,68 @@ class PslistAdd extends PureComponent{
       },
       {
         title: '生产厂家',
-        dataIndex: 'ctmmManufacturerName'
+        dataIndex: 'ctmmManufacturerName',
+        width: 224,
+        className:'ellipsis',
+        render:(text)=>(
+          <Tooltip placement="topLeft" title={text}>{text}</Tooltip>
+        )
       },
       {
         title: '单位',
         dataIndex: 'replanUnit',
+        width: 60,
       },
       {
         title: '配送数量',
-        dataIndex: 'realDeliveryQuantiry'
+        dataIndex: 'realDeliveryQuantiry',
+        width: 112,
       },  
       {
         title: '实到数量',
-        dataIndex: 'realReceiveQuantiry'
+        dataIndex: 'realReceiveQuantiry',
+        width: 112,
       },
       {
         title: '生产批号',
-        dataIndex: 'productBatchNo'
+        dataIndex: 'productBatchNo',
+        width: 168,
       },
       {
         title: '生产日期',
-        dataIndex: 'realProductTime'
+        dataIndex: 'realProductTime',
+        width: 168,
       },
       {
         title: '有效期至',
-        dataIndex: 'realValidEndDate'
+        dataIndex: 'realValidEndDate',
+        width: 168,
       },
       {
         title: '包装规格',
         dataIndex: 'packageSpecification',
+        width: 168,
       },
       {
         title: '剂型',
         dataIndex: 'ctmmDosageFormDesc',
+        width: 168,
       },
       {
         title: '供应商',
-        dataIndex: 'supplierName'
+        dataIndex: 'supplierName',
+        width: 168,
       },
       {
         title: '批准文号',
-        dataIndex: 'approvalNo'
+        dataIndex: 'approvalNo',
+        width: 168,
       }
     ];
     
     return (
       <div className='fullCol fadeIn' style={{padding: '0 24px 24px', background: 'rgb(240, 242, 245)'}}>
-        <div className="fullCol-fullChild" style={{marginLeft: -24, marginRight: -24}}>
+        <div className="fullCol-fullChild" style={{margin: '0 -24px 0'}}>
           <Row style={{margin: '0 -32px', borderBottom: '1px solid rgba(0, 0, 0, .2)'}}>
             <Col span={8}>
               <h3 style={{padding: '0 0 15px 32px', fontSize: '20px'}}>
@@ -385,7 +424,7 @@ class PslistAdd extends PureComponent{
             </Col>
           </Row>
         </div>
-        <div className='detailCard' style={{margin: '30px -6px'}}>
+        <div className='detailCard' style={{margin: '30px -6px 0'}}>
           <Tabs 
           activeKey={activeKey}
           tabBarExtraContent={ btnShow && unVerfiyList && unVerfiyList.length? <Button type='primary' onClick={this.saveCheck}>确认验收</Button> : null}
@@ -394,7 +433,7 @@ class PslistAdd extends PureComponent{
               <Table
                 bordered
                 loading={loading}
-                scroll={{x: '200%'}}
+                scroll={{x: 2600}}
                 columns={columnsUnVerfiy}
                 dataSource={unVerfiyList || []}
                 pagination={false}
@@ -409,7 +448,7 @@ class PslistAdd extends PureComponent{
               <Table
                 loading={loading}
                 bordered
-                scroll={{x: '250%'}}
+                scroll={{x: 2244}}
                 columns={columnsVerify}
                 dataSource={verifyList || []}
                 rowKey={'key'}

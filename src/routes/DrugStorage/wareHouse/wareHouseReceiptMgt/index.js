@@ -42,7 +42,6 @@ class Putaway extends PureComponent{
       {
        title: '入库单',
        width: 280,
-       fixed: 'left',
        dataIndex: 'inStoreCode',
        render: (text,record) =>{
         return <span>

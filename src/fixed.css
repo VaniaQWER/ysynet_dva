@@ -171,7 +171,7 @@
 .detailCard{
   position: relative;
   background: #fff;
-  margin: 16px -16px 0 -16px;
+  margin: 16px -16px -16px -16px;
   padding: 16px;
 }
 .fullCol div.detailCard:nth-child(2){
@@ -295,10 +295,10 @@ td:hover .editable-cell-icon {
 .fullCol-fullChild{
   position: relative;
   top: -9px;
-  margin-left: -40px;
-  margin-right: -40px;
+  margin-left: -32px;
+  margin-right: -32px;
   background: #fff;
-  /* margin-top: -9px; */
+  margin-top: -24px;
   padding: 12px 32px 32px;
   border-top: 1px solid #f0f2f5;
   min-height: 78px;
@@ -443,19 +443,21 @@ td:hover .editable-cell-icon {
 /*  空表格图片覆盖 */
 .ant-table-empty .ant-table-placeholder{
   color:#fff;
+  padding:0;
 }
-.ant-table-empty .ant-table-placeholder:after{
+.ant-table-empty .ant-table-placeholder:after,.ant-modal-body .ant-table-empty .ant-table-placeholder:after{
   content:"";
   display:block;
   position:relative;
   left:0;
   top:0;
   width: 100%;
-  min-height:300px;
+  min-height: 300px;
   background:#fff url('./assets/emptyTable.jpg') no-repeat center;
 
 }
-@media(min-width:1920px){
+
+/* @media screen and (min-width:1440px){
   .ant-table-empty .ant-table-placeholder:after{
     content:"";
     display:block;
@@ -463,12 +465,11 @@ td:hover .editable-cell-icon {
     left:0;
     top:0;
     width: 100%;
-    min-height:612px;
+    min-height:432px;
     background:#fff url('./assets/emptyTable.jpg') no-repeat center;
-  
   }
 }
-@media(min-width:1680px){
+@media screen and (min-width:1680px){
   .ant-table-empty .ant-table-placeholder:after{
     content:"";
     display:block;
@@ -481,7 +482,8 @@ td:hover .editable-cell-icon {
   
   }
 }
-@media(min-width:1440px){
+
+@media screen and (min-width:1920px){
   .ant-table-empty .ant-table-placeholder:after{
     content:"";
     display:block;
@@ -489,9 +491,8 @@ td:hover .editable-cell-icon {
     left:0;
     top:0;
     width: 100%;
-    min-height:432px;
+    min-height:612px;
     background:#fff url('./assets/emptyTable.jpg') no-repeat center;
+  
   }
-}
-
-
+} */

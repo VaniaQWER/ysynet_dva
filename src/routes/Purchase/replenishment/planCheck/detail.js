@@ -66,8 +66,12 @@ const columns = [
   },
   {
     title: '生产厂家',
-    width: 280,
+    width: 224,
     dataIndex: 'ctmmManufacturerName',
+    className: 'ellipsis',
+    render:(text)=>(
+      <Tooltip placement="topLeft" title={text}>{text}</Tooltip>
+    )
   },
   {
     title: '供应商',

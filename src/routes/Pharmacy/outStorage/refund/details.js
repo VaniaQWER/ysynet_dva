@@ -4,19 +4,19 @@
 * @Last Modified time: 2018-07-24 13:13:55 
  */
 import React, { PureComponent } from 'react';
-import { Table ,Row, Col, Button, Modal, Tooltip , Card, Spin, message } from 'antd';
+import { Table ,Row, Col, Button, Modal, Tooltip, Spin, message } from 'antd';
 import { Link } from 'react-router-dom';
 import { connect } from 'dva';
 const Conform = Modal.confirm;
 const columns = [
   {
     title: '通用名称',
-    width: 180,
+    width: 168,
     dataIndex: 'ctmmGenericName',
   },
   {
     title: '规格',
-    width: 180,
+    width: 168,
     dataIndex: 'ctmmSpecification',
     className:'ellipsis',
     render:(text)=>(
@@ -25,47 +25,52 @@ const columns = [
   },
   {
     title: '入库单号',
-    width: 180,
+    width: 168,
     dataIndex: 'inStoreCode',
   },
   {
     title: '包装规格',
-    width: 180,
-    dataIndex: 'fmodal',
+    width: 168,
+    dataIndex: 'packageSpecification',
   },
   {
     title: '单位',
-    width: 100,
+    width: 60,
     dataIndex: 'replanUnit',
   },
   {
     title: '出库数量',
-    width: 100,
+    width: 112,
     dataIndex: 'backNum',
   },
   {
     title: '生产批号',
-    width: 150,
+    width: 168,
     dataIndex: 'batchNo',
   },
   {
     title: '生产日期',
-    width: 160,
+    width: 168,
     dataIndex: 'productDate',
   },
   {
     title: '有效期至',
-    width: 160,
+    width: 168,
     dataIndex: 'validEndDate',
   },
   {
     title: '生产厂家',
     dataIndex: 'ctmmManufacturerName',
-    width: 200
+    width: 224,
+    className:'ellipsis',
+    render:(text)=>(
+      <Tooltip placement="topLeft" title={text}>{text}</Tooltip>
+    )
   },
   {
     title: '批准文号',
     dataIndex: 'approvalNo',
+    width: 224
   }
 ];
 
@@ -122,101 +127,100 @@ class DetailsRefund extends PureComponent{
   }
 
   render(){
-    const { detailsData, dataSource, spinning, loading } = this.state;
+    const { detailsData, dataSource, spinning } = this.state;
     return (
       <div className='fadeIn ysynet-content'>
-      <Spin spinning={spinning}>
-        <Card>
-          <div className='ysynet-details-flex-header'>
-            <h3>单据信息</h3>
-            {
-              detailsData.backStatus === 1 &&
-              <div style={{ textAlign: 'right' }}>
-                <Link to={{pathname: `/editPharmacyBackStoragePlan/${this.props.match.params.backNo}`}}><Button type='default'>编辑</Button></Link>
-                <Button type='primary' onClick={this.backStroage} loading={loading} style={{ marginLeft: 8 }}>确认退货</Button>
-              </div>
-            }
-          </div>
-          <Row>
-            <Col span={8}>
-                <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
-                    <label>退库单</label>
+        <Spin spinning={spinning}>
+          <div style={{margin: '0 16px'}}>
+            <div className='ysynet-details-flex-header'>
+              <h3>单据信息</h3>
+              {
+                detailsData.backStatus === 1 &&
+                <div style={{ textAlign: 'right' }}>
+                  <Link to={{pathname: `/editPharmacyBackStoragePlan/${this.props.match.params.backNo}`}}><Button type='default'>编辑</Button></Link>
                 </div>
-                <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
-                  <div className='ant-form-item-control'>{ detailsData.backNo }</div>
-                </div>
-            </Col>
-            <Col span={8}>
-                <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
-                    <label>状态</label>
-                </div>
-                <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
-                  <div className='ant-form-item-control'>{ detailsData.backStatusName }</div>
-                </div>
-            </Col>
-            <Col span={8}>
-                <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
-                    <label>配货部门</label>
-                </div>
-                <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
-                  <div className='ant-form-item-control'>{ detailsData.backDpetName }</div>
-                </div>
-            </Col>
-          </Row>
-          <Row>
-            <Col span={8}>
-                <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
-                    <label>退货人</label>
-                </div>
-                <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
-                  <div className='ant-form-item-control'>{ detailsData.createUserName }</div>
-                </div>
-            </Col>
-            <Col span={8}>
-                <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
-                    <label>退货时间</label>
-                </div>
-                <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
-                  <div className='ant-form-item-control'>{ detailsData.createDate }
+              }
+            </div>
+            <Row>
+              <Col span={8}>
+                  <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
+                      <label>退库单</label>
                   </div>
-                </div>
-            </Col>
-            <Col span={8}>
-                <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
-                    <label>复核人</label>
-                </div>
-                <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
-                  <div className='ant-form-item-control'>{ detailsData.reviewUserName }</div>
-                </div>
-            </Col>
-          </Row>
-          <Row>
-            <Col span={8}>
-                <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
-                    <label>复核时间</label>
-                </div>
-                <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
-                  <div className='ant-form-item-control'>{ detailsData.reviewDate }</div>
-                </div>
-            </Col>
-          </Row>
-         
-         <hr className='hr'/>
-         <h3>产品信息</h3>
-        <Table  
-          bordered
-          dataSource={dataSource}
-          scroll={{x: '170%'}}
-          columns={columns}
-          rowKey={'drugCode'}
-          pagination={{
-            size: 'small',
-            showQuickJumper: true,
-            showSizeChanger: true
-          }}
-        />
-      </Card>
-      </Spin>
+                  <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
+                    <div className='ant-form-item-control'>{ detailsData.backNo }</div>
+                  </div>
+              </Col>
+              <Col span={8}>
+                  <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
+                      <label>状态</label>
+                  </div>
+                  <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
+                    <div className='ant-form-item-control'>{ detailsData.backStatusName }</div>
+                  </div>
+              </Col>
+              <Col span={8}>
+                  <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
+                      <label>配货部门</label>
+                  </div>
+                  <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
+                    <div className='ant-form-item-control'>{ detailsData.backDpetName }</div>
+                  </div>
+              </Col>
+            </Row>
+            <Row>
+              <Col span={8}>
+                  <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
+                      <label>退货人</label>
+                  </div>
+                  <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
+                    <div className='ant-form-item-control'>{ detailsData.createUserName }</div>
+                  </div>
+              </Col>
+              <Col span={8}>
+                  <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
+                      <label>退货时间</label>
+                  </div>
+                  <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
+                    <div className='ant-form-item-control'>{ detailsData.createDate }
+                    </div>
+                  </div>
+              </Col>
+              <Col span={8}>
+                  <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
+                      <label>复核人</label>
+                  </div>
+                  <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
+                    <div className='ant-form-item-control'>{ detailsData.reviewUserName }</div>
+                  </div>
+              </Col>
+            </Row>
+            <Row>
+              <Col span={8}>
+                  <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
+                      <label>复核时间</label>
+                  </div>
+                  <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
+                    <div className='ant-form-item-control'>{ detailsData.reviewDate }</div>
+                  </div>
+              </Col>
+            </Row>
+          
+          <hr className='hr'/>
+          <h3>产品信息</h3>
+          <Table  
+            bordered
+            dataSource={dataSource}
+            scroll={{x: 1796}}
+            columns={columns}
+            rowKey={'drugCode'}
+            pagination={{
+              size: 'small',
+              showQuickJumper: true,
+              showSizeChanger: true
+            }}
+          />
+          </div>
+        </Spin>
       </div>
     )
   }

@@ -263,7 +263,6 @@ class PlanOrder extends PureComponent{
     const columns = [
       {
         title: '订单号',
-        fixed: 'left',
         dataIndex: 'orderCode',
         width: 280,
         render: (text,record) =>{

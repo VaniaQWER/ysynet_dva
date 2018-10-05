@@ -16,23 +16,27 @@ const modalColumns = [
   {
     title: '货位',
     dataIndex: 'goodsName',
+    width: 112
   },
   {
     title: '货位类型',
     dataIndex: 'positionTypeName',
+    width: 168
   },
   {
     title: '通用名称',
     dataIndex: 'ctmmGenericName',
+    width: 168
   },
   {
     title: '商品名',
     dataIndex: 'ctmmTradeName',
+    width: 224
   },
   {
     title: '规格',
     dataIndex: 'ctmmSpecification',
-    width: 180,
+    width: 168,
     className:'ellipsis',
     render:(text)=>(
       <Tooltip placement="topLeft" title={text}>{text}</Tooltip>
@@ -40,38 +44,42 @@ const modalColumns = [
   },
   {
     title: '剂型',
-    width: 180,
+    width: 168,
     dataIndex: 'ctmmDosageFormDesc',
   },
   {
     title: '生产批号',
-    width: 180,
+    width: 168,
     dataIndex: 'lot',
   },
   {
     title: '生产日期',
-    width: 160,
+    width: 168,
     dataIndex: 'productDate',
   },
   {
     title: '有效期至',
-    width: 160,
+    width: 168,
     dataIndex: 'validEndDate',
   },
  
   {
     title: '包装规格',
-    width: 100,
+    width: 112,
     dataIndex: 'packageSpecification',
   },
   {
     title: '生产厂家',
-    width: 100,
+    width: 224,
     dataIndex: 'ctmmManufacturerName',
+    className:'ellipsis',
+    render:(text)=>(
+      <Tooltip placement="topLeft" title={text}>{text}</Tooltip>
+    )
   },
   {
     title: '批准文号',
-    width: 100,
+    width: 224,
     dataIndex: 'approvalNo',
   }
 ]
@@ -220,8 +228,9 @@ class AddSupplementDocuments extends PureComponent{
         width: 124,
         dataIndex: 'totalQuantity',
         render:(text,record,index) =>{
-          return <InputNumber 
-                  defaultValue={text || 1} 
+          return <InputNumber
+                  min={1}
+                  defaultValue={text} 
                   onChange={(e)=>this.setRowInput(e,'totalQuantity',index)}
                  />
         }
@@ -260,6 +269,10 @@ class AddSupplementDocuments extends PureComponent{
         title: '生产厂家',
         width: 224,
         dataIndex: 'ctmmManufacturerName',
+        className: 'ellipsis',
+        render:(text)=>(
+          <Tooltip placement="topLeft" title={text}>{text}</Tooltip>
+        )
       },
       {
         title: '包装规格',
@@ -383,7 +396,7 @@ class AddSupplementDocuments extends PureComponent{
               ref="table"
               isJson={true}
               url={supplementDoc.addProductList}
-              scroll={{x: '180%'}}
+              scroll={{x: 2072}}
               columns={modalColumns}
               rowKey={'id'}
               rowSelection={{

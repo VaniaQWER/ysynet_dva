@@ -12,10 +12,10 @@
 }
 
 .content {
-  min-height: calc(100vh - 129px);
+  min-height: calc(100vh - 145px);
   padding: 16px;
-  margin-top: -5px;
-  /* background: #fff; */
+  margin-top: 16px;
+  background: #fff;
 }
 
 .sider {

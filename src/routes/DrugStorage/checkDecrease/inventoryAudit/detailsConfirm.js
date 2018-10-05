@@ -40,7 +40,11 @@ class DetailsConfirm extends PureComponent {
       },
       {
         title: '生产厂家',
-        dataIndex: 'productCompany'
+        dataIndex: 'productCompany',
+        className: 'ellipsis',
+        render:(text)=>(
+          <Tooltip placement="topLeft" title={text}>{text}</Tooltip>
+        )
       },
       {
         title: '库存数量',

@@ -26,42 +26,42 @@ const formItemLayout = {
 const columns = [
   {
    title: '部门',
-   width: 120,
+   width: 168,
    dataIndex: 'deptName',
   },
   {
     title: '库存数量',
-    width:120,
+    width: 112,
     dataIndex: 'usableQuantity',
   },
   {
     title: '单位',
-    width: 100,
+    width: 60,
     dataIndex: 'replanUnit',
   },
   {
     title: '通用名称',
-    width: 180,
+    width: 168,
     dataIndex: 'ctmmGenericName',
   },
   {
     title: '商品名称',
-    width: 180,
+    width: 224,
     dataIndex: 'ctmmTradeName',
   },
   {
     title: '规格',
-    width: 180,
+    width: 168,
     dataIndex: 'ctmmSpecification',
   },
   {
     title: '剂型',
-    width: 180,
+    width: 168,
     dataIndex: 'ctmmDosageFormDesc',
 	},
 	{
     title: '包装规格',
-    width:150,
+    width: 168,
     dataIndex: 'packageSpecification',
     className:'ellipsis',
     render:(text)=>(
@@ -71,26 +71,35 @@ const columns = [
   {
     title: '生产批号',
     dataIndex: 'batchNo',
+    width: 168,
   },
   {
     title: '生产日期',
     dataIndex: 'productDate',
+    width: 168,
   },
   {
     title: '有效期至',
     dataIndex: 'validEndDate',
+    width: 168,
   },
   {
     title: '批准文号',
     dataIndex: 'approvalNo',
+    width: 224,
   },
   {
     title: '生产厂家',
     dataIndex: 'ctmmManufacturerName',
+    width: 224,
+    className:'ellipsis',
+    render:(text)=>(
+      <Tooltip placement="topLeft" title={text}>{text}</Tooltip>
+    )
   },
   {
     title: '供应商',
-    width:150,
+    width: 224,
     dataIndex: 'supplierName',
   }
 ];
@@ -99,11 +108,12 @@ const modalColumns = [
   {
     title: '通用名称',
     dataIndex: 'ctmmGenericName',
+    width: 168,
   },
   {
     title: '规格',
     dataIndex: 'ctmmSpecification',
-    width: 180,
+    width: 168,
     className:'ellipsis',
     render:(text)=>(
       <Tooltip placement="topLeft" title={text}>{text}</Tooltip>
@@ -111,41 +121,52 @@ const modalColumns = [
   },
   {
     title: '入库单号',
-    width: 260,
+    width: 280,
     dataIndex: 'inStoreCode',
   },
   {
     title: '生产批号',
     dataIndex: 'batchNo',
+    width: 168,
   },
   {
     title: '生产日期',
     dataIndex: 'productDate',
+    width: 168,
   },
   {
     title: '有效期至',
     dataIndex: 'validEndDate',
+    width: 168,
   },
   {
     title: '剂型',
     dataIndex: 'ctmmDosageFormDesc',
+    width: 168,
   },
   {
     title: '包装单位',
-    width: 100,
+    width: 168,
     dataIndex: 'replanUnit',
   },
   {
     title: '批准文号',
     dataIndex: 'approvalNo',
+    width: 224,
   },
   {
     title: '生产厂家',
     dataIndex: 'ctmmManufacturerName',
+    width: 224,
+    className:'ellipsis',
+    render:(text)=>(
+      <Tooltip placement="topLeft" title={text}>{text}</Tooltip>
+    )
   },
   {
     title: '供应商',
     dataIndex: 'supplierName',
+    width: 224,
   }
 ]
 class AddRefund extends PureComponent{
@@ -301,7 +322,7 @@ class AddRefund extends PureComponent{
               dataSource={dataSource}
               title={()=>'产品信息'}
               bordered
-              scroll={{x: '180%'}}
+              scroll={{x: 2460}}
               columns={columns}
               rowKey={'drugCode'}
               style={{marginTop: 24}}
@@ -397,7 +418,7 @@ class AddRefund extends PureComponent{
               bordered
               isJson={true}
               url={outStorage.RECALLORLOCKADDPRODUCT_LIST}
-              scroll={{x: '190%'}}
+              scroll={{x: 2128}}
               columns={modalColumns}
               rowKey={'id'}
               rowSelection={{

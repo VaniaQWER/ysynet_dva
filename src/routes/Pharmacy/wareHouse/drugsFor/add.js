@@ -39,7 +39,8 @@ class NewAdd extends PureComponent {
     dataSource: [],
     btnLoading: false,
     saveLoading: false,
-    applyType: '1'        //补货方式
+    applyType: '1',        //补货方式
+    fetchValue: undefined
   }
   componentDidMount = () =>{
     this.getReplenishList('1');
@@ -161,18 +162,22 @@ class NewAdd extends PureComponent {
       modalLoading,
       btnLoading,
       saveLoading,
-      fetching
+      fetching,
+      fetchValue
     } = this.state;
     const columns = [
       {
         title: '通用名称',
-        dataIndex: 'ctmmGenericName'
+        dataIndex: 'ctmmGenericName',
+        width: 168
       }, {
         title: '商品名',
-        dataIndex: 'ctmmTradeName'
+        dataIndex: 'ctmmTradeName',
+        width: 224
       }, {
         title: '规格',
         dataIndex: 'ctmmSpecification',
+        width: 168,
         className: 'ellipsis',
         render: (text) => (
           <Tooltip placement="topLeft" title={text}>{text}</Tooltip>
@@ -180,18 +185,23 @@ class NewAdd extends PureComponent {
       }, {
         title: '剂型',
         dataIndex: 'ctmmDosageFormDesc',
-        width: 150
+        width: 168
       }, {
         title: '生产厂家',
-        dataIndex: 'ctmmManufacturerName'
+        dataIndex: 'ctmmManufacturerName',
+        width: 224,
+        className: 'ellipsis',
+        render: (text) => (
+          <Tooltip placement="topLeft" title={text}>{text}</Tooltip>
+        )
       }, {
         title: '包装规格',
         dataIndex: 'packageSpecification',
-        width: 240
+        width: 168
       }, {
         title: '单位',
         dataIndex: 'replanUnit',
-        width: 150,
+        width: 60,
       }, {
         title: '申领数量',
         dataIndex: 'applyNum',
@@ -211,43 +221,54 @@ class NewAdd extends PureComponent {
       }, {
         title: '药库库存',
         dataIndex: 'usableQuantity',
+        width: 112,
       }, {
         title: '库存上限',
-        dataIndex: 'upperQuantity'
+        dataIndex: 'upperQuantity',
+        width: 112,
       }, {
         title: '库存下限',
-        dataIndex: 'downQuantity'
+        dataIndex: 'downQuantity',
+        width: 112,
       }, {
         title: '批准文号',
         dataIndex: 'approvalNo',
-        width: 150,
+        width: 224,
       }
     ];
     const modalColumns = [
       {
         title: '通用名',
-        dataIndex: 'ctmmGenericName'
+        dataIndex: 'ctmmGenericName',
+        width: 168,
       }, {
         title: '商品名',
-        dataIndex: 'ctmmTradeName'
+        dataIndex: 'ctmmTradeName',
+        width: 224,
       }, {
         title: '规格',
-        dataIndex: 'ctmmSpecification'
+        dataIndex: 'ctmmSpecification',
+        width: 168,
       }, {
         title: '剂型',
         dataIndex: 'ctmmDosageFormDesc',
-        width: 150
+        width: 168
       }, {
         title: '包装规格',
         dataIndex: 'packageSpecification',
-        width: 150
+        width: 168
       }, {
         title: '批准文号',
         dataIndex: 'approvalNo',
-        width: 150,
+        width: 240,
       }, {
         title: '生产厂家',
-        dataIndex: 'ctmmManufacturerName'
+        dataIndex: 'ctmmManufacturerName',
+        width: 224,
+        className: 'ellipsis',
+        render: (text) => (
+          <Tooltip placement="topLeft" title={text}>{text}</Tooltip>
+        )
       },
     ];
     return (
@@ -342,6 +363,7 @@ class NewAdd extends PureComponent {
           <Row>
             <Col span={7} style={{ marginLeft: 4 }}>
               <FetchSelect
+                value={fetchValue}
                 style={{ width: 248 }}
                 placeholder='通用名/商品名'
                 url={wareHouse.QUERY_DRUG_BY_LIST}
@@ -351,7 +373,7 @@ class NewAdd extends PureComponent {
                     ...query,
                     hisDrugCodeList: [value]
                   };
-                  this.setState({query});
+                  this.setState({query, fetchValue: value});
                 }}
               />
             </Col>
@@ -359,12 +381,12 @@ class NewAdd extends PureComponent {
           <div className='detailCard'>
             <RemoteTable
               query={query}
-              url={wareHouse.QUERYDRUGBYDEPT}
+              url={wareHouse.QUERYDRUGBYDEPT_PHARMACY}
               isJson={true}
               ref="table"
               modalLoading={modalLoading}
               columns={modalColumns}
-              scroll={{ x: '180%' }}
+              scroll={{ x: 1392 }}
               rowKey='drugCode'
               rowSelection={{
                 selectedRowKeys: this.state.modalSelected,
@@ -383,7 +405,7 @@ class NewAdd extends PureComponent {
             bordered
             columns={columns}
             dataSource={dataSource}
-            scroll={{ x: '200%' }}
+            scroll={{ x: 1908 }}
             rowKey='drugCode'
             rowSelection={{
               selectedRowKeys: this.state.selected,

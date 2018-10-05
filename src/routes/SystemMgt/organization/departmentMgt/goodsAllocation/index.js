@@ -100,12 +100,12 @@ class GoodsAllocation extends PureComponent{
   //新加货位 -关闭弹窗
   onCancelModal = () => {
     this.props.form.resetFields();
-    this.setState({visible:false})
+    this.setState({visible:false, record: {}})
   }
 
   //编辑货位-
   editModal=(record)=>{
-    this.setState({record,visible:true,modalTitle:'编辑'})
+    this.setState({record,visible:true,modalTitle:'编辑'});
     const { positionName , positionType , chargeInPerson } = record ;
     this.props.form.setFieldsValue({ positionName , positionType :`${positionType}`, chargeInPerson })
   }

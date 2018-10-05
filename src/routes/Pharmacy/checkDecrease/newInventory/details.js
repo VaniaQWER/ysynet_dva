@@ -436,28 +436,72 @@ class Details extends PureComponent {
       realSelectedRows
     };
   }
+  //表格渲染
+  tableRender = (columns) => {
+    let {info, tableLoading, query, dataSource, expandedRowKeys} = this.state;
+    if(info.checkStatus && info.checkStatus === 2) {
+      return <RetomeTable
+              loading={tableLoading}
+              fetchBefore={()=>{
+                this.setState({
+                  tableLoading: true
+                });
+              }}
+              ref={'table'}
+              query={query}
+              data={dataSource}
+              url={checkDecrease.GET_LIST_BY_BILLNO}
+              scroll={{x: 2800}}
+              columns={columns}
+              rowKey={'uuid'}
+              expandedRowKeys={expandedRowKeys}
+              cb={this.tableCallBack}
+              onExpandedRowsChange={this.onExpandedRowsChange}
+              rowSelection={{
+                selectedRowKeys: this.state.selected,
+                onChange: this.changeSelectRow,
+                onSelect: this.changeSelect,
+                onSelectAll: this.selectAll,
+                getCheckboxProps: record => ({
+                  disabled: record.id === null || record.checkDetailStatus === 2
+                })
+              }}
+            />
+    };
+    if(info.checkStatus && info.checkStatus !== 2) {
+      return <RetomeTable
+              ref={'table'}
+              query={query}
+              url={checkDecrease.GET_LIST_BY_BILLNO}
+              scroll={{x: 2800}}
+              columns={columns}
+              rowKey={'uuid'}
+             />
+    };
+    return null;
+  }
   render() {
-    let {info, query, dataSource, submitLoading, expandedRowKeys, checkLoading, tableLoading} = this.state;
+    let {info, submitLoading, checkLoading} = this.state;
     let columns = [
       {
         title: '货位',
         dataIndex: 'locName',
-        width: 200
+        width: 112
       },
       {
         title: '货位类型',
         dataIndex: 'positionTypeName',
-        width: 180
+        width: 168
       },
       {
         title: '通用名称',
         dataIndex: 'ctmmGenericName',
-        width: 180
+        width: 168
       },
       {
         title: '规格',
         dataIndex: 'ctmmSpecification',
-        width: 100,
+        width: 168,
         className: 'ellipsis',
         render:(text)=>(
           <Tooltip placement="topLeft" title={text}>{text}</Tooltip>
@@ -466,26 +510,31 @@ class Details extends PureComponent {
       {
         title: '生产厂家',
         dataIndex: 'ctmmManufacturerName',
-        width: 250
+        width: 224,
+        className: 'ellipsis',
+        render:(text)=>(
+          <Tooltip placement="topLeft" title={text}>{text}</Tooltip>
+        )
       },
       {
         title: '包装规格',
         dataIndex: 'packageSpecification',
-        width: 180
+        width: 168
       },
       {
         title: '单位',
         dataIndex: 'unit',
-        width: 50
+        width: 60
       },
       {
         title: '账面库存',
         dataIndex: 'accountStoreNum',
-        width: 100
+        width: 112
       },
       {
         title: '实际数量',
         dataIndex: 'practicalRepertory',
+        width: 140,
         render:(text, record, i)=>{
           return info.checkStatus === 2 && record.checkDetailStatus === 1?
                  <InputNumber
@@ -499,18 +548,17 @@ class Details extends PureComponent {
                   precision={0}
                  /> : text
         },
-        width: 180
       },
       {
         title: '盈亏数量',
         dataIndex: 'checkNum', 
         render: (text, record) => text? text : 0,
-        width: 180
+        width: 112
       },
       {
         title: '账面批号',
         dataIndex: 'accountBatchNo',
-        width: 180
+        width: 168
       },
       {
         title: '实际批号',
@@ -530,7 +578,7 @@ class Details extends PureComponent {
       {
         title: '生产日期',
         dataIndex: 'accountProductTime',
-        width: 150
+        width: 168
       },
       {
         title: '实际生产日期',
@@ -553,7 +601,7 @@ class Details extends PureComponent {
       {
         title: '有效期至',
         dataIndex: 'accountEndTime',
-        width: 150
+        width: 168
       },
       {
         title: '实际有效期至',
@@ -576,18 +624,19 @@ class Details extends PureComponent {
       {
         title: '单价',
         dataIndex: 'referencePrice',
-        width: 50
+        width: 112
       },
       {
         title: '盈亏金额',
-        dataIndex: 'mount'
+        dataIndex: 'mount',
+        width: 112
       },
     ];
     if(info.checkStatus === 2) {
       columns.push({
         title: '操作',
         dataIndex: 'action', 
-        width: 100,
+        width: 112,
         render: (text, record, i) => {
           if(record.id && record.checkDetailStatus === 1) {
             return <a onClick={()=>{
@@ -723,7 +772,8 @@ class Details extends PureComponent {
             }
           </Row>
           <hr className="hr"/>
-          {
+          {this.tableRender(columns)}
+          {/* {
             info.checkStatus ?  
             info.checkStatus === 2? 
             <RetomeTable
@@ -737,7 +787,7 @@ class Details extends PureComponent {
               query={query}
               data={dataSource}
               url={checkDecrease.GET_LIST_BY_BILLNO}
-              scroll={{x: '250%'}}
+              scroll={{x: 2880}}
               columns={columns}
               rowKey={'uuid'}
               expandedRowKeys={expandedRowKeys}
@@ -756,12 +806,12 @@ class Details extends PureComponent {
                   ref={'table'}
                   query={query}
                   url={checkDecrease.GET_LIST_BY_BILLNO}
-                  scroll={{x: '250%'}}
+                  scroll={{x: 2880}}
                   columns={columns}
                   rowKey={'uuid'}
                   />
             : null
-          }
+          } */}
         </div>
       </div>
     )

@@ -70,25 +70,28 @@ class Details extends PureComponent {
     });
     
   }
-  //不通过
   render() {
     let {info, query, loading} = this.state;
     let columns = [
       {
         title: '货位',
         dataIndex: 'locName',
+        width: 112
       },
       {
         title: '货位类型',
         dataIndex: 'positionTypeName',
+        width: 168
       },
       {
         title: '通用名',
         dataIndex: 'ctmmGenericName',
+        width: 168
       },
       {
         title: '规格',
         dataIndex: 'ctmmSpecification',
+        width: 168,
         className: 'ellipsis',
         render:(text)=>(
           <Tooltip placement="topLeft" title={text}>{text}</Tooltip>
@@ -97,60 +100,76 @@ class Details extends PureComponent {
       {
         title: '生产厂家',
         dataIndex: 'ctmmManufacturerName',
-        width: 220,
+        width: 224,
+        className: 'ellipsis',
+        render:(text)=>(
+          <Tooltip placement="topLeft" title={text}>{text}</Tooltip>
+        )
       },
       {
         title: '包装规格',
         dataIndex: 'packageSpecification',
+        width: 168,
       },
       {
         title: '单位',
         dataIndex: 'unit',
+        width: 60,
       },
       {
         title: '账面库存',
         dataIndex: 'accountStoreNum',
+        width: 112,
       },
       {
         title: '实际数量',
-        dataIndex: 'practicalRepertory'
+        dataIndex: 'practicalRepertory',
+        width: 112,
       },
       {
         title: '盈亏数量',
         dataIndex: 'checkNum', 
-        render: (text, record) => text? text : 0
+        width: 112,
       },
       {
         title: '账面批号',
+        width: 168,
         dataIndex: 'accountBatchNo',
       },
       {
         title: '实际批号',
         dataIndex: 'practicalBatch',
+        width: 168,
       },
       {
         title: '生产日期',
-        dataIndex: 'productDate'
+        dataIndex: 'productDate',
+        width: 168,
       },
       {
         title: '实际生产日期',
-        dataIndex: 'realProductTime'
+        dataIndex: 'realProductTime',
+        width: 168,
       },
       {
         title: '有效期至',
-        dataIndex: 'accountEndTime'
+        dataIndex: 'accountEndTime',
+        width: 168,
       },
       {
         title: '实际有效期至',
-        dataIndex: 'validEndTime'
+        dataIndex: 'validEndTime',
+        width: 168,
       },
       {
         title: '单价',
-        dataIndex: 'referencePrice'
+        dataIndex: 'referencePrice',
+        width: 112,
       },
       {
         title: '盈亏金额',
-        dataIndex: 'mount'
+        dataIndex: 'mount',
+        width: 112,
       }
     ];
     return (
@@ -270,8 +289,9 @@ class Details extends PureComponent {
           <RetomeTable
             query={query}
             url={checkDecrease.GET_LIST_BY_BILLNO}
-            scroll={{x: '280%'}}
+            scroll={{x: 2636}}
             columns={columns}
+            pagination={{size: 'small'}}
             rowKey={'id'}
           />
         </div>

@@ -15,17 +15,17 @@ const {Search} = Input;
 const modalColumns = [
   {
     title: '通用名',
-    width:100,
+    width: 168,
     dataIndex: 'ctmmGenericName'
   },
   {
     title: '商品名',
-    width:150,
+    width: 224,
     dataIndex: 'ctmmTradeName',
   },
   {
     title: '规格',
-    width:150,
+    width: 168,
     dataIndex: 'ctmmSpecification',
     className:'ellipsis',
     render:(text)=>(
@@ -34,22 +34,26 @@ const modalColumns = [
   },
   {
     title: '剂型',
-    width:150,
+    width: 168,
     dataIndex: 'ctmmDosageFormDesc',
   },
   {
     title: '包装规格',
-    width:150,
+    width: 168,
     dataIndex: 'packageSpecification',
   },
   {
     title: '生产厂家',
-    width:150,
+    width: 224,
     dataIndex: 'ctmmManufacturerName',
+    className: 'ellipsis',
+    render:(text)=>(
+      <Tooltip placement="topLeft" title={text}>{text}</Tooltip>
+    )
   },
   {
     title: '批准文号',
-    width:150,
+    width: 224,
     dataIndex: 'approvalNo',
   }
 ];
@@ -203,7 +207,7 @@ class AddOutput extends PureComponent{
     const columns = [
       {
         title: '数量',
-        width:150,
+        width: 120,
         dataIndex: 'outStoreNum',
         render:(text, record, i)=>(
           <InputNumber 
@@ -222,27 +226,27 @@ class AddOutput extends PureComponent{
       },
       {
         title: '当前库存',
-        width:120,
+        width: 112,
         dataIndex: 'usableQuantity',
       },
       {
         title: '单位',
-        width:150,
+        width: 60,
         dataIndex: 'replanUnit',
       },
       {
         title: '通用名',
-        width:100,
+        width: 168,
         dataIndex: 'ctmmGenericName'
       },
       {
         title: '商品名',
-        width:150,
+        width: 224,
         dataIndex: 'ctmmTradeName',
       },
       {
         title: '规格',
-        width:150,
+        width: 168,
         dataIndex: 'ctmmSpecification',
         className:'ellipsis',
         render:(text)=>(
@@ -251,42 +255,46 @@ class AddOutput extends PureComponent{
       },
       {
         title: '剂型',
-        width:150,
+        width: 168,
         dataIndex: 'ctmmDosageFormDesc',
       },
       {
         title: '包装规格',
-        width:150,
+        width: 168,
         dataIndex: 'packageSpecification',
       },
       {
         title: '生产批号',
-        width:150,
+        width: 168,
         dataIndex: 'lot',
       },
       {
         title: '生产日期',
-        width:150,
+        width: 168,
         dataIndex: 'productDate'
       },
       {
         title: '有效期至',
-        width:150,
+        width: 168,
         dataIndex: 'validEndDate'
       },
       {
         title: '生产厂家',
-        width:150,
+        width: 224,
         dataIndex: 'ctmmManufacturerName',
+        className:'ellipsis',
+        render:(text)=>(
+          <Tooltip placement="topLeft" title={text}>{text}</Tooltip>
+        )
       },
       {
         title: '供应商',
-        width:150,
+        width: 224,
         dataIndex: 'supplierName'
       },
       {
         title: '批准文号',
-        width:150,
+        width: 224,
         dataIndex: 'approvalNo',
       }
     ];
@@ -299,7 +307,7 @@ class AddOutput extends PureComponent{
     })
     return (
       <div className='fullCol' style={{padding: '0 24px 24px', background: 'rgb(240, 242, 245)'}}>
-        <div className='fullCol-fullChild' style={{marginLeft: '-24px', marginRight: '-24px'}}>
+        <div className='fullCol-fullChild' style={{marginLeft: '-24px', marginRight: '-24px', marginTop: 0}}>
           <Row style={{margin: '0 -32px', borderBottom: '1px solid rgba(0, 0, 0, .2)'}}>
             <Col span={8}>
               <h3 style={{padding: '0 0 15px 32px', fontSize: '20px'}}>
@@ -408,7 +416,7 @@ class AddOutput extends PureComponent{
                 this.setState({selectedRowKeyModal, selectedRowModal});
               }
             }}
-            scroll={{x: '200%'}}
+            scroll={{x: 2404}}
             columns={modalColumns}
             rowKey={'batchNo'}
           />

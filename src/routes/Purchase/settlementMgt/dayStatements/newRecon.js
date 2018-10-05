@@ -37,8 +37,12 @@ const columns = [
   },
   {
     title: '生产厂家',
-    width: 280,
+    width: 224,
     dataIndex: 'ctmmManufacturerName',
+    className: 'ellipsis',
+    render:(text)=>(
+      <Tooltip placement="topLeft" title={text}>{text}</Tooltip>
+    )
   },
   {
     title: '批准文号',
@@ -167,7 +171,7 @@ class NewRecon extends PureComponent{
         let {query, value, submitLoading, count} = this.state;
         return (
         <div className='fullCol' style={{padding: '0 24px 24px', background: 'rgb(240, 242, 245)'}}>
-            <div className='fullCol-fullChild' style={{marginLeft: -24, marginRight: -24}}>
+            <div className='fullCol-fullChild' style={{margin: '0 -24px'}}>
                 <Row style={{margin: '0 -32px', borderBottom: '1px solid rgba(0, 0, 0, .2)'}}>
                     <Col span={8}>
                     <h3 style={{padding: '0 0 15px 32px', fontSize: '20px'}}>
@@ -210,7 +214,7 @@ class NewRecon extends PureComponent{
                                 value={value}
                                 style={{width: '100%'}}
                                 url={common.QUERY_DRUG_BY_LIST}
-                                placeholder='通用名/产品名/生产厂家/供应商'
+                                placeholder='通用名/产品名'
                                 cb={this.changeFetchSelect}
                             />
                         </div>

@@ -9,27 +9,27 @@ import {connect} from 'dva';
 const columns = [
   {
    title: '申领数量',
-   width:150,
+   width: 112,
    dataIndex: 'applyNum',
   },
   {
     title: '单位',
-    width:150,
+    width: 60,
     dataIndex: 'replanUnit'
   },
   {
     title: '通用名称',
-    width:100,
+    width: 168,
     dataIndex: 'ctmmGenericName',
   },
   {
     title: '商品名称',
-    width:150,
+    width: 224,
     dataIndex: 'ctmmTradeName',
   },
   {
     title: '规格',
-    width:150,
+    width: 168,
     dataIndex: 'ctmmSpecification',
     className:'ellipsis',
     render:(text)=>(
@@ -38,23 +38,27 @@ const columns = [
   },
   {
     title: '剂型',
-    width:150,
+    width: 168,
     dataIndex: 'ctmmDosageFormDesc',
   },
   {
     title: '包装规格',
-    width:150,
+    width: 168,
     dataIndex: 'packageSpecification'
   },
   {
     title: '批准文号',
-    width:150,
+    width: 224,
     dataIndex: 'approvalNo',
   },
   {
     title: '生产厂家',
-    width:150,
+    width: 224,
     dataIndex: 'ctmmManufacturerName',
+    className:'ellipsis',
+    render:(text)=>(
+      <Tooltip placement="topLeft" title={text}>{text}</Tooltip>
+    )
   }
 ];
 class DetailsApplyAccept extends PureComponent{
@@ -151,7 +155,7 @@ class DetailsApplyAccept extends PureComponent{
             dataSource={dataSource}
             bordered
             pagination={false}
-            scroll={{x: '150%'}}
+            scroll={{x: 1516}}
             columns={columns}
             rowKey={'drugCode'}
           />

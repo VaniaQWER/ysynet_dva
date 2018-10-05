@@ -21,6 +21,7 @@ class NewAddGoodsAdjust extends PureComponent{
     visible: false,
     okLoading: false,
     selected: [],
+    value: undefined,
     selectedRows: [],
     modalSelected: [],
     modalSelectedRows: [],
@@ -42,7 +43,7 @@ class NewAddGoodsAdjust extends PureComponent{
     
     modalSelectedRows = modalSelectedRows.map(item=>{
       return {
-        drugCode: item.drugCode,
+        batchNo: item.batchNo,
         lot: item.lot,
         locCode: item.goodsCode
       }
@@ -188,14 +189,16 @@ class NewAddGoodsAdjust extends PureComponent{
   }
   
   render(){
-    const {visible, query, dataSource, okLoading, submitLoading} = this.state;
+    const {visible, value, query, dataSource, okLoading, submitLoading} = this.state;
     const columns = [
       {
         title: '通用名',
+		    width: 168,
         dataIndex: 'ctmmGenericName'
       },
       {
         title: '规格',
+		    width: 168,
         dataIndex: 'ctmmSpecification',
         className:'ellipsis',
         render:(text)=>(
@@ -204,11 +207,17 @@ class NewAddGoodsAdjust extends PureComponent{
       },
       {
         title: '生产厂家',
-        dataIndex: 'ctmmManufacturerName'
+        dataIndex: 'ctmmManufacturerName',
+		    width: 224,
+        className:'ellipsis',
+        render:(text)=>(
+          <Tooltip placement="topLeft" title={text}>{text}</Tooltip>
+        )
       },
       {
         title: '移动数量',
         dataIndex: 'adjustNum',
+		    width: 120,
         render: (text, record, i) => {
           return <InputNumber
                   min={1}
@@ -222,23 +231,28 @@ class NewAddGoodsAdjust extends PureComponent{
       },
       {
         title: '移动单位',
-        dataIndex: 'replanUnit'
+		    width: 112,
+        dataIndex: 'replanUnit',
       },
       {
         title: '原库存',
+		    width: 112,
         dataIndex: 'usableQuantity'
       },
       {
         title: '原货位',
+		    width: 112,
         dataIndex: 'goodsName'
       },
       {
         title: '原货位类型',
+		    width: 168,
         dataIndex: 'positionTypeName',
       },
       {
         title: '目的货位',
         dataIndex: 'goalLocCode',
+		    width: 120,
         render: (text, record, i) => {
           return <Select
                   style={{width: '100%'}}
@@ -258,55 +272,71 @@ class NewAddGoodsAdjust extends PureComponent{
       },
       {
         title: '目的货位单位',
+		    width: 168,
         dataIndex: 'targetUnit',
       },
       {
         title: '目的货位类型',
+		    width: 168,
         dataIndex: 'targetTypeName'
       },
       {
         title: '转换系数',
+		    width: 112,
         dataIndex: 'conversionRate'
       },
       {
         title: '包装规格',
+		    width: 168,
         dataIndex: 'packageSpecification'
       }
     ];
     const modalColumns = [
       {
         title: '货位',
+		    width: 112,
         dataIndex: 'goodsName'
       },{
         title: '货位类型',
+		    width: 168,
         dataIndex: 'positionTypeName'
       },{
         title: '通用名',
+		    width: 168,
         dataIndex: 'ctmmGenericName'
       },{
         title: '商品名',
+		    width: 224,
         dataIndex: 'ctmmTradeName',
       },{
         title: '规格',
+		    width: 168,
         dataIndex: 'ctmmSpecification',
       },{
         title: '剂型',
+		    width: 168,
         dataIndex: 'ctmmDosageFormDesc',
       },{
         title: '包装规格',
+		    width: 168,
         dataIndex: 'packageSpecification'
       },{
         title: '生产厂家',
         dataIndex: 'ctmmManufacturerName',
-        width: 300
+        width: 224,
+        className:'ellipsis',
+        render:(text)=>(
+          <Tooltip placement="topLeft" title={text}>{text}</Tooltip>
+        )
       },{
         title: '批准文号',
+		    width: 224,
         dataIndex: 'approvalNo'
       }
     ];
     return (
       <div className='fullCol fadeIn' style={{padding: '0 24px 24px', background: 'rgb(240, 242, 245)'}}>
-        <div className='fullCol-fullChild' style={{marginLeft: -24, marginRight: -24}}> 
+        <div className='fullCol-fullChild' style={{margin: '0 -24px'}}> 
           <Row style={{margin: '0 -32px', borderBottom: '1px solid rgba(0, 0, 0, .2)'}}>
             <Col span={8}>
               <h3 style={{padding: '0 0 15px 32px', fontSize: '20px'}}>
@@ -336,7 +366,7 @@ class NewAddGoodsAdjust extends PureComponent{
             bordered
             rowKey='id'
             dataSource={dataSource}
-            scroll={{ x: '210%' }}
+            scroll={{ x: 1968 }}
             pagination={false}
             rowSelection={{
               selectedRowKeys: this.state.selected,
@@ -374,6 +404,8 @@ class NewAddGoodsAdjust extends PureComponent{
           <Row>
             <Col span={8} style={{marginLeft: 4}}>
               <FetchSelect
+                allowClear
+                value={value}
                 style={{ width: 248 }}
                 placeholder='通用名/商品名'
                 url={goodsAdjust.QUERY_DRUG_BY_LIST}
@@ -381,9 +413,12 @@ class NewAddGoodsAdjust extends PureComponent{
                   let {query} = this.state;
                   query = {
                     ...query,
-                    hisDrugCodeList: [value]
+                    hisDrugCodeList: value ? [value] : []
                   };
-                  this.setState({query});
+                  this.setState({
+                    query,
+                    value
+                  });
                 }}
               />
             </Col>
@@ -394,7 +429,7 @@ class NewAddGoodsAdjust extends PureComponent{
             url={goodsAdjust.roomDrugList}
             style={{ marginTop: 16 }} 
             columns={modalColumns}
-            scroll={{ x: '180%' }}
+            scroll={{ x: 1672 }}
             rowKey='id'
             rowSelection={{
               selectedRowKeys: this.state.modalSelected,

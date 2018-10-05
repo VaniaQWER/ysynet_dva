@@ -13,11 +13,13 @@ import {connect} from 'dva';
 const columns = [
   {
     title: '通用名',
-    dataIndex: 'ctmmGenericName'
+    dataIndex: 'ctmmGenericName',
+    width: 168
   },
   {
     title: '规格',
     dataIndex: 'ctmmSpecification',
+    width: 168,
     className:'ellipsis',
     render:(text)=>(
       <Tooltip placement="topLeft" title={text}>{text}</Tooltip>
@@ -25,47 +27,62 @@ const columns = [
   },
   {
     title: '生产厂家',
-    dataIndex: 'ctmmManufacturerName'
+    dataIndex: 'ctmmManufacturerName',
+    width: 224,
+    className:'ellipsis',
+    render:(text)=>(
+      <Tooltip placement="topLeft" title={text}>{text}</Tooltip>
+    )
   },
   {
     title: '移动数量',
-    dataIndex: 'adjustNum'
+    dataIndex: 'adjustNum',
+    width: 112,
   },
   {
     title: '移动单位',
-    dataIndex: 'originalUnitName'
+    dataIndex: 'originalUnitName',
+    width: 112,
   },
   {
     title: '原库存',
-    dataIndex: 'originalStore'
+    dataIndex: 'originalStore',
+    width: 112,
   },
   {
     title: '原货位',
-    dataIndex: 'originalGoodsName'
+    dataIndex: 'originalGoodsName',
+    width: 112,
   },
   {
     title: '原货位类型',
     dataIndex: 'originalLocTypeName',
+    width: 168,
   },
   {
     title: '目的货位',
     dataIndex: 'goalGoodsName',
+    width: 112,
   },
   {
     title: '目的货位单位',
     dataIndex: 'goalUnitName',
+    width: 168,
   },
   {
     title: '目的货位类型',
-    dataIndex: 'goalLocTypeName'
+    dataIndex: 'goalLocTypeName',
+    width: 168,
   },
   {
     title: '转换系数',
-    dataIndex: 'conversionRate'
+    dataIndex: 'conversionRate',
+    width: 112,
   },
   {
     title: '包装规格',
-    dataIndex: 'packageSpecification'
+    dataIndex: 'packageSpecification',
+    width: 168,
   }
 ];
 
@@ -139,7 +156,8 @@ class ReplenishmentDetail extends PureComponent{
             loading={loading}
             dataSource={roomLocAdjustDetailVoList || []}
             bordered
-            scroll={{x: '150%'}}
+            pagination={false}
+            scroll={{x: 1904}}
             columns={columns}
             rowKey={'drugCode'}
           />

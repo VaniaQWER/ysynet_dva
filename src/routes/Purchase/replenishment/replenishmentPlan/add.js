@@ -8,14 +8,14 @@
  * @file 药库 - 补货管理--补货计划--新建计划
  */
 import React, { PureComponent } from 'react';
-import { Row, Col, Button, Input, Table, Modal, Icon, Tooltip, message, Select, Spin, InputNumber } from 'antd';
+import { Row, Col, Button, Table, Modal, Icon, Tooltip, message, Select, Spin, InputNumber } from 'antd';
 import {replenishmentPlan} from '../../../../api/replenishment/replenishmentPlan';
 import RemoteTable from '../../../../components/TableGrid';
+import FetchSelect from '../../../../components/FetchSelect/index';
 import _ from 'lodash';
 import {validAmount} from '../../../../utils/utils';
 import {connect} from 'dva';
 
-const { Search } = Input;
 const { Option } = Select;
 
 class NewAdd extends PureComponent {
@@ -217,7 +217,8 @@ class NewAdd extends PureComponent {
       modalLoading,
       spinLoading,
       btnLoading,
-      saveLoading
+      saveLoading,
+      value
     } = this.state;
     const columns = [
       {
@@ -435,11 +436,23 @@ class NewAdd extends PureComponent {
           >
             <Row>
               <Col span={7} style={{ marginLeft: 4 }}>
-                <Search
+                <FetchSelect
+                  allowClear
+                  value={value}
                   style={{ width: 248 }}
                   placeholder='通用名/商品名'
-                  ref="paramName"
-                  onSearch={val => this.refs.table.fetch({ ...query, paramName: val })}
+                  url={replenishmentPlan.QUERY_DRUG_BY_LIST}
+                  cb={(value, option) => {
+                    let {query} = this.state;
+                    query = {
+                      ...query,
+                      hisDrugCodeList: value ? [value] : []
+                    };
+                    this.setState({
+                      query,
+                      value
+                    });
+                  }}
                 />
               </Col>
             </Row>

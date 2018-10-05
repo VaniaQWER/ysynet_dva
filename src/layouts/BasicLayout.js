@@ -35,8 +35,8 @@ class BasicLayout extends PureComponent {
             let deptInfo = data.deptInfo;
             let { menuList } = deptInfo[0];
             let tree = menuFormat(menuList,true,1);
-            let id = window.localStorage.getItem('key');
-            let deptName = window.localStorage.getItem('deptName');
+            let id = window.sessionStorage.getItem('key');
+            let deptName = window.sessionStorage.getItem('deptName');
             // let id = this.props.location.pathname.split('/')[2];
             // let deptName;
             // data.deptInfo.map(item => {
@@ -155,8 +155,8 @@ class BasicLayout extends PureComponent {
         hasDept: false
       });
     }
-    window.localStorage.setItem('key', e.key);
-    window.localStorage.setItem('deptName', e.item.props.children);
+    window.sessionStorage.setItem('key', e.key);
+    window.sessionStorage.setItem('deptName', e.item.props.children);
     console.log(e);
     
     dispatch({

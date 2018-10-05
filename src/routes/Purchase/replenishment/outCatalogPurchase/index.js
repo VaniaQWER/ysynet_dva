@@ -183,7 +183,6 @@ class OutCatalogPurchase extends PureComponent{
       {
         title: '计划单号',
         dataIndex: 'planCode',
-        fixed: 'left',
         width: 280,
         render: (text,record) =>{
           return <span>

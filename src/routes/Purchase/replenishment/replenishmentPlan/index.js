@@ -106,7 +106,7 @@ class SearchForm extends PureComponent{
                     filterOption={(input, option) => option.props.children.indexOf(input) >= 0}
                   >
                     {
-                      this.props.typeListDate.map((item, index) => <Option value={item.label} key={index}>{item.label}</Option>)
+                      this.props.typeListDate.map((item, index) => <Option value={item.value} key={index}>{item.label}</Option>)
                     }
                   </Select>
                 )
@@ -196,7 +196,6 @@ class ReplenishmentPlan extends PureComponent {
       {
         title: '计划单号',
         dataIndex: 'planCode',
-        fixed: 'left',
         width: 280,
         render: (text, record) => {
           return <span>

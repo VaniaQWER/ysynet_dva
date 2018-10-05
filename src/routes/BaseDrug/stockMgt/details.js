@@ -5,28 +5,36 @@ import querystring from 'querystring';
 const columns = [
     {
         title: '生产批号',
-        dataIndex: 'lot'
+        dataIndex: 'lot',
+        width: 168
     }, {
         title: '生产日期',
-        dataIndex: 'productDate'
+        dataIndex: 'productDate',
+        width: 168
     }, {
         title: '有效期至',
         dataIndex: 'validEndDate',
+        width: 168
     }, {
         title: '货位',
-        dataIndex: "storeLocName"
+        dataIndex: "storeLocName",
+        width: 112
     }, {
         title: '货位类型',
         dataIndex: "storeType",
+        width: 168
     }, {
         title: '单位',
         dataIndex: "unit",
+        width: 60
     }, {
         title: '数量',
-        dataIndex: "usableQuantity"
+        dataIndex: "usableQuantity",
+        width: 112
     }, {
         title: '供应商',
-        dataIndex: 'supplierName'
+        dataIndex: 'supplierName',
+        width: 224
     }
 ]
 

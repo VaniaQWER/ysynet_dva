@@ -17,7 +17,6 @@ const columns = [
    title: '出库单',
    dataIndex: 'medicinalCode',
    width:150,
-   fixed: 'left',
    render:(text)=>
    <span>
       <Link to={{pathname: `/drugStorage/drugStorageManage/output/details`}}>{text}</Link>

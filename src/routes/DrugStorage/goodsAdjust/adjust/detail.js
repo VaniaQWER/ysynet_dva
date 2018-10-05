@@ -13,10 +13,12 @@ import {connect} from 'dva';
 const columns = [
   {
     title: '通用名',
-    dataIndex: 'ctmmGenericName'
+    dataIndex: 'ctmmGenericName',
+		width: 168,
   },
   {
     title: '规格',
+		width: 168,
     dataIndex: 'ctmmSpecification',
     className:'ellipsis',
     render:(text)=>(
@@ -25,46 +27,61 @@ const columns = [
   },
   {
     title: '生产厂家',
-    dataIndex: 'ctmmManufacturerName'
+    dataIndex: 'ctmmManufacturerName',
+		width: 224,
+    className:'ellipsis',
+    render:(text)=>(
+      <Tooltip placement="topLeft" title={text}>{text}</Tooltip>
+    )
   },
   {
     title: '移动数量',
+		width: 112,
     dataIndex: 'adjustNum'
   },
   {
     title: '移动单位',
+		width: 112,
     dataIndex: 'originalUnitName'
   },
   {
     title: '原库存',
+		width: 112,
     dataIndex: 'originalStore'
   },
   {
     title: '原货位',
+		width: 112,
     dataIndex: 'originalGoodsName'
   },
   {
     title: '原货位类型',
+		width: 168,
     dataIndex: 'originalLocTypeName',
   },
   {
     title: '目的货位',
     dataIndex: 'goalGoodsName',
+		width: 112,
   },
   {
     title: '目的货位单位',
     dataIndex: 'goalUnitName',
+		width: 168,
   },
   {
     title: '目的货位类型',
+		width: 168,
     dataIndex: 'goalLocTypeName'
   },
   {
     title: '转换系数',
+		width: 112,
     dataIndex: 'conversionRate'
   },
   {
     title: '包装规格',
+		width: 168,
     dataIndex: 'packageSpecification'
   }
 ];
@@ -135,7 +152,7 @@ class ReplenishmentDetail extends PureComponent{
             loading={loading}
             dataSource={roomLocAdjustDetailVoList || []}
             bordered
-            scroll={{x: '150%'}}
+            scroll={{x: 1904}}
             columns={columns}
             rowKey={'drugCode'}
           />

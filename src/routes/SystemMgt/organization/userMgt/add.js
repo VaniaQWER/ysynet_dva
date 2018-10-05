@@ -8,7 +8,7 @@
  * @file 系统管理--组织机构--用户管理--添加
  */
 import React, { PureComponent } from 'react';
-import { Form, Row, Col, Radio, Input, Button, Table, Affix, Modal } from 'antd';
+import { Form, Row, Col, Radio, Input, Button, Table, Affix, Modal, message } from 'antd';
 import { formItemLayout } from '../../../../utils/commonStyles';
 import { DeptSelect } from '../../../../common/dic';
 import { connect } from 'dva';
@@ -62,7 +62,7 @@ class AddUser extends PureComponent{
     ctcpName: null,// 新增人员查询输入库姓名
     hisDeptName: null // 新增人员查询输入库 所属科室
   }
-  componentWillMount = () =>{
+  componentDidMount = () =>{
     this.setState({ userLoading: true, deptLoading: true });
     let { dispatch } = this.props;
     // 所属部门
@@ -103,6 +103,9 @@ class AddUser extends PureComponent{
       if(!err){
         let userInfo = {}, deptList = [],roleList = [];
         let { selectedRows, userSelected } = this.state;
+        if(userSelected.length === 0) {
+          return message.warning('至少选择一个角色');
+        };
         selectedRows.map(item => deptList.push({ deptType: item.deptType, id: item.id }));
         userSelected.map(item => roleList.push({ id: item }));
         userInfo.deptList = deptList;

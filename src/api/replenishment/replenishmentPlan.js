@@ -9,4 +9,5 @@ export  const replenishmentPlan = {
     PURCHASEORDERLIST: `${_local}/a/purchaseorder/list`, //计划订单列表
     
     QUERYDRUGBYDEPT: `${_local}/a/depot/depotplan/queryDrugByDept`,  //添加产品查询产品信息列表
+    QUERY_DRUG_BY_LIST: `${_local}/a/common/queryDrugByList`,  //添加产品 - 下拉框
 }

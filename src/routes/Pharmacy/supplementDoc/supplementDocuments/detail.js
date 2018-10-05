@@ -11,17 +11,17 @@ const Comfirm = Modal.confirm;
 const columns = [
   {
     title: '数量',
-    width: 100,
+    width: 112,
     dataIndex: 'makeipQuantity',
   },
   {
     title: '单位',
-    width: 100,
+    width: 60,
     dataIndex: 'replanUnit',
   },
   {
     title: '包装规格',
-    width: 270,
+    width: 168,
     dataIndex: 'packageSpecification',
     className:'ellipsis',
     render:(text)=>(
@@ -30,37 +30,41 @@ const columns = [
   },
   {
     title: '目的货位类型',
-    width: 120,
+    width: 168,
     dataIndex: 'positionTypeName',
   },
   {
     title: '通用名',
-    width: 180,
+    width: 168,
     dataIndex: 'ctmmGenericName',
   },
   {
     title: '规格',
-    width: 270,
+    width: 168,
     dataIndex: 'ctmmSpecification',
   },
   {
     title: '生产厂家',
-    width: 200,
+    width: 224,
     dataIndex: 'ctmmManufacturerName',
+    className:'ellipsis',
+    render:(text)=>(
+      <Tooltip placement="topLeft" title={text}>{text}</Tooltip>
+    )
   },
   {
     title: '生产批号',
-    width: 180,
+    width: 168,
     dataIndex: 'lot',
   },
   {
     title: '生产日期',
-    width: 200,
+    width: 168,
     dataIndex: 'productDate',
   },
   {
     title: '有效期至',
-    width: 200,
+    width: 168,
     dataIndex: 'validEndDate',
   }
 ];
@@ -68,7 +72,8 @@ const columns = [
 class ReplenishmentDetail extends PureComponent{
 
   state ={
-    baseInfo:{}
+    baseInfo:{},
+    outOrGoName: ""
   }
   componentDidMount(){
     console.log(this.props.match.params.id)
@@ -78,7 +83,8 @@ class ReplenishmentDetail extends PureComponent{
       callback:(data)=>{
         console.log(data)
         this.setState({
-          baseInfo:data
+          baseInfo:data,
+          outOrGoName: data.makeupType === 2? "出库单" : "入库单"
         })
       }
     })
@@ -104,7 +110,7 @@ class ReplenishmentDetail extends PureComponent{
   } 
 
   render(){
-    const { baseInfo} = this.state;
+    const { baseInfo, outOrGoName} = this.state;
     return ( 
       <div className='fullCol fadeIn'>
         <div className='fullCol-fullChild'>
@@ -129,7 +135,7 @@ class ReplenishmentDetail extends PureComponent{
             </Col>
             <Col span={8}>
             <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
-              <label>入库单</label>
+              <label>{outOrGoName}</label>
             </div>
             <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
               <div className='ant-form-item-control'>{baseInfo?baseInfo.storeCode:''}</div>
@@ -192,7 +198,7 @@ class ReplenishmentDetail extends PureComponent{
             title={()=>'产品信息'}
             style={{marginTop: 20}}
             columns={columns}
-            scroll={{ x: '100%' }}
+            scroll={{ x: 1572 }}
             rowKey='drugCode'
             dataSource={baseInfo?baseInfo.list:[]}
           />

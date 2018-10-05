@@ -127,19 +127,22 @@ class BaseMgt extends PureComponent{
     })
   }
   render(){
-    const { medalQuery, info, visible, okLoading, value, query, removeLoading } = this.state;
+    const { medalQuery, info, visible, okLoading, value, query } = this.state;
     const columns = [
       {
         title: '通用名称',
         dataIndex: 'ctmmGenericName',
+        width: 168,
       },
       {
         title: '商品名称',
         dataIndex: 'ctmmTradeName',
+        width: 224,
       },
       {
         title: '规格',
         dataIndex: 'ctmmSpecification',
+        width: 168,
         className: 'ellipsis',
         render:(text)=>(
           <Tooltip placement="topLeft" title={text}>{text}</Tooltip>
@@ -148,39 +151,57 @@ class BaseMgt extends PureComponent{
       {
         title: '剂型',
         dataIndex: 'ctmmDosageFormDesc',
+        width: 168,
       },
       {
         title: '包装规格',
         dataIndex: 'packageSpecification',
+        width: 168,
       },
       {
         title: '批准文号',
         dataIndex: 'approvalNo',
+        width: 224,
       },
       {
         title: '生产厂家',
         dataIndex: 'ctmmManufacturerName',
+        width: 224,
+        className: 'ellipsis',
+        render:(text)=>(
+          <Tooltip placement="topLeft" title={text}>{text}</Tooltip>
+        )
       }
     ]
     const modalColumns = [
       {
         title: '通用名',
-        dataIndex: 'ctmmGenericName'
+        dataIndex: 'ctmmGenericName',
+        width: 168,
       },{
         title: '商品名',
         dataIndex: 'ctmmTradeName',
+        width: 224,
       },{
         title: '规格',
         dataIndex: 'ctmmSpecification',
+        width: 168,
       },{
         title: '剂型',
         dataIndex: 'ctmmDosageFormDesc',
+        width: 168,
       },{
         title: '包装规格',
-        dataIndex: 'packageSpecification'
+        dataIndex: 'packageSpecification',
+        width: 168,
       },{
         title: '生产厂家',
         dataIndex: 'ctmmManufacturerName',
+        width: 224,
+        className: 'ellipsis',
+        render:(text)=>(
+          <Tooltip placement="topLeft" title={text}>{text}</Tooltip>
+        )
       }
     ];
     return (
@@ -238,7 +259,7 @@ class BaseMgt extends PureComponent{
             url={drugMgt.ADD_CARDINAL_MEDICINE}
             style={{ marginTop: 16 }} 
             columns={modalColumns}
-            scroll={{ x: '130%' }}
+            scroll={{ x: 1120 }}
             rowKey='drugCode'
             rowSelection={{
               selectedRowKeys: this.state.modalSelected,
@@ -251,14 +272,14 @@ class BaseMgt extends PureComponent{
         <div className='detailCard'>
           <h3>产品信息
             <Button style={{margin: '0 8px'}} onClick={this.showModal} type="primary">新增</Button>
-            <Button loading={removeLoading} onClick={this.remove}>移除</Button>
+            {/* <Button loading={removeLoading} onClick={this.remove}>移除</Button> */}
           </h3>
           <hr className="hr"/>
           <RemoteTable
             ref='table'
             query={query}
             url={drugMgt.FIND_CARDINAL_MEDICINE_DETAIL}
-            scroll={{x: true}}
+            scroll={{x: 1344}}
             columns={columns}
             rowKey={'id'}
             rowSelection={{

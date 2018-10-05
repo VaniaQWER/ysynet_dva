@@ -61,6 +61,10 @@ const columns = [
     title: '生产厂家',
     width: 224,
     dataIndex: 'ctmmManufacturerName',
+    className: 'ellipsis',
+    render:(text)=>(
+      <Tooltip placement="topLeft" title={text}>{text}</Tooltip>
+    )
   },
   {
     title: '生产批号',
@@ -160,7 +164,7 @@ class AddNewAcceptance extends PureComponent{
     let {verifyList, unVerfiyList} = info;
     return (
       <div className='fullCol' style={{padding: '0 24px 24px', background: 'rgb(240, 242, 245)'}}>
-        <div className='fullCol-fullChild' style={{marginLeft: -24, marginRight: -24}}>
+        <div className='fullCol-fullChild' style={{margin: '0 -24px'}}>
           <Row style={{margin: '0 -32px', borderBottom: '1px solid rgba(0, 0, 0, .2)'}}>
             <Col span={8}>
               <h3 style={{padding: '0 0 15px 32px', fontSize: '20px'}}>

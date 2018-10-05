@@ -84,16 +84,18 @@ class EditDrugDirectory extends PureComponent{
         bigDrugCode: info.bCode
       },
       callback: (data) => {
-        let minUnit = data.filter(item => item.sort === 3);
-        let packUnit = data.filter(item => item.sort === 1);
-        let packageSpecification = data.filter(item => item.sort === 2);
-        if(minUnit.length) {
-          minUnit = this.unitTransform(minUnit);
-        }else {
-          minUnit = '';
-        };
-        packUnit = this.unitTransform(packUnit);
-        packageSpecification = this.unitTransform(packageSpecification);
+        let {minUnit, packUnit, packageSpecification} = this.state;
+        data.forEach(item => {
+          if(item.sort === 1) {
+            packageSpecification = this.unitTransform(item);
+          };
+          if(item.sort === 2) {
+            packUnit = this.unitTransform(item);
+          };
+          if(item.sort === 3) {
+            minUnit = this.unitTransform(item);
+          };
+        });
         this.setState({
           minUnit,
           packUnit,
@@ -104,9 +106,7 @@ class EditDrugDirectory extends PureComponent{
   }
 
   unitTransform(unitList) {
-    console.log(unitList);
-    
-    let {bigUnit, conversionRate, smallUit} = unitList[0];
+    let {bigUnit, conversionRate, smallUit} = unitList;
     return `${bigUnit} = ${conversionRate} ${smallUit}`;
   }
 

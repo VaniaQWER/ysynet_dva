@@ -245,12 +245,12 @@ class DetailsPicking extends PureComponent{
     const leftColumns = [
       {
         title: '通用名称',
-        width:100,
+        width: 168,
         dataIndex: 'ctmmGenericName',
       },
       {
         title: '规格',
-        width:150,
+        width: 168,
         dataIndex: 'ctmmSpecification',
         className:'ellipsis',
         render:(text)=>(
@@ -259,69 +259,73 @@ class DetailsPicking extends PureComponent{
       },
       {
         title: '剂型',
-        width:150,
+        width: 168,
         dataIndex: 'ctmmDosageFormDesc',
       },
       {
         title: '生产厂家',
-        width:150,
+        width: 224,
         dataIndex: 'ctmmManufacturerName',
+        className:'ellipsis',
+        render:(text)=>(
+          <Tooltip placement="topLeft" title={text}>{text}</Tooltip>
+        )
       },
       {
         title: '单位',
-        width:80,
+        width: 60,
         dataIndex: 'replanUnit',
       },
       {
         title: '申领数量',
-        width:80,
+        width: 112,
         dataIndex: 'applyNum',
       },
       {
         title: '当前库存',
-        width:80,
+        width: 112,
         dataIndex: 'totalStoreNum',
       },
       {
         title: '已分配',
-        width:80,
+        width: 112,
         dataIndex: 'finishNum',
       },
       {
         title: '欠品数',
-        width:80,
+        width: 112,
         dataIndex: 'lackNum',
       },
       {
         title: '预分配数',
-        width:150,
+        width: 112,
         dataIndex: 'receiveNum'
       },
     ];
     const rightColumns =  [
       {
         title: '生产批号',
-        width:150,
+        width: 168,
         dataIndex: 'lot',
       },
       {
         title: '生产日期',
-        width: 100,
+        width: 168,
         dataIndex: 'productDate'
       },
       {
         title: '有效期至',
-        width: 100,
+        width: 168,
         dataIndex: 'validEndDate',
       },
       {
         title: '可分配数',
-        width: 90,
+        width: 112,
         dataIndex: 'allocationNum',
       },
       {
         title: '分配数',
-        width: 110,
+        width: 112,
         dataIndex: 'usableQuantity',
         render: this.amountInputRender
       }
@@ -407,7 +411,7 @@ class DetailsPicking extends PureComponent{
               <Table
                 bordered
                 loading={loading}
-                scroll={{x: '100%'}}
+                scroll={{x: 1348}}
                 columns={leftColumns}
                 dataSource={leftDataSource}
                 rowKey={'id'}
@@ -439,7 +443,7 @@ class DetailsPicking extends PureComponent{
             <Col span={10} offset={1}>
               <Table
                 bordered
-                scroll={{x: '100%'}}
+                scroll={{x: 728}}
                 dataSource={rightDataSource}
                 columns={rightColumns}
                 loading={rightLoading}

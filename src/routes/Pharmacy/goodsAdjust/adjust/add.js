@@ -43,7 +43,7 @@ class NewAddGoodsAdjust extends PureComponent{
     this.setState({okLoading: true});
     modalSelectedRows = modalSelectedRows.map(item=>{
       return {
-        drugCode: item.drugCode,
+        batchNo: item.batchNo,
         lot: item.lot,
         locCode: item.locCode
       }
@@ -208,6 +208,10 @@ class NewAddGoodsAdjust extends PureComponent{
         title: '生产厂家',
         dataIndex: 'ctmmManufacturerName',
         width: 224,
+        className:'ellipsis',
+        render:(text)=>(
+          <Tooltip placement="topLeft" title={text}>{text}</Tooltip>
+        )
       },
       {
         title: '移动数量',
@@ -289,37 +293,49 @@ class NewAddGoodsAdjust extends PureComponent{
     const modalColumns = [
       {
         title: '货位',
-        dataIndex: 'goodsName'
+        dataIndex: 'goodsName',
+        width: 112,
       },{
         title: '货位类型',
-        dataIndex: 'positionTypeName'
+        dataIndex: 'positionTypeName',
+        width: 168,
       },{
         title: '通用名',
-        dataIndex: 'ctmmGenericName'
+        dataIndex: 'ctmmGenericName',
+        width: 168,
       },{
         title: '商品名',
         dataIndex: 'ctmmTradeName',
+        width: 224,
       },{
         title: '规格',
         dataIndex: 'ctmmSpecification',
+        width: 168,
       },{
         title: '剂型',
         dataIndex: 'ctmmDosageFormDesc',
+        width: 168,
       },{
         title: '包装规格',
-        dataIndex: 'packageSpecification'
+        dataIndex: 'packageSpecification',
+        width: 112,
       },{
         title: '生产厂家',
         dataIndex: 'ctmmManufacturerName',
-        width: 300
+        width: 224,
+        className:'ellipsis',
+        render:(text)=>(
+          <Tooltip placement="topLeft" title={text}>{text}</Tooltip>
+        )
       },{
         title: '批准文号',
-        dataIndex: 'approvalNo'
+        dataIndex: 'approvalNo',
+        width: 224,
       }
     ];
     return (
       <div className='fullCol fadeIn' style={{padding: '0 24px 24px', background: 'rgb(240, 242, 245)'}}>
-        <div className='fullCol-fullChild' style={{marginLeft: -24, marginRight: -24}}> 
+        <div className='fullCol-fullChild' style={{margin: '0 -24px 0'}}> 
           <Row style={{margin: '0 -32px', borderBottom: '1px solid rgba(0, 0, 0, .2)'}}>
             <Col span={8}>
               <h3 style={{padding: '0 0 15px 32px', fontSize: '20px'}}>
@@ -412,7 +428,7 @@ class NewAddGoodsAdjust extends PureComponent{
             url={goodsAdjust.roomDrugList}
             style={{ marginTop: 16 }} 
             columns={modalColumns}
-            scroll={{ x: '180%' }}
+            scroll={{ x: 1616 }}
             rowKey='id'
             rowSelection={{
               selectedRowKeys: this.state.modalSelected,

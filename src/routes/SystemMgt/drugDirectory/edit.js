@@ -10,7 +10,10 @@ class EditDrugDirectory extends PureComponent{
   constructor(props){
     super(props)
     this.state = {
-      baseData: {}
+      baseData: {},
+      minUnit: '',
+      packUnit: '',
+      fullUnit: ''
     }
   }
   componentDidMount = () =>{
@@ -19,7 +22,25 @@ class EditDrugDirectory extends PureComponent{
       type: 'drugDirectory/getMedicineInfo',
       payload: { bigDrugCode , medDrugType },
       callback: (data) =>{
-        this.setState({ baseData: data })
+        let {minUnit, packUnit, fullUnit} = this.state;
+        let {listTransforsVo} = data;
+        listTransforsVo.forEach(item => {
+          if(item.sort === 1) {
+            fullUnit = this.getMaPInfo(listTransforsVo, item.sort);
+          };
+          if(item.sort === 2) {
+            packUnit = this.getMaPInfo(listTransforsVo, item.sort);
+          };
+          if(item.sort === 3) {
+            minUnit = this.getMaPInfo(listTransforsVo, item.sort);
+          };
+        });
+        this.setState({ 
+          baseData: data,
+          minUnit,
+          packUnit,
+          fullUnit
+        })
       }
     })
   }
@@ -47,7 +68,7 @@ class EditDrugDirectory extends PureComponent{
     }
   }
   render(){
-    const { baseData } = this.state;
+    const { baseData, minUnit, packUnit, fullUnit } = this.state;
     return (
       <div className='fullCol fadeIn'>
         <div className='fullCol-fullChild'>
@@ -150,7 +171,7 @@ class EditDrugDirectory extends PureComponent{
                   <label>最小发药单位</label>
                 </div>
                 <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
-                  <div className='ant-form-item-control'> {baseData?this.getMaPInfo(baseData.listTransforsVo,3) :''}</div>
+                  <div className='ant-form-item-control'> {minUnit}</div>
                 </div>
               </Col>
               <Col span={10}>
@@ -158,7 +179,7 @@ class EditDrugDirectory extends PureComponent{
                 <label>包装规格</label>
               </div>
               <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
-                <div className='ant-form-item-control'>{baseData?this.getMaPInfo(baseData.listTransforsVo,2) :''}</div>
+                <div className='ant-form-item-control'>{packUnit}</div>
               </div>
               </Col>
               <Col span={10}>
@@ -166,7 +187,7 @@ class EditDrugDirectory extends PureComponent{
                   <label>整包装单位</label>
                 </div>
                 <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
-                  <div className='ant-form-item-control'>{ baseData.ctmmPackingUnit &&baseData.ctmmPackingCoefficient ?  `${baseData.ctmmPackingUnit} = ${baseData.ctmmPackingCoefficient}`:'' }</div>
+                  <div className='ant-form-item-control'>{fullUnit}</div>
                 </div>
               </Col>
             </Row>

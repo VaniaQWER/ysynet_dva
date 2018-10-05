@@ -11,20 +11,18 @@ const Comfirm = Modal.confirm;
 const columns = [
   {
     title: '数量',
-    width: 100,
-    dataIndex: 'num',
-    render:(text,record)=>"24"
+    width: 112,
+    dataIndex: 'makeipQuantity'
   },
   {
     title: '单位',
-    width: 100,
-    dataIndex: 'unit1',
-    render:(text)=>'箱'
+    width: 60,
+    dataIndex: 'replanUnit',
   },
   {
     title: '包装规格',
-    width: 270,
-    dataIndex: 'replanUnit',
+    width: 168,
+    dataIndex: 'packageSpecification',
     className:'ellipsis',
     render:(text)=>(
       <Tooltip placement="topLeft" title={text}>{text}</Tooltip>
@@ -32,37 +30,41 @@ const columns = [
   },
   {
     title: '目的货位类型',
-    width: 120,
+    width: 168,
     dataIndex: 'positionTypeName',
   },
   {
     title: '通用名',
-    width: 180,
+    width: 168,
     dataIndex: 'ctmmGenericName',
   },
   {
     title: '规格',
-    width: 270,
+    width: 168,
     dataIndex: 'ctmmSpecification',
   },
   {
     title: '生产厂家',
-    width: 200,
+    width: 224,
     dataIndex: 'productCompany',
+    className:'ellipsis',
+    render:(text)=>(
+      <Tooltip placement="topLeft" title={text}>{text}</Tooltip>
+    )
   },
   {
     title: '生产批号',
-    width: 180,
+    width: 168,
     dataIndex: 'lot',
   },
   {
     title: '生产日期',
-    width: 200,
+    width: 168,
     dataIndex: 'productDate',
   },
   {
     title: '有效期至',
-    width: 200,
+    width: 168,
     dataIndex: 'validEndDate',
   }
 ];
@@ -197,8 +199,10 @@ class ReplenishmentDetail extends PureComponent{
           <Table
             title={()=>'产品信息'}
             style={{marginTop: 20}}
+            bordered
             columns={columns}
-            scroll={{ x: '100%' }}
+            pagination={false}
+            scroll={{ x: 1572 }}
             rowKey='drugCode'
             dataSource={baseInfo?baseInfo.list:[]}
           />

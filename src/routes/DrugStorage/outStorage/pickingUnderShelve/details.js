@@ -117,6 +117,7 @@ class DetailsPickSoldOut extends PureComponent{
       {
         title: '通用名称',
         dataIndex: 'ctmmGenericName',
+        width: 168
       },
       {
         title: '规格',
@@ -124,50 +125,56 @@ class DetailsPickSoldOut extends PureComponent{
         className:'ellipsis',
         render:(text)=>(
           <Tooltip placement="topLeft" title={text}>{text}</Tooltip>
-        )
+        ),
+        width: 168
       },
       {
         title: '生产厂家',
-        width: 150,
-        dataIndex: 'ctmmManufacturerName'
+        width: 224,
+        dataIndex: 'ctmmManufacturerName',
+        className:'ellipsis',
+        render:(text)=>(
+          <Tooltip placement="topLeft" title={text}>{text}</Tooltip>
+        ),
       },
       {
         title: '生产批号',
-        width: 150,
+        width: 168,
         dataIndex: 'lot'
       },
       {
         title: '生产日期',
-        width: 160,
+        width: 168,
         dataIndex: 'productDate'
       },
       {
         title: '有效期至',
-        width: 160,
+        width: 168,
         dataIndex: 'validEndDate'
       },
       {
         title: '包装规格',
         dataIndex: 'packageSpecification',
+        width: 168,
       },
       {
         title: '单位',
-        width: 80,
+        width: 60,
         dataIndex: 'replanUnit'
       },
       {
         title: '指示货位',
         dataIndex: 'locName',
+        width: 112,
       },
       {
         title: '配货数量',
-        width: 90,
-        fixed: 'right',
+        width: 112,
         dataIndex: 'allocationNum',
       },
       {
         title: '实际拣货数量',
-        width: 120,
+        width: 168,
         fixed: 'right',
         dataIndex: 'amount',
         render:(text,record,index)=>{
@@ -263,7 +270,7 @@ class DetailsPickSoldOut extends PureComponent{
               <Table
                 bordered
                 dataSource={leftDataSource}
-                scroll={{x: '160%'}}
+                scroll={{x: 1684}}
                 columns={columns}
                 loading={loading}
                 pagination={false}
@@ -280,7 +287,7 @@ class DetailsPickSoldOut extends PureComponent{
               <Table
                 bordered
                 dataSource={rightDataSource}
-                scroll={{x: '160%'}}
+                scroll={{x: 1684}}
                 loading={loading}
                 columns={readyPickingColumns}
                 pagination={false}

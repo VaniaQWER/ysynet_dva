@@ -97,7 +97,11 @@ class Details extends PureComponent {
       {
         title: '生产厂家',
         dataIndex: 'ctmmManufacturerName',
-        width: 280
+        width: 224,
+        className: 'ellipsis',
+        render:(text)=>(
+          <Tooltip placement="topLeft" title={text}>{text}</Tooltip>
+        )
       },
       {
         title: '批准文号',

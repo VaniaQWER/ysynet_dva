@@ -8,13 +8,13 @@
  * @file 药库 - 补货管理--补货计划--新建计划
  */
 import React, { PureComponent } from 'react';
-import { Row, Col, Button, Input, Select, Modal, Icon, Tooltip, message, Table, InputNumber  } from 'antd';
+import { Row, Col, Button, Input, Modal, Icon, Select, Tooltip, message, Table, InputNumber  } from 'antd';
 import RemoteTable from '../../../../components/TableGrid';
 import { replenishmentPlan } from '../../../../api/replenishment/replenishmentPlan';
 import {validAmount} from '../../../../utils/utils';
+import FetchSelect from '../../../../components/FetchSelect/index';
 import _ from 'lodash';
 import { connect } from 'dva';
-const { Search } = Input;
 const { Option } = Select;
 class NewAdd extends PureComponent{
   state = {
@@ -29,7 +29,8 @@ class NewAdd extends PureComponent{
     selected: [],
     selectedRows: [],
     modalSelected: [],
-    modalSelectedRows: []
+    modalSelectedRows: [],
+    value: undefined
   }
   componentWillMount = () =>{
     const { dispatch } = this.props;
@@ -158,12 +159,13 @@ class NewAdd extends PureComponent{
       type: 'base/submit',
       payload: { ...postData },
       callback: () =>{
+        message.success(`${auditStatus === "1" ? '保存' : '提交'}成功，该计划已到补货计划模块`);
         history.push({ pathname: '/purchase/replenishment/outCatalogPurchase' });
       }
     })
   }
   render(){
-    const { visible, deptModules, query, btnLoading, dataSource } = this.state;
+    const { visible, deptModules, query, btnLoading, dataSource, value } = this.state;
     const columns = [
       {
         title: '通用名称',
@@ -188,7 +190,7 @@ class NewAdd extends PureComponent{
       }, {
         title: '生产厂家',
         dataIndex: 'ctmmManufacturerName',
-        width: 168,
+        width: 224,
         className:'ellipsis',
         render:(text)=>(
           <Tooltip placement="topLeft" title={text}>{text}</Tooltip>
@@ -247,7 +249,7 @@ class NewAdd extends PureComponent{
         width: 112,
         render: (text,record,index)=>{
           return <InputNumber
-                    defaultValue={text || 1}
+                    defaultValue={text}
                     min={1}
                     precision={0}
                     onChange={(value)=>{
@@ -297,7 +299,11 @@ class NewAdd extends PureComponent{
       }, {
         title: '生产厂家',
         dataIndex: 'ctmmManufacturerName',
-        width: 280,
+        width: 224,
+        className: 'ellipsis',
+        render:(text)=>(
+          <Tooltip placement="topLeft" title={text}>{text}</Tooltip>
+        )
       }, {
         title: '批准文号',
         width: 224,
@@ -358,10 +364,23 @@ class NewAdd extends PureComponent{
         >
         <Row>
           <Col span={7} style={{marginLeft: 4}}>
-            <Search 
+            <FetchSelect
+              allowClear
+              value={value}
               style={{ width: 248 }}
               placeholder='通用名/商品名'
-              onSearch={val => this.refs.table.fetch({ ...query, paramName: val })}
+              url={replenishmentPlan.QUERY_DRUG_BY_LIST}
+              cb={(value, option) => {
+                let {query} = this.state;
+                query = {
+                  ...query,
+                  hisDrugCodeList: value ? [value] : []
+                };
+                this.setState({
+                  query,
+                  value
+                });
+              }}
             />
           </Col>
         </Row>

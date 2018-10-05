@@ -81,7 +81,7 @@ class AddUser extends PureComponent{
         this.setState({ btnLoading: false });
         let {location} = this.props;
         location.pathname = location.pathname.split('/');
-        location.pathname.length = 5;
+        location.pathname.length = 4;
         location.pathname = location.pathname.join('/');
         history.push({ pathname: location.pathname })
       } 

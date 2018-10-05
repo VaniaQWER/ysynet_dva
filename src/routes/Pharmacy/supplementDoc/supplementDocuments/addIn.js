@@ -17,23 +17,27 @@ const modalColumns = [
   {
     title: '货位',
     dataIndex: 'goodsName',
+    width: 112
   },
   {
     title: '货位类型',
-    dataIndex: 'positionTypeName',
+    dataIndex: 'storeTypeName',
+    width: 168
   },
   {
     title: '通用名称',
     dataIndex: 'ctmmGenericName',
+    width: 168
   },
   {
     title: '商品名',
     dataIndex: 'ctmmTradeName',
+    width: 224
   },
   {
     title: '规格',
     dataIndex: 'ctmmSpecification',
-    width: 180,
+    width: 168,
     className:'ellipsis',
     render:(text)=>(
       <Tooltip placement="topLeft" title={text}>{text}</Tooltip>
@@ -41,22 +45,26 @@ const modalColumns = [
   },
   {
     title: '剂型',
-    width: 180,
+    width: 168,
     dataIndex: 'ctmmDosageFormDesc',
   },
   {
     title: '包装规格',
-    width: 100,
+    width: 112,
     dataIndex: 'packageSpecification',
   },
   {
     title: '生产厂家',
-    width: 100,
+    width: 224,
     dataIndex: 'ctmmManufacturerName',
+    className:'ellipsis',
+    render:(text)=>(
+      <Tooltip placement="topLeft" title={text}>{text}</Tooltip>
+    )
   },
   {
     title: '批准文号',
-    width: 100,
+    width: 224,
     dataIndex: 'approvalNo',
   }
 ]
@@ -234,12 +242,12 @@ class AddSupplementDocuments extends PureComponent{
       {
         title: '货位',
         width: 112,
-        dataIndex: 'goosName',
+        dataIndex: 'goodsName',
       },
       {
         title: '货位类型',
         width: 112,
-        dataIndex: 'positionTypeName',
+        dataIndex: 'storeTypeName',
       },
       {
         title: '通用名',
@@ -255,6 +263,10 @@ class AddSupplementDocuments extends PureComponent{
         title: '生产厂家',
         width: 224,
         dataIndex: 'ctmmManufacturerName',
+        className: 'ellipsis',
+        render:(text)=>(
+          <Tooltip placement="topLeft" title={text}>{text}</Tooltip>
+        )
       },
       {
         title: '包装规格',
@@ -407,7 +419,7 @@ class AddSupplementDocuments extends PureComponent{
               ref="table"
               isJson={true}
               url={supplementDoc.addlist}
-              scroll={{x: '180%'}}
+              scroll={{x: 1616}}
               columns={modalColumns}
               rowKey={'drugCode'}
               rowSelection={{

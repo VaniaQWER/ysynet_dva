@@ -139,14 +139,18 @@ const columns = [
   {
     title: '通用名称',
     dataIndex: 'genericName',
+    width: 168,
+    fixed: 'left'
   },
   {
     title: '商品名称',
     dataIndex: 'tradeName',
+    width: 224
   },
   {
     title: '规格',
     dataIndex: 'specification',
+    width: 168,
     className: 'ellipsis',
     render:(text)=>(
       <Tooltip placement="topLeft" title={text}>{text}</Tooltip>
@@ -155,24 +159,27 @@ const columns = [
   {
     title: '剂型',
     dataIndex: 'dosageDesc',
+    width: 168
   },
   {
     title: '包装规格',
     dataIndex: 'packageSpecification',
+    width: 112
   },
   {
     title: '单位',
     dataIndex: 'unit',
-    width: 100
+    width: 60
   },
   {
     title: '药品编码',
     dataIndex: 'hisDrugCode',
-    width: 150
+    width: 224
   },
   {
     title: '批准文号',
     dataIndex: 'approvalNo',
+    width: 224
   }
 ]
 
@@ -247,22 +254,27 @@ class DrugDirectory extends PureComponent{
       {
         title: '生产厂家',
         dataIndex: 'manufactureName',
+        width: 224,
+        className: 'ellipsis',
+        render:(text)=>(
+          <Tooltip placement="topLeft" title={text}>{text}</Tooltip>
+        )
       },
       {
         title: '库存上限',
         dataIndex: 'upperQuantity',
-        width: 100
+        width: 112
       },
       {
        title: '库存下限',
        dataIndex: 'downQuantity',
-       width: 100
+       width: 112
       },
       {
         title: '操作',
         dataIndex: 'action',
         fixed: 'right',
-        width: 100,
+        width: 60,
         render: (text,record)=>{
           return  <span>
             <Link to={{pathname: `/baseDrug/drugMgt/drugCatalog/edit/bCode=${record.bigDrugCode}&dCode=${record.drugCode}&id=${record.id}`}}>{'编辑'}</Link>
@@ -353,7 +365,7 @@ class DrugDirectory extends PureComponent{
         query={query}
         style={{marginTop: 20}}
         columns={IndexColumns}
-        scroll={{ x: '180%' }}
+        scroll={{ x: 1348 }}
         url={drugMgt.FIND_MEDICINE_CATALOG}
         rowSelection={{
           selectedRowKeys: this.state.selected,

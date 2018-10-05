@@ -10,17 +10,17 @@ import querystring from 'querystring';
 const columns = [
   {
     title: '通用名',
-    width:100,
+    width: 168,
     dataIndex: 'ctmmGenericName'
   },
   {
     title: '商品名',
-    width:150,
+    width: 224,
     dataIndex: 'ctmmTradeName',
   },
   {
     title: '规格',
-    width:150,
+    width: 168,
     dataIndex: 'ctmmSpecification',
     className:'ellipsis',
     render:(text)=>(
@@ -29,53 +29,57 @@ const columns = [
   },
   {
     title: '剂型',
-    width:150,
+    width: 168,
     dataIndex: 'ctmmDosageFormDesc',
   },
   {
     title: '包装规格',
-    width:150,
+    width: 168,
     dataIndex: 'packageSpecification'
   },
   {
     title: '单位',
-    width:100,
+    width: 60,
     dataIndex: 'replanUnit'
   },
   {
     title: '出库数量',
-    width:100,
+    width: 112,
     dataIndex: 'backNum'
   },
   {
     title: '生产批号',
-    width:150,
+    width: 168,
     dataIndex: 'lot',
   },
   {
     title: '生产日期',
-    width:150,
+    width: 168,
     dataIndex: 'productDate',
   },
   {
     title: '有效期至',
-    width:150,
+    width: 168,
     dataIndex: 'validEndDate'
     
   },
   {
     title: '批准文号',
-    width:150,
+    width: 224,
     dataIndex: 'approvalNo',
   },
   {
     title: '生产厂家',
-    width:150,
+    width: 224,
     dataIndex: 'ctmmManufacturerName',
+    className:'ellipsis',
+    render:(text)=>(
+      <Tooltip placement="topLeft" title={text}>{text}</Tooltip>
+    )
   },
   {
     title: '供应商',
-    width:150,
+    width: 224,
     dataIndex: 'supplierName',
   }
 ];
@@ -257,7 +261,7 @@ class DetailsOutput extends PureComponent{
             bordered
             loading={loading}
             dataSource={detailVo || []}
-            scroll={{x: '250%'}}
+            scroll={{x: 2244}}
             columns={columns}
             rowKey={'batchNo'}
             pagination={false}
