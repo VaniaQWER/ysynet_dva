@@ -266,9 +266,10 @@ class DepartmentMgt extends PureComponent{
   render(){
     const columns = [
       {
-        title: '部门名称',
-        dataIndex: 'deptName',
+        title: '部门性质',
+        dataIndex: 'deptType',
         width: 168,
+        render:(text,record,index)=>text?DeptFormat[text]:''
       },
       {
         title: '科室名称',
@@ -276,10 +277,9 @@ class DepartmentMgt extends PureComponent{
         width: 168,
       },
       {
-        title: '部门类型',
-        dataIndex: 'deptType',
+        title: '部门名称',
+        dataIndex: 'deptName',
         width: 168,
-        render:(text,record,index)=>text?DeptFormat[text]:''
       },
       {
         title: '地址',
@@ -367,10 +367,10 @@ class DepartmentMgt extends PureComponent{
           onCancel={this.onCancelModal}
           >
           <Form onSubmit={this.onSubmit}>
-            <FormItem {...singleFormItemLayout} label={`部门类型`}>
+            <FormItem {...singleFormItemLayout} label={`部门性质`}>
               {
                 getFieldDecorator(`deptType`,{
-                  rules: [{ required: true,message: '请输入部门类型' }]
+                  rules: [{ required: true,message: '请输入部门性质' }]
                 })(
                   <Select onSelect={(val)=>this.props.form.setFieldsValue({deptType:val})}>
                     {
@@ -382,21 +382,21 @@ class DepartmentMgt extends PureComponent{
                 )
               }
             </FormItem>
+            <FormItem {...singleFormItemLayout} label={`科室名称`}>
+              {
+                getFieldDecorator(`openDeptName`,{//openDeptCode
+                  rules: [{ required: true,message: '请输入科室名称' }]
+                })(
+                  <Input onClick={this.showDeptModal} readOnly/>
+                )
+              }
+            </FormItem>
             <FormItem {...singleFormItemLayout} label={`部门名称`}>
               {
                 getFieldDecorator(`deptName`,{
                   rules: [{ required: true,message: '请输入部门名称' }]
                 })(
                   <Input />
-                )
-              }
-            </FormItem>
-            <FormItem {...singleFormItemLayout} label={`科室`}>
-              {
-                getFieldDecorator(`openDeptName`,{//openDeptCode
-                  rules: [{ required: true,message: '请输入科室' }]
-                })(
-                  <Input onClick={this.showDeptModal} readOnly/>
                 )
               }
             </FormItem>

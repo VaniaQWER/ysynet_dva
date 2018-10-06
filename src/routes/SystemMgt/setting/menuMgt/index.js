@@ -49,7 +49,7 @@ class MenuMgt extends PureComponent{
       {
         title: '菜单名称',
         dataIndex: 'name',
-        width: 168
+        width: 224
       },
       {
         title: '链接',

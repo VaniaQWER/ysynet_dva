@@ -9,7 +9,7 @@
  * @file 系统管理--组织机构--用户管理
  */
 import React, { PureComponent } from 'react';
-import { Form, Row, Col, Input, Select, Button, Icon, Popconfirm, Modal } from 'antd';
+import { Form, Row, Col, Input, Select, Button, Icon, Popconfirm, Modal, Badge } from 'antd';
 import { formItemLayout } from '../../../../utils/commonStyles';
 import RemoteTable from '../../../../components/TableGrid';
 import { systemMgt } from '../../../../api/systemMgt';
@@ -219,14 +219,25 @@ class UserMgt extends PureComponent{
         width: 112
       },
       {
-        title: '所属科室',
+        title: '部门性质',
+        dataIndex: 'deptType',
+        width: 168
+      },
+      {
+        title: '科室名称',
         dataIndex: 'hisCtDeptNme',
         width: 168,
       },
       {
-        title: '部门',
+        title: '部门名称',
         dataIndex: 'deptName',
         width: 168,
+      },
+      {
+        title: '状态',
+        dataIndex: 'isStart',
+        width: 112,
+        render: text => <Badge status={text==="0" ? "success" :"error"} text={text==="0" ? "启用" :"停用"}/>
       },
       {
         title: '编辑人',
@@ -268,7 +279,7 @@ class UserMgt extends PureComponent{
           columns={columns}
           bordered
           query={query}
-          scroll={{ x: 1138 }}
+          scroll={{ x: 1250 }}
           url={systemMgt.FINDUSERLIST}
           rowKey={'loginName'}
           onChange={this._tableChange}

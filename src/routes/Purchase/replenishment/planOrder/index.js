@@ -271,6 +271,10 @@ class PlanOrder extends PureComponent{
           </span>  
         }
       },{
+        title: '计划单号',
+        dataIndex: 'planCode',
+        width: 168,
+      },{
         title: '订单状态',
         dataIndex: 'orderStatusName',
         width: 112,
@@ -312,7 +316,7 @@ class PlanOrder extends PureComponent{
           />
          <div className='ant-row-bottom'>
             <Button type='primary' onClick={this.sendOrder} disabled >发送订单</Button>
-            <Button type='default' onClick={this.closeOrder} loading={loading} style={{ marginLeft: 8 }}>关闭订单</Button>
+            <Button type='default' onClick={this.closeOrder} loading={loading} style={{ marginLeft: 8 }}>取消订单</Button>
          </div>
          <RemoteTable 
             onChange={this._tableChange}
@@ -321,7 +325,7 @@ class PlanOrder extends PureComponent{
             isJson={true}
             query={query}
             ref='table'
-            scroll={{ x: 1448 }}
+            scroll={{ x: 1500 }}
             rowKey={'id'}
             url={replenishmentPlan.PURCHASEORDERLIST}
             rowSelection={{
