@@ -72,7 +72,10 @@ class Output extends PureComponent{
   constructor(props) {
     super(props);
     this.state = {
-      selected: []
+      selected: [],
+      query: {
+        backType: '3'
+      }
     }
   }
   _tableChange = values => {
@@ -147,7 +150,6 @@ export default connect(state=>state)(Output);
 class SearchFormWrapper extends PureComponent {
   state = {
     status: [],
-    type: [],
     dept: []
   }
   componentDidMount() {
@@ -160,15 +162,15 @@ class SearchFormWrapper extends PureComponent {
         this.setState({status: data});
       }
     });
-    this.props.formProps.dispatch({
-      type: 'base/orderStatusOrorderType',
-      payload: {
-        type: 'out_store_type'
-      },
-      callback: (data) => {
-        this.setState({type: data});
-      }
-    });
+    // this.props.formProps.dispatch({
+    //   type: 'base/orderStatusOrorderType',
+    //   payload: {
+    //     type: 'room_out_store_type'
+    //   },
+    //   callback: (data) => {
+    //     this.setState({type: data});
+    //   }
+    // });
     this.props.formProps.dispatch({
       type: 'base/findAllDepts',
       callback: (data) => {
@@ -225,10 +227,9 @@ class SearchFormWrapper extends PureComponent {
   }
 
   render() {
-    let {status, type, dept} = this.state;
+    let {status, dept} = this.state;
     const { getFieldDecorator } = this.props.form;
     status = this.dataRender(status);
-    type = this.dataRender(type);
     dept = dept.map((item, i) => {
       return <Option key={i} value={item.id}>{item.deptName}</Option>
     });
@@ -258,7 +259,7 @@ class SearchFormWrapper extends PureComponent {
               )}
             </FormItem>
           </Col>
-          <Col span={8} style={{display: display}}>
+          {/* <Col span={8} style={{display: display}}>
             <FormItem label={`出库分类`} {...formItemLayout}>
               {getFieldDecorator('backType')(
                 <Select 
@@ -271,7 +272,7 @@ class SearchFormWrapper extends PureComponent {
                 </Select>
               )}
             </FormItem>
-          </Col>
+          </Col> */}
           <Col span={8} style={{display: display}}>
             <FormItem label={`单据号`} {...formItemLayout}>
               {getFieldDecorator('orderNo')(
@@ -293,7 +294,7 @@ class SearchFormWrapper extends PureComponent {
               )}
             </FormItem>
           </Col>
-          <Col span={8} style={{ textAlign: 'right', marginTop: 4}} >
+          <Col span={8} style={{float: 'right', textAlign: 'right', marginTop: 4}} >
             <Button type="primary" htmlType="submit">查询</Button>
             <Button style={{marginLeft: 8}} onClick={this.handleReset}>重置</Button>
             <a style={{marginLeft: 8, fontSize: 14}} onClick={this.toggle}>

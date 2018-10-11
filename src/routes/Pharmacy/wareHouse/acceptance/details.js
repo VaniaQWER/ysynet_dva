@@ -9,23 +9,9 @@ import querystring from 'querystring';
 import {connect} from 'dva';
 const columns = [
   {
-    title: '实到数量',
-    width: 112,
-    dataIndex: 'realReceiveQuantiry'
-  },
-  {
-    title: '需求数量',
-    width: 112,
-    dataIndex: 'realDeliveryQuantiry'
-  },
-  {
-    title: '单位',
-    width: 112,
-    dataIndex: 'replanUnit'
-  },
-  {
     title: '通用名',
     width: 168,
+    fixed: 'left',
     dataIndex: 'ctmmGenericName'
   },
   {
@@ -41,6 +27,26 @@ const columns = [
     render: (text)=>(
       <Tooltip placement="topLeft" title={text}>{text}</Tooltip>
     )
+  },
+  {
+    title: '生产批号',
+    width: 168,
+    dataIndex: 'productBatchNo',
+  },
+  {
+    title: '实到数量',
+    width: 112,
+    dataIndex: 'realReceiveQuantiry'
+  },
+  {
+    title: '需求数量',
+    width: 112,
+    dataIndex: 'realDeliveryQuantiry'
+  },
+  {
+    title: '单位',
+    width: 112,
+    dataIndex: 'replanUnit'
   },
   {
     title: '剂型',
@@ -68,11 +74,6 @@ const columns = [
     )
   },
   {
-    title: '生产批号',
-    width: 168,
-    dataIndex: 'productBatchNo',
-  },
-  {
     title: '生产日期',
     width: 168,
     dataIndex: 'realProductTime',
@@ -96,8 +97,8 @@ class DetailsNewLibrary extends PureComponent{
     this.state={
       checkLoading: false,
       detailInfo: {},
-      defaultActiveKey: info.state,
-      btnShow: info.state === '1'? true : false,
+      defaultActiveKey: null,
+      btnShow: false,
       loading: false,
       id: info.id,
       info: {},
@@ -119,7 +120,9 @@ class DetailsNewLibrary extends PureComponent{
       callback: (data) => {
         this.setState({
           loading: false,
-          info: data
+          info: data,
+          defaultActiveKey: data.auditStatus === 1 ? '1' : '2',
+          btnShow: data.auditStatus === 1 ? true : false,
         })
       }
     })
@@ -161,14 +164,10 @@ class DetailsNewLibrary extends PureComponent{
   }
 
   tabsChange = (key) =>{
-    let {info} = this.state;
-    let {listUnCheck} = info;
-    if(key === '2') {
-      this.setState({btnShow: false});
-    };
-    if(key === '1' && listUnCheck !== undefined && listUnCheck.length !== 0) {
-      this.setState({btnShow: true});
-    };
+    this.setState({
+      btnShow: key === '1', 
+      defaultActiveKey: key
+    });
   }
 
   render(){
@@ -238,7 +237,7 @@ class DetailsNewLibrary extends PureComponent{
             </Row>
           </div>
         <div className='detailCard'>
-          <Tabs defaultActiveKey={defaultActiveKey} onChange={this.tabsChange} tabBarExtraContent={ btnShow && unVerfiyList && unVerfiyList.length > 0? <Button loading={checkLoading} type='primary' onClick={this.saveCheck}>确认验收</Button> : null}>
+          <Tabs activeKey={defaultActiveKey} onChange={this.tabsChange} tabBarExtraContent={ btnShow && unVerfiyList && unVerfiyList.length > 0? <Button loading={checkLoading} type='primary' onClick={this.saveCheck}>确认验收</Button> : null}>
             <TabPane tab="待验收" key="1">
               <Table
                 bordered
@@ -258,7 +257,7 @@ class DetailsNewLibrary extends PureComponent{
               <Table
                 loading={loading}
                 bordered
-                scroll={{x: 2456}}
+                scroll={{x: 2408}}
                 columns={columns}
                 dataSource={verifyList || []}
                 rowKey={'id'}

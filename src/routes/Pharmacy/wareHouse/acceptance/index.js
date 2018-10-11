@@ -176,7 +176,7 @@ render() {
         <Col span={8}>
           <FormItem label={`单据`} {...formItemLayout}>
             {getFieldDecorator('distributeCode', {})(
-            <Input placeholder='入库单/配送单/订单号'/>
+            <Input placeholder='出库单/申领单'/>
             )}
           </FormItem>
         </Col>

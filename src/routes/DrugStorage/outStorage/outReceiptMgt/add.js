@@ -331,7 +331,7 @@ class AddOutput extends PureComponent{
               <Button onClick={()=>this.delete()} >移除</Button>
             </Col>
             <Col span={6}>
-                接收部门：
+                收货部门：
                 <Select
                   notFoundContent={<Spin size="small" />}
                   onChange={this.change}

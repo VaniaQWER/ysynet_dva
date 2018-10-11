@@ -130,8 +130,8 @@ class SearchForm extends PureComponent{
                   initialValue: ''
                 })(
                   <Select>
-                    <Option key={-1} value='1'>是</Option>
-                    <Option key={-1} value='2'>否</Option>
+                    <Option key={0} value='2'>是</Option>
+                    <Option key={1} value='1'>否</Option>
                   </Select>
                 )
               }

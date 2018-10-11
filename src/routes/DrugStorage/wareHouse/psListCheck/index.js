@@ -83,7 +83,7 @@ class SearchForm extends PureComponent{
     this.props.formProps.dispatch({
       type: 'base/orderStatusOrorderType',
       payload: {
-        type: 'audit_status'
+        type: 'acceptance_checkVo'
       },
       callback: (data)=>{
         this.setState({status: data})
@@ -136,6 +136,13 @@ class SearchForm extends PureComponent{
   toggle = () => {
     this.props.formProps.dispatch({
       type:'base/setShowHide'
+    });
+  }
+  //重置
+  handleReset = () => {
+    this.props.form.resetFields();
+    this.props.formProps.dispatch({
+      type:'base/clearQueryConditions'
     });
   }
   listRender = (list) => {

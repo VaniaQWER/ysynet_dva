@@ -139,7 +139,7 @@
 }
 
 .logoWrapper {
-  height: 61px;
+  height: 55px;
   position: relative;
   /* background-color: #fff; */
   color: #000;
@@ -149,7 +149,6 @@
   -o-transition: all .3s;
   transition: all .3s;
   overflow: hidden;
-  border-bottom: 3px solid #f0f2f5;
 }
 /*lable显示文字时 left*/
 .ant-form-item-label-left{
@@ -454,8 +453,8 @@ td:hover .editable-cell-icon {
   width: 100%;
   min-height: 300px;
   background:#fff url('./assets/emptyTable.jpg') no-repeat center;
-
 }
+
 
 /* @media screen and (min-width:1440px){
   .ant-table-empty .ant-table-placeholder:after{

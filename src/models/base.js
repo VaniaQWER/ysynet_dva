@@ -81,6 +81,16 @@ export default {
         message.error(data.msg);
       }
     },
+    //基数药验收 - 确认验收
+    *baseSaveCheck({payload, callback}, {call}) {
+      const data = yield call(baseDrug.saveCheck, payload);
+      console.log(data, '验收');
+      if(data.code === 200 && data.msg === 'success') {
+        callback && callback(data.data);
+      }else {
+        message.error(data.msg);
+      }
+    },
     // 采购部门
     *getModule({ payload,callback },{ call }){
       const data = yield call(replenishment.getModule, payload);
@@ -107,9 +117,28 @@ export default {
       };
       callback && callback();
     },
+    //基数药申领 - 保存提交
+    *baseapplySave({payload, callback}, {call}) {
+      const data = yield call(pharmacy.baseapplySave, payload);
+      if(data.code !== 200) {
+        message.error(data.msg);
+        return;
+      };
+      callback && callback();
+    },
     //药品申领 - 新建申领 - 添加产品
     *applyAddDrug({payload, callback}, {call}) {
       const data = yield call(pharmacy.applyAddDrug, payload);
+      console.log(data, '添加产品');
+      if(data.code === 200 && data.msg === 'success') {
+        callback && callback(data.data);
+      }else {
+        message.error(data.msg);
+      }
+    },
+    //基数药申领 - 新建申领 - 添加产品
+    *baseapplyAddDrug({payload, callback}, {call}) {
+      const data = yield call(baseDrug.baseapplyAddDrug, payload);
       console.log(data, '添加产品');
       if(data.code === 200 && data.msg === 'success') {
         callback && callback(data.data);

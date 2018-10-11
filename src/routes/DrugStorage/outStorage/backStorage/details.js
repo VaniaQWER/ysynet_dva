@@ -46,7 +46,7 @@ const columns = [
   {
     title: '生产批号',
     width: 168,
-    dataIndex: 'batchNo',
+    dataIndex: 'lot',
   },
   {
     title: '生产日期',

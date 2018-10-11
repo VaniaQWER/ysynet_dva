@@ -345,6 +345,8 @@ class EditDrugDirectory extends PureComponent{
                 <div className='ant-form-item-control'>{fillBackData?fillBackData.ctmmAnotherName:''}</div>
               </div>
             </Col>
+          </Row>
+          <Row>
             <Col span={8}>
               <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
                 <label>规格</label>
@@ -370,6 +372,8 @@ class EditDrugDirectory extends PureComponent{
                 <div className='ant-form-item-control'>{fillBackData?fillBackData.ctmmDosageFormDesc:''}</div>
               </div>
             </Col>
+          </Row>
+          <Row>
             <Col span={8}>
               <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
                   <label>生产厂家</label>
@@ -394,6 +398,8 @@ class EditDrugDirectory extends PureComponent{
                 <div className='ant-form-item-control'>{fillBackData?fillBackData.hisDrugCode : ''}</div>
               </div>
             </Col>
+          </Row>
+          <Row>
             <Col span={8}>
               <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
                   <label>状态</label>
@@ -482,7 +488,7 @@ class EditDrugDirectory extends PureComponent{
                   </FormItem>
                 </Col>
                 <Col span={10}>
-                  <FormItem {...formItemLayout} label={`采购量`}>
+                  <FormItem {...formItemLayout} label={`补货量`}>
                     {
                       getFieldDecorator(`purchaseQuantity`,{
                         initialValue: fillBackData?fillBackData.purchaseQuantity:''

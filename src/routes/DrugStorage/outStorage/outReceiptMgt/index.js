@@ -41,7 +41,7 @@ const columns = [
     dataIndex: 'status',
   },
   {
-    title: '申领部门',
+    title: '收货部门',
     width: 168,
     dataIndex: 'deptName'
   },
@@ -112,11 +112,6 @@ class Output extends PureComponent{
     return (
       <div className='ysynet-main-content'>
         <SearchForm formProps={{...this.props}} />
-        <Row>
-          <Button type='primary' className='button-gap'>
-            <Link to={{pathname:`/addNewOutput`}}>新建出库</Link>
-          </Button>
-        </Row>
         <RemoteTable
           onChange={this._tableChange}
           query={query}
@@ -152,7 +147,7 @@ class SearchFormWrapper extends PureComponent {
     this.props.formProps.dispatch({
       type: 'base/orderStatusOrorderType',
       payload: {
-        type: 'out_store_type'
+        type: 'depot_out_store_type'
       },
       callback: (data) => {
         this.setState({type: data});

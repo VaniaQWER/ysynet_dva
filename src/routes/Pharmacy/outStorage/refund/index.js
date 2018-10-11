@@ -52,7 +52,7 @@ const columns = [
   {
     title: '复核人',
     width: 112,
-    dataIndex: 'reviewUserId',
+    dataIndex: 'reviewUserName',
    },
    {
     title: '复核时间',
@@ -64,6 +64,7 @@ const columns = [
 class SearchFormWrapper extends PureComponent {
   state = {
     back_status_options: [], // 状态
+    backCause: []
   }
   toggle = () => {
     this.props.formProps.dispatch({
@@ -78,6 +79,17 @@ class SearchFormWrapper extends PureComponent {
       payload: { type: 'back_status' },
       callback: (data) =>{
         this.setState({ back_status_options: data });
+      }
+    });
+    dispatch({
+      type: 'base/orderStatusOrorderType',
+      payload: {
+        type: 'back_cause_room'
+      },
+      callback: (data) => {
+        this.setState({
+          backCause: data
+        });
       }
     });
     let { queryConditons } = this.props.formProps.base;
@@ -117,7 +129,7 @@ class SearchFormWrapper extends PureComponent {
     });
   }
   render() {
-    const { back_status_options } = this.state;
+    const { back_status_options, backCause } = this.state;
     const { getFieldDecorator } = this.props.form;
     const {display} = this.props.formProps.base;
     const expand = display === 'block'; 
@@ -135,10 +147,17 @@ class SearchFormWrapper extends PureComponent {
           </Col>
           <Col span={8}>
             <FormItem label={`退库原因`} {...formItemLayout}>
-              {getFieldDecorator('backCause',{
-                initialValue: ''
-              })(
-               <Input placeholder='请输入'/>
+              {getFieldDecorator('backCause')(
+                <Select
+                  placeholder="请选择退库原因"
+                  style={{width: '100%'}}
+                >
+                  {
+                    backCause.map(item => (
+                      <Option key={item.value} value={item.value}>{item.label}</Option>
+                    ))
+                  }
+                </Select>
               )}
             </FormItem>
           </Col>
@@ -167,7 +186,7 @@ class SearchFormWrapper extends PureComponent {
               )}
             </FormItem>
           </Col>
-          <Col span={this.state.expand ? 16 : 8} style={{ textAlign: 'right', marginTop: 4}} >
+          <Col span={8} style={{float: 'right', textAlign: 'right', marginTop: 4}} >
             <Button type="primary" htmlType="submit">查询</Button>
             <Button style={{marginLeft: 8}} onClick={this.handleReset}>重置</Button>
             <a style={{marginLeft: 8, fontSize: 14}} onClick={this.toggle}>

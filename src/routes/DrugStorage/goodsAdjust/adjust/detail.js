@@ -83,7 +83,12 @@ const columns = [
     title: '包装规格',
 		width: 168,
     dataIndex: 'packageSpecification'
-  }
+  },
+  {
+    title: '生产批号',
+		width: 168,
+    dataIndex: 'lot'
+  },
 ];
 
 class ReplenishmentDetail extends PureComponent{
@@ -152,7 +157,7 @@ class ReplenishmentDetail extends PureComponent{
             loading={loading}
             dataSource={roomLocAdjustDetailVoList || []}
             bordered
-            scroll={{x: 1904}}
+            scroll={{x: 2072}}
             columns={columns}
             rowKey={'drugCode'}
           />

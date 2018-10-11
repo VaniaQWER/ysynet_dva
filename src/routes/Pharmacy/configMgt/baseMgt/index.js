@@ -6,7 +6,7 @@
  */
 
 import React , {PureComponent} from 'react';
-import { Form, Row, Col, Button, Input, Select } from 'antd';
+import { Form, Row, Col, Button, Select } from 'antd';
 import {Link} from 'react-router-dom';
 import RemoteTable from '../../../../components/TableGrid';
 import { baseMgt } from '../../../../api/pharmacy/configMgt';
@@ -97,7 +97,7 @@ class SearchForm extends PureComponent{
             </FormItem>
           </Col>
           <Col span={8}>
-            <FormItem {...formItemLayout} label={`货位`}>
+            {/* <FormItem {...formItemLayout} label={`货位`}>
               {
                 getFieldDecorator(`storeLocName`,{
                   initialValue: ''
@@ -105,7 +105,7 @@ class SearchForm extends PureComponent{
                   <Input placeholder='请输入' />
                 )
               }
-            </FormItem>
+            </FormItem> */}
           </Col>
           <Col style={{textAlign: 'right'}} span={8}>
             <Button type="primary" htmlType="submit">查询</Button>
@@ -134,15 +134,15 @@ class BaseMgt extends PureComponent{
         title: '部门名称',
         dataIndex: 'deptName'
       },
-      {
-        title: '货位名称',
-        dataIndex: 'storeLoc',
-      },
+      // {
+      //   title: '货位名称',
+      //   dataIndex: 'storeLoc',
+      // },
       {
         title: '操作',
         dataIndex: 'RN',
-        width: 60,
-        render: (text, record) => <Link to={{pathname: `/pharmacy/configMgt/baseMgt/drug/code=${record.deptCode}&loc=${record.storeLoc}`}}>药品</Link>
+        width: 112,
+        render: (text, record) => <Link to={{pathname: `/pharmacy/configMgt/baseMgt/drug/code=${record.deptCode}`}}>编辑目录</Link>
       }
     ];
     let query = this.props.base.queryConditons;

@@ -74,86 +74,86 @@ class RecallAndLockedDetail extends PureComponent {
     render() {
 			const { detailsData, dataSource, spinning } = this.state;
 			const { recallStatus } = this.props.match.params;
-        const columns = [
-					{
-						title: '部门',
-						width: 168,
-						dataIndex: 'deptName',
-					},
-					{
-						title: '库存数量',
-						width: 112,
-						dataIndex: 'recallNum',
-					},
-					{
-						title: '单位',
-						width: 60,
-						dataIndex: 'unit',
-					},
-					{
-						title: '通用名',
-						dataIndex: 'ctmmGenericName',
-						width: 168,
-					},
-					{
-						title: '商品名',
-						dataIndex: 'ctmmTradeName',
-						width: 224,
-					},
-					{
-						title: '规格',
-						dataIndex: 'ctmmSpecification',
-						width: 168,
-						className: 'ellipsis',
-						render: (text) => (
-								<Tooltip placement="topLeft" title={text}>{text}</Tooltip>
-						)
-					},
-					{
-						title: '剂型',
-						width: 168,
-						dataIndex: 'ctmmDosageFormDesc'
-					},
-					{
-						title: '包装规格',
-						width: 168,
-						dataIndex: 'packageSpecification',
-					},
-					{
-						title: '生产批号',
-						width: 168,
-						dataIndex: 'lot'
-					},
-					{
-						title: '生产日期',
-						width: 168,
-						dataIndex: 'productDate',
-					},
-					{
-						title: '有效期至',
-						width: 168,
-						dataIndex: 'validEndDate',
-					},
-					{
-						title: '生产厂家',
-						dataIndex: 'ctmmManufacturerName',
-						width: 224,
-						className: 'ellipsis',
-						render: (text) => (
-								<Tooltip placement="topLeft" title={text}>{text}</Tooltip>
-						)
-					},
-					{
-						title: '批准文号',
-						dataIndex: 'approvalNo',
-						width: 224,
-					},
-					{
-						title: '供应商',
-						width: 224,
-						dataIndex: 'supplierName'
-					}
-        ];
+			const columns = [
+				{
+					title: '部门',
+					width: 168,
+					dataIndex: 'deptName',
+				},
+				{
+					title: '库存数量',
+					width: 112,
+					dataIndex: 'recallNum',
+				},
+				{
+					title: '单位',
+					width: 60,
+					dataIndex: 'unit',
+				},
+				{
+					title: '通用名',
+					dataIndex: 'ctmmGenericName',
+					width: 168,
+				},
+				{
+					title: '商品名',
+					dataIndex: 'ctmmTradeName',
+					width: 224,
+				},
+				{
+					title: '规格',
+					dataIndex: 'ctmmSpecification',
+					width: 168,
+					className: 'ellipsis',
+					render: (text) => (
+							<Tooltip placement="topLeft" title={text}>{text}</Tooltip>
+					)
+				},
+				{
+					title: '剂型',
+					width: 168,
+					dataIndex: 'ctmmDosageFormDesc'
+				},
+				{
+					title: '包装规格',
+					width: 168,
+					dataIndex: 'packageSpecification',
+				},
+				{
+					title: '生产批号',
+					width: 168,
+					dataIndex: 'lot'
+				},
+				{
+					title: '生产日期',
+					width: 168,
+					dataIndex: 'productDate',
+				},
+				{
+					title: '有效期至',
+					width: 168,
+					dataIndex: 'validEndDate',
+				},
+				{
+					title: '生产厂家',
+					dataIndex: 'ctmmManufacturerName',
+					width: 224,
+					className: 'ellipsis',
+					render: (text) => (
+							<Tooltip placement="topLeft" title={text}>{text}</Tooltip>
+					)
+				},
+				{
+					title: '批准文号',
+					dataIndex: 'approvalNo',
+					width: 224,
+				},
+				{
+					title: '供应商',
+					width: 224,
+					dataIndex: 'supplierName'
+				}
+			];
         return (
 					<Spin spinning={spinning}>
 						<div className='fullCol fadeIn'>

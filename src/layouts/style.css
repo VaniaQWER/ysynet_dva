@@ -12,9 +12,10 @@
 }
 
 .content {
-  min-height: calc(100vh - 145px);
+  min-height: calc(100vh - 110px);
   padding: 16px;
-  margin-top: 16px;
+  margin: 0 -16px 0;
+  border: 16px solid #f0f2f5;
   background: #fff;
 }
 
@@ -26,23 +27,31 @@
   position: fixed;
   bottom: 0;
   cursor: pointer;
-  height: 48px;
-  line-height: 48px;
-  color: #fff;
+  height: 40px;
+  line-height: 40px;
+  background: #fff;
   z-index: 1;
   padding-left: 30px;
   -webkit-transition: all .2s;
   transition: all .2s;
+  border-right: 1px solid #e8e8e8;
 }
 .trigger{
   color: #f2a11c;
   font-size: 18px;
 }
+.affix{
+  background:#fff;
+}
 .header {
   background: #fff;
+  border-bottom: 3px solid #f0f2f5;
   height: 58px;
+  padding: 0;
+  margin: 0;
   line-height: 58px;
   font-size: 16px;
+  width:100%;
 }
 .subHeader{
   height: 52px;
@@ -58,4 +67,72 @@
   display: flex;
   justify-content: flex-end;
   margin-right: 16px;
+}
+
+.sider {
+  background-color: '#fff';
+  position: fixed;
+  overflow: auto;
+  height: calc(100vh - 98px);
+  left: 0;
+}
+
+.sider::-webkit-scrollbar {
+  width: 7px;
+  display: none;
+  background-color: rgba(0, 0, 0, 0);
+}
+
+.sider::-webkit-scrollbar-thumb {
+  border-radius: 10px;
+  background-color: rgba(0, 0, 0, .1);
+}
+
+.sider::-webkit-scrollbar-track {
+  border-radius: 10px;
+  background-color: rgba(0, 0, 0, 0);
+}
+.sider::-moz-scrollbar {
+  width: 7px;
+  display: none;
+  background-color: rgba(0, 0, 0, 0);
+}
+
+.sider::-moz-scrollbar-thumb {
+  border-radius: 10px;
+  background-color: rgba(0, 0, 0, .1);
+}
+
+.sider::-moz-scrollbar-track {
+  border-radius: 10px;
+  background-color: rgba(0, 0, 0, 0);
+}
+.sider::-ms-scrollbar {
+  width: 7px;
+  display: none;
+  background-color: rgba(0, 0, 0, 0);
+}
+
+.sider::-ms-scrollbar-thumb {
+  border-radius: 10px;
+  background-color: rgba(0, 0, 0, .1);
+}
+
+.sider::-ms-scrollbar-track {
+  border-radius: 10px;
+  background-color: rgba(0, 0, 0, 0);
+}
+.sider::-o-scrollbar {
+  width: 7px;
+  display: none;
+  background-color: rgba(0, 0, 0, 0);
+}
+
+.sider::-o-scrollbar-thumb {
+  border-radius: 10px;
+  background-color: rgba(0, 0, 0, .1);
+}
+.sider::-o-scrollbar-track {
+  border-radius: 10px;
+  background-color: rgba(0, 0, 0, 0);
 }

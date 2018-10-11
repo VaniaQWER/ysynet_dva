@@ -59,7 +59,8 @@ const columns = [
 class SearchFormWrapper extends PureComponent {
   state = {
     back_status_options: [], // 状态
-    supplierList: []
+    supplierList: [],
+    backCause: []
   }
   toggle = () => {
     this.props.formProps.dispatch({
@@ -74,6 +75,17 @@ class SearchFormWrapper extends PureComponent {
       payload: { type: 'back_status' },
       callback: (data) =>{
         this.setState({ back_status_options: data });
+      }
+    });
+    dispatch({
+      type: 'base/orderStatusOrorderType',
+      payload: {
+        type: 'back_cause'
+      },
+      callback: (data) => {
+        this.setState({
+          backCause: data
+        });
       }
     });
     dispatch({
@@ -120,7 +132,7 @@ class SearchFormWrapper extends PureComponent {
     });
   }
   render() {
-    const { back_status_options, supplierList } = this.state;
+    const { back_status_options, supplierList, backCause } = this.state;
     const { getFieldDecorator } = this.props.form;
     const {display} = this.props.formProps.base;
     const expand = display === 'block';
@@ -137,7 +149,16 @@ class SearchFormWrapper extends PureComponent {
           <Col span={8}>
             <FormItem label={`退货原因`} {...formItemLayout}>
               {getFieldDecorator('backCause')(
-               <Input placeholder="请输入"/>
+                <Select
+                  placeholder="请选择退货原因"
+                  style={{width: '100%'}}
+                >
+                  {
+                    backCause.map(item => (
+                      <Option key={item.value} value={item.value}>{item.label}</Option>
+                    ))
+                  }
+                </Select>
               )}
             </FormItem>
           </Col>

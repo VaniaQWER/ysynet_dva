@@ -12,11 +12,12 @@ import NewAdd from './routes/Purchase/replenishment/replenishmentPlan/add';
 import CatalogAdd from './routes/Purchase/replenishment/outCatalogPurchase/add';
 import AddDrugsFor from './routes/Pharmacy/wareHouse/drugsFor/add';
 import AddNewAcceptance from './routes/Pharmacy/wareHouse/acceptance/add';
-import AddOutput from './routes/DrugStorage/outStorage/outReceiptMgt/add';
+import AddOutput from './routes/DrugStorage/outStorage/withdraw/add';
 import AddNewBackStorage from './routes/DrugStorage/outStorage/backStorage/add' // 药库退货
 import AddNewBackStoragePlan from './routes/Pharmacy/outStorage/refund/add' // 药房退库
 import AddNewReCallOrLocked from './routes/DrugStorage/outStorage/recallAndLocked/add'; // 药库 新建召回, 新建锁定
 import PharmacyAddNewOutput from './routes/Pharmacy/outStorage/newOut/add';
+import PharmacyAddNewBaseOutput from './routes/Pharmacy/outStorage/baseReplen/add';
 import PslistAdd from './routes/DrugStorage/wareHouse/psListCheck/add';
 import NewAddGoodsAdjust  from './routes/DrugStorage/goodsAdjust/adjust/add';
 import PharmacyAddGoodsAdjust from './routes/Pharmacy/goodsAdjust/adjust/add';
@@ -97,6 +98,7 @@ function RouterConfig({ history, app }) {
           <Route path="/editPharmacyBackStoragePlan/:backNo" component={AddNewBackStoragePlan}/>
           <Route path="/AddNewReCallOrLocked/:type" component={AddNewReCallOrLocked}/>
           <Route path="/pharmacyAddNewOutput" component={PharmacyAddNewOutput}/>
+          <Route path="/pharmacyAddNewBaseOutput" component={PharmacyAddNewBaseOutput}/>
           <Route path="/AddNewCheck" component={PslistAdd}/>
           <Route path="/addGoodsAdjust" component={NewAddGoodsAdjust}/>
           <Route path="/pharmacyAddGoodsAdjust" component={PharmacyAddGoodsAdjust}/>

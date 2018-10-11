@@ -1,6 +1,6 @@
 import React, { PureComponent } from 'react';
 import { Route, Switch, Redirect } from 'dva/router';
-import { Layout, Icon, Row, Col, Tooltip, Menu, Dropdown, Spin,  } from 'antd';//Affix
+import { Layout, Icon, Row, Col, Tooltip, Menu, Dropdown, Spin, Affix } from 'antd';//Affix
 import { connect } from 'dva';
 import Profile from '../components/profile'
 import SiderMenu from '../components/SiderMenu';
@@ -201,15 +201,53 @@ class BasicLayout extends PureComponent {
     return (
       <Layout>
         {/* <Affix offsetTop={0}> */}
+
+        <Affix offsetTop={0} className={`${styles.affix}`}>
+          <Header className={`${styles.header}`}>
+            <Row>
+              <Col style={{ width: this.state.collapsed ? 80: 232 , float: 'left'}}>
+                <div className='logoWrapper'>
+                  <div className='logo'></div>
+                </div>
+              </Col>
+              <Col span={4} style={{ paddingLeft: 16 }}>
+                {
+                  currentDept.deptId &&
+                  <Dropdown overlay={this.menu(deptList)} trigger={['click']}>
+                    <Tooltip title='子系统切换' placement='right'>
+                      <span className="ant-dropdown-link">
+                        {currentDept.deptName} <Icon type="down" style={{ marginLeft: 8 }}/>
+                      </span>
+                    </Tooltip>
+                  </Dropdown>
+                }
+              </Col>
+              <Col span={14} style={{textAlign: 'right', float: 'right'}}>
+                <div className={styles.profile}>
+                  {/* <div>
+                    <Tooltip title="子系统切换">
+                      <Icon type="sync" className={styles.icon} onClick={() => this.props.history.push({
+                        pathname: '/subSystem'
+                      })}/> 
+                    </Tooltip>
+                  </div> */}
+                  <Profile userName={userInfo.name}/>
+                </div>
+              </Col>
+            </Row>
+          </Header>
+        </Affix>
+        <Layout>
           <Sider
             trigger={null}
             collapsible
             width={232}
             collapsed={this.state.collapsed}
+            className={styles.sider}
             style={{
-              backgroundColor: '#fff'
+              background: '#fff'
             }}
-          >
+            >
             <SiderMenu 
               history={this.props.history}
               collapsed={this.state.collapsed}
@@ -227,70 +265,43 @@ class BasicLayout extends PureComponent {
                 />
             </div>
           </Sider>
-        {/* </Affix> */}
-        <Content>
-          {/* <Affix offsetTop={0}> */}
-            <Header className={`${styles.header}`} style={{ marginBottom: 3,padding: 0 }}>
-              <Row>
-                <Col span={4} style={{ paddingLeft: 16 }}>
+          <Layout  style={{ marginLeft: this.state.collapsed ? 80: 232 }}>
+            {/* </Affix> */}
+            <Content>
+              <Header className={`${styles.subHeader}`}>
+                <Tooltip title='返回' placement='bottom'>
                   {
-                    currentDept.deptId &&
-                    <Dropdown overlay={this.menu(deptList)} trigger={['click']}>
-                      <Tooltip title='子系统切换' placement='right'>
-                        <span className="ant-dropdown-link">
-                          {currentDept.deptName} <Icon type="down" style={{ marginLeft: 8 }}/>
-                        </span>
-                      </Tooltip>
-                    </Dropdown>
+                    pathname.length > 5 && 
+                    <a onClick={()=>this.props.history.go(-1)}>
+                      <Icon type="arrow-left" theme="outlined" style={{ fontSize: 18, marginRight: 16 }}/>
+                    </a>
                   }
-                </Col>
-                <Col span={20} style={{textAlign: 'right'}}>
-                  <div className={styles.profile}>
-                    {/* <div>
-                      <Tooltip title="子系统切换">
-                        <Icon type="sync" className={styles.icon} onClick={() => this.props.history.push({
-                          pathname: '/subSystem'
-                        })}/> 
-                      </Tooltip>
-                    </div> */}
-                    <Profile userName={userInfo.name}/>
-                  </div>
-                </Col>
-              </Row>
-            </Header>
-          {/* </Affix> */}
-          <Header className={`${styles.subHeader}`}>
-            <Tooltip title='返回' placement='bottom'>
-              {
-                pathname.length > 5 && 
-                <a onClick={()=>this.props.history.go(-1)}>
-                  <Icon type="arrow-left" theme="outlined" style={{ fontSize: 18, marginRight: 16 }}/>
-                </a>
-              }
-            </Tooltip>
-            <span>{title}</span>
-          </Header>
-          {hasDept ? (
-            <Content className={`${styles.content}`}>
-              <Switch>
-                <Redirect from="/" to="/login" exact={true}/>
-                {
-                  getRouteData('BasicLayout').map(item =>
-                    (
-                      <Route
-                        exact={item.exact}
-                        key={item.path}
-                        path={item.path}
-                        component={item.component}
-                      />
-                    )
-                  )
-                }
-                <Route component={() => <div>404</div>} />
-              </Switch>
+                </Tooltip>
+                <span>{title}</span>
+              </Header>
+              {hasDept ? (
+                <Content className={`${styles.content}`}>
+                  <Switch>
+                    <Redirect from="/" to="/login" exact={true}/>
+                    {
+                      getRouteData('BasicLayout').map(item =>
+                        (
+                          <Route
+                            exact={item.exact}
+                            key={item.path}
+                            path={item.path}
+                            component={item.component}
+                          />
+                        )
+                      )
+                    }
+                    <Route component={() => <div>404</div>} />
+                  </Switch>
+                </Content>
+              ) : <Spin><div className={styles.content} style={{background: '#fff'}}></div></Spin>}
             </Content>
-          ) : <Spin><div className={styles.content} style={{background: '#fff'}}></div></Spin>}
-        </Content>
+          </Layout>  
+        </Layout>
       </Layout>  
     )
   }

@@ -103,7 +103,7 @@ class AddMenuMgt extends PureComponent{
   //取消 - 提交表单
   goBack = () => {
     const { history } = this.props;
-    history.push({pathname:'/sys/menu'})
+    history.push({pathname:'/sys/menu/menuMgt'})
   }
 
   // 选择上级菜单 

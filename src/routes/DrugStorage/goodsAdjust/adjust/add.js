@@ -26,7 +26,7 @@ class NewAddGoodsAdjust extends PureComponent{
     modalSelected: [],
     modalSelectedRows: [],
     query: {
-      existDrugCodeList: [],
+      existDrugList: [],
       hisDrugCodeList: []
     },
     dataSource: [],
@@ -43,7 +43,7 @@ class NewAddGoodsAdjust extends PureComponent{
     
     modalSelectedRows = modalSelectedRows.map(item=>{
       return {
-        batchNo: item.batchNo,
+        drugCode: item.drugCode,
         lot: item.lot,
         locCode: item.goodsCode
       }
@@ -75,11 +75,16 @@ class NewAddGoodsAdjust extends PureComponent{
 
   showModal = () => {
     let {dataSource, query} = this.state;
-    dataSource = dataSource.map(item=>item.drugCode);
+    dataSource = dataSource.map(item=>({
+        drugCode: item.drugCode,
+        locCode: item.goodsCode,
+        lot: item.lot,
+      })
+    );
     this.setState({
       query: {
         ...query,
-        existDrugCodeList: dataSource
+        existDrugList: dataSource
       }, 
       visible: true,
     });
@@ -135,13 +140,15 @@ class NewAddGoodsAdjust extends PureComponent{
         goalLocCode: item.goalLocCode,
         goalUnit: item.targetUnitCode,
         lot: item.lot,
+        goalLot: item.lot,
         originalBigDrugCode: item.bigDrugCode,
-        originalUnit: item.replanUnitCode,
         originalLocCode: item.goodsCode,
         originalStore: item.usableQuantity,
         productDate: item.productDate,
         supplierCode: item.supplierCode,
-        validEndDate: item.validEndDate
+        validEndDate: item.validEndDate,
+        originalUnit: item.replanUnitCode,
+        originLocName: item.goodsName
       }
     });
     
@@ -252,7 +259,7 @@ class NewAddGoodsAdjust extends PureComponent{
       {
         title: '目的货位',
         dataIndex: 'goalLocCode',
-		    width: 120,
+		    width: 168,
         render: (text, record, i) => {
           return <Select
                   style={{width: '100%'}}
@@ -284,6 +291,11 @@ class NewAddGoodsAdjust extends PureComponent{
         title: '转换系数',
 		    width: 112,
         dataIndex: 'conversionRate'
+      },
+      {
+        title: '生产批号',
+        dataIndex: 'lot',
+        width: 168,
       },
       {
         title: '包装规格',
@@ -320,6 +332,22 @@ class NewAddGoodsAdjust extends PureComponent{
         title: '包装规格',
 		    width: 168,
         dataIndex: 'packageSpecification'
+      },{
+        title: '生产批号',
+		    width: 168,
+        dataIndex: 'lot'
+      },{
+        title: '生产日期',
+		    width: 168,
+        dataIndex: 'productDate'
+      },{
+        title: '有效期至',
+		    width: 168,
+        dataIndex: 'validEndDate'
+      },{
+        title: '数量',
+		    width: 112,
+        dataIndex: 'usableQuantity'
       },{
         title: '生产厂家',
         dataIndex: 'ctmmManufacturerName',
@@ -366,7 +394,7 @@ class NewAddGoodsAdjust extends PureComponent{
             bordered
             rowKey='id'
             dataSource={dataSource}
-            scroll={{ x: 1968 }}
+            scroll={{ x: 2184 }}
             pagination={false}
             rowSelection={{
               selectedRowKeys: this.state.selected,
@@ -429,7 +457,7 @@ class NewAddGoodsAdjust extends PureComponent{
             url={goodsAdjust.roomDrugList}
             style={{ marginTop: 16 }} 
             columns={modalColumns}
-            scroll={{ x: 1672 }}
+            scroll={{ x: 2288 }}
             rowKey='id'
             rowSelection={{
               selectedRowKeys: this.state.modalSelected,

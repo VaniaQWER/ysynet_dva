@@ -88,7 +88,6 @@ class MenuMgt extends PureComponent{
         title: '操作',
         dataIndex: 'action',
         width: 170,
-        fixed: 'right',
         render: (text,record,index)=>{
           return <span>
             <Link className='button-gap' to={{pathname:`/sys/menu/menuMgt/add/${querystring.stringify({id:record.id,parentId:record.parentId})}`}}>编辑</Link>

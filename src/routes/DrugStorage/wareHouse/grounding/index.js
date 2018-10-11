@@ -166,8 +166,10 @@ class SearchFormWrapper extends PureComponent {
  //重置
   handleReset = () => {
     this.props.form.resetFields();
+    this.props.formProps.dispatch({
+      type:'base/clearQueryConditions'
+    });
   }
-
   render() {
     let { status, type } = this.state;
     const { getFieldDecorator } = this.props.form;

@@ -62,7 +62,7 @@ const columns = [
   },
   {
     title: '生产批号',
-    dataIndex: 'flot',
+    dataIndex: 'lot',
     width: 180,
     render: (text,record,index)=>{
       return <Input defaultValue={text || 'PH123'}/>

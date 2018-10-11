@@ -10,6 +10,14 @@ export function drugsForInfo(options) {
   })
 };
 
+export function baseDrugsForInfo(options) {
+  return request(`${_local}/a/baseapply/detail`, {
+    method: 'GET',
+    type: 'formData',
+    body: options
+  })
+}
+
 export function selectApplyDept(options) {
   return request(`${_local}/a/apply/selectApplyDept`, {
     method: 'POST',
@@ -94,6 +102,14 @@ export function roomacceptanceInfo(options) {
 
 export function finish(options) {
   return request(`${_local}/a/checkacceptdetail/finish`, {
+    method: 'POST',
+    type: 'json',
+    body: options
+  })
+}
+
+export function baseapplySave(options) {
+  return request(`${_local}/a/baseapply/save`, {
     method: 'POST',
     type: 'json',
     body: options

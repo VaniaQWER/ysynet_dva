@@ -124,7 +124,7 @@ class Details extends PureComponent{
                 <div className='detailCard'>
                     <h3 style={{marginBottom: 16}}>库存信息</h3>
                     <RemoteTable
-                        rowKey="id"
+                        rowKey="batchNo"
                         query={query}
                         url={drugStorage.getDetailList}
                         columns={columns}

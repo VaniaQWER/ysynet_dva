@@ -67,7 +67,6 @@ class AddOutput extends PureComponent{
       selectedRow: [],
       visible: false,
       dataSource: [],
-      type: [],
       dept: [],
       query: {},
       submitLoading: false
@@ -78,16 +77,9 @@ class AddOutput extends PureComponent{
     this.props.dispatch({
       type: 'base/findAllDeptsAndType',
       callback: (data) => {
-        let type = data.map((item) => {
-          return {
-            key: item.key + '',
-            value: item.value
-          }
-        });
-        type = _.uniqWith(type, _.isEqual);
+        data = data.filter(item => item.key === 3);
         this.setState({
           dept: data,
-          type
         });
       }
     })
@@ -101,13 +93,13 @@ class AddOutput extends PureComponent{
       return;
     };
     dataSource = _.difference(dataSource, selectedRow);
-    this.setState({dataSource});
+    this.setState({dataSource, selectedRowKeys: []});
   }
 
   //提交该出库单
   onSubmit = () =>{
-    let {outStoreType, dataSource, deptCode} = this.state;
-    if(outStoreType === undefined || deptCode === undefined) {
+    let {dataSource, deptCode} = this.state;
+    if(deptCode === undefined) {
       message.warning('请选择部门和类型');
       return;
     };
@@ -132,7 +124,7 @@ class AddOutput extends PureComponent{
       payload: {
         detail: {
           deptCode,
-          outStoreType,
+          outStoreType: '3',
           listDetail
         }
       },
@@ -140,7 +132,7 @@ class AddOutput extends PureComponent{
         this.setState({
           submitLoading: false
         });
-        this.props.history.push('/drugStorage/outStorage/outReceiptMgt');
+        this.props.history.push('/pharmacy/outStorage/newOut');
       }
     })
   }
@@ -149,7 +141,7 @@ class AddOutput extends PureComponent{
     let {dataSource} = this.state;
     let listDetail = dataSource.map(item=>{
       return {
-        batch: item.lot,
+        batchNo: item.lot,
         drugCode: item.drugCode
       }
     });
@@ -189,17 +181,8 @@ class AddOutput extends PureComponent{
   }
 
   deptChange = (value) => {
-   let {dept} = this.state;
-   let outStoreType;
-   dept.map(item => {
-     if(item.id === value) {
-       outStoreType = item.key + '';
-     };
-     return item;
-   });
     this.setState({
-      deptCode: value,
-      outStoreType
+      deptCode: value
     });
   }
   
@@ -298,13 +281,10 @@ class AddOutput extends PureComponent{
         dataIndex: 'approvalNo',
       }
     ];
-    let {visible, selectedRowKeyModal, dataSource, type, dept, query, submitLoading, outStoreType} = this.state; 
+    let {visible, selectedRowKeyModal, dataSource, dept, query, submitLoading, selectedRowKeys} = this.state; 
     dept = dept.map((item, i) => {
       return <Option key={i} value={item.id}>{item.deptName}</Option>
     });
-    type = type.map((item, i) => {
-      return <Option key={i} value={item.key}>{item.value}</Option>
-    })
     return (
       <div className='fullCol' style={{padding: '0 24px 24px', background: 'rgb(240, 242, 245)'}}>
         <div className='fullCol-fullChild' style={{marginLeft: '-24px', marginRight: '-24px', marginTop: 0}}>
@@ -344,7 +324,7 @@ class AddOutput extends PureComponent{
                   {dept}
                 </Select>
             </Col>
-            <Col span={6}>
+            {/* <Col span={6}>
               出库类型：
                 <Select
                   disabled
@@ -357,22 +337,23 @@ class AddOutput extends PureComponent{
                   >
                   {type}
                 </Select>
-            </Col>
+            </Col> */}
           </Row>
         </div>
         <div className='detailCard' style={{margin: '-10px -6px'}}>
           <h3 style={{paddingBottom: 10, borderBottom: '1px solid rgba(0, 0, 0, .1)'}}>产品信息</h3>
           <Table
             rowSelection={{
+              selectedRowKeys: selectedRowKeys,
               onChange:(selectedRowKey, selectedRow)=>{
-                this.setState({selectedRow})
+                this.setState({selectedRow, selectedRowKeys: selectedRowKey})
               }
             }}
             bordered
             dataSource={dataSource}
             scroll={{x: '200%'}}
             columns={columns}
-            rowKey={'lot'}
+            rowKey={'batchNo'}
             style={{marginTop: 24}}
           />
         </div>
@@ -385,7 +366,7 @@ class AddOutput extends PureComponent{
           }}>
             取消
           </Button>
-          <Button loading={submitLoading} type="primary" className='button-gap' style={{float:'right'}} onClick={() => this.onSubmit()}>
+          <Button loading={submitLoading} type="primary" className='button-gap' style={{float:'right'}} onClick={this.onSubmit}>
             确定
           </Button>
         </div> : null

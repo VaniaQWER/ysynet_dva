@@ -39,7 +39,7 @@ export function getPutStorageInfo(options) {    //入库单详情
   })
 };
 
-export function saveCheck(options) {       //增加验收批号
+export function saveCheck(options) {       //确认验收
   return request(`${_local}/a/checkacceptdetail/checkList`, {
     method: 'POST',
     type: 'json',

@@ -153,7 +153,7 @@ class SearchFormWrapper extends PureComponent {
           <Col span={8}>
             <FormItem label={`单号`} {...formItemLayout}>
               {getFieldDecorator('inStoreCode', {})(
-                <Input placeholder='入库单/配送单/订单号'/>
+                <Input placeholder='入库单/出库单/申领单'/>
               )}
             </FormItem>
           </Col>

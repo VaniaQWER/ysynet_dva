@@ -4,7 +4,7 @@
 * @Last Modified time: 2018-07-24 13:16:33 
  */
 import React, { PureComponent } from 'react';
-import { Table ,Row, Col, Card, Spin, Button, Modal , InputNumber , Tooltip, message, Affix } from 'antd';
+import { Table ,Row, Col, Spin, Button, Modal , InputNumber , Tooltip, message, Affix } from 'antd';
 import { connect } from 'dva';
 const Conform = Modal.confirm;
 
@@ -332,7 +332,7 @@ class DetailsPicking extends PureComponent{
     ];
     return (
       <div className='ysynet-content'>
-        <Card>
+        <div style={{margin: '0 16px'}}>
           <Spin spinning={loading}>
             <div className='ysynet-details-flex-header'>
               <h3>单据信息</h3>
@@ -455,7 +455,7 @@ class DetailsPicking extends PureComponent{
           {
             this.affixButton()
           }
-        </Card>
+        </div>
       </div>
     )
   }

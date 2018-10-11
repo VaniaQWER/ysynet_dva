@@ -169,6 +169,7 @@ class NewAdd extends PureComponent {
       {
         title: '通用名称',
         dataIndex: 'ctmmGenericName',
+        fixed: 'left',
         width: 168
       }, {
         title: '商品名',
@@ -210,8 +211,12 @@ class NewAdd extends PureComponent {
           return <InputNumber
                     defaultValue={text}
                     min={1}
+                    max={record.locaUpperQuantity}
                     precision={0}
                     onChange={(value)=>{
+                      if(value > record.locaUpperQuantity) {
+                        return message.warning('申领数量不得大于库存上限!');
+                      };
                       dataSource = JSON.parse(JSON.stringify(dataSource));
                       dataSource[i].applyNum = value;
                       this.setState({dataSource});
@@ -219,16 +224,16 @@ class NewAdd extends PureComponent {
                  />
         }
       }, {
-        title: '药库库存',
-        dataIndex: 'usableQuantity',
+        title: '可用库存',
+        dataIndex: 'localUsableQuantity',
         width: 112,
       }, {
         title: '库存上限',
-        dataIndex: 'upperQuantity',
+        dataIndex: 'locaUpperQuantity',
         width: 112,
       }, {
         title: '库存下限',
-        dataIndex: 'downQuantity',
+        dataIndex: 'localDownQuantity',
         width: 112,
       }, {
         title: '批准文号',

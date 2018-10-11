@@ -106,7 +106,7 @@ class SearchForm extends PureComponent{
               }
             </FormItem>
           </Col>
-          <Col span={8} style={{ display: display }}>
+          {/* <Col span={8} style={{ display: display }}>
             <FormItem {...formItemLayout} label={`是否报告药`}>
               {
                 getFieldDecorator('medDrugType',{
@@ -120,7 +120,7 @@ class SearchForm extends PureComponent{
                 )
               }
             </FormItem>
-          </Col>
+          </Col> */}
           <Col span={8} style={{float: 'right', textAlign: 'right', marginTop: 4}} >
            <Button type="primary" htmlType="submit">查询</Button>
            <Button type='default' style={{marginLeft: 8}} onClick={this.handleReset}>重置</Button>
@@ -140,7 +140,10 @@ const columns = [
     title: '通用名称',
     dataIndex: 'genericName',
     width: 168,
-    fixed: 'left'
+    fixed: 'left',
+    render: (text, record) => (
+      <Link to={{pathname: `/baseDrug/drugMgt/drugCatalog/edit/bCode=${record.bigDrugCode}&dCode=${record.drugCode}&id=${record.id}`}}>{text}</Link>
+    )
   },
   {
     title: '商品名称',
@@ -261,25 +264,9 @@ class DrugDirectory extends PureComponent{
         )
       },
       {
-        title: '库存上限',
-        dataIndex: 'upperQuantity',
+        title: '库存基数',
+        dataIndex: 'stockBase',
         width: 112
-      },
-      {
-       title: '库存下限',
-       dataIndex: 'downQuantity',
-       width: 112
-      },
-      {
-        title: '操作',
-        dataIndex: 'action',
-        fixed: 'right',
-        width: 60,
-        render: (text,record)=>{
-          return  <span>
-            <Link to={{pathname: `/baseDrug/drugMgt/drugCatalog/edit/bCode=${record.bigDrugCode}&dCode=${record.drugCode}&id=${record.id}`}}>{'编辑'}</Link>
-          </span>
-        }
       },
     ];
     let query = this.props.base.queryConditons;
@@ -288,11 +275,11 @@ class DrugDirectory extends PureComponent{
     return (
     <div className='ysynet-main-content'>
       <WrappSearchForm formProps={{...this.props}}/>
-      <Row className='ant-row-bottom'>
+      {/* <Row className='ant-row-bottom'>
         <Col>
           <Button type='primary' onClick={this.bitchEdit}>批量设置上下限</Button>
         </Col>
-      </Row>
+      </Row> */}
       <Modal
         title={'批量编辑'}
         width={488}
@@ -365,14 +352,14 @@ class DrugDirectory extends PureComponent{
         query={query}
         style={{marginTop: 20}}
         columns={IndexColumns}
-        scroll={{ x: 1348 }}
+        scroll={{ x: 1176 }}
         url={drugMgt.FIND_MEDICINE_CATALOG}
-        rowSelection={{
-          selectedRowKeys: this.state.selected,
-          onChange: (selectedRowKeys, selectedRows) => {
-            this.setState({selected: selectedRowKeys, selectedRows: selectedRows})
-          }
-        }}
+        // rowSelection={{
+        //   selectedRowKeys: this.state.selected,
+        //   onChange: (selectedRowKeys, selectedRows) => {
+        //     this.setState({selected: selectedRowKeys, selectedRows: selectedRows})
+        //   }
+        // }}
         rowKey='id'
       />
     </div>

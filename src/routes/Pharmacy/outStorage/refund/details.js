@@ -46,7 +46,7 @@ const columns = [
   {
     title: '生产批号',
     width: 168,
-    dataIndex: 'batchNo',
+    dataIndex: 'lot',
   },
   {
     title: '生产日期',
@@ -135,7 +135,7 @@ class DetailsRefund extends PureComponent{
             <div className='ysynet-details-flex-header'>
               <h3>单据信息</h3>
               {
-                detailsData.backStatus === 1 &&
+                detailsData.backStatus === 3 &&
                 <div style={{ textAlign: 'right' }}>
                   <Link to={{pathname: `/editPharmacyBackStoragePlan/${this.props.match.params.backNo}`}}><Button type='default'>编辑</Button></Link>
                 </div>

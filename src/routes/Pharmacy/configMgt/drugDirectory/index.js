@@ -149,13 +149,12 @@ const columns = [
   {
     title: '通用名称',
     dataIndex: 'ctmmGenericName',
-    width: 168
+    width: 168,
   },
   {
     title: '商品名称',
     dataIndex: 'ctmmTradeName',
     width: 224
-    
   },
   {
     title: '规格',
@@ -320,12 +319,12 @@ class DrugDirectory extends PureComponent{
       },
       {
         title: '库存上限',
-        dataIndex: 'downQuantity',
+        dataIndex: 'upperQuantity',
         width: 112
       },
       {
        title: '库存下限',
-       dataIndex: 'upperQuantity',
+       dataIndex: 'downQuantity',
        width: 112
       },
       {

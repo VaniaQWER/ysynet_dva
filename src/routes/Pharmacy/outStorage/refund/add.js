@@ -4,7 +4,7 @@
 * @Last Modified time: 2018-07-24 13:13:55 
  */
 import React, { PureComponent } from 'react';
-import { Table , Col, Button, Icon, Modal , message, InputNumber, Input , Affix , Row , Tooltip, Spin, Form } from 'antd';
+import { Table , Col, Button, Icon, Modal , message, InputNumber, Input , Affix , Row , Tooltip, Spin, Form, Select } from 'antd';
 import { outStorage } from '../../../../api/drugStorage/outStorage';
 import { Link } from 'react-router-dom';
 import RemoteTable from '../../../../components/TableGrid';
@@ -12,7 +12,7 @@ import _ from 'lodash';
 import { connect } from 'dva';
 const FormItem = Form.Item;
 const Conform = Modal.confirm;
-
+const {Option} = Select;
 const formItemLayout = {
   labelCol: {
     xs: { span: 24 },
@@ -23,7 +23,16 @@ const formItemLayout = {
     sm: { span: 16 },//17
   },
 }
-
+const formRemarkLayout = {
+  labelCol: {
+    xs: { span: 24 },
+    sm: { span: 6 },//5
+  },
+  wrapperCol: {
+    xs: { span: 24 },
+    sm: { span: 18 },//17
+  },
+}
 const modalColumns = [
   {
     title: '通用名称',
@@ -47,7 +56,7 @@ const modalColumns = [
   {
     title: '生产批号',
     width: 168,
-    dataIndex: 'batchNo',
+    dataIndex: 'lot',
   },
   {
     title: '生产日期',
@@ -66,7 +75,7 @@ const modalColumns = [
   },
   {
     title: '包装单位',
-    width: 60,
+    width: 112,
     dataIndex: 'unit',
   },
   {
@@ -89,6 +98,86 @@ const modalColumns = [
     width: 224,
   }
 ]
+class RemarksForm extends PureComponent{
+  state = {
+    recallReason: [],
+    remarks: ''
+  }
+  componentDidMount() {
+    this.props.dispatch({
+      type: 'base/orderStatusOrorderType',
+      payload: {
+        type: 'back_cause_room'
+      },
+      callback: (data) => {
+        data = data.filter(item => item.value !== '');
+        this.setState({
+          recallReason: data
+        });
+      }
+    });
+  }
+  componentWillReceiveProps(nextProps) {
+    if(this.props.detailsData.backCause !== nextProps.detailsData.backCause) {
+      this.setState({
+        remarks: nextProps.detailsData.backCause
+      })
+    };
+  }
+  render() {
+    const { getFieldDecorator } = this.props.form;
+    const { detailsData } = this.props;
+    let {recallReason, remarks} = this.state;
+    recallReason = recallReason.map(item => (
+      <Option key={item.value} value={item.value}>{item.label}</Option>
+    ));
+    return (
+      <Form>
+        <Row gutter={30}>
+          <Col span={12}>
+            <FormItem label={`退货原因`} {...formRemarkLayout}>
+              {getFieldDecorator('backCause', {
+                initialValue: detailsData.backCause ? detailsData.backCause : '',
+                rules: [{
+                  required: true, message: '请选择退货原因',
+                }]
+              })(
+                <Select
+                  placeholder="请选择退货原因"
+                  onChange={(value) => {
+                    this.setState({
+                      remarks: value
+                    })
+                  }}
+                  style={{width: '100%'}}
+                >
+                  {recallReason}
+                </Select>
+              )}
+            </FormItem>
+          </Col>
+          <Col span={12}>
+            {
+              remarks === '其他' ? 
+                <FormItem label={`原因`} {...formRemarkLayout}>
+                  {getFieldDecorator('backcauseOther',{
+                    initialValue: detailsData.backCauseOther ? detailsData.backCauseOther : '',
+                    rules: [{
+                        required: true, message: '请输入原因',
+                    }]
+                  })(
+                  <Input placeholder='请输入原因'/>
+                  )}
+                </FormItem>
+              : null
+            }
+          </Col>
+        </Row>
+      </Form>
+    )
+  }
+}
+const RemarksFormWarp = Form.create()(RemarksForm);
 class AddRefund extends PureComponent{
 
   constructor(props){
@@ -102,7 +191,6 @@ class AddRefund extends PureComponent{
       isEdit: false,
       btnLoading: false, // 添加产品modal 确认
       detailsData: {}, // 详情
-      backCause: null,
       dataSource: [],
       selected: [],  // 新建, 编辑 table 勾选
       selectedRows: [],
@@ -128,7 +216,6 @@ class AddRefund extends PureComponent{
           let { query } = this.state;
           let existDrugCodeList = data.list.map(item => item.drugCode);
           this.setState({ 
-            backCause: data.backCause,
             detailsData: data, 
             isEdit: true, 
             dataSource: data.list,
@@ -162,27 +249,35 @@ class AddRefund extends PureComponent{
   }
   //提交该出库单
   backStroage = () =>{
-    const {  dataSource, backCause } = this.state;
-    Conform({
-      content:"是否确认退库",
-      onOk:()=>{
-        const { dispatch, history } = this.props;
-        let postData = {}, backDrugList = [];
-        dataSource.map(item => backDrugList.push({ backNum: item.backNum, drugCode: item.drugCode, batchNo: item.batchNo }));
-        postData.backDrugList = backDrugList;
-        postData.backcause = backCause;
-        console.log(postData,'postData')
-        dispatch({
-          type: 'base/submitBackStorage',
-          payload: { ...postData },
-          callback: () => {
-            message.success('退库成功');
-            history.push({pathname:"/drugStorage/outStorage/backStorage"})
-          }
+    const {  dataSource } = this.state;
+    this.refs.remarksForm.validateFields((err, values) => {
+      if(!err) {
+        Conform({
+          content:"是否确认退库",
+          onOk:()=>{
+            const { dispatch, history } = this.props;
+            let postData = {}, backDrugList = [];
+            dataSource.map(item => backDrugList.push({ backNum: item.backNum, drugCode: item.drugCode, batchNo: item.batchNo }));
+            postData.backDrugList = backDrugList;
+            postData.backcause = values.backCause;
+            if(values.backcauseOther) {
+              postData.backcauseOther = values.backcauseOther;
+            }
+            console.log(postData,'postData')
+            dispatch({
+              type: 'base/submitBackStorage',
+              payload: { ...postData },
+              callback: () => {
+                message.success('退库成功');
+                history.push({pathname:"/drugStorage/outStorage/backStorage"})
+              }
+            })
+          },
+          onCancel:()=>{}
         })
-      },
-      onCancel:()=>{}
+      }
     })
+    
   }
 
   //添加产品 到 主表
@@ -240,13 +335,9 @@ class AddRefund extends PureComponent{
         dataIndex: 'unit',
       },
       {
-        title: '包装规格',
+        title: '有效期至',
         width: 168,
-        dataIndex: 'packageSpecification',
-        className:'ellipsis',
-        render:(text)=>(
-          <Tooltip placement="topLeft" title={text}>{text}</Tooltip>
-        )
+        dataIndex: 'validEndDate',
       },
       {
         title: '通用名称',
@@ -269,19 +360,23 @@ class AddRefund extends PureComponent{
         dataIndex: 'ctmmDosageFormDesc',
       },
       {
+        title: '包装规格',
+        width: 168,
+        dataIndex: 'packageSpecification',
+        className:'ellipsis',
+        render:(text)=>(
+          <Tooltip placement="topLeft" title={text}>{text}</Tooltip>
+        )
+      },
+      {
         title: '生产批号',
         width: 168,
-        dataIndex: 'batchNo',
+        dataIndex: 'lot',
       },
       {
         title: '生产日期',
         width: 168,
         dataIndex: 'productDate',
-      },
-      {
-        title: '有效期至',
-        width: 168,
-        dataIndex: 'validEndDate',
       },
       {
         title: '批准文号',
@@ -331,11 +426,13 @@ class AddRefund extends PureComponent{
                 </Button>
               <Button onClick={this.delete} >移除</Button>
             </Col>
-            <Col span={24}>
-              <Input placeholder='请输入退库原因' 
-                defaultValue={detailsData.backCause? detailsData.backCause: ''}
-                onInput={e => this.setState({ backCause: e.target.value })} 
-                style={{width:250, marginTop:12}}
+          </Row>
+          <Row style={{ marginTop: 10 }}>
+            <Col span={12}>
+              <RemarksFormWarp
+                detailsData={detailsData}
+                dispatch={this.props.dispatch}
+                ref="remarksForm"
               />
             </Col>
           </Row>
@@ -348,7 +445,7 @@ class AddRefund extends PureComponent{
               bordered
               scroll={{x: 2404}}
               columns={columns}
-              rowKey={'drugCode'}
+              rowKey={'id'}
               style={{marginTop: 24}}
               rowSelection={{
                 selectedRowKeys: this.state.selected,

@@ -67,7 +67,8 @@ const columns = [
 /* 搜索 - 表单 */
 class SearchFormWrapper extends PureComponent {
   state = {
-    recall_status_options: []
+    recall_status_options: [],
+    recallReason: []
   }
   componentDidMount = () =>{
     const { dispatch } = this.props.formProps;
@@ -77,6 +78,17 @@ class SearchFormWrapper extends PureComponent {
       callback: (data) =>{
         let res = data.filter(item => item.value === '' || item.value === '1' || item.value === '2' || item.value === '4');
         this.setState({ recall_status_options: res });
+      }
+    });
+    dispatch({
+      type: 'base/orderStatusOrorderType',
+      payload: {
+        type: 'recall_reason'
+      },
+      callback: (data) => {
+        this.setState({
+          recallReason: data
+        });
       }
     });
     let { queryConditons } = this.props.formProps.base;
@@ -122,7 +134,7 @@ class SearchFormWrapper extends PureComponent {
   }
  
   render() {
-    const { recall_status_options } = this.state;
+    const { recall_status_options, recallReason } = this.state;
     const { getFieldDecorator } = this.props.form;
     const {display} = this.props.formProps.base;
     const expand = display === 'block';
@@ -158,10 +170,17 @@ class SearchFormWrapper extends PureComponent {
           </Col>
           <Col span={8} style={{ display }}>
             <FormItem label={'原因'} {...formItemLayout}>
-              {getFieldDecorator('remarks',{
-                initialValue: ''
-              })(
-                <Input placeholder={'请输入'} />
+              {getFieldDecorator('remarks',)(
+                <Select
+                  placeholder="请选择原因"
+                  style={{width: '100%'}}
+                >
+                  {
+                    recallReason.map(item => (
+                      <Option key={item.value} value={item.value}>{item.label}</Option>
+                    ))
+                  }
+                </Select>
               )}
             </FormItem>
           </Col>

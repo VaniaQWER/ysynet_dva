@@ -6,7 +6,7 @@
  */
 
 import React , {PureComponent} from 'react';
-import { Row, Col, Button, Modal, message, Tooltip} from 'antd';
+import { Row, Col, Button, Modal, message, Tooltip, InputNumber} from 'antd';
 import RemoteTable from '../../../../components/TableGrid';
 import FetchSelect from '../../../../components/FetchSelect/index';
 import { drugMgt } from '../../../../api/baseDrug/drugMgt';
@@ -26,8 +26,7 @@ class BaseMgt extends PureComponent{
         mate: ''
       },
       query: {
-        deptCode: info.code,
-        storeName: info.loc
+        deptCode: info.code
       },
       visible: false,
       value: undefined,
@@ -36,7 +35,9 @@ class BaseMgt extends PureComponent{
       modalSelected: [],
       selectedRows: [],
       selected: [],
-      removeLoading: false
+      removeLoading: false,
+      editingKey: '',
+      stockBaseValue: ''
     }
   }
   componentDidMount() {
@@ -126,11 +127,54 @@ class BaseMgt extends PureComponent{
       }
     })
   }
+  //库存基数input
+  changeStockBase = (value) => {
+    console.log(value);
+    
+    this.setState({
+      stockBaseValue: value
+    });
+  }
+  //编辑
+  editRow = (id) => {
+    this.setState({
+      editingKey: id
+    });
+  }
+  //保存
+  saveStockBase = () => {
+    const {stockBaseValue, editingKey, query} = this.state;
+    this.props.dispatch({
+      type: 'configMgt/getHisMedicineBound',
+      payload: {
+        id: editingKey,
+        stockBase: stockBaseValue,
+        deptCode: query.deptCode
+      },
+      callback: (data) => {
+        if(data.code === 200) {
+          this.setState({
+            editingKey: '',
+            stockBaseValue: ''
+          });
+          this.refs.table.fetch();
+        }
+      }
+    })
+  }
+  //取消
+  cancelStockBase = () => {
+    this.setState({
+      editingKey: '',
+      stockBaseValue: ''
+    });
+  }
   render(){
-    const { medalQuery, info, visible, okLoading, value, query } = this.state;
+    const { medalQuery, info, visible, okLoading, value, query, editingKey } = this.state;
     const columns = [
       {
         title: '通用名称',
+        fixed: 'left',
         dataIndex: 'ctmmGenericName',
         width: 168,
       },
@@ -171,6 +215,41 @@ class BaseMgt extends PureComponent{
         render:(text)=>(
           <Tooltip placement="topLeft" title={text}>{text}</Tooltip>
         )
+      },
+      {
+        title: '库存基数',
+        dataIndex: 'stockBase',
+        width: 112,
+        fixed: 'right',
+        render:(text, record)=>{
+          if(record.id === editingKey) {
+            return <InputNumber
+                    defaultValue={text}
+                    min={1}
+                    max={999999}
+                    precision={0}
+                    onChange={this.changeStockBase}
+                   />
+          }else {
+            return <span>{text}</span>
+          }
+        }
+      },
+      {
+        title: '操作',
+        dataIndex: 'RN',
+        width: 124,
+        fixed: 'right',
+        render: (text, record) => {
+          if(record.id === editingKey) {
+            return <span>
+                    <a style={{margin: 8}} onClick={this.saveStockBase}>保存</a>
+                    <a onClick={this.cancelStockBase}>取消</a>
+                   </span>
+          }else {
+            return <a onClick={this.editRow.bind(this, record.id)}>编辑库存基数</a>
+          }
+        }
       }
     ]
     const modalColumns = [
@@ -202,7 +281,7 @@ class BaseMgt extends PureComponent{
         render:(text)=>(
           <Tooltip placement="topLeft" title={text}>{text}</Tooltip>
         )
-      }
+      },
     ];
     return (
       <div className="fullCol fadeIn">
@@ -215,16 +294,6 @@ class BaseMgt extends PureComponent{
               <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
                 <div className="ant-form-item-control">
                   {info.deptName || ''}
-                </div>
-              </div>
-            </Col>
-            <Col span={8}>
-              <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
-                <label>货位名称</label>
-              </div>
-              <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
-                <div className="ant-form-item-control">
-                  {info.storeLoc || ''}
                 </div>
               </div>
             </Col>
@@ -279,15 +348,9 @@ class BaseMgt extends PureComponent{
             ref='table'
             query={query}
             url={drugMgt.FIND_CARDINAL_MEDICINE_DETAIL}
-            scroll={{x: 1344}}
+            scroll={{x: 1520}}
             columns={columns}
             rowKey={'id'}
-            rowSelection={{
-              selectedRowKeys: this.state.selected,
-              onChange: (selectedRowKeys, selectedRows) => {
-                this.setState({selected: selectedRowKeys, selectedRows: selectedRows})
-              }
-            }}
           />
         </div>
       </div>

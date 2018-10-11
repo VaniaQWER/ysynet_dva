@@ -36,7 +36,7 @@ let uuid = 0;
 const customPanelStyle = {
   background: '#fff',
   borderRadius: 4,
-  marginBottom: 24,
+  marginBottom: 16,
   border: 0,
   overflow: 'hidden',
 }
@@ -525,7 +525,7 @@ class EditDrugDirectory extends PureComponent{
           </Row>
         </div>
         <Form className='leftLable'>
-          <Collapse bordered={false} style={{backgroundColor:'#f0f2f5', marginLeft: '-12px', marginRight: '-12px'}} defaultActiveKey={['1','2','3','4','5']}>
+          <Collapse bordered={false} style={{backgroundColor:'#f0f2f5', margin: '0 -16px'}} defaultActiveKey={['1','2','3','4','5']}>
             <Panel header="单位信息" key="1" style={customPanelStyle}>
               <Row>
                 <Col span={10}>

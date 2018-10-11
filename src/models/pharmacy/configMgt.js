@@ -47,6 +47,13 @@ export default {
       }else {
         message.error(data.msg);
       }
+    },
+    //基数药编辑库存基数保存
+    *getHisMedicineBound({payload, callback}, {call}) {
+      const data = yield call(configMgt.getHisMedicineBound, payload);
+      if(typeof callback === 'function') {
+        callback(data);
+      }
     }
     /*-- end --*/
   }

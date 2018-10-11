@@ -94,7 +94,7 @@ export default {
     *getpickingDetail({ payload,callback },{ call }){
       const data = yield call(outStorageService.getPickingDetail, payload);
       if(data.code !== 200){
-        return message.error(data.msg||'获取拣货闲情失败')
+        return message.error(data.msg||'获取拣货详情失败')
       }
       if(callback) callback(data.data)
     },

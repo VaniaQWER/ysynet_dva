@@ -4,7 +4,8 @@
 * @Last Modified time: 2018-07-24 13:13:55 
  */
 import React, { PureComponent } from 'react';
-import { Table ,Row, Col, Button, Modal ,Tabs , message , InputNumber , Tooltip , Card} from 'antd';
+import { Table ,Row, Col, Button, Modal ,Tabs , message , InputNumber , Tooltip} from 'antd';
+import { Link } from 'react-router-dom';
 import { connect } from 'dva';
 const TabPane = Tabs.TabPane; 
 const Conform = Modal.confirm;
@@ -23,7 +24,10 @@ class DetailsPickSoldOut extends PureComponent{
     }
   }
   
-  componentWillMount = () =>{
+  componentDidMount = () => {
+    this.getDetail();
+  }
+  getDetail = () => {
     if (this.props.match.params.pickingOrderNo) {
       let { pickingOrderNo} = this.props.match.params;
       this.setState({ loading: true });
@@ -79,7 +83,7 @@ class DetailsPickSoldOut extends PureComponent{
         this.setState({
           checkLoading: true
         })
-        const { history, dispatch } = this.props;
+        const { dispatch } = this.props;
         let postData = {}, pickingDetail = [];
         selectedRows.map(item => pickingDetail.push({
           drugCode: item.drugCode,
@@ -97,7 +101,7 @@ class DetailsPickSoldOut extends PureComponent{
             this.setState({
               checkLoading: true
             });
-            history.push({pathname:"/drugStorage/outStorage/pickingUnderShelve"})
+            this.getDetail();
           }
         })
       },
@@ -199,104 +203,112 @@ class DetailsPickSoldOut extends PureComponent{
       dataIndex: 'pickingNum',
     })
     return (
-      <div className='bgf fadeIn' style={{ marginLeft: -16 }}>
-        <Card>
-          <h3>单据信息 
-            <Button style={{float:'right'}} icon='printer' onClick={()=> message.warning('敬请期待下个版本迭代内容')}>打印</Button>
-          </h3>
-          <Row>
-            <Col span={8}>
-              <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
-                <label>拣货单</label>
-              </div>
-              <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
-                <div className='ant-form-item-control'>{ detailsData.pickingOredr }</div>
-              </div>
-            </Col>
-            <Col span={8}>
-              <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
-                <label>类型</label>
-              </div>
-              <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
-                <div className='ant-form-item-control'>{ detailsData.typeName }</div>
-              </div>
-            </Col>
-            <Col span={8}>
-              <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
-                <label>单号</label>
-              </div>
-              <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
-                <div className='ant-form-item-control'>{ detailsData.applyOrder }</div>
-              </div>
-            </Col>
-          </Row>
-          <Row>
-            <Col span={8}>
-              <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
-                <label>申领部门</label>
-              </div>
-              <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
-                <div className='ant-form-item-control'>{ detailsData.applyDeptName }</div>
-              </div>
-            </Col>
-            <Col span={8}>
-              <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
-                <label>状态</label>
-              </div>
-              <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
-                <div className='ant-form-item-control'>{ detailsData.statusName }</div>
-              </div>
-            </Col>
-            <Col span={8}>
-              <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
-                <label>拣货时间</label>
-              </div>
-              <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
-                <div className='ant-form-item-control'>{ detailsData.pickingTime }</div>
-              </div>
-            </Col>
-          </Row>
-          <hr className='hr'/>
-          <h3>产品信息</h3>
-          <Tabs  
-            activeKey={activeKey}
-            onChange={this.changeTabs}
-            tabBarExtraContent={ 
-              activeKey  === '1' && leftDataSource && leftDataSource.length >0 ? 
-              <Button type='primary' loading={checkLoading} onClick={()=>this.onSubmit()}>确认拣货</Button> 
-              : null
-            }>
-            <TabPane tab="待拣货" key="1">
-              <Table
-                bordered
-                dataSource={leftDataSource}
-                scroll={{x: 1684}}
-                columns={columns}
-                loading={loading}
-                pagination={false}
-                rowKey={'id'}
-                rowSelection={{
-                  selectedRowKeys: this.state.selected,
-                  onChange: (selectedRowKeys, selectedRows) => {
-                    this.setState({selected: selectedRowKeys, selectedRows: selectedRows})
-                  }
-                }}
-              />
-            </TabPane>
-            <TabPane tab="已拣货" key="2">
-              <Table
-                bordered
-                dataSource={rightDataSource}
-                scroll={{x: 1684}}
-                loading={loading}
-                columns={readyPickingColumns}
-                pagination={false}
-                rowKey={'id'}
-              />
-            </TabPane>
-          </Tabs>
-          
-        </Card>
+      <div className='bgf fadeIn'>
+        <Row>
+          <Col span={12}>
+            <h3>单据信息</h3>
+          </Col>
+          <Col span={12} style={{textAlign: 'right'}}>
+            {
+              detailsData && detailsData.status === 2 ? 
+              <Link to={{pathname: `/drugStorage/outStorage/outReceiptMgt/details/id=${detailsData.backNo}`}}>
+                <Button style={{marginRight: 8}} type="primary">下一步: 复核</Button>
+              </Link> : null
+            }
+            <Button  icon='printer' onClick={()=> message.warning('敬请期待下个版本迭代内容')}>打印</Button>
+          </Col>
+        </Row>
+        <Row>
+          <Col span={8}>
+            <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
+              <label>拣货单</label>
+            </div>
+            <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
+              <div className='ant-form-item-control'>{ detailsData.pickingOredr }</div>
+            </div>
+          </Col>
+          <Col span={8}>
+            <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
+              <label>类型</label>
+            </div>
+            <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
+              <div className='ant-form-item-control'>{ detailsData.typeName }</div>
+            </div>
+          </Col>
+          <Col span={8}>
+            <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
+              <label>单号</label>
+            </div>
+            <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
+              <div className='ant-form-item-control'>{ detailsData.applyOrder }</div>
+            </div>
+          </Col>
+        </Row>
+        <Row>
+          <Col span={8}>
+            <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
+              <label>申领部门</label>
+            </div>
+            <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
+              <div className='ant-form-item-control'>{ detailsData.applyDeptName }</div>
+            </div>
+          </Col>
+          <Col span={8}>
+            <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
+              <label>状态</label>
+            </div>
+            <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
+              <div className='ant-form-item-control'>{ detailsData.statusName }</div>
+            </div>
+          </Col>
+          <Col span={8}>
+            <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">
+              <label>拣货时间</label>
+            </div>
+            <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-18">
+              <div className='ant-form-item-control'>{ detailsData.pickingTime }</div>
+            </div>
+          </Col>
+        </Row>
+        <hr className='hr'/>
+        <h3>产品信息</h3>
+        <Tabs  
+          activeKey={activeKey}
+          onChange={this.changeTabs}
+          tabBarExtraContent={ 
+            activeKey  === '1' && leftDataSource && leftDataSource.length >0 ? 
+            <Button type='primary' loading={checkLoading} onClick={()=>this.onSubmit()}>确认拣货</Button> 
+            : null
+          }>
+          <TabPane tab="待拣货" key="1">
+            <Table
+              bordered
+              dataSource={leftDataSource}
+              scroll={{x: 1684}}
+              columns={columns}
+              loading={loading}
+              pagination={false}
+              rowKey={'id'}
+              rowSelection={{
+                selectedRowKeys: this.state.selected,
+                onChange: (selectedRowKeys, selectedRows) => {
+                  this.setState({selected: selectedRowKeys, selectedRows: selectedRows})
+                }
+              }}
+            />
+          </TabPane>
+          <TabPane tab="已拣货" key="2">
+            <Table
+              bordered
+              dataSource={rightDataSource}
+              scroll={{x: 1684}}
+              loading={loading}
+              columns={readyPickingColumns}
+              pagination={false}
+              rowKey={'id'}
+            />
+          </TabPane>
+        </Tabs>
       </div>
     )
   }

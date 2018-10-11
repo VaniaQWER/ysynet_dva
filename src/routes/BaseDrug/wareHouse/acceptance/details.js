@@ -139,7 +139,7 @@ class DetailsNewLibrary extends PureComponent{
     });
     let detailList = selected.map(item => ({id: item}));
     this.props.dispatch({
-      type: 'base/saveCheck',
+      type: 'base/baseSaveCheck',
       payload: {
         detailList,
         distributeCode: id

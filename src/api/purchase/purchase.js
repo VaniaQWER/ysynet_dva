@@ -19,3 +19,13 @@ export const dayStatements = {
   DAILY_DETAIL_LIST: `${_local}/a/bill/balance/dailyDetailList`,//日对账单详情列表
   GENERATOR_DAILY_LIST: `${_local}/a/bill/balance/generatorDailyList`,//生成对账单列表
 }
+
+//发票查询
+export const invoiceQueryMenu = {
+  INVOICE_LIST: `${_local}/a/invoice/list`,     //发票查询列表
+}
+
+//统计分析
+export const statisticAnalysis = {
+  
+}

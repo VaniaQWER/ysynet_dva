@@ -8,7 +8,7 @@
  * @file 基数药 - 申领 - 新建
  */
 import React, { PureComponent } from 'react';
-import { Row, Col, Button, Table, Modal, Icon, Tooltip, message, InputNumber } from 'antd';
+import { Row, Col, Button, Table, Modal, Icon, Tooltip, message } from 'antd';
 import {wareHouse} from '../../../../api/pharmacy/wareHouse';
 import RemoteTable from '../../../../components/TableGrid';
 import FetchSelect from '../../../../components/FetchSelect/index';
@@ -43,7 +43,7 @@ class NewAdd extends PureComponent {
     this.setState({btnLoading: true});
     modalSelectedRows = modalSelectedRows.map(item=>item.drugCode);
     this.props.dispatch({
-      type: 'base/applyAddDrug',
+      type: 'base/baseapplyAddDrug',
       payload: {
         deptCode: query.deptCode,
         drugCodeList: modalSelectedRows
@@ -85,8 +85,8 @@ class NewAdd extends PureComponent {
   submit = (applyStatus) => {   //提交  保存
     let {dataSource, applyType, query} = this.state;
     let isNull = dataSource.every(item => {
-      if(!item.applyNum) {
-        message.warning('申领数量不能为空');
+      if(item.baseApplyNum < 0) {
+        message.warning('当前提交数据中存在库存不足的数据!');
         return false;
       };
       return true
@@ -94,7 +94,7 @@ class NewAdd extends PureComponent {
     if(!isNull) return;
     dataSource = dataSource.map(item => {
       return {
-        applyNum: item.applyNum,
+        applyNum: item.baseApplyNum,
         drugCode: item.drugCode,
       }
     });
@@ -109,7 +109,7 @@ class NewAdd extends PureComponent {
     };
     
     this.props.dispatch({
-      type: 'base/applySubmit',
+      type: 'base/baseapplySave',
       payload: body,
       callback: ()=>{
         message.success(`${applyStatus === '0'? '保存' : '提交'}成功`);
@@ -178,31 +178,15 @@ class NewAdd extends PureComponent {
         width: 60,
       }, {
         title: '申领数量',
-        dataIndex: 'applyNum',
+        dataIndex: 'baseApplyNum',
         width: 120,
-        render: (text, record, i) => {
-          return <InputNumber
-                    defaultValue={text}
-                    min={1}
-                    precision={0}
-                    onChange={(value)=>{
-                      dataSource = JSON.parse(JSON.stringify(dataSource));
-                      dataSource[i].applyNum = value;
-                      this.setState({dataSource});
-                    }} 
-                 />
-        }
       }, {
-        title: '药房库存',
-        dataIndex: 'usableQuantity',
+        title: '可用库存',
+        dataIndex: 'localUsableQuantity',
         width: 112,
       }, {
-        title: '库存上限',
-        dataIndex: 'upperQuantity',
-        width: 112,
-      }, {
-        title: '库存下限',
-        dataIndex: 'downQuantity',
+        title: '库存基数',
+        dataIndex: 'stockBase',
         width: 112,
       }, {
         title: '批准文号',
@@ -313,7 +297,7 @@ class NewAdd extends PureComponent {
             bordered
             columns={columns}
             dataSource={dataSource}
-            scroll={{ x: 1900 }}
+            scroll={{ x: 1788 }}
             rowKey='drugCode'
             rowSelection={{
               selectedRowKeys: this.state.selected,

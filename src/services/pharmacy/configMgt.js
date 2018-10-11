@@ -36,4 +36,12 @@ export function MoveCardinalMedicineDetail(options) {
   })
 }
 
+export function getHisMedicineBound(options) {
+  return request(`${_local}/a/basemedicinedetail/getHisMedicineBound`, {
+    method: 'POST',
+    type: 'formData',
+    body: options
+  })
+}
+
 /*-- end --*/
