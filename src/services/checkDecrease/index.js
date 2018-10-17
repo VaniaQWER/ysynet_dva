@@ -11,6 +11,15 @@ export function createCheckbill(options) {
     body: options
   })
 }
+//导出
+export function checkBillExport(options) {
+  return request(`${_local}/a/excessive/statics/checkBillExport`, {
+    method: 'POST',
+    type: 'formData',
+    export: true,
+    body: options
+  }) 
+}
 //删除
 export function deleteCheckBill(options) {
   return request(`${_local}/a/checkbill/delete`, {
@@ -61,6 +70,14 @@ export function auditPassOrNo(options) {
     body: options
   })
 }
+export function checkBillSheveExport(options) {
+  return request(`${_local}/a/excessive/statics/checkBillSheveExport`, {
+    method: 'POST',
+    type: 'formData',
+    export: true,
+    body: options
+  })
+}
 /*-- end --*/
 
 /*-- 盘点损益 --*/
@@ -78,6 +95,15 @@ export function getCausticexcessive(options) {
   return request(`${_local}/a/causticexcessive/get`, {
     method: 'GET',
     type: 'formData',
+    body: options
+  })
+}
+//导出
+export function excessiveExport(options) {
+  return request(`${_local}/a/excessive/statics/excessiveExport`, {
+    method: 'POST',
+    type: 'formData',
+    export: true,
     body: options
   })
 }

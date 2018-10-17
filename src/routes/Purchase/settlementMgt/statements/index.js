@@ -98,10 +98,27 @@ class SettlementMgt extends PureComponent {
         });
         this.props.form.setFieldsValue(value);
     }
+    //打印
+    export = () => {
+        let {queryConditons} = this.props.base;
+        queryConditons = {...queryConditons};
+        delete queryConditons.pageNo;
+        delete queryConditons.key;
+        delete queryConditons.pageSize;
+        delete queryConditons.sortField;
+        delete queryConditons.sortOrder;
+        delete queryConditons.time;
+        this.props.dispatch({
+            type: 'settlementMgt/settleExport',
+            payload: queryConditons,
+        });
+    }
     render() {
         let {getFieldDecorator} = this.props.form;
         let query = this.props.base.queryConditons;
+        query = {...query};
         delete query.key;
+        delete query.time;
         return (
             <div className="ysynet-main-content">
                 <Form onSubmit={this.handleSearch}>
@@ -126,8 +143,12 @@ class SettlementMgt extends PureComponent {
                         </Col>
                     </Row>
                 </Form>
+                <Row>
+                    <Button onClick={this.export}>导出</Button>
+                </Row>
                 <RemoteTable
                     query={query}
+                    style={{marginTop: 20}}
                     url={settlementMgt.SETTLE_LIST}
                     columns={columns}
                     rowKey={'id'}

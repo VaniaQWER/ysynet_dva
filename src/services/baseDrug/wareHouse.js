@@ -24,3 +24,12 @@ export function baseapplyAddDrug(options) {
     body: options
   })
 }
+
+export function baseCheckPrint(options) {
+  return request(`${_local}/a/deliver/print/printBasicMedicDetail`, {
+    method: 'POST',
+    type: 'formData',
+    export: true,
+    body: options
+  }) 
+}

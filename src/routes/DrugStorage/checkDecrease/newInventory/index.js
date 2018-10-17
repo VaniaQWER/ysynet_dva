@@ -51,7 +51,7 @@ class SearchForm extends PureComponent {
           values.filterStatus = status.map(item=>item.value).filter(item=>item !== '').join(',');
         }
         this.props.formProps.dispatch({
-          type:'base/setQueryConditions',
+          type:'base/updateConditions',
           payload: values
         });
       }
@@ -248,6 +248,21 @@ class NewInventory extends PureComponent {
       return <Radio key={item.value} value={item.value}>{item.label}</Radio>
     })
   }
+  //导出 
+  export = () => { 
+    let { queryConditons } = this.props.base;
+    queryConditons = {...queryConditons};
+    delete queryConditons.key;
+    delete queryConditons.makingTime;
+    delete queryConditons.pageNo;
+    delete queryConditons.pageSize;
+    delete queryConditons.sortOrder;
+    delete queryConditons.sortField;
+    this.props.dispatch({
+      type: 'checkDecrease/checkBillExport',
+      payload: queryConditons
+    })
+  }
   render() {
     const { getFieldDecorator} = this.props.form;
     const formItemLayoutAdd = { 
@@ -307,7 +322,7 @@ class NewInventory extends PureComponent {
     ];
     let query = this.props.base.queryConditons;
     query = {...query};
-    delete query.checkEndTime;
+    delete query.makingTime;
     delete query.key;
     return (
       <div className='ysynet-main-content'>
@@ -318,7 +333,8 @@ class NewInventory extends PureComponent {
         />
         <div>
           <Button type='primary' onClick={this.newAdd}><Icon type="plus" />新建</Button>
-          <Button loading={deleteLoadig} style={{ marginLeft: 8 }} onClick={this.delete}>删除</Button>
+          <Button loading={deleteLoadig} style={{ margin: '0 8px' }} onClick={this.delete}>删除</Button>
+          <Button onClick={this.export}>导出</Button>
         </div>
         <RemoteTable 
           onChange={this._tableChange}

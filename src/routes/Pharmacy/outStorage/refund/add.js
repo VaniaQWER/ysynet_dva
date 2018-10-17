@@ -269,7 +269,7 @@ class AddRefund extends PureComponent{
               payload: { ...postData },
               callback: () => {
                 message.success('退库成功');
-                history.push({pathname:"/drugStorage/outStorage/backStorage"})
+                history.push({pathname:"/pharmacy/outStorage/refund"})
               }
             })
           },
@@ -463,7 +463,7 @@ class AddRefund extends PureComponent{
                   <Col style={{ textAlign: 'right', padding: '10px' }}>
                     <Button onClick={this.backStroage} type='primary' style={{ marginRight: 8 }}>确定</Button>
                     <Button type='primary' ghost>
-                      <Link to={{pathname:`/drugStorage/outStorage/backStorage`}}>取消</Link>
+                      <Link to={{pathname:`/pharmacy/outStorage/refund`}}>取消</Link>
                     </Button>
                   </Col>
                 </Row>

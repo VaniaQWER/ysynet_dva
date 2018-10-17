@@ -133,25 +133,25 @@ toggle = () => {
 handleSearch = (e) => {
   e.preventDefault();
   this.props.form.validateFields((err, values) => {
-  let {initTime, checkTime} = values;
-  if(initTime && initTime.length !== 0){
-    values.startCreateTime = initTime[0].format('YYYY-MM-DD');
-    values.endCreateTime = initTime[1].format('YYYY-MM-DD');
-  }else {
-    values.startCreateTime = '';
-    values.endCreateTime = '';
-  };
-  if(checkTime && checkTime.length !== 0){
-    values.receptionStartTime = checkTime[0].format('YYYY-MM-DD');
-    values.receptionEndTime = checkTime[1].format('YYYY-MM-DD');
-  }else {
-    values.receptionStartTime = '';
-    values.receptionEndTime = '';
-  };
-  this.props.formProps.dispatch({
-    type:'base/setQueryConditions',
-    payload: values
-  });
+    let {initTime, checkTime} = values;
+    if(initTime && initTime.length !== 0){
+      values.startCreateTime = initTime[0].format('YYYY-MM-DD');
+      values.endCreateTime = initTime[1].format('YYYY-MM-DD');
+    }else {
+      values.startCreateTime = '';
+      values.endCreateTime = '';
+    };
+    if(checkTime && checkTime.length !== 0){
+      values.receptionStartTime = checkTime[0].format('YYYY-MM-DD');
+      values.receptionEndTime = checkTime[1].format('YYYY-MM-DD');
+    }else {
+      values.receptionStartTime = '';
+      values.receptionEndTime = '';
+    };
+    this.props.formProps.dispatch({
+      type:'base/updateConditions',
+      payload: values
+    });
   });
 }
 //重置

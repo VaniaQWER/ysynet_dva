@@ -141,7 +141,7 @@ class AddOutput extends PureComponent{
         this.setState({
           submitLoading: false
         });
-        this.props.history.push('/drugStorage/outStorage/outReceiptMgt');
+        this.props.history.push('/drugStorage/outStorage/withdraw');
       }
     })
   }
@@ -356,7 +356,7 @@ class AddOutput extends PureComponent{
                   placeholder={'请选择'}
                   optionFilterProp="children"
                   filterOption={(input, option) => option.props.children.indexOf(input) >= 0}
-                  >
+                >
                   {type}
                 </Select>
             </Col>
@@ -372,6 +372,7 @@ class AddOutput extends PureComponent{
               }
             }}
             bordered
+            pagination={{size: 'small'}}
             dataSource={dataSource}
             scroll={{x: 2308}}
             columns={columns}

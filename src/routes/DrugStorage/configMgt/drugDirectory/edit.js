@@ -4,7 +4,7 @@
 * @Last Modified time: 2018-07-24 10:58:49 
  */
 import React, { PureComponent } from 'react';
-import { Form , Row , Button , Col , Select , Input , Modal , Icon , Collapse , Radio , message} from 'antd';
+import { Form , Row , Button , Col , Select , InputNumber , Input, Modal , Icon , Collapse , Radio , message} from 'antd';
 import { connect } from 'dva';
 const supplyFormItemLayout = {
   labelCol: {
@@ -53,7 +53,9 @@ class EditDrugDirectory extends PureComponent{
     supplierList:[],//供应商循环数据
     minUnit: '', 
     packUnit: '', 
-    fullUnit: ''
+    fullUnit: '',
+    upperQuantity: 0,
+    downQuantity: 0
   }
 
   componentDidMount(){
@@ -80,7 +82,9 @@ class EditDrugDirectory extends PureComponent{
           medDrugType:data.data.medDrugType,
           minUnit, 
           packUnit, 
-          fullUnit
+          fullUnit,
+          upperQuantity: data.data.upperQuantity,
+          downQuantity: data.data.downQuantity
         })
         if(data.data.supplier && data.data.supplier.length&&data.data.medDrugType===2){//目录外 
           this.setState({
@@ -112,13 +116,13 @@ class EditDrugDirectory extends PureComponent{
     })
 
     //获取供应商下拉框
-    this.props.dispatch({
-      type:'drugStorageConfigMgt/getSupplier',
-      payload:null,//{hisDrugCode:data.data.hisDrugCode}
-      callback:(data)=>{
-        this.setState({supplierSelect:data.data})
-      }
-    })
+    // this.props.dispatch({
+    //   type:'drugStorageConfigMgt/getSupplier',
+    //   payload:null,//{hisDrugCode:data.data.hisDrugCode}
+    //   callback:(data)=>{
+    //     this.setState({supplierSelect:data.data})
+    //   }
+    // })
     //获取补货指示h货位
     this.props.dispatch({
       type:'drugStorageConfigMgt/getGoodsTypeInfo',
@@ -281,13 +285,36 @@ class EditDrugDirectory extends PureComponent{
     </Col>
   )
 
+  setQuantity = (key, value) => {
+    const {upperQuantity, downQuantity} = this.state;
+    if(typeof value === 'number') {
+      if(key === 'downQuantity' && value > upperQuantity) return;
+      if(key === 'upperQuantity' && value < downQuantity) return;
+      this.setState({
+        [key]: value
+      });
+    };
+  }
+
   render(){
-    const {supplierList , fillBackData , replanUnitSelect , goodsTypeSelect , supplierSelect , medDrugType, minUnit, packUnit, fullUnit} =this.state;
-    const { getFieldDecorator , getFieldValue } = this.props.form;
+    const {
+      supplierList, 
+      fillBackData, 
+      replanUnitSelect, 
+      goodsTypeSelect, 
+      supplierSelect, 
+      medDrugType, 
+      minUnit, 
+      packUnit, 
+      fullUnit,
+      upperQuantity,
+      downQuantity
+    } =this.state;
+    const { getFieldDecorator, getFieldsValue } = this.props.form;
     getFieldDecorator('keys', { initialValue: fillBackData?fillBackData.customUnit?fillBackData.customUnit:[]:[] });
-    const keys = getFieldValue('keys');
-    const formItems = keys.map((k, index) => {
-      return (
+    const {keys} = getFieldsValue();
+    
+    const formItems = keys.map((k, index) => (
         <Col span={10} key={index}>
           <FormItem {...formItemLayout} label={`自定义包装${index+1}`}  key={index}>
             {
@@ -350,8 +377,7 @@ class EditDrugDirectory extends PureComponent{
             ) : null}
           </FormItem>
         </Col>
-      )
-    });
+    ));
     const formItemSupply = supplierList.map((k, index) => {
       return (
         <Col span={12} key={index}>
@@ -590,7 +616,13 @@ class EditDrugDirectory extends PureComponent{
                       getFieldDecorator(`upperQuantity`,{
                         initialValue:fillBackData?fillBackData.upperQuantity:''
                       })(
-                        <Input placeholder='请输入' />
+                        <InputNumber
+                          min={downQuantity}
+                          onChange={this.setQuantity.bind(this, 'upperQuantity')}
+                          precision={0}
+                          style={{width: '100%'}} 
+                          placeholder='请输入' 
+                        />
                       )
                     }
                   </FormItem>
@@ -601,7 +633,12 @@ class EditDrugDirectory extends PureComponent{
                       getFieldDecorator(`purchaseQuantity`,{
                         initialValue: fillBackData?fillBackData.purchaseQuantity:''
                       })(
-                        <Input />
+                        <InputNumber
+                          max={upperQuantity}
+                          precision={0}
+                          style={{width: '100%'}} 
+                          placeholder='请输入' 
+                        />
                       )
                     }
                   </FormItem>
@@ -614,7 +651,13 @@ class EditDrugDirectory extends PureComponent{
                       getFieldDecorator(`downQuantity`,{
                         initialValue: fillBackData?fillBackData.downQuantity:'',
                       })(
-                        <Input placeholder='请输入' />
+                        <InputNumber
+                          max={upperQuantity}
+                          precision={0}
+                          onChange={this.setQuantity.bind(this, 'downQuantity')}
+                          style={{width: '100%'}} 
+                          placeholder='请输入' 
+                        />
                       )
                     }
                   </FormItem>

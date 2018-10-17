@@ -2,7 +2,7 @@
  * @file 药库 - 盘点损益 - 新建盘点 - 详情(待确认)
  */
 import React, { PureComponent } from 'react';
-import {Row, Col, Input, message, Tooltip} from 'antd';
+import {Row, Col, Input, message, Tooltip, Button} from 'antd';
 import {profiLossRecord} from '../../../../api/checkDecrease';
 import RetomeTable from '../../../../components/TableGrid';
 import querystring from 'querystring';
@@ -49,6 +49,11 @@ class Details extends PureComponent {
     this.setState({
       query: {...query}
     });
+  }
+  //打印
+  print = () => {
+    const {causticExcessiveNo} = this.state;
+    window.open(`${profiLossRecord.CAUSTIC_EXCESSIVE_PRINT}?causticExcessiveNo=${causticExcessiveNo}`)
   }
   render() {
     let {info, query} = this.state;
@@ -123,7 +128,7 @@ class Details extends PureComponent {
       },
       {
         title: '生产日期',
-        dataIndex: 'productDate',
+        dataIndex: 'accountProductTime',
         width: 168,
       },
       {
@@ -158,6 +163,9 @@ class Details extends PureComponent {
           <Row>
             <Col span={12}>
               <h2>损益单: <span>{info.causticExcessiveNo || ''}</span></h2>
+            </Col>
+            <Col span={12} style={{ textAlign: 'right' }}>
+              <Button icon="printer" onClick={this.print}>打印</Button>
             </Col>
           </Row>
           <Row>

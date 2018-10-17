@@ -75,7 +75,7 @@ class SearchForm extends PureComponent{
       if(!err){
         console.log(values,'查询数据');
         this.props.formProps.dispatch({
-          type:'base/setQueryConditions',
+          type:'base/updateConditions',
           payload: values
         });
       }

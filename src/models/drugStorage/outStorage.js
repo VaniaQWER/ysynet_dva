@@ -68,7 +68,6 @@ export default {
       }
       if(callback) callback(data.data)
     },
-    
     // 单条数据更新
     *singUpdate({ payload,callback },{ call }){
       const data = yield call(outStorageService.singUpdate, payload);

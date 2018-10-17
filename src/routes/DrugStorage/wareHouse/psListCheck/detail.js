@@ -11,6 +11,7 @@ import React, { PureComponent } from 'react';
 import {Row, Col, Tooltip, Input, InputNumber, DatePicker, Button, Tabs, Table, message} from 'antd';
 import {connect} from 'dva';
 import moment from 'moment';
+import wareHouse from '../../../../api/drugStorage/wareHouse';
 import querystring from 'querystring';
 import {difference} from 'lodash';
 
@@ -319,6 +320,12 @@ class PslistCheck extends PureComponent{
         distributeCode: this.state.id
       },
       callback: (data) => {
+        if(data.unVerfiyList.length) {
+          data.unVerfiyList = data.unVerfiyList.map(item => {
+            item.realReceiveQuantity = item.realDeliveryQuantiry;
+            return item;
+          })
+        };
         this.setState({
           detailInfo: data,
           loading: false,
@@ -327,6 +334,11 @@ class PslistCheck extends PureComponent{
         });
       }
     })
+  }
+  //打印
+  print = () => {
+    const {distributeCode, auditStatus} = this.state.detailInfo;//printDetail
+    window.open(`${wareHouse.PRINT_DETAIL}?distributeCode=${distributeCode}&status=${auditStatus}`);
   }
   render(){
     let {loading, defaultActiveKey, expandedRowKeys, btnShow, detailInfo, checkLoading} = this.state;
@@ -375,14 +387,14 @@ class PslistCheck extends PureComponent{
         title: '实到数量',
         dataIndex: 'realReceiveQuantity',
         render: (text,record,index)=>{
-          return <InputNumber 
+          return <InputNumber
+                    defaultValue={text}
                     onChange={(value)=>{
                       if(value > record.realDeliveryQuantiry){
                         message.warning('请注意：实到数量比配送数量多');
                       }
                       record.realReceiveQuantity = value;
                     }} 
-                    defaultValue={text}
                   />
         },
         width: 120
@@ -451,7 +463,7 @@ class PslistCheck extends PureComponent{
       {
         title: '操作',
         dataIndex: 'RN',
-        width: 60,
+        width: 112,
         render: (text, record, i)=>{
           return record.id ? 
                  <a onClick={this.addBatch.bind(this, record, i)}>增加验收批号</a> 
@@ -566,7 +578,14 @@ class PslistCheck extends PureComponent{
     return (
       <div className='fullCol fadeIn'>
         <div className='fullCol-fullChild'>
-          <h3>单据信息</h3>
+          <Row>
+            <Col span={12}>
+              <h3>单据信息</h3>
+            </Col>
+            <Col span={12} style={{textAlign: 'right'}}>
+              <Button onClick={this.print}>打印</Button>
+            </Col>
+          </Row>
           <Row>
             <Col span={8}>
               <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">

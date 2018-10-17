@@ -4,7 +4,7 @@
 * @Last Modified time: 2018-08-06 15:31:15 
  */
 import React, { PureComponent } from 'react';
-import { DatePicker, Form, Input , Row, Col, Button, Icon, Select, message, Popconfirm } from 'antd';
+import { DatePicker, Form, Input , Row, Col, Button, Icon, Select } from 'antd';
 import { formItemLayout } from '../../../../utils/commonStyles';
 import { Link } from 'react-router-dom';
 import RemoteTable from '../../../../components/TableGrid';
@@ -30,11 +30,6 @@ class Putaway extends PureComponent{
       type:'base/setQueryConditions',
       payload: values
     });
-  }
-
-  //单行确认 
-  confirmOk = () => {
-    message.success('操作成功')
   }
 
   render(){
@@ -78,18 +73,6 @@ class Putaway extends PureComponent{
         title: '上架时间',
         width: 224,
         dataIndex: 'createDate'
-      },
-      {
-        title: '操作',
-        width: 60,
-        dataIndex: 'RN',
-        fixed: 'right',
-        render: (text, record) => 
-          <span>
-            <Popconfirm title="确定打印吗？" okText="是" cancelText="否"  onConfirm={()=>this.confirmOk(record)}>
-              <a>打印</a>
-            </Popconfirm>
-          </span>  
       }
     ];
     let query = this.props.base.queryConditons;
@@ -180,7 +163,7 @@ class SearchFormWrapper extends PureComponent {
       }
       values.supplierCodeList = values.supplierCodeList? [values.supplierCodeList] : [];
       this.props.formProps.dispatch({
-        type:'base/setQueryConditions',
+        type:'base/updateConditions',
         payload: values
       });
     });

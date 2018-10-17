@@ -6,6 +6,7 @@
 import React, { PureComponent } from 'react';
 import { Table, Row, Col, Button, Tooltip, message} from 'antd';
 import {connect} from 'dva';
+import {outStorage} from '../../../../api/drugStorage/outStorage';
 import querystring from 'querystring';
 const columns = [
   {
@@ -137,7 +138,7 @@ class DetailsOutput extends PureComponent{
     })
   }
   //确认
-  onSubmit = () =>{
+  onSubmit = () => {
     let {info} = this.state
     let {backNo, deptCode, detailVo} = info;
     let outStoreDetail = detailVo.map(item => {
@@ -155,9 +156,16 @@ class DetailsOutput extends PureComponent{
         outStoreDetail
       },
       callback: (data) => {
-        this.props.history.go(-1);
+        this.props.history.push('/pharmacy/outStorage/pharmacyReview');
+        message.success('复核成功');
       }
     })
+  }
+
+  //打印
+  print = () => {
+    const {id} = this.state;
+    window.open(`${outStorage.PRINT_DETAIL}?backNo=${id}`, '_blank');
   }
 
   render(){
@@ -172,14 +180,19 @@ class DetailsOutput extends PureComponent{
                 单据信息
               </h2>
             </Col>
-            {
-              info.status && info.status === 1? (
-                <Col style={{textAlign:'right', float: 'right'}} span={6}>
-                  <Button type='primary' className='button-gap' style={{marginRight: 8}} onClick={()=>this.onSubmit()}>复核通过</Button>
-                  <Button loading={banLoading} onClick={()=>this.onBan()} >不通过</Button>
-                </Col>
-              ) : null
-            }
+              <Col style={{textAlign:'right', float: 'right'}} span={6}>
+                {
+                  info.status && info.status === 1? (
+                      [<Button type='primary' key="1" className='button-gap' style={{marginRight: 8}} onClick={()=>this.onSubmit()}>复核通过</Button>,
+                      <Button loading={banLoading} key="2" onClick={()=>this.onBan()} >不通过</Button>]
+                  ) : null
+                }
+                {
+                  info.status && info.status === 2? (
+                      <Button icon='printer' onClick={this.print} >打印</Button>
+                  ) : null
+                }
+              </Col>
           </Row>
           <Row>
             <Col span={8}>
@@ -267,7 +280,7 @@ class DetailsOutput extends PureComponent{
             dataSource={detailVo || []}
             scroll={{x: 2356}}
             columns={columns}
-            rowKey={'lot'}
+            rowKey={'batchNo'}
             pagination={false}
           />
         </div>

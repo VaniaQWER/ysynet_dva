@@ -16,10 +16,9 @@ export default {
     //删除药品
     *DeleteDeptDrug({ payload, callback },{ put, call }){
       const data = yield call(configMgt.DeleteDeptDrug, payload);
-      if(data.code !== 200){
-        message.error(data.msg)
+      if(typeof callback === 'function') {
+        callback && callback(data);
       }
-      if(callback) callback(data);
     },
     //药品目录详情
     *GetDrugInfo({ payload, callback },{ put, call }){

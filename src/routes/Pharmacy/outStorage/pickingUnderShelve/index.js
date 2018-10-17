@@ -5,7 +5,7 @@
  */
 
 import React, { PureComponent } from 'react';
-import { Form, Row, Col, Button, Icon , message , Popconfirm, Select , Input , DatePicker ,} from 'antd';
+import { Form, Row, Col, Button, Icon , message , Select , Input , DatePicker } from 'antd';
 import { Link } from 'react-router-dom'
 import { formItemLayout } from '../../../../utils/commonStyles';
 import RemoteTable from '../../../../components/TableGrid';
@@ -74,7 +74,7 @@ class SearchFormWrapper extends PureComponent {
           values.endTime = values.Time[1].format('YYYY-MM-DD');
         }
         this.props.formProps.dispatch({
-          type:'base/setQueryConditions',
+          type:'base/updateConditions',
           payload: values
         });
       }
@@ -242,17 +242,6 @@ class PickSoldOut extends PureComponent{
         title: '拣货时间',
         dataIndex: 'updateDate',
         width: 224,
-      },
-      {
-        title: '操作',
-        width: 60,
-        dataIndex: 'RN',
-        render: (text, record) => 
-          <span>
-            <Popconfirm title="确定打印吗？" okText="是" cancelText="否"  onConfirm={()=>message.warning('此功能暂未开放')}>
-              <a>打印</a>
-            </Popconfirm>
-          </span>  
       }
     ];
     return (

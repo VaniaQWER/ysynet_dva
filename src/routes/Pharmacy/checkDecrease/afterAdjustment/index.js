@@ -50,7 +50,7 @@ class SearchForm extends PureComponent {
           values.filterStatus = status.map(item=>item.value).filter(item=>item !== "").join(',');
         }
         this.props.formProps.dispatch({
-          type:'base/setQueryConditions',
+          type:'base/updateConditions',
           payload: values
         });
       }
@@ -131,6 +131,12 @@ class AfterAdjustment extends PureComponent {
     display: 'none',
     types: [],
     status: [],
+  }
+  _tableChange = values => {
+    this.props.dispatch({
+      type:'base/setQueryConditions',
+      payload: values
+    });
   }
   componentDidMount() {
     this.props.dispatch({

@@ -93,7 +93,7 @@ export default {
       }else {
         message.error(data.msg);
       }
-    }
+    },
   },
   subscriptions: {
     

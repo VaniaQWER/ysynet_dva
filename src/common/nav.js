@@ -525,7 +525,7 @@ export const getNavData = app => [
       name: "盘点审核",
       icon: 'setting',
       path: '/drugStorage/checkDecrease/inventoryAudit',
-      component: dynamicWrapper(app, [], () => import('../routes/DrugStorage/checkDecrease/inventoryAudit')),
+      component: dynamicWrapper(app, ['checkDecrease/index'], () => import('../routes/DrugStorage/checkDecrease/inventoryAudit')),
     },
     // 药库 - 盘点损益 - 盘点审核 - 详情(待审核)
     {
@@ -553,7 +553,7 @@ export const getNavData = app => [
       name: "损益记录",
       icon: 'setting',
       path: '/drugStorage/checkDecrease/profiLossRecord',
-      component: dynamicWrapper(app, [], () => import('../routes/DrugStorage/checkDecrease/profiLossRecord')),
+      component: dynamicWrapper(app, ['checkDecrease/index'], () => import('../routes/DrugStorage/checkDecrease/profiLossRecord')),
     },
     // 药库 - 盘点损益 - 损益记录 - 详情
     {
@@ -1175,16 +1175,40 @@ export const getNavData = app => [
       component: dynamicWrapper(app, [], () => import('../routes/Purchase/replenishment/replenishmentPlan/detail')),
     },
     {
-      name: "采购结算-补货管理--目录外采购",
+      name: "自采管理-自采管理--采购计划",
+      icon: 'setting',
+      path: '/purchase/sinceMining/replenishmentPlan',
+      component: dynamicWrapper(app, ['replenishment/replenish'], () => import('../routes/Purchase/sinceMining/replenishmentPlan')),
+    },
+    {
+      name: "自采管理-自采管理--采购计划--详情",
+      icon: 'setting',
+      path: '/purchase/sinceMining/replenishmentPlan/detail/:planCode',
+      component: dynamicWrapper(app, [], () => import('../routes/Purchase/sinceMining/replenishmentPlan/detail')),
+    },
+    {
+      name: "采购结算-补货管理--目录外补货",
       icon: 'setting',
       path: '/purchase/replenishment/outCatalogPurchase',
       component: dynamicWrapper(app, ['replenishment/replenish'], () => import('../routes/Purchase/replenishment/outCatalogPurchase')),
     },
     {
-      name: "采购结算-补货管理--目录外采购--详情",
+      name: "采购结算-补货管理--目录外补货--详情",
       icon: 'setting',
       path: '/purchase/replenishment/outCatalogPurchase/detail/:planCode',
       component: dynamicWrapper(app, [], () => import('../routes/Purchase/replenishment/outCatalogPurchase/detail')),
+    },
+    {
+      name: "采购结算-自采管理--目录外采购",
+      icon: 'setting',
+      path: '/purchase/sinceMining/outCatalogPurchase',
+      component: dynamicWrapper(app, ['replenishment/replenish'], () => import('../routes/Purchase/sinceMining/outCatalogPurchase')),
+    },
+    {
+      name: "采购结算-自采管理--目录外采购--详情",
+      icon: 'setting',
+      path: '/purchase/sinceMining/outCatalogPurchase/detail/:planCode',
+      component: dynamicWrapper(app, [], () => import('../routes/Purchase/sinceMining/outCatalogPurchase/detail')),
     },
     {
       name: "采购结算-补货管理--计划审核",
@@ -1215,7 +1239,7 @@ export const getNavData = app => [
       name: "结算管理",
       icon: 'setting',
       path: '/purchase/settlementMgt/dayStatements',
-      component: dynamicWrapper(app, [], () => import('../routes/Purchase/settlementMgt/dayStatements')),
+      component: dynamicWrapper(app, ['purchase/settlementMgt'], () => import('../routes/Purchase/settlementMgt/dayStatements')),
     },
     //采购结算 - 结算管理 - 日对账单 - 详情
     {
@@ -1229,7 +1253,7 @@ export const getNavData = app => [
       name: "结算管理",
       icon: 'setting',
       path: '/purchase/settlementMgt/statements',
-      component: dynamicWrapper(app, [], () => import('../routes/Purchase/settlementMgt/statements')),
+      component: dynamicWrapper(app, ['purchase/settlementMgt'], () => import('../routes/Purchase/settlementMgt/statements')),
     },
     //采购结算 - 结算管理 - 结算单 - 详情
     {
@@ -1257,35 +1281,28 @@ export const getNavData = app => [
       name: "结算分析",
       icon: 'setting',
       path: '/purchase/statisticAnalysis/settlementAnalysis',
-      component: dynamicWrapper(app, [], () => import('../routes/Purchase/statisticAnalysis/settlementAnalysis')),
+      component: dynamicWrapper(app, ['purchase/statistics'], () => import('../routes/Purchase/statisticAnalysis/settlementAnalysis')),
     },
     //采购结算 - 统计分析 - 药品台账
     {
       name: "药品台账",
       icon: 'setting',
       path: '/purchase/statisticAnalysis/drugLedger',
-      component: dynamicWrapper(app, [], () => import('../routes/Purchase/statisticAnalysis/drugLedger')),
+      component: dynamicWrapper(app, ['purchase/statistics'], () => import('../routes/Purchase/statisticAnalysis/drugLedger')),
     },
     //采购结算 - 统计分析 - 近效期查询
     {
       name: "近效期查询",
       icon: 'setting',
       path: '/purchase/statisticAnalysis/nearlyEffective',
-      component: dynamicWrapper(app, [], () => import('../routes/Purchase/statisticAnalysis/nearlyEffective')),
-    },
-    //采购结算 - 统计分析 - 近效期查询
-    {
-      name: "近效期查询",
-      icon: 'setting',
-      path: '/purchase/statisticAnalysis/nearlyEffective',
-      component: dynamicWrapper(app, [], () => import('../routes/Purchase/statisticAnalysis/nearlyEffective')),
+      component: dynamicWrapper(app, ['purchase/statistics'], () => import('../routes/Purchase/statisticAnalysis/nearlyEffective')),
     },
     //采购结算 - 统计分析 - 损益分析
     {
       name: "损益分析",
       icon: 'setting',
       path: '/purchase/statisticAnalysis/profitLoss',
-      component: dynamicWrapper(app, [], () => import('../routes/Purchase/statisticAnalysis/profitLoss')),
+      component: dynamicWrapper(app, ['purchase/statistics'], () => import('../routes/Purchase/statisticAnalysis/profitLoss')),
     },
     //采购结算 - 统计分析 - 损益分析 - 详情
     {
@@ -1348,7 +1365,7 @@ export const getNavData = app => [
       name: "供应商退货分析",
       icon: 'setting',
       path: '/purchase/statisticAnalysis/supplierReturn',
-      component: dynamicWrapper(app, [], () => import('../routes/Purchase/statisticAnalysis/supplierReturn')),
+      component: dynamicWrapper(app, ['purchase/statistics'], () => import('../routes/Purchase/statisticAnalysis/supplierReturn')),
     },
     //采购结算 - 统计分析 - 财务指标 
     {

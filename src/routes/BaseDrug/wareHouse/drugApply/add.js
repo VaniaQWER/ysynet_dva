@@ -180,6 +180,9 @@ class NewAdd extends PureComponent {
         title: '申领数量',
         dataIndex: 'baseApplyNum',
         width: 120,
+        render: (text) => (
+          text < 0 ? 0 : text
+        )
       }, {
         title: '可用库存',
         dataIndex: 'localUsableQuantity',
@@ -290,7 +293,7 @@ class NewAdd extends PureComponent {
             />
           </div>
         </Modal>
-        <div className='detailCard' style={{margin: '-12px -8px 0px -8px'}}>
+        <div className='detailCard' style={{margin: '-12px -8px -6px', minHeight: 'calc(100vh - 152px)'}}>
           <Table
             title={()=>'产品信息'}
             loading={loading}
@@ -310,18 +313,16 @@ class NewAdd extends PureComponent {
             }}
             pagination={false}
           />
+          {
+            dataSource.length === 0? null : 
+              <Row>
+                <Col style={{ textAlign: 'right', marginTop: '10px' }}>
+                  <Button loading={saveLoading} onClick={()=>{this.submit('1')}} type='primary'>提交</Button>
+                  <Button loading={saveLoading} onClick={()=>{this.submit('0')}} type='danger' style={{ marginLeft: 8 }} ghost>保存</Button>
+                </Col>
+              </Row>
+          }
         </div>
-        {
-          dataSource.length === 0? null : 
-          <div className="detailCard" style={{margin: '-12px -8px 0px -8px'}}>
-            <Row>
-              <Col style={{ textAlign: 'right', padding: '10px' }}>
-                <Button loading={saveLoading} onClick={()=>{this.submit('1')}} type='primary'>提交</Button>
-                <Button loading={saveLoading} onClick={()=>{this.submit('0')}} type='danger' style={{ marginLeft: 8 }} ghost>保存</Button>
-              </Col>
-            </Row>
-          </div>
-        }
       </div>
     )
   }

@@ -49,7 +49,7 @@ class SearchForm extends PureComponent {
           values.filterStatus = status.map(item=>item.value).filter(item=>item !== "").join(',');
         }
         this.props.formProps.dispatch({
-          type:'base/setQueryConditions',
+          type:'base/updateConditions',
           payload: values
         });
       }
@@ -162,10 +162,21 @@ class InventoryAudit extends PureComponent {
       payload: values
     });
   }
-  //查询
-  // queryHandler = query => {
-  //   this.setState({ query });
-  // }
+  //导出
+  export = () => {
+    let { queryConditons } = this.props.base;
+    queryConditons = {...queryConditons};
+    delete queryConditons.key;
+    delete queryConditons.makingTime;
+    delete queryConditons.pageNo;
+    delete queryConditons.pageSize;
+    delete queryConditons.sortOrder;
+    delete queryConditons.sortField;
+    this.props.dispatch({
+      type: 'checkDecrease/checkBillSheveExport',
+      payload: queryConditons
+    })
+  }
   render() {
     const {status, types} = this.state;
     const columns = [
@@ -232,6 +243,9 @@ class InventoryAudit extends PureComponent {
           types={types}
           formProps={{...this.props}}
         />
+        <Row>
+          <Button onClick={this.export}>导出</Button>
+        </Row>
         <RemoteTable
           onChange={this._tableChange}
           query={query}

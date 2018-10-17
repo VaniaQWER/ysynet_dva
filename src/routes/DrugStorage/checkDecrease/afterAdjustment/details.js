@@ -139,7 +139,7 @@ class Details extends PureComponent {
       },
       {
         title: '生产日期',
-        dataIndex: 'productDate',
+        dataIndex: 'accountProductTime',
         width: 168,
       },
       {

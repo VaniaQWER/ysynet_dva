@@ -48,8 +48,9 @@ class RemoteTable extends Component {
       onChange({
         ...postData
       })
+    }else {
+      this.fetch(postData);
     }
-    this.fetch(postData);
   }
   fetch = (params = {...this.props.query}, url = this.props.url,catchData={...this.props.catchData}) => {
     this.setState({loading: true, searchParams: params });

@@ -53,7 +53,7 @@ class SearchForm extends PureComponent{
     this.props.form.validateFields((err, values) => {
       if (!err) {
         this.props.formProps.dispatch({
-          type:'base/setQueryConditions',
+          type:'base/updateConditions',
           payload: values
         });
       }

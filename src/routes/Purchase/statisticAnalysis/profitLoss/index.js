@@ -9,7 +9,7 @@
  * @file 采购计划 - 统计分析--损益分析
  */
 import React, { PureComponent } from 'react';
-import { Form, Row, Col, Button, Input, DatePicker, Icon, Select } from 'antd';
+import { Form, Row, Col, Button, Input, DatePicker, Icon, Select, message } from 'antd';
 import { Link } from 'react-router-dom';
 import RemoteTable from '../../../../components/TableGrid';
 import { connect } from 'dva';
@@ -30,6 +30,9 @@ const formItemLayout = {
 
 
 class SearchForm extends PureComponent{
+  state = {
+    deptList: []
+  }
   toggle = () => {
     this.props.formProps.dispatch({
       type:'base/setShowHide'
@@ -37,9 +40,8 @@ class SearchForm extends PureComponent{
   }
   componentDidMount() {
     let { queryConditons } = this.props.formProps.base;
+    const { dispatch } = this.props.formProps;
     //找出表单的name 然后set
-    console.log(queryConditons);
-    
     let values = this.props.form.getFieldsValue();
     values = Object.getOwnPropertyNames(values);
     let value = {};
@@ -48,6 +50,18 @@ class SearchForm extends PureComponent{
       return keyItem;
     });
     this.props.form.setFieldsValue(value);
+    dispatch({
+      type: 'statistics/getDeptByParam',
+      callback: ({data, code, msg}) => {
+        if(code === 200) {
+          this.setState({
+            deptList: data
+          });
+        }else {
+          message.error(msg);
+        }
+      }
+    })
   }
   handleSearch = e => {
     e.preventDefault();
@@ -55,15 +69,15 @@ class SearchForm extends PureComponent{
       if (!err) {
         const closeDate = values.closeDate === undefined ? '' : values.closeDate;
         if (closeDate.length > 0) {
-          values.settleStartTime = closeDate[0].format('YYYY-MM-DD');
-          values.settleEndTime = closeDate[1].format('YYYY-MM-DD');
+          values.startTime = closeDate[0].format('YYYY-MM-DD');
+          values.endTime = closeDate[1].format('YYYY-MM-DD');
         }else {
-          values.settleStartTime = '';
-          values.settleEndTime = '';
+          values.startTime = '';
+          values.endTime = '';
         };
         this.props.formProps.dispatch({
-          type:'base/setQueryConditions',
-          payload: values
+          type:'base/updateConditions',
+          payload: { ...values }
         });
       }
     })
@@ -79,13 +93,14 @@ class SearchForm extends PureComponent{
     const { getFieldDecorator } = this.props.form;
     const {display} = this.props.formProps.base;
     const expand = display === 'block';
+    const { deptList } = this.state;
     return (
       <Form className="ant-advanced-search-form" onSubmit={this.handleSearch}>
         <Row gutter={30}>
           <Col span={8}>
             <FormItem {...formItemLayout} label={`部门`}>
               {
-                getFieldDecorator(`supplierName`)(
+                getFieldDecorator(`deptCode`)(
                   <Select 
                     placeholder="请选择"
                     style={{
@@ -93,6 +108,11 @@ class SearchForm extends PureComponent{
                     }}
                   >
                     <Option key="全部" value="">全部</Option>
+                    {
+                      deptList.map(item => (
+                        <Option key={item.id} value={item.id}>{item.deptName}</Option>
+                      ))
+                    }
                   </Select>
                 )
               }
@@ -101,7 +121,7 @@ class SearchForm extends PureComponent{
           <Col span={8}>
             <FormItem {...formItemLayout} label={`损益单号`}>
               {
-                getFieldDecorator(`settleBillNo`)(
+                getFieldDecorator(`causticExcessiveNo`)(
                   <Input placeholder='请输入' />
                 )
               }
@@ -110,7 +130,7 @@ class SearchForm extends PureComponent{
           <Col span={8} style={{ display: display }}>
             <FormItem {...formItemLayout} label={`损益类型`}>
               {
-                getFieldDecorator(`invoiceParam`)(
+                getFieldDecorator(`causticExcessiveType`)(
                   <Select
                     placeholder="请选择"
                     style={{
@@ -118,7 +138,7 @@ class SearchForm extends PureComponent{
                     }}
                   >
                     <Option key="全部" value="">全部</Option>
-                    <Option key="0" value="0">损</Option>
+                    <Option key="2" value="2">损</Option>
                     <Option key="1" value="1">益</Option>
                   </Select>
                 )
@@ -151,6 +171,7 @@ const WrapperForm = Form.create()(SearchForm);
 class ProfitLoss extends PureComponent {
   state = {
     query: {},
+    tableFooter: {}
   }
   _tableChange = values => {
     this.props.dispatch({
@@ -158,12 +179,50 @@ class ProfitLoss extends PureComponent {
       payload: values
     });
   }
+  _tableCallback = () => {
+    const {deptCode} = this.props.base.queryConditons;
+    if(deptCode !== '' && deptCode !== undefined) {
+      this.props.dispatch({
+        type: 'statistics/getStatics',
+        payload: {
+          deptCode: deptCode,
+          type: 1
+        },
+        callback: ({code, data, msg}) => {
+          if(code === 200) {
+            this.setState({
+              tableFooter: data
+            });
+          }else {
+            message.error(msg);
+          };
+        }
+      });
+    }else {
+      this.setState({
+        tableFooter: {}
+      });
+    }
+  }
+  export = () => {
+    let {queryConditons} = this.props.base;
+    queryConditons = {...queryConditons};
+    delete queryConditons.key;
+    delete queryConditons.pageNo;
+    delete queryConditons.pageSize;
+    delete queryConditons.sortField;
+    delete queryConditons.sortOrder;
+    this.props.dispatch({
+      type: 'statistics/profitLossExport',
+      payload: queryConditons
+    })
+  }
   render() {
     const {match} = this.props;
     const columns = [
       {
         title: '损益单号',
-        dataIndex: 'invoiceNo',
+        dataIndex: 'causticExcessiveNo',
         width: 168,
         render: (text, record) => {
           return <span>
@@ -172,31 +231,31 @@ class ProfitLoss extends PureComponent {
         }
       }, {
         title: '部门',
-        dataIndex: 'invoiceCode',
+        dataIndex: 'deptName',
         width: 168,
       }, {
         title: '账面总库存',
-        dataIndex: 'settleBillNo',
+        dataIndex: 'accountTotalAmount',
         width: 112,
       }, {
         title: '实际总库存',
-        dataIndex: 'invoiceTime',
+        dataIndex: 'realTotalAmount',
         width: 112,
       }, {
         title: '损益总数量',
-        dataIndex: 'invoiceAmount',
+        dataIndex: 'excessiveTotalAmount',
         width: 168
       }, {
         title: '实际总损益金额(元)',
-        dataIndex: 'supplierName',
+        dataIndex: 'excessiveTotalMoney',
         width: 168,
       }
     ];
+    const {tableFooter} = this.state;
     let query = this.props.base.queryConditons;
     query = {
       ...query,
-    }
-    delete query.invoiceDate;
+    };
     delete query.closeDate;
     delete query.key;
     return (
@@ -204,16 +263,39 @@ class ProfitLoss extends PureComponent {
         <WrapperForm
           formProps={{...this.props}}
         />
+        <Row>
+          <Button onClick={this.export}>导出</Button>
+        </Row>
         <RemoteTable
           onChange={this._tableChange}
           query={query}
           scroll={{x: 896}}
-          isJson
           columns={columns}
           style={{marginTop: 20}}
           ref='table'
-          rowKey={'id'}
-          url={statisticAnalysis.INVOICE_LIST}
+          rowKey={'causticExcessiveNo'}
+          cb={this._tableCallback}
+          url={statisticAnalysis.EXCESSIVE_LIST}
+          footer={() => (
+            <Row>
+              <Col span={8}>
+                <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-7">
+                  <label style={{fontWeight: 600}}>部门损益总数量</label>
+                </div>
+                <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-17">
+                  <div style={{color: 'red'}} className='ant-form-item-control'>{tableFooter.excessiveTotalAmount || 0}</div>
+                </div>
+              </Col>
+              <Col span={8}>
+                <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-10">
+                  <label style={{fontWeight: 600}}> 部门实际总损益金额(元)</label>
+                </div>
+                <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-14">
+                  <div style={{color: 'red'}} className='ant-form-item-control'>{tableFooter.excessiveTotalMoney || 0}</div>
+                </div>
+              </Col>
+            </Row>
+          )}
         />
       </div>
     )

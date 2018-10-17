@@ -21,6 +21,13 @@ export default {
     display: 'none'    
   },
   effects:{
+    //药房药库基数药 - 药品目录 - 导出
+    *deptExport({payload, callback}, {call}) {
+      const data = yield call(base.deptExport, payload);
+      if(typeof callback === 'function') {
+        callback && callback(data);
+      }
+    },
     //基数药 - 验收 - 新增验收 - 搜索
     *getCheckDetail({payload, callback}, {call}) {
       const data = yield call(baseDrug.getCheckDetail, payload);
@@ -270,6 +277,18 @@ export default {
         ...state,
         queryConditons: {
           key, ...state.queryConditons, ...action.payload
+        }
+      }
+    },
+    updateConditions(state, action) {
+      const key = window.location.href.split('#')[1];
+      return {
+        ...state,
+        queryConditons: {
+          key, 
+          ...state.queryConditons, 
+          ...action.payload,
+          pageNo: 1
         }
       }
     },

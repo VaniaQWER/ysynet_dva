@@ -163,6 +163,18 @@ class DetailsNewLibrary extends PureComponent{
     };
   }
 
+  //打印
+  print = () => {
+    const { distributeCode, auditStatus } = this.state.info;
+    this.props.dispatch({
+      type: 'wareHouse/baseCheckPrint',
+      payload: {
+        distributeCode,
+        status: auditStatus
+      }
+    });
+  }
+
   render(){
     let {btnShow, loading, info, checkLoading, activeKey } = this.state;
     let {verifyList, unVerfiyList} = info;
@@ -170,7 +182,14 @@ class DetailsNewLibrary extends PureComponent{
       <div className='fullCol'>
         <div  className='fullCol-fullChild'>
           <Spin spinning={loading}>
-            <h3>单据信息</h3>
+            <Row>
+              <Col span={12}>
+                <h3>单据信息</h3>
+              </Col>
+              <Col span={12} style={{textAlign: 'right'}}>
+                <Button onClick={this.print}>打印</Button>
+              </Col>
+            </Row>
             <Row>
               <Col span={8}>
                 <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">

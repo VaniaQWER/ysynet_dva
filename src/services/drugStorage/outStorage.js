@@ -9,7 +9,6 @@ import request from '../../utils/request';
 import { _local } from '../../api/local';
 
 /*  出库   */
-
 // 受理配货
 
 export function genDeptList(options) { // 已申领部门

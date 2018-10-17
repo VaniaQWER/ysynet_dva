@@ -40,7 +40,7 @@ class SearchForm extends PureComponent{
     e.preventDefault();
     this.props.form.validateFields((err,values)=>{
       this.props.formProps.dispatch({
-        type:'base/setQueryConditions',
+        type:'base/updateConditions',
         payload: values
       });
     })
@@ -249,6 +249,20 @@ class DrugDirectory extends PureComponent{
       payload: values
     });
   }
+  //导出
+  export = () => {
+    let {queryConditons} = this.props.base;
+    queryConditons = {...queryConditons};
+    delete queryConditons.pageSize;
+    delete queryConditons.pageNo;
+    delete queryConditons.sortField;
+    delete queryConditons.sortOrder;
+    delete queryConditons.key;
+    this.props.dispatch({
+      type: 'base/deptExport',
+      payload: queryConditons,
+    });
+  }
   render(){
     const {visible, loading, min, max} = this.state;
     const { getFieldDecorator } = this.props.form;
@@ -275,11 +289,12 @@ class DrugDirectory extends PureComponent{
     return (
     <div className='ysynet-main-content'>
       <WrappSearchForm formProps={{...this.props}}/>
-      {/* <Row className='ant-row-bottom'>
+      <Row className='ant-row-bottom'>
         <Col>
-          <Button type='primary' onClick={this.bitchEdit}>批量设置上下限</Button>
+          {/* <Button type='primary' onClick={this.bitchEdit}>批量设置上下限</Button> */}
+          <Button type='default' onClick={this.export}>导出</Button>
         </Col>
-      </Row> */}
+      </Row>
       <Modal
         title={'批量编辑'}
         width={488}

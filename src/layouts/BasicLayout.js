@@ -215,9 +215,9 @@ class BasicLayout extends PureComponent {
                   currentDept.deptId &&
                   <Dropdown overlay={this.menu(deptList)} trigger={['click']}>
                     <Tooltip title='子系统切换' placement='right'>
-                      <span className="ant-dropdown-link">
+                      <a className="ant-dropdown-link">
                         {currentDept.deptName} <Icon type="down" style={{ marginLeft: 8 }}/>
-                      </span>
+                      </a>
                     </Tooltip>
                   </Dropdown>
                 }
@@ -269,14 +269,14 @@ class BasicLayout extends PureComponent {
             {/* </Affix> */}
             <Content>
               <Header className={`${styles.subHeader}`}>
-                <Tooltip title='返回' placement='bottom'>
                   {
                     pathname.length > 5 && 
-                    <a onClick={()=>this.props.history.go(-1)}>
-                      <Icon type="arrow-left" theme="outlined" style={{ fontSize: 18, marginRight: 16 }}/>
-                    </a>
+                    <Tooltip title='返回' placement='bottom'>
+                      <a onClick={()=>this.props.history.go(-1)}>
+                        <Icon type="arrow-left" theme="outlined" style={{ fontSize: 18, marginRight: 16 }}/>
+                      </a>
+                    </Tooltip>
                   }
-                </Tooltip>
                 <span>{title}</span>
               </Header>
               {hasDept ? (

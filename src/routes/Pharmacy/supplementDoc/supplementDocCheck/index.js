@@ -203,7 +203,7 @@ class SearchFormWrapper extends PureComponent {
         values.reviewendTime = moment(values.reviewTime[1]).format('YYYY-MM-DD');
       }
       this.props.formProps.dispatch({
-          type:'base/setQueryConditions',
+          type:'base/updateConditions',
           payload: values
         });
     });

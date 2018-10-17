@@ -2,7 +2,7 @@
  * @file 药房 - 日对账单 - 详情
  */
 import React, { PureComponent } from 'react';
-import { Row, Col, Input, Tooltip, message } from 'antd';
+import { Row, Col, Input, Tooltip, message, Button } from 'antd';
 import RemoteTable from '../../../../components/TableGrid';
 import FetchSelect from '../../../../components/FetchSelect';
 import {dayStatements, common} from '../../../../api/purchase/purchase';
@@ -57,6 +57,11 @@ class Details extends PureComponent {
       query,
       value
     });
+  }
+  //打印
+  print = () => {
+    const {id} = this.props.match.params;
+    window.open(`${dayStatements.PRINT_DELIVERY_DETAIL}?sendId=${id}`);
   }
   render() {
     let {query, value, info} = this.state;
@@ -170,6 +175,9 @@ class Details extends PureComponent {
           <Row>
             <Col span={12}>
               <h2>对账单: <span>KP00221180700001CW</span></h2>
+            </Col>
+            <Col span={12} style={{textAlign: 'right'}}>
+              <Button onClick={this.print}>打印</Button>
             </Col>
           </Row>
           <Row>

@@ -48,10 +48,11 @@ export default function request(url, options) {
   }else if(newOptions.method === 'GET' || newOptions.method === 'get'){
     url = newOptions.type ? `${url}?${querystring.stringify(newOptions.body)}` : '';
     delete newOptions.body;
-  }
-  return fetch(url, newOptions)
-  .then(response=> checkStatus(response))
-  .then(response => response.json())
+  };
+  if(!newOptions.export) {
+    return fetch(url, newOptions)
+    .then(response=> checkStatus(response))
+    .then(response => response.json())
     .catch((error) => {
       if (error.code) {
         notification.error({
@@ -67,4 +68,33 @@ export default function request(url, options) {
       }
       return error;
     });
+  }else {
+    return fetch(url, newOptions)
+    .then(response=> checkStatus(response))
+    .then(response => response.blob())
+    .then(blob => {
+      const url = window.URL.createObjectURL(blob);
+      const urlArr = url.split('-');
+      const filename = urlArr[urlArr.length - 1];
+      let a = document.createElement('a');
+      a.href = url;
+      a.download = `${filename}.xlsx`;
+      a.click();                    
+    })
+    .catch((error) => {
+      if (error.code) {
+        notification.error({
+          message: error.name,
+          description: error.message,
+        });
+      }
+      if ('stack' in error && 'message' in error) {
+        notification.error({
+          message: `请求错误: ${url}`,
+          description: error.message,
+        });
+      }
+      return error;
+    })
+  }
 }

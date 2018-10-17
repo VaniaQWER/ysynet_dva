@@ -101,7 +101,7 @@ class SearchForm extends PureComponent{
           values.supplierCodeList = [values.supplierCodeList];
         };
         this.props.formProps.dispatch({
-          type:'base/setQueryConditions',
+          type:'base/updateConditions',
           payload: values
         });
       }

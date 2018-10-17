@@ -158,12 +158,6 @@ class SettlementAnalysis extends PureComponent {
               }]}
             />
             <Geom
-              tooltip={['time*people', (time, people)=>{
-                return {
-                  name: '库房结存数量',
-                  value: people
-                }
-              }]}
               type="line" 
               position="time*people" 
               color="#fdae6b" 

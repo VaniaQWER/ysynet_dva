@@ -124,7 +124,7 @@ class SearchFormWrapper extends PureComponent {
       };
       delete values.time;
       this.props.formProps.dispatch({
-        type:'base/setQueryConditions',
+        type:'base/updateConditions',
         payload: values
       });
     });

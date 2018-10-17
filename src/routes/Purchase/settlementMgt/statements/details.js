@@ -2,7 +2,7 @@
  * @file 药房 - 日对账单 - 详情
  */
 import React, { PureComponent } from 'react';
-import { Row, Col, Input, message, Tooltip } from 'antd';
+import { Row, Col, Input, message, Tooltip, Button } from 'antd';
 import RemoteTable from '../../../../components/TableGrid';
 import FetchSelect from '../../../../components/FetchSelect';
 import {settlementMgt, common} from '../../../../api/purchase/purchase';
@@ -55,6 +55,11 @@ class Details extends PureComponent {
     this.setState({
       query
     });
+  }
+  //打印
+  print = () => {
+    const {settleBillNo} = this.state.query;
+    window.open(`${settlementMgt.PRINT_DELIVERY_DETAIL}?sendId=${settleBillNo}`);
   }
   render() {
     let {info, query, value} = this.state;
@@ -136,6 +141,9 @@ class Details extends PureComponent {
           <Row>
             <Col span={12}>
               <h2>结算单: <span>{info.settleBillNo || ''}</span></h2>
+            </Col>
+            <Col span={12} style={{textAlign: 'right'}}>
+              <Button onClick={this.print}>打印</Button>
             </Col>
           </Row>
           <Row>

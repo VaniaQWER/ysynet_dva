@@ -20,3 +20,12 @@ export function InsertMakeup(options){
     body: options
   })
 }
+//药品药库基数药 - 药品目录 - 导出
+export function deptExport(options) {
+  return request(`${_local}/a/his/hisctmedicinematerial/export`, {
+    method: 'POST',
+    type: 'formData',
+    export: true,
+    body: options
+  })
+}

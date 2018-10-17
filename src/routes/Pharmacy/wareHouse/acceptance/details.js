@@ -6,6 +6,7 @@
 import React, { PureComponent } from 'react';
 import { Table ,Row, Col, Tabs, Tooltip, Button, message } from 'antd';
 import querystring from 'querystring';
+import {wareHouse} from '../../../../api/pharmacy/wareHouse';
 import {connect} from 'dva';
 const columns = [
   {
@@ -170,13 +171,26 @@ class DetailsNewLibrary extends PureComponent{
     });
   }
 
+  //打印
+  print = () => {
+    const { auditStatus, distributeCode } = this.state.info;
+    window.open(`${wareHouse.PRINT_ROOM_DETAIL}?distributeCode=${distributeCode}&status=${auditStatus}`);
+  }
+
   render(){
     let {defaultActiveKey, btnShow, loading, info, checkLoading } = this.state;
     let {verifyList, unVerfiyList} = info;
     return (
       <div className='fullCol'>
           <div className='fullCol-fullChild'>
-            <h3>单据信息</h3>
+            <Row>
+              <Col span={12}>
+                <h3>单据信息</h3>
+              </Col>
+              <Col span={12} style={{textAlign: 'right'}}>
+                <Button onClick={this.print}>打印</Button>
+              </Col>
+            </Row>
             <Row>
               <Col span={8}>
                 <div className="ant-form-item-label-left ant-col-xs-24 ant-col-sm-5">

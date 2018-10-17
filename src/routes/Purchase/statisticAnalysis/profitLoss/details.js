@@ -8,18 +8,20 @@
   @file 损益分析 详情
 */
 import React, { PureComponent } from 'react';
-import { Table, Row, Col, Tooltip, message } from 'antd';
+import { Row, Col, Tooltip, message } from 'antd';
+import RemoteTable from '../../../../components/TableGrid';
+import {statisticAnalysis} from '../../../../api/purchase/purchase';
 import { connect } from 'dva';
 const columns = [
   {
     title: '货位',
     width: 112,
-    dataIndex: 'hw'
+    dataIndex: 'locName'
   },
   {
     title: '货位类型',
     width: 168,
-    dataIndex: 'hwlx'
+    dataIndex: 'positionTypeName'
   },
   {
     title: '通用名',
@@ -29,12 +31,12 @@ const columns = [
   {
     title: '商品名',
     width: 168,
-    dataIndex: 'goodsName'
+    dataIndex: 'ctmmTradeName'
   },
   {
     title: '规格',
     width: 168,
-    dataIndex: 'goodsSpec',
+    dataIndex: 'ctmmSpecification',
     className:'ellipsis',
     render:(text)=>(
       <Tooltip placement="topLeft" title={text}>{text}</Tooltip>
@@ -43,7 +45,7 @@ const columns = [
   {
     title: '生产厂家',
     width: 224,
-    dataIndex: 'producerName',
+    dataIndex: 'ctmmManufacturerName',
     className:'ellipsis',
     render:(text)=>(
       <Tooltip placement="topLeft" title={text}>{text}</Tooltip>
@@ -60,14 +62,14 @@ const columns = [
     dataIndex: 'lot'
   },
   {
-    title: '生产日期',
+    title: 'productDate',
     width: 168,
     dataIndex: 'scrq'
   },
   {
     title: '有效期止',
     width: 168,
-    dataIndex: 'yxqz'
+    dataIndex: 'validEndTime'
   },
   {
     title: '包装规格',
@@ -77,53 +79,56 @@ const columns = [
   {
     title: '剂型',
     width: 168,
-    dataIndex: 'jx'
+    dataIndex: 'ctmmDosageFormDesc'
   },
   {
     title: '供应商',
     width: 168,
-    dataIndex: 'gys'
+    dataIndex: 'supplierName'
   },
   {
     title: '药品编码',
     width: 168,
-    dataIndex: 'goodsCode'
+    dataIndex: 'hisDrugCode'
   },
   {
     title: '批准文号',
     width: 224,
-    dataIndex: 'registKey'
+    dataIndex: 'approvalNo'
   },
   {
     title: '账面库存',
-    dataIndex: 'zmkc',
+    dataIndex: 'accountStoreNum',
     width: 112
   },
   {
     title: '实际库存',
     width: 112,
-    dataIndex: 'sjkc'
+    dataIndex: 'practicalRepertory'
   },
   {
     title: '损益数量',
     width: 112,
-    dataIndex: 'sysl'
+    dataIndex: 'checkNum'
   },
   {
     title: '价格',
     width: 112,
-    dataIndex: 'jg'
+    dataIndex: 'referencePrice'
   },
   {
     title: '实际损益金额',
     width: 168,
-    dataIndex: 'sjsyje'
+    dataIndex: 'excessiveMoney'
   },
 ];
 
 class Detail extends PureComponent{
   state = {
-    detailsData: {}
+    detailsData: {},
+    query: {
+      checkBillNo: this.props.match.params.id
+    }
   }
   componentDidMount = () => {
     this.getDetail();
@@ -133,9 +138,9 @@ class Detail extends PureComponent{
     if (this.props.match.params.id) {
       let { id } = this.props.match.params;
       this.props.dispatch({
-        type: 'statistics/invoiceDetail',
+        type: 'statistics/profitLossDetailHead',
         payload: {
-          invoiceNo: id
+          causticExcessiveNo: id
         },
         callback: (data) => {
           if(data.code === 200 && data.msg === 'success') {
@@ -151,7 +156,7 @@ class Detail extends PureComponent{
     }
   }
   render(){
-    const { detailsData } = this.state;
+    const { detailsData, query } = this.state;
     return (
       <div className='fullCol fadeIn'>
         <div className='fullCol-fullChild'>
@@ -161,7 +166,7 @@ class Detail extends PureComponent{
                 <label>部门</label>
               </div>
               <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-17">
-                <div className='ant-form-item-control'>{detailsData.supplierName}</div>
+                <div className='ant-form-item-control'>{detailsData.deptName}</div>
               </div>
             </Col>
           </Row>
@@ -171,7 +176,7 @@ class Detail extends PureComponent{
                 <label>损益单号</label>
               </div>
               <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-17">
-                <div className='ant-form-item-control'>{detailsData.settleBillNo}</div>
+                <div className='ant-form-item-control'>{detailsData.causticExcessiveNo}</div>
               </div>
             </Col>
           </Row>
@@ -181,7 +186,7 @@ class Detail extends PureComponent{
                 <label>账面总库存</label>
               </div>
               <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-17">
-                <div className='ant-form-item-control'>{detailsData.invoiceNo}</div>
+                <div className='ant-form-item-control'>{detailsData.accountTotalAmount}</div>
               </div>
             </Col>
             <Col span={8}>
@@ -189,7 +194,7 @@ class Detail extends PureComponent{
               <label>实际总库存</label>
             </div>
             <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-17">
-              <div className='ant-form-item-control'>{detailsData.invoiceCode}</div>
+              <div className='ant-form-item-control'>{detailsData.realTotalAmount}</div>
             </div>
             </Col>
             <Col span={8}>
@@ -197,7 +202,7 @@ class Detail extends PureComponent{
                 <label>损益总数量</label>
               </div>
               <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-17">
-                <div className='ant-form-item-control'>{detailsData.invoiceTime}</div>
+                <div className='ant-form-item-control'>{detailsData.excessiveTotalAmount}</div>
               </div>
             </Col>
             <Col span={8}>
@@ -205,7 +210,7 @@ class Detail extends PureComponent{
                   <label>实际总损益金额</label>
               </div>
               <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-17">
-                <div className='ant-form-item-control'>{detailsData.invoiceAmount}</div>
+                <div className='ant-form-item-control'>{detailsData.excessiveTotalMoney}</div>
               </div>
             </Col>
             <Col span={8}>
@@ -213,20 +218,20 @@ class Detail extends PureComponent{
                   <label>生成时间</label>
               </div>
               <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-17">
-                <div className='ant-form-item-control'>{detailsData.settleDate}</div>
+                <div className='ant-form-item-control'>{detailsData.createDate}</div>
               </div>
             </Col>
           </Row>
         </div>
         <div className='detailCard'>
-          <Table
-            title={()=>'损益信息'}
+          <h3>损益信息</h3>
+          <hr className="hr" />
+          <RemoteTable
+            query={query}
             scroll={{x: 3168}}
             columns={columns}
             rowKey={'id'}
-            bordered
-            dataSource={detailsData.billdetaillist ? detailsData.billdetaillist : []}
-            pagination={false}
+            url={statisticAnalysis.PROFIT_LOSS_DETAIL_LIST}
           />
         </div>
       </div>

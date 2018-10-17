@@ -150,7 +150,7 @@ class SearchFormWrapper extends PureComponent {
         values.receptionEndTime = '';
       };
       this.props.formProps.dispatch({
-        type:'base/setQueryConditions',
+        type:'base/updateConditions',
         payload: values
       });
     });

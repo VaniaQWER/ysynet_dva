@@ -57,7 +57,7 @@ class SearchForm extends PureComponent{
     e.preventDefault();
     this.props.form.validateFields((err, values) => {
       this.props.formProps.dispatch({
-        type:'base/setQueryConditions',
+        type:'base/updateConditions',
         payload: values
       });
     });
@@ -114,7 +114,7 @@ class SearchForm extends PureComponent{
                 getFieldDecorator(`ctmmStatusCode`,{
                   initialValue: ''
                 })(
-                  <Select>
+                  <Select placeholder="请选择">
                     <Option value=''>全部</Option>
                     <Option value='0'>启用</Option>
                     <Option value='1'>停用</Option>
@@ -129,7 +129,7 @@ class SearchForm extends PureComponent{
                 getFieldDecorator('medDrugType',{
                   initialValue: ''
                 })(
-                  <Select>
+                  <Select placeholder="请选择">
                     <Option key={0} value='2'>是</Option>
                     <Option key={1} value='1'>否</Option>
                   </Select>
@@ -248,6 +248,20 @@ class DrugDirectory extends PureComponent{
       callback(new Error('请输入非0正整数！'));
     }
   }
+  //导出
+  print = () => {
+    let {queryConditons} = this.props.base;
+    queryConditons = {...queryConditons};
+    delete queryConditons.pageSize;
+    delete queryConditons.pageNo;
+    delete queryConditons.sortField;
+    delete queryConditons.sortOrder;
+    delete queryConditons.key;
+    this.props.dispatch({
+      type: 'base/deptExport',
+      payload: queryConditons,
+    })
+  }
   render(){
     const { addVisible, addLoading } = this.state;
     const { getFieldDecorator } = this.props.form;
@@ -270,150 +284,151 @@ class DrugDirectory extends PureComponent{
         render: text => <Badge status={text==="0" ? "success" :"error"} text={text==="0" ? "启用" :"停用"}/>
       },
     ];
-    let query = this.props.base.queryConditons;
+    let query = {...this.props.base.queryConditons};
     delete query.key;
     return (
-    <div className='ysynet-main-content'>
-      <WrappSearchForm 
-        formProps={{...this.props}} 
-      />
-      <Row className='ant-row-bottom'>
-        <Col>
-          <Button type='primary' onClick={this.add}>新增</Button>
-        </Col>
-      </Row>
-      <Modal
-        title='新建'
-        width={1000}
-        visible={addVisible}
-        onCancel={()=>{this.setState({ addVisible: false });this.props.form.resetFields()}}
-        footer={[
-          <Button key="submit" type='primary' loading={addLoading} onClick={this.save}>
-              确认
-          </Button>,
-          <Button key="back"  type='default' onClick={()=>{this.setState({ addVisible: false });this.props.form.resetFields()}}>取消</Button>
-        ]}
-      >
-        <Form>
-          <Row>
-            <Col span={10}>
-              <FormItem {...singleFormItemLayout} label={`通用名称`}>
-                {
-                  getFieldDecorator(`ctmmGenericName`,{
-                    initialValue: '',
-                    rules: [{ required: true,message: '请输入通用名称' }]
-                  })(
-                    <Input placeholder='请输入' />
-                  )
-                }
-              </FormItem>
-              <FormItem {...singleFormItemLayout} label={`商品名`}>
-                {
-                  getFieldDecorator(`ctmmTradeName`,{
-                    initialValue: '',
-                    rules: [{ required: true,message: '请输入商品名' }]
-                  })(
-                    <Input placeholder='请输入' />
-                  )
-                }
-              </FormItem>
-              <FormItem {...singleFormItemLayout} label={`规格`}>
-                {
-                  getFieldDecorator(`ctmmSpecification`,{
-                    initialValue: '',
-                    rules: [{ required: true,message: '请输入规格' }]
-                  })(
-                    <Input placeholder='请输入' />
-                  )
-                }
-              </FormItem>
-              <FormItem {...singleFormItemLayout} label={`剂型`}>
-                {
-                  getFieldDecorator(`ctmmDosageFormDesc`,{
-                    initialValue: '',
-                    rules: [{ required: true,message: '请输入剂型' }]
-                  })(
-                    <Input placeholder='请输入' />
-                  )
-                }
-              </FormItem>
-              <FormItem {...singleFormItemLayout} label={`生产厂家`}>
-                {
-                  getFieldDecorator(`ctmmManufacturerName`,{
-                    initialValue: '',
-                    rules: [{ required: true,message: '请输入生产厂家' }]
-                  })(
-                    <Input placeholder='请输入' />
-                  )
-                }
-              </FormItem>
-             
-            </Col>
-            <Col span={10} push={1}>
-              <FormItem {...singleFormItemLayout} label={`批准文号`}>
-                {
-                  getFieldDecorator(`approvalNo`,{
-                    initialValue: '',
-                    rules: [{ required: true,message: '请输入批准文号' }]
-                  })(
-                    <Input placeholder='请输入' />
-                  )
-                }
-              </FormItem>
-              <FormItem {...singleFormItemLayout} label={`包装规格`}>
-                {
-                  getFieldDecorator(`ctpHdmsCheckinUnitDesc`,{
-                    initialValue: '',
-                    rules: [{ required: true,message: '请输入包装规格' }]
-                  })(
-                    <Input placeholder='请输入' />
-                  )
-                }
-              </FormItem>
-              <FormItem {...singleFormItemLayout} label={`最小发药单位`}>
-                {
-                  getFieldDecorator(`ctpHdmsBasicUnitDesc`,{
-                    initialValue: '',
-                    rules: [{ required: true,message: '请输入最小发药单位' }]
-                  })(
-                    <Input placeholder='请输入' />
-                  )
-                }
-              </FormItem>
-              <FormItem {...singleFormItemLayout} label={`1包装规格 = `}>
-                {
-                  getFieldDecorator(`ctpHdmsCheckInConvfacCode`,{
-                    initialValue: '',
-                    rules: [{ 
-                      required: true,
-                      message: '请输入转换系数',
-                      whitespace: true,
-                      validator: this.validDay
-                    }]
-                  })(
-                    <Input
-                      type="number"
-                      placeholder='请输入' 
-                      addonAfter='最小发药单位'
-                    />
-                  )
-                }
-              </FormItem>
-            </Col>
-          </Row>
-        </Form>
-      </Modal>
-      <RemoteTable
-        onChange={this._tableChange}
-        ref='table'
-        bordered
-        query={query}
-        url={systemMgt.MEDICINEMATERIAL_LIST}
-        scroll={{x: 1624}}
-        columns={IndexColumns}
-        rowKey={'id'}
-      />
-    </div>
+      <div className='ysynet-main-content'>
+        <WrappSearchForm
+          formProps={{...this.props}} 
+        />
+        <Row className='ant-row-bottom'>
+          <Col>
+            <Button style={{marginRight: 8}} type='primary' onClick={this.add}>新增</Button>
+            <Button onClick={this.print}>导出</Button>
+          </Col>
+        </Row>
+        <Modal
+          title='新建'
+          width={1000}
+          visible={addVisible}
+          onCancel={()=>{this.setState({ addVisible: false });this.props.form.resetFields()}}
+          footer={[
+            <Button key="submit" type='primary' loading={addLoading} onClick={this.save}>
+                确认
+            </Button>,
+            <Button key="back"  type='default' onClick={()=>{this.setState({ addVisible: false });this.props.form.resetFields()}}>取消</Button>
+          ]}
+        >
+          <Form>
+            <Row>
+              <Col span={10}>
+                <FormItem {...singleFormItemLayout} label={`通用名称`}>
+                  {
+                    getFieldDecorator(`ctmmGenericName`,{
+                      initialValue: '',
+                      rules: [{ required: true,message: '请输入通用名称' }]
+                    })(
+                      <Input placeholder='请输入' />
+                    )
+                  }
+                </FormItem>
+                <FormItem {...singleFormItemLayout} label={`商品名`}>
+                  {
+                    getFieldDecorator(`ctmmTradeName`,{
+                      initialValue: '',
+                      rules: [{ required: true,message: '请输入商品名' }]
+                    })(
+                      <Input placeholder='请输入' />
+                    )
+                  }
+                </FormItem>
+                <FormItem {...singleFormItemLayout} label={`规格`}>
+                  {
+                    getFieldDecorator(`ctmmSpecification`,{
+                      initialValue: '',
+                      rules: [{ required: true,message: '请输入规格' }]
+                    })(
+                      <Input placeholder='请输入' />
+                    )
+                  }
+                </FormItem>
+                <FormItem {...singleFormItemLayout} label={`剂型`}>
+                  {
+                    getFieldDecorator(`ctmmDosageFormDesc`,{
+                      initialValue: '',
+                      rules: [{ required: true,message: '请输入剂型' }]
+                    })(
+                      <Input placeholder='请输入' />
+                    )
+                  }
+                </FormItem>
+                <FormItem {...singleFormItemLayout} label={`生产厂家`}>
+                  {
+                    getFieldDecorator(`ctmmManufacturerName`,{
+                      initialValue: '',
+                      rules: [{ required: true,message: '请输入生产厂家' }]
+                    })(
+                      <Input placeholder='请输入' />
+                    )
+                  }
+                </FormItem>
+              
+              </Col>
+              <Col span={10} push={1}>
+                <FormItem {...singleFormItemLayout} label={`批准文号`}>
+                  {
+                    getFieldDecorator(`approvalNo`,{
+                      initialValue: '',
+                      rules: [{ required: true,message: '请输入批准文号' }]
+                    })(
+                      <Input placeholder='请输入' />
+                    )
+                  }
+                </FormItem>
+                <FormItem {...singleFormItemLayout} label={`包装规格`}>
+                  {
+                    getFieldDecorator(`ctpHdmsCheckinUnitDesc`,{
+                      initialValue: '',
+                      rules: [{ required: true,message: '请输入包装规格' }]
+                    })(
+                      <Input placeholder='请输入' />
+                    )
+                  }
+                </FormItem>
+                <FormItem {...singleFormItemLayout} label={`最小发药单位`}>
+                  {
+                    getFieldDecorator(`ctpHdmsBasicUnitDesc`,{
+                      initialValue: '',
+                      rules: [{ required: true,message: '请输入最小发药单位' }]
+                    })(
+                      <Input placeholder='请输入' />
+                    )
+                  }
+                </FormItem>
+                <FormItem {...singleFormItemLayout} label={`1包装规格 = `}>
+                  {
+                    getFieldDecorator(`ctpHdmsCheckInConvfacCode`,{
+                      initialValue: '',
+                      rules: [{ 
+                        required: true,
+                        message: '请输入转换系数',
+                        whitespace: true,
+                        validator: this.validDay
+                      }]
+                    })(
+                      <Input
+                        type="number"
+                        placeholder='请输入' 
+                        addonAfter='最小发药单位'
+                      />
+                    )
+                  }
+                </FormItem>
+              </Col>
+            </Row>
+          </Form>
+        </Modal>
+        <RemoteTable
+          onChange={this._tableChange}
+          ref='table'
+          bordered
+          query={query}
+          url={systemMgt.MEDICINEMATERIAL_LIST}
+          scroll={{x: 1624}}
+          columns={IndexColumns}
+          rowKey={'id'}
+        />
+      </div>
     )
   }
 }

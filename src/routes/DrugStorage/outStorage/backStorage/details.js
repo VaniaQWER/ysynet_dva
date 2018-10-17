@@ -6,6 +6,7 @@
 import React, { PureComponent } from 'react';
 import { Table ,Row, Col, Button, Modal, Tooltip, Spin, message } from 'antd';
 import {Link} from 'react-router-dom';
+import { outStorage } from '../../../../api/drugStorage/outStorage';
 import { connect } from 'dva';
 const Conform = Modal.confirm;
 const columns = [
@@ -98,11 +99,8 @@ class DetailsRefund extends PureComponent{
         });
       }
   }
-  edit = () =>{
-    console.log('edit')
-  }
   // 确认退货
-  backStroage = () =>{
+  backStroage = () => {
     Conform({
       content:"是否确认退货？",
       onOk:()=>{
@@ -125,6 +123,11 @@ class DetailsRefund extends PureComponent{
       onCancel:()=>{}
     })
   }
+  //打印
+  print = () => {
+    const {backNo} = this.props.match.params;//printBackDetail
+    window.open(`${outStorage.PRINT_BACK_DETAIL}?backNo=${backNo}`);
+  }
 
   render(){
     const { detailsData, dataSource, spinning } = this.state;
@@ -141,6 +144,9 @@ class DetailsRefund extends PureComponent{
                   {/* <Button type='primary' onClick={this.backStroage} style={{ marginLeft: 8 }}>确认退货</Button> */}
                 </div>
               }
+              <div style={{ textAlign: 'right' }}>
+                  <Button onClick={this.print}>打印</Button>
+                </div>
             </div>
             <Row>
               <Col span={8}>

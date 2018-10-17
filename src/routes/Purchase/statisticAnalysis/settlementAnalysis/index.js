@@ -9,12 +9,14 @@
  * @file 采购计划 - 补货管理--补货计划
  */
 import React, { PureComponent } from 'react';
-import { Form, Row, Col, Button, Input, DatePicker } from 'antd';
-import { Chart, Axis, Geom, Tooltip, Legend } from 'bizcharts';
-import {DataSet} from '@antv/data-set';
+import { Form, Row, Col, Button, DatePicker, message, Select, Spin } from 'antd';
+import { Chart, Axis, Geom, Tooltip, Guide, Legend } from 'bizcharts';
+import moment from 'moment';
 import { connect } from 'dva';
 const FormItem = Form.Item;
 const { RangePicker } = DatePicker;
+const {Option} = Select;
+const Text = Guide.Text;
 const formItemLayout = {
   labelCol: {
     xs: { span: 24 },
@@ -28,35 +30,121 @@ const formItemLayout = {
 
 
 class SearchForm extends PureComponent{
+  state = {
+    supplierList: []
+  }
+  componentDidMount() {
+    const {dispatch} = this.props.formProps;
+    dispatch({
+      type: 'statistics/supplierAll',
+      callback: ({data, code, msg}) => {
+        if(code === 200) {
+          this.setState({
+            supplierList: data
+          });
+          this.setDetailValues(data[0].ctmaSupplierCode)
+          this.getData({
+            supplierCodeList: [data[0].ctmaSupplierCode],
+            startTime: moment().subtract(6, 'months').format('YYYY-MM-DD'),
+            endTime: moment().format('YYYY-MM-DD')
+          });
+        }else {
+          message.error(msg);
+        }
+      }
+    });
+  }
+  getData = (payload) => {
+    const {dispatch} = this.props.formProps;
+    dispatch({
+      type: 'statistics/settleStaticsList',
+      payload,
+      callback: ({data, code, msg}) => {
+        if(code === 200) {
+          this.props.setData(data)
+        }else {
+          message.error(msg);
+        };
+      }
+    });
+  }
+  setDetailValues = (supplierCodeList) => {
+    const {setFieldsValue} = this.props.form;
+    setFieldsValue({
+      supplierCodeList,
+      closeDate: [moment().subtract(6, 'months'), moment()]
+    });
+  }
   handleSearch = e => {
     e.preventDefault();
     this.props.form.validateFields((err, values) => {
       if (!err) {
         const closeDate = values.closeDate === undefined ? '' : values.closeDate;
         if (closeDate.length > 0) {
-          values.settleStartTime = closeDate[0].format('YYYY-MM-DD');
-          values.settleEndTime = closeDate[1].format('YYYY-MM-DD');
+          values.startTime = closeDate[0].format('YYYY-MM-DD');
+          values.endTime = closeDate[1].format('YYYY-MM-DD');
         }else {
-          values.settleStartTime = '';
-          values.settleEndTime = '';
+          values.startTime = '';
+          values.endTime = '';
         };
+        this.getData({
+          supplierCodeList: [values.supplierCodeList],
+          startTime: values.startTime,
+          endTime: values.endTime
+        });
       }
+    })
+  }
+  export = () => {
+    const {dispatch} = this.props.formProps;
+    const {getFieldsValue} = this.props.form;
+    const {closeDate, supplierCodeList} = getFieldsValue();
+    let payload = {};
+    if(closeDate !== undefined && closeDate.length === 0) {
+      payload.startTime = closeDate[0];
+      payload.endTime = closeDate[1];
+    }else {
+      payload.startTime = '';
+      payload.endTime = '';
+    };
+    payload.supplierCodeList = [supplierCodeList];
+    dispatch({
+      type: 'statistics/staticsExport',
+      payload
     })
   }
   //重置
   handleReset = () => {
-    this.props.form.resetFields();
+    const {supplierList} = this.state;
+    this.setDetailValues(supplierList[0].ctmaSupplierCode);
+    this.getData({
+      supplierCodeList: [supplierList[0].ctmaSupplierCode],
+      startTime: moment().subtract(6, 'months').format('YYYY-MM-DD'),
+      endTime: moment().format('YYYY-MM-DD')
+    });
   }
   render(){
     const { getFieldDecorator } = this.props.form;
+    const { supplierList } = this.state;
     return (
       <Form className="ant-advanced-search-form" onSubmit={this.handleSearch}>
         <Row gutter={30}>
           <Col span={8}>
             <FormItem {...formItemLayout} label={`供应商`}>
               {
-                getFieldDecorator(`supplierName`)(
-                  <Input placeholder='请输入' className={'ysynet-formItem-width'}/>
+                getFieldDecorator(`supplierCodeList`)(
+                  <Select
+                    showSearch
+                    placeholder="请选择"
+                    optionFilterProp="children"
+                    filterOption={(input, option) => option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0}
+                  >
+                  {
+                    supplierList.map(item => (
+                      <Option key={item.ctmaSupplierCode} value={item.ctmaSupplierCode}>{item.ctmaSupplierName}</Option>
+                    ))
+                  }
+                  </Select>
                 )
               }
             </FormItem>
@@ -65,7 +153,7 @@ class SearchForm extends PureComponent{
             <FormItem {...formItemLayout} label={`结算时间`}>
               {
                 getFieldDecorator(`closeDate`)(
-                  <RangePicker className={'ysynet-formItem-width'}/>
+                  <RangePicker allowClear={false} className={'ysynet-formItem-width'}/>
                 )
               }
             </FormItem>
@@ -75,6 +163,9 @@ class SearchForm extends PureComponent{
            <Button type='default' style={{marginLeft: 8}} onClick={this.handleReset}>重置</Button>
          </Col>
         </Row>
+        <div>
+          <Button onClick={this.export} style={{marginLeft: 42}}>导出</Button>
+        </div>
       </Form>
     )
   }
@@ -83,57 +174,100 @@ const WrapperForm = Form.create()(SearchForm);
 
 class SettlementAnalysis extends PureComponent {
   state = {
-    data: []
+    data: [],
+    spinning: true
   }
   setData = (data) => {
     this.setState({
-      data
+      data,
+      spinning: false
     });
-  }
-  export() {
-    
   }
   
   render() {
-    const data = [
-      { year: "1992", '结算金额': 4 },
-      { year: "1993", '结算金额': 3.5 },
-      { year: "1994", '结算金额': 5 },
-      { year: "1995", '结算金额': 4.9 },
-      { year: "1996", '结算金额': 6 },
-      { year: "1997", '结算金额': 7 },
-      { year: "1998", '结算金额': 9 },
-      { year: "1999", '结算金额': 13 }
-    ];
-    const ds = new DataSet();
-    const dv = ds.createView().source(data);
-    dv.transform({
-      type: 'fold',
-      fields: [ '结算金额' ], // 展开字段集
-      key: 'city', // key字段
-      value: 'value', // value字段
-    });
+    const { data, spinning } = this.state;
     return (
       <div className='ysynet-main-content'>
         <WrapperForm
           formProps={{...this.props}}
           setData={this.setData}
         />
-        <div>
-          <Button onClick={this.export} style={{marginLeft: 42}}>导出</Button>
-        </div>
+        <h2 style={{textAlign: 'center'}}>供应商结算分析（单位：万元）</h2>
         <div style={{marginTop: 20}}>
-          <Chart height={400} data={dv} forceFit>
-            <Legend position="bottom-left" marker={'circle'}/>
-            <Axis name="year"/>
-            <Axis name="value" />
-            <Tooltip crosshairs={{type : "y"}}/>
-            <Geom type="line" position="year*value" color={'city'} size={2} />
-            <Geom type='point' position="year*value" color={'city'} size={4} shape={'circle'} style={{ stroke: '#fff', lineWidth: 1}} />
-          </Chart>
+          <Spin spinning={spinning}>
+            <Chart 
+              height={400} 
+              data={data} 
+              forceFit
+              padding={[ 20, 60, 60, 60]}
+            >
+              <Guide>
+                <Legend
+                  custom={true}
+                  allowAllCanceled={false}
+                  items={[
+                    {
+                      value: "结算金额",
+                      marker: {
+                        symbol: "circle",
+                        fill: "#3182bd",
+                        radius: 5
+                      }
+                    }
+                  ]}
+                />
+                <Text
+                  top={true}
+                  position={ ['0%','0%'] }  // 文本的起始位置，值为原始数据值，支持 callback
+                  content= {'结算金额'} // 显示的文本内容
+                  style= {{
+                    fontSize: '12', // 文本大小
+                  }}
+                />
+                <Text
+                  top={true}
+                  position={ ['98%','97%'] }  // 文本的起始位置，值为原始数据值，支持 callback
+                  content= {'日期'} // 显示的文本内容
+                  style= {{
+                    fontSize: '12', // 文本大小
+                  }}
+                />
+              </Guide>
+              <Axis name="settleDate"/>
+              <Axis name="settleSumAmount"/>
+              <Tooltip />
+              <Geom 
+                type="line" 
+                position="settleDate*settleSumAmount" 
+                size={2} 
+                tooltip={['settleDate*settleSumAmount', (settleDate, settleSumAmount)=>{
+                  return {
+                    name: '结存金额(万元)',
+                    value: settleSumAmount
+                  }
+                }]}
+              />
+              <Geom
+                type="point"
+                tooltip={['settleSumAmount*settleDate', (settleDate, settleSumAmount)=>{
+                  return {
+                    name: '日期',
+                    value: settleDate
+                  }
+                }]}
+                position="settleDate*settleSumAmount"
+                size={4}
+                shape={"circle"}
+                style={{
+                  stroke: "#fff",
+                  lineWidth: 1
+                }}
+              />
+            </Chart>
+          </Spin>
         </div>
       </div>
     )
   }
 }
-export default connect(state => state)(Form.create()(SettlementAnalysis));
+export default connect(state => state)(SettlementAnalysis);

@@ -55,6 +55,12 @@ class Output extends PureComponent{
       payload: values
     });
   }
+  export = () => {
+    let { queryConditons } = this.props.base;
+    queryConditons = {...queryConditons};
+    console.log(queryConditons);
+    
+  }
   render(){
     let query = this.props.base.queryConditons;
     query = {...query};
@@ -62,6 +68,9 @@ class Output extends PureComponent{
     return (
       <div  className='ysynet-main-content'>
         <SearchForm formProps={{...this.props}} />
+        <Row>
+          <Button onClick={this.export}>导出</Button>
+        </Row>
         <RetomeTable
           onChange={this._tableChange}
           query={query}
@@ -82,7 +91,7 @@ class SearchFormWrapper extends PureComponent {
     e.preventDefault();
     this.props.form.validateFields((err, values) => {
       this.props.formProps.dispatch({
-        type:'base/setQueryConditions',
+        type:'base/updateConditions',
         payload: values
       });
     });

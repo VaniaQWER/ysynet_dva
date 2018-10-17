@@ -227,6 +227,7 @@ class NewAdd extends PureComponent {
         title: '可用库存',
         dataIndex: 'localUsableQuantity',
         width: 112,
+        render: (text) => text ? text : 0
       }, {
         title: '库存上限',
         dataIndex: 'locaUpperQuantity',

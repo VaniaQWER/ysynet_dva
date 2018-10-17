@@ -6,6 +6,7 @@
 import React, { PureComponent } from 'react';
 import { Table, Row, Col, Button, Tooltip, message} from 'antd';
 import {connect} from 'dva';
+import {outStorage} from '../../../../api/drugStorage/outStorage';
 import querystring from 'querystring';
 const columns = [
   {
@@ -155,6 +156,11 @@ class DetailsOutput extends PureComponent{
       }
     })
   }
+  //打印
+  print = () => {
+    const {id} = this.state;
+    window.open(`${outStorage.PRINT_DETAIL}?backNo=${id}`, '_blank');
+  }
 
   render(){
     let {info, loading, status} = this.state;
@@ -168,14 +174,19 @@ class DetailsOutput extends PureComponent{
                 单据信息
               </h2>
             </Col>
-            {
-              status === 1? (
-                <Col style={{textAlign:'right', float: 'right'}} span={6}>
-                  <Button type='primary' className='button-gap' style={{marginRight: 8}} onClick={()=>this.onSubmit()}>复核通过</Button>
-                  <Button onClick={()=>this.onBan()} >不通过</Button>
-                </Col>
-              ) : null
-            }
+              <Col style={{textAlign:'right', float: 'right'}} span={6}>
+                {
+                  status === 1 ? (
+                    [<Button type='primary' key="1" className='button-gap' onClick={()=>this.onSubmit()}>复核通过</Button>,
+                    <Button style={{margin: '0 8px'}} key="2" onClick={()=>this.onBan()} >不通过</Button>]
+                  ) : null
+                }
+                {
+                  status === 2 ? (
+                    <Button icon='printer' onClick={this.print} >打印</Button>
+                  ) : null
+                }
+              </Col>
           </Row>
           <Row>
             <Col span={8}>

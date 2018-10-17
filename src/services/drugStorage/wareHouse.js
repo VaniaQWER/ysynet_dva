@@ -73,3 +73,12 @@ export function checkOutStore(options) {
     body: options
   })
 }
+
+export function instoreExport(options) {
+  return request(`${_local}/a/instoredetail/print/printInstoreDetail`, {
+    method: 'POST',
+    type: 'formData',
+    export: true,
+    body: options
+  })  
+}

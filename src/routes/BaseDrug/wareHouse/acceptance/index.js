@@ -109,7 +109,7 @@ class SearchFormWrapper extends PureComponent {
       this.props.formProps.dispatch({
         type: 'base/orderStatusOrorderType',
         payload: {
-          type: 'acceptance_check'
+          type: 'basemedic_check'
         },
         callback: (data) => {
           this.setState({statusList: data});
@@ -150,7 +150,7 @@ class SearchFormWrapper extends PureComponent {
       values.checkEndTime = '';
     };
     this.props.formProps.dispatch({
-      type:'base/setQueryConditions',
+      type:'base/updateConditions',
       payload: values
     });
     });

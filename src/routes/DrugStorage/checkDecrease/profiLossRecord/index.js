@@ -41,7 +41,7 @@ class SearchForm extends PureComponent {
           values.checkEndTime = makingTime[1].format('YYYY-MM-DD HH:mm');
         };
         this.props.formProps.dispatch({
-          type:'base/setQueryConditions',
+          type:'base/updateConditions',
           payload: values
         });
       }
@@ -129,6 +129,21 @@ class ProfiLossRecord extends PureComponent {
       payload: values
     });
   }
+  //导出
+  export = () => {
+    let { queryConditons } = this.props.base;
+    queryConditons = {...queryConditons};
+    delete queryConditons.key;
+    delete queryConditons.makingTime;
+    delete queryConditons.pageNo;
+    delete queryConditons.pageSize;
+    delete queryConditons.sortOrder;
+    delete queryConditons.sortField;
+    this.props.dispatch({
+      type: 'checkDecrease/excessiveExport',
+      payload: queryConditons
+    })
+  }
   render() {
     const {types} = this.state;
     const columns = [
@@ -180,6 +195,9 @@ class ProfiLossRecord extends PureComponent {
           types={types}
           formProps={{...this.props}}
         />
+        <Row>
+          <Button onClick={this.export}>导出</Button>
+        </Row>
         <RemoteTable
           onChange={this._tableChange}
           query={query}

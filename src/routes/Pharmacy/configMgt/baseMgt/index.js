@@ -38,7 +38,7 @@ class SearchForm extends PureComponent{
         values.deptCodeList = [];
       }
       this.props.formProps.dispatch({
-        type:'base/setQueryConditions',
+        type:'base/updateConditions',
         payload: values
       });
     });

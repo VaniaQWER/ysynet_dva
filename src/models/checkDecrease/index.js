@@ -13,6 +13,13 @@ export default {
       const data = yield call(checkDecrease.createCheckbill, payload);
       callback && callback(data);
     },
+    //导出
+    *checkBillExport({callback, payload}, {call}) {
+      const data = yield call(checkDecrease.checkBillExport, payload);
+      if(callback && typeof callback === 'function') {
+        callback(data);
+      }; 
+    },
     //删除
     *deleteCheckBill({callback, payload}, {call}) {
       const data = yield call(checkDecrease.deleteCheckBill, payload);
@@ -45,6 +52,13 @@ export default {
       const data = yield call(checkDecrease.auditPassOrNo, payload);
       callback && callback(data);
     },
+    //导出
+    *checkBillSheveExport({callback, payload}, {call}) {
+      const data = yield call(checkDecrease.checkBillSheveExport, payload);
+      if(callback && typeof callback === 'function') {
+        callback(data);
+      }; 
+    },
     /*-- end --*/
 
     /*-- 盘点损益 --*/
@@ -58,6 +72,13 @@ export default {
     *getCausticexcessive({callback, payload}, {call}) {
       const data = yield call(checkDecrease.getCausticexcessive, payload);
       callback && callback(data);
+    },
+    //导出
+    *excessiveExport({callback, payload}, {call}) {
+      const data = yield call(checkDecrease.excessiveExport, payload);
+      if(callback && typeof callback === 'function') {
+        callback(data);
+      }; 
     }
   }
 }

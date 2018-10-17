@@ -492,6 +492,11 @@ class Details extends PureComponent {
     };
     return null;
   }
+  //打印
+  print = () => {
+    const {checkBillNo} = this.state.query;
+    window.open(`${checkDecrease.CHECK_BILL_PRINT}?checkBillNo=${checkBillNo}`)
+  }
   render() {
     let {info, submitLoading, checkLoading} = this.state;
     let columns = [
@@ -672,12 +677,16 @@ class Details extends PureComponent {
             <Col span={12}>
               <h2>盘点单: <span>{info.checkBillNo || ''}</span></h2>
             </Col>
-            {
-              info.checkStatus === 1 ? 
               <Col span={12} style={{ textAlign: 'right' }}>
-                <Button loading={checkLoading} type='primary' style={{marginRight: 10}} onClick={this.check}>盘点</Button>
-              </Col> : null
-            }
+                {
+                  info.checkStatus === 1 ?
+                  <Button loading={checkLoading} type='primary' style={{marginRight: 10}} onClick={this.check}>盘点</Button> : null
+                }
+                {
+                  info.checkStatus === 5 ?
+                  <Button icon='printer' style={{marginRight: 10}} onClick={this.print}>打印</Button> : null
+                }
+              </Col> 
           </Row>
           <Row>
             <Col span={8}>
@@ -785,45 +794,6 @@ class Details extends PureComponent {
           </Row>
           <hr className="hr"/>
           {this.tableRender(columns)}
-          {/* {
-            info.checkStatus ?  
-            info.checkStatus === 2? 
-            <RetomeTable
-              loading={tableLoading}
-              fetchBefore={()=>{
-                this.setState({
-                  tableLoading: true
-                });
-              }}
-              ref={'table'}
-              query={query}
-              data={dataSource}
-              url={checkDecrease.GET_LIST_BY_BILLNO}
-              scroll={{x: '250%'}}
-              columns={columns}
-              rowKey={'uuid'}
-              expandedRowKeys={expandedRowKeys}
-              cb={this.tableCallBack}
-              onExpandedRowsChange={this.onExpandedRowsChange}
-              rowSelection={{
-                selectedRowKeys: this.state.selected,
-                onChange: this.changeSelectRow,
-                onSelect: this.changeSelect,
-                onSelectAll: this.selectAll,
-                getCheckboxProps: record => ({
-                  disabled: record.id === null || record.checkDetailStatus === 2
-                })
-              }}
-            /> : <RetomeTable
-                  ref={'table'}
-                  query={query}
-                  url={checkDecrease.GET_LIST_BY_BILLNO}
-                  scroll={{x: '250%'}}
-                  columns={columns}
-                  rowKey={'uuid'}
-                  />
-            : null
-          } */}
         </div>
       </div>
     )

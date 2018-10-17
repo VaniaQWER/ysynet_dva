@@ -127,7 +127,7 @@ class SearchForm extends PureComponent{
       if(!err) {
         values.supplierCodeList = values.supplierCodeList? [values.supplierCodeList] : [];
         this.props.formProps.dispatch({
-          type:'base/setQueryConditions',
+          type:'base/updateConditions',
           payload: values
         });
       };
@@ -244,7 +244,12 @@ class DistributionCheck extends PureComponent{
     },
     data: []
   }
-
+  _tableChange = values => {
+    this.props.dispatch({
+      type:'base/setQueryConditions',
+      payload: values
+    });
+  }
   render(){
     let query = this.props.base.queryConditons;
     query = {
@@ -263,6 +268,7 @@ class DistributionCheck extends PureComponent{
           query={query}
           ref="tab"
           url={wareHouse.depotdistributeList}
+          onChange={this._tableChange}
           columns={columns}
           scroll={{ x: 1512 }}
           rowKey={'id'}

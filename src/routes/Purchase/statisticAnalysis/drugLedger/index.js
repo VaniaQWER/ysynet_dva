@@ -29,8 +29,44 @@ const formItemLayout = {
 
 
 class SearchForm extends PureComponent{
+  state = {
+    supplierList: [],
+    deptList: [],
+    typeList: []
+  }
   componentDidMount() {
-    
+    const {dispatch} = this.props.formProps;
+    dispatch({
+      type: 'statistics/supplierAll',
+      callback: ({data, code, msg}) => {
+        if(code === 200) {
+          this.setState({
+            supplierList: data
+          });
+        }
+      }
+    });
+    dispatch({
+      type: 'statistics/getDeptByParam',
+      callback: ({data, code, msg}) => {
+        if(code === 200) {
+          this.setState({
+            deptList: data
+          });
+        }
+      }
+    });
+    dispatch({
+      type: 'base/orderStatusOrorderType',
+      payload: {
+        type: "medicine_standing"
+      },
+      callback: (data) => {
+        this.setState({
+          typeList: data
+        });
+      }
+    })
   }
   toggle = () => {
     this.props.formProps.dispatch({
@@ -41,21 +77,13 @@ class SearchForm extends PureComponent{
     e.preventDefault();
     this.props.form.validateFields((err, values) => {
       if (!err) {
-        const invoiceDate = values.invoiceDate === undefined ? '' : values.invoiceDate;
-        if (invoiceDate.length > 0) {
-          values.invoiceStartTime = invoiceDate[0].format('YYYY-MM-DD');
-          values.invoiceEndTime = invoiceDate[1].format('YYYY-MM-DD');
-        }else {
-          values.invoiceStartTime = '';
-          values.invoiceEndTime = '';
-        };
         const closeDate = values.closeDate === undefined ? '' : values.closeDate;
         if (closeDate.length > 0) {
-          values.settleStartTime = closeDate[0].format('YYYY-MM-DD HH:mm');
-          values.settleEndTime = closeDate[1].format('YYYY-MM-DD HH:mm');
+          values.startTime = closeDate[0].format('YYYY-MM-DD HH:mm');
+          values.endTime = closeDate[1].format('YYYY-MM-DD HH:mm');
         }else {
-          values.settleStartTime = '';
-          values.settleEndTime = '';
+          values.startTime = '';
+          values.endTime = '';
         };
         this.props._handlQuery(values);
       }
@@ -69,14 +97,27 @@ class SearchForm extends PureComponent{
     const { getFieldDecorator } = this.props.form;
     const {display} = this.props.formProps.base;
     const expand = display === 'block';
+    const { supplierList, deptList, typeList } = this.state;
     return (
       <Form className="ant-advanced-search-form" onSubmit={this.handleSearch}>
         <Row gutter={30}>
           <Col span={8}>
             <FormItem {...formItemLayout} label={`供应商`}>
               {
-                getFieldDecorator(`supplierName`)(
-                  <Input placeholder='请输入' className={'ysynet-formItem-width'}/>
+                getFieldDecorator(`supplierCode`)(
+                  <Select
+                    showSearch
+                    placeholder="请选择"
+                    optionFilterProp="children"
+                    filterOption={(input, option) => option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0}
+                  >
+                    <Option key={''} value={''}>全部</Option>
+                  {
+                    supplierList.map(item => (
+                      <Option key={item.ctmaSupplierCode} value={item.ctmaSupplierCode}>{item.ctmaSupplierName}</Option>
+                    ))
+                  }
+                  </Select>
                 )
               }
             </FormItem>
@@ -84,7 +125,7 @@ class SearchForm extends PureComponent{
           <Col span={8}>
             <FormItem {...formItemLayout} label={'商品名/通用名'}>
               {
-                getFieldDecorator(`settleBillNo`)(
+                getFieldDecorator(`paramsName`)(
                   <Input placeholder='请输入' />
                 )
               }
@@ -93,14 +134,19 @@ class SearchForm extends PureComponent{
           <Col span={8} style={{ display: display }}>
             <FormItem {...formItemLayout} label={`部门`}>
               {
-                getFieldDecorator(`invoiceParam`)(
-                  <Select 
+                getFieldDecorator(`deptCode`)(
+                  <Select
+                    showSearch
                     placeholder="请选择"
-                    style={{
-                      width: '100%'
-                    }}
+                    optionFilterProp="children"
+                    filterOption={(input, option) => option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0}
                   >
-                    <Option value={""} key={""}>全部</Option>
+                    <Option key={''} value={''}>全部</Option>
+                    {
+                      deptList.map(item => (
+                        <Option key={item.id} value={item.id}>{item.deptName}</Option>
+                      ))
+                    }
                   </Select>
                 )
               }
@@ -118,14 +164,20 @@ class SearchForm extends PureComponent{
           <Col span={8} style={{ display: display }}>
             <FormItem {...formItemLayout} label={`类型`}>
               {
-                getFieldDecorator(`invoiceDate`)(
+                getFieldDecorator(`secondType`)(
                   <Select 
                     placeholder="请选择"
                     style={{
                       width: '100%'
                     }}
+                    optionFilterProp="children"
+                    filterOption={(input, option) => option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0}
                   >
-                    <Option value={""} key={""}>全部</Option>
+                    {
+                      typeList.map(item => (
+                        <Option key={item.value} value={item.value}>{item.label}</Option>
+                      ))
+                    }
                   </Select>
                 )
               }
@@ -153,37 +205,42 @@ class DrugLedger extends PureComponent {
     this.setState({query});
   }
   export = () => {
-    
+    this.props.dispatch({
+      type: 'statistics/medicineStandingExport',
+      payload: {
+        ...this.state.query
+      }
+    })
   }
   render() {
     const columns = [
       {
         title: '部门',
-        dataIndex: 'invoiceNo',
+        dataIndex: 'deptName',
         width: 168,
       }, {
         title: '类型',
-        dataIndex: 'invoiceCode',
+        dataIndex: 'type',
         width: 168,
       }, {
         title: '时间',
-        dataIndex: 'settleBillNo',
+        dataIndex: 'createDate',
         width: 224,
       }, {
         title: '通用名',
-        dataIndex: 'invoiceTime',
+        dataIndex: 'ctmmGenericName',
         width: 224,
       }, {
         title: '商品名',
-        dataIndex: 'invoiceAmount',
+        dataIndex: 'ctmmTradeName',
         width: 168
       }, {
         title: '规格',
-        dataIndex: 'gg',
+        dataIndex: 'ctmmSpecification',
         width: 168,
       }, {
         title: '生产厂家',
-        dataIndex: 'sccj',
+        dataIndex: 'ctmmManufacturerName',
         width: 224,
         className:'ellipsis',
         render:(text)=>(
@@ -199,47 +256,47 @@ class DrugLedger extends PureComponent {
         width: 168,
       }, {
         title: '生产日期',
-        dataIndex: 'scrq',
+        dataIndex: 'productDate',
         width: 168,
       }, {
         title: '有效期止',
-        dataIndex: 'yxqz',
+        dataIndex: 'validEndDate',
         width: 168,
       }, {
         title: '包装规格',
-        dataIndex: 'bzgg',
+        dataIndex: 'packageSpecification',
         width: 168,
       }, {
         title: '剂型',
-        dataIndex: 'jx',
+        dataIndex: 'ctmmDosageFormDesc',
         width: 168,
       }, {
         title: '供应商',
-        dataIndex: 'gys',
+        dataIndex: 'supplierName',
         width: 168,
       }, {
         title: '药品编号',
-        dataIndex: 'ypbm',
+        dataIndex: 'hisDrugCode',
         width: 168,
       }, {
         title: '批准文号',
-        dataIndex: 'pzwh',
+        dataIndex: 'approvalNo',
         width: 168,
       }, {
         title: '库存数量',
-        dataIndex: 'kcsl',
+        dataIndex: 'stockNum',
         width: 112,
       }, {
         title: '入库数量',
-        dataIndex: 'rksl',
+        dataIndex: 'inStockNum',
         width: 112,
       }, {
         title: '出库数量',
-        dataIndex: 'cksl',
+        dataIndex: 'outStockNum',
         width: 112,
       }, {
         title: '结存数量',
-        dataIndex: 'jcsl',
+        dataIndex: 'balanceNum',
         width: 112,
       }
     ];
@@ -256,13 +313,12 @@ class DrugLedger extends PureComponent {
         <RemoteTable
           onChange={this._tableChange}
           query={query}
-          isJson
           columns={columns}
           scroll={{x: 3248}}
           style={{marginTop: 20}}
           ref='table'
           rowKey={'id'}
-          url={statisticAnalysis.INVOICE_LIST}
+          url={statisticAnalysis.DRUG_LEDGER}
         />
       </div>
     )

@@ -9,7 +9,7 @@
  * @file 科室退库分析
  */
 import React, { PureComponent } from 'react';
-import { Form, Row, Col, Button, Input, DatePicker, Icon, Select, Tooltip } from 'antd';
+import { Form, Row, Col, Button, Input, DatePicker, Icon, Select, Tooltip, message } from 'antd';
 import RemoteTable from '../../../../components/TableGrid';
 import { connect } from 'dva';
 import {statisticAnalysis} from '../../../../api/purchase/purchase';
@@ -29,8 +29,32 @@ const formItemLayout = {
 
 
 class SearchForm extends PureComponent{
+  state = {
+    supplierList: [],
+    deptList: []
+  }
   componentDidMount() {
-    
+    const {dispatch} = this.props.formProps;
+    dispatch({
+      type: 'statistics/supplierAll',
+      callback: ({data, code, msg}) => {
+        if(code === 200) {
+          this.setState({
+            supplierList: data
+          });
+        }
+      }
+    });
+    dispatch({
+      type: 'statistics/getDeptByParam',
+      callback: ({data, code, msg}) => {
+        if(code === 200) {
+          this.setState({
+            deptList: data
+          });
+        }
+      }
+    });
   }
   toggle = () => {
     this.props.formProps.dispatch({
@@ -41,21 +65,13 @@ class SearchForm extends PureComponent{
     e.preventDefault();
     this.props.form.validateFields((err, values) => {
       if (!err) {
-        const invoiceDate = values.invoiceDate === undefined ? '' : values.invoiceDate;
-        if (invoiceDate.length > 0) {
-          values.invoiceStartTime = invoiceDate[0].format('YYYY-MM-DD');
-          values.invoiceEndTime = invoiceDate[1].format('YYYY-MM-DD');
-        }else {
-          values.invoiceStartTime = '';
-          values.invoiceEndTime = '';
-        };
         const closeDate = values.closeDate === undefined ? '' : values.closeDate;
         if (closeDate.length > 0) {
-          values.settleStartTime = closeDate[0].format('YYYY-MM-DD HH:mm');
-          values.settleEndTime = closeDate[1].format('YYYY-MM-DD HH:mm');
+          values.startTime = closeDate[0].format('YYYY-MM-DD');
+          values.endTime = closeDate[1].format('YYYY-MM-DD');
         }else {
-          values.settleStartTime = '';
-          values.settleEndTime = '';
+          values.startTime = '';
+          values.endTime = '';
         };
         this.props._handlQuery(values);
       }
@@ -64,19 +80,33 @@ class SearchForm extends PureComponent{
   //重置
   handleReset = () => {
     this.props.form.resetFields();
+    this.props._handlQuery({});
   }
   render(){
     const { getFieldDecorator } = this.props.form;
     const {display} = this.props.formProps.base;
     const expand = display === 'block';
+    const { supplierList, deptList } = this.state;
     return (
       <Form className="ant-advanced-search-form" onSubmit={this.handleSearch}>
         <Row gutter={30}>
           <Col span={8}>
             <FormItem {...formItemLayout} label={`供应商`}>
               {
-                getFieldDecorator(`supplierName`)(
-                  <Input placeholder='请输入'/>
+                getFieldDecorator(`supplierCode`)(
+                  <Select
+                    showSearch
+                    placeholder="请选择"
+                    optionFilterProp="children"
+                    filterOption={(input, option) => option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0}
+                  >
+                    <Option key={''} value={''}>全部</Option>
+                  {
+                    supplierList.map(item => (
+                      <Option key={item.ctmaSupplierCode} value={item.ctmaSupplierCode}>{item.ctmaSupplierName}</Option>
+                    ))
+                  }
+                  </Select>
                 )
               }
             </FormItem>
@@ -84,14 +114,19 @@ class SearchForm extends PureComponent{
           <Col span={8}>
             <FormItem {...formItemLayout} label={`部门`}>
               {
-                getFieldDecorator(`invoiceParam`)(
-                  <Select 
+                getFieldDecorator(`deptCode`)(
+                  <Select
+                    showSearch
                     placeholder="请选择"
-                    style={{
-                      width: '100%'
-                    }}
+                    optionFilterProp="children"
+                    filterOption={(input, option) => option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0}
                   >
-                    <Option value={""} key={""}>全部</Option>
+                    <Option key={''} value={''}>全部</Option>
+                  {
+                    deptList.map(item => (
+                      <Option key={item.id} value={item.id}>{item.deptName}</Option>
+                    ))
+                  }
                   </Select>
                 )
               }
@@ -100,7 +135,7 @@ class SearchForm extends PureComponent{
           <Col span={8} style={{ display: display }}>
             <FormItem {...formItemLayout} label={`退库单号`}>
               {
-                getFieldDecorator(`invoiceDate`)(
+                getFieldDecorator(`backNo`)(
                   <Input placeholder='请输入'/>
                 )
               }
@@ -109,7 +144,7 @@ class SearchForm extends PureComponent{
           <Col span={8} style={{ display: display }}>
             <FormItem {...formItemLayout} label={'商品名/通用名'}>
               {
-                getFieldDecorator(`settleBillNo`)(
+                getFieldDecorator(`paramName`)(
                   <Input placeholder='请输入' />
                 )
               }
@@ -140,43 +175,81 @@ const WrapperForm = Form.create()(SearchForm);
 
 class SectionAnalysis extends PureComponent {
   state = {
-    query: {},
+    query: {
+      type: 1
+    },
+    tableFooter: {}
   }
   handlQuery = (query) => {
-    this.setState({query});
+    this.setState({
+      query: {
+        ...this.state.query, 
+        ...query
+      }
+    });
+  }
+  _tableCallback = () => {
+    const {deptCode} = this.state.query;
+    if(deptCode !== '' && deptCode !== undefined) {
+      this.props.dispatch({
+        type: 'statistics/listCount',
+        payload: {
+          deptCode: deptCode,
+          type: 1
+        },
+        callback: ({code, data, msg}) => {
+          if(code === 200) {
+            this.setState({
+              tableFooter: data
+            });
+          }else {
+            message.error(msg);
+          };
+        }
+      });
+    }else {
+      this.setState({
+        tableFooter: {}
+      });
+    }
   }
   export = () => {
-    
+    this.props.dispatch({
+      type: 'statistics/kstkExport',
+      payload: {
+        ...this.state.query
+      }
+    })
   }
   render() {
     const columns = [
       {
         title: '部门',
-        dataIndex: 'invoiceNo',
+        dataIndex: 'deptName',
         width: 168,
       }, {
         title: '退库单号',
-        dataIndex: 'invoiceCode',
+        dataIndex: 'backNo',
         width: 168,
       }, {
         title: '退库原因',
-        dataIndex: 'settleBillNo',
+        dataIndex: 'backCause',
         width: 168,
       }, {
         title: '通用名',
-        dataIndex: 'invoiceTime',
+        dataIndex: 'ctmmGenericName',
         width: 224,
       }, {
         title: '商品名',
-        dataIndex: 'invoiceAmount',
+        dataIndex: 'ctmmTradeName',
         width: 168
       }, {
         title: '规格',
-        dataIndex: 'gg',
+        dataIndex: 'ctmmSpecification',
         width: 168,
       }, {
         title: '生产厂家',
-        dataIndex: 'sccj',
+        dataIndex: 'ctmmManufacturerName',
         width: 224,
         className:'ellipsis',
         render:(text)=>(
@@ -188,7 +261,7 @@ class SectionAnalysis extends PureComponent {
         width: 112,
       }, {
         title: '退库数量',
-        dataIndex: 'tknum',
+        dataIndex: 'backNum',
         width: 112,
       }, {
         title: '生产批号',
@@ -196,35 +269,35 @@ class SectionAnalysis extends PureComponent {
         width: 168,
       }, {
         title: '生产日期',
-        dataIndex: 'scrq',
+        dataIndex: 'productDate',
         width: 168,
       }, {
         title: '有效期止',
-        dataIndex: 'yxqz',
+        dataIndex: 'validEndDate',
         width: 168,
       }, {
         title: '包装规格',
-        dataIndex: 'bzgg',
+        dataIndex: 'packageSpecification',
         width: 168,
       }, {
         title: '剂型',
-        dataIndex: 'jx',
+        dataIndex: 'ctmmDosageFormDesc',
         width: 168,
       }, {
         title: '供应商',
-        dataIndex: 'gys',
+        dataIndex: 'ctmaSupplierName',
         width: 168,
       }, {
         title: '药品编号',
-        dataIndex: 'ypbm',
+        dataIndex: 'hisDrugCode',
         width: 168,
       }, {
         title: '批准文号',
-        dataIndex: 'pzwh',
+        dataIndex: 'approvalNo',
         width: 168,
       }
     ];
-    const {query} = this.state;
+    const {query, tableFooter} = this.state;
     return (
       <div className='ysynet-main-content'>
         <WrapperForm
@@ -249,7 +322,7 @@ class SectionAnalysis extends PureComponent {
                   <label style={{fontWeight: 600}}>科室退库总单数</label>
                 </div>
                 <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-16">
-                  <div style={{color: 'red'}} className='ant-form-item-control'>0</div>
+                  <div style={{color: 'red'}} className='ant-form-item-control'>{tableFooter.returnBackNum || 0}</div>
                 </div>
               </Col>
               <Col span={8}>
@@ -257,13 +330,14 @@ class SectionAnalysis extends PureComponent {
                   <label style={{fontWeight: 600}}>科室退库总数量</label>
                 </div>
                 <div className="ant-form-item-control-wrapper ant-col-xs-24 ant-col-sm-16">
-                  <div style={{color: 'red'}} className='ant-form-item-control'>0</div>
+                  <div style={{color: 'red'}} className='ant-form-item-control'>{tableFooter.returnStoreNum || 0}</div>
                 </div>
               </Col>
             </Row>
           )}
-          rowKey={'id'}
-          url={statisticAnalysis.INVOICE_LIST}
+          rowKey={'backNo'}
+          url={statisticAnalysis.KSTK_LIST}
+          cb={this._tableCallback}
         />
       </div>
     )

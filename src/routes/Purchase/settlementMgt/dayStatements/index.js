@@ -94,7 +94,7 @@ class Statements extends PureComponent{
                 values.endTime = '';
             };
             this.props.dispatch({
-                type:'base/setQueryConditions',
+                type:'base/updateConditions',
                 payload: values
             });
         })
@@ -120,6 +120,21 @@ class Statements extends PureComponent{
         this.props.dispatch({
             type:'base/setQueryConditions',
             payload: values
+        });
+    }
+    //导出
+    export = () => {
+        let {queryConditons} = this.props.base;
+        queryConditons = {...queryConditons};
+        delete queryConditons.pageNo;
+        delete queryConditons.key;
+        delete queryConditons.pageSize;
+        delete queryConditons.sortField;
+        delete queryConditons.sortOrder;
+        delete queryConditons.time;
+        this.props.dispatch({
+            type: 'settlementMgt/billExport',
+            payload: queryConditons,
         });
     }
     render() {
@@ -171,6 +186,7 @@ class Statements extends PureComponent{
                         </Col>
                         <Col span={24}>
                             <Link to={{ pathname: `/NewRecon` }}><Button type="primary">生成对账</Button></Link>
+                            <Button style={{marginLeft: 8}} onClick={this.export}>导出</Button>
                         </Col>
                     </Row>
                 </Form>

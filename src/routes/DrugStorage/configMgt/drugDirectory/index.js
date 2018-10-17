@@ -1,5 +1,5 @@
 import React , {PureComponent} from 'react';
-import { Form, Row, Col, Button, Input, Select, Icon, Tooltip, message, Modal  } from 'antd';
+import { Form, Row, Col, Button, Input, Select, Icon, Tooltip, message, Modal, InputNumber  } from 'antd';
 import { configMgt } from '../../../../api/drugStorage/configMgt';
 import { Link } from 'react-router-dom';
 import RemoteTable from '../../../../components/TableGrid';
@@ -42,7 +42,7 @@ class SearchForm extends PureComponent{
     console.log(this.props.formProps)
     this.props.form.validateFields((err,values)=>{
       this.props.formProps.dispatch({
-          type:'base/setQueryConditions',
+          type:'base/updateConditions',
           payload: values
       })
     })
@@ -99,7 +99,7 @@ class SearchForm extends PureComponent{
                 getFieldDecorator(`ctmmStatusCode`,{
                   initialValue: ''
                 })(
-                  <Select>
+                  <Select placeholder="请选择">
                     <Option key='' value=''>全部</Option>
                     <Option key='0' value='0'>启用</Option>
                     <Option key='1' value='1'>停用</Option>
@@ -114,7 +114,7 @@ class SearchForm extends PureComponent{
                 getFieldDecorator('medDrugType',{
                   initialValue: ''
                 })(
-                  <Select>
+                  <Select placeholder="请选择">
                     <Option key='' value=''>全部</Option>
                     <Option key='2' value='2'>是</Option>
                     <Option key='1' value='1'>否</Option>
@@ -193,7 +193,9 @@ class DrugDirectory extends PureComponent{
     visible: false,
     addVisible: false,
     loading: false,
-    addLoading: false
+    addLoading: false,
+    upperQuantity: 999999,
+    downQuantity: 0
   }
 
 
@@ -297,8 +299,32 @@ class DrugDirectory extends PureComponent{
       payload: values
     })
   }
+  setQuantity = (key, value) => {
+    const {upperQuantity, downQuantity} = this.state;
+    if(typeof value === 'number') {
+      if(key === 'downQuantity' && value > upperQuantity) return;
+      if(key === 'upperQuantity' && value < downQuantity) return;
+      this.setState({
+        [key]: value
+      });
+    };
+  }
+  //导出
+  export = () => {
+    let {queryConditons} = this.props.base;
+    queryConditons = {...queryConditons};
+    delete queryConditons.pageSize;
+    delete queryConditons.pageNo;
+    delete queryConditons.sortField;
+    delete queryConditons.sortOrder;
+    delete queryConditons.key;
+    this.props.dispatch({
+      type: 'base/deptExport',
+      payload: queryConditons,
+    })
+  }
   render(){
-    const { visible, loading, addVisible, addLoading } = this.state;
+    const { visible, loading, addVisible, addLoading, downQuantity, upperQuantity } = this.state;
     const { getFieldDecorator } = this.props.form;
     const IndexColumns = [
       ...columns,
@@ -333,7 +359,7 @@ class DrugDirectory extends PureComponent{
         }
       },
     ];
-    let query = this.props.base.queryConditons;
+    let query = {...this.props.base.queryConditons};
     delete query.key;
     return (
     <div className='ysynet-main-content'>
@@ -343,6 +369,7 @@ class DrugDirectory extends PureComponent{
           <Button type='primary' onClick={this.bitchEdit}>批量设置上下限</Button>
           <Button type='default' onClick={this.add} style={{ margin: '0 8px' }}>新增</Button>
           <Button type='default' onClick={this.remove}>移除</Button>
+          <Button type='default' style={{marginLeft: 8}} onClick={this.export}>导出</Button>
         </Col>
       </Row>
       <Modal
@@ -361,33 +388,45 @@ class DrugDirectory extends PureComponent{
           <FormItem {...formItemLayout} label={`库存上限`}>
             {
               getFieldDecorator(`upperQuantity`,{
-                initialValue: '',
                 rules:[{
                   required:true,message:"请输入库存上限！"
                 }]
               })(
-                <Input placeholder='请输入'/>
+                <InputNumber
+                  style={{width: '100%'}}
+                  min={downQuantity}
+                  onChange={this.setQuantity.bind(this, 'upperQuantity')}
+                  placeholder='请输入'
+                  precision={0}                  
+                />
               )
             }
           </FormItem>
           <FormItem {...formItemLayout} label={`库存下限`}>
             {
               getFieldDecorator(`downQuantity`,{
-                initialValue: '',
                 rules:[{
                   required:true,message:"请输入库存下限！"
                 }]
               })(
-                <Input placeholder='请输入'/>
+                <InputNumber
+                  style={{width: '100%'}}
+                  max={upperQuantity}
+                  onChange={this.setQuantity.bind(this, 'downQuantity')}
+                  placeholder='请输入'
+                />
               )
             }
           </FormItem>
           <FormItem {...formItemLayout} label={`采购量`}>
             {
               getFieldDecorator(`purchaseQuantity`,{
-                initialValue: '',
               })(
-                <Input placeholder='请输入'/>
+                <InputNumber 
+                  style={{width: '100%'}}
+                  max={upperQuantity}
+                  placeholder='请输入'
+                />
               )
             }
           </FormItem>

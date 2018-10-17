@@ -4,7 +4,7 @@
 * @Last Modified time: 2018-09-01 09:40:37 
  */
 import React, { PureComponent } from 'react';
-import { Form , Row , Button , Col , Select , Input , Modal , Icon , Collapse , message} from 'antd';
+import { Form , Row , Button , Col , Select , Input , Modal , Icon , Collapse , message, InputNumber } from 'antd';
 import { connect } from 'dva';
 const formItemLayout ={
   labelCol: {
@@ -29,7 +29,7 @@ const inlineFormItemLayout = {
 const customPanelStyle = {
   background: '#fff',
   borderRadius: 4,
-  marginBottom: 24,
+  marginBottom: 20,
   border: 0,
   overflow: 'hidden',
 }
@@ -53,6 +53,8 @@ class EditDrugDirectory extends PureComponent{
     minUnit: '',
     packUnit: '',
     fullUnit: '',
+    upperQuantity: 0,
+    downQuantity: 0
   }
 
   componentDidMount(){
@@ -84,7 +86,9 @@ class EditDrugDirectory extends PureComponent{
           fillBackData,
           minUnit,
           packUnit,
-          fullUnit
+          fullUnit,
+          upperQuantity: data.data.upperQuantity,
+          downQuantity: data.data.downQuantity
         })
          //获取补货单位下拉框
           this.props.dispatch({
@@ -241,9 +245,33 @@ class EditDrugDirectory extends PureComponent{
     </Col>
   )
 
+  setQuantity = (key, value) => {
+    const {upperQuantity, downQuantity} = this.state;
+    if(typeof value === 'number') {
+      if(key === 'downQuantity' && value > upperQuantity) return;
+      if(key === 'upperQuantity' && value < downQuantity) return;
+      this.setState({
+        [key]: value
+      });
+    };
+  }
+
   render(){
 
-    const { fillBackData ,minUnit, packUnit, fullUnit, replanUnitSelect ,replanUnitZN , replanSelect ,dispensingSelect , scatteredSelect,advanceSelect  } =this.state;
+    const { 
+      fillBackData,
+      minUnit, 
+      packUnit, 
+      fullUnit, 
+      replanUnitSelect,
+      replanUnitZN, 
+      replanSelect,
+      dispensingSelect, 
+      scatteredSelect,
+      advanceSelect,
+      upperQuantity,
+      downQuantity
+    } =this.state;
     const { getFieldDecorator , getFieldValue } = this.props.form;
     getFieldDecorator('keys', { initialValue: fillBackData?fillBackData.customUnit?fillBackData.customUnit:[]:[] });
     const keys = getFieldValue('keys');
@@ -411,7 +439,7 @@ class EditDrugDirectory extends PureComponent{
           </Row>
         </div>
         <Form className='leftLable'>
-          <Collapse bordered={false} style={{backgroundColor:'#f0f2f5', marginLeft: '-12px', marginRight: '-12px'}} defaultActiveKey={['1','2','3','4']}>
+          <Collapse bordered={false} style={{backgroundColor:'#f0f2f5', marginLeft: '-16px', marginRight: '-16px'}} defaultActiveKey={['1','2','3','4']}>
             <Panel header="单位信息" key="1" style={customPanelStyle}>
               <Row>
                 <Col span={10}>
@@ -482,18 +510,29 @@ class EditDrugDirectory extends PureComponent{
                       getFieldDecorator(`upperQuantity`,{
                         initialValue:fillBackData?fillBackData.upperQuantity:''
                       })(
-                        <Input placeholder='请输入' />
+                        <InputNumber
+                          min={downQuantity}
+                          onChange={this.setQuantity.bind(this, 'upperQuantity')}
+                          precision={0}
+                          style={{width: '100%'}} 
+                          placeholder='请输入' 
+                        />
                       )
                     }
                   </FormItem>
                 </Col>
                 <Col span={10}>
-                  <FormItem {...formItemLayout} label={`补货量`}>
+                  <FormItem {...formItemLayout} label={`采购量`}>
                     {
                       getFieldDecorator(`purchaseQuantity`,{
                         initialValue: fillBackData?fillBackData.purchaseQuantity:''
                       })(
-                        <Input />
+                        <InputNumber
+                          max={upperQuantity}
+                          precision={0}
+                          style={{width: '100%'}} 
+                          placeholder='请输入' 
+                        />
                       )
                     }
                   </FormItem>
@@ -506,7 +545,13 @@ class EditDrugDirectory extends PureComponent{
                       getFieldDecorator(`downQuantity`,{
                         initialValue: fillBackData?fillBackData.downQuantity:'',
                       })(
-                        <Input placeholder='请输入' />
+                        <InputNumber
+                          max={upperQuantity}
+                          precision={0}
+                          onChange={this.setQuantity.bind(this, 'downQuantity')}
+                          style={{width: '100%'}} 
+                          placeholder='请输入' 
+                        />
                       )
                     }
                   </FormItem>

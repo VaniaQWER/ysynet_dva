@@ -9,6 +9,14 @@ export function settleDetail(options) {
     body: options
   })
 };
+export function settleExport(options) {
+  return request(`${_local}/a/settle/export`, {
+    method: 'POST',
+    type: 'formData',
+    export: true,
+    body: options
+  })
+}
 /*-- end --*/
 
 /*-- 日对账单 --*/
@@ -24,6 +32,15 @@ export function push2Hrp(options) {
   return request(`${_local}/a/bill/balance/push2Hrp`, {
     method: 'POST',
     type: 'json',
+    body: options
+  })
+}
+
+export function billExport(options) {
+  return request(`${_local}/a/bill/balance/export`, {
+    method: 'POST',
+    type: 'formData',
+    export: true,
     body: options
   })
 }

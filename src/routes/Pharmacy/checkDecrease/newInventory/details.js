@@ -480,6 +480,11 @@ class Details extends PureComponent {
     };
     return null;
   }
+  //打印
+  print = () => {
+    const {checkBillNo} = this.state.query;
+    window.open(`${checkDecrease.CHECK_BILL_PRINT}?checkBillNo=${checkBillNo}`)
+  }
   render() {
     let {info, submitLoading, checkLoading} = this.state;
     let columns = [
@@ -660,12 +665,16 @@ class Details extends PureComponent {
             <Col span={12}>
               <h2>盘点单: <span>{info.checkBillNo || ''}</span></h2>
             </Col>
-            {
-              info.checkStatus === 1 ? 
-              <Col span={12} style={{ textAlign: 'right' }}>
-                <Button loading={checkLoading} type='primary' style={{marginRight: 10}} onClick={this.check}>盘点</Button>
-              </Col> : null
-            }
+            <Col span={12} style={{ textAlign: 'right' }}>
+                {
+                  info.checkStatus === 1 ?
+                  <Button loading={checkLoading} type='primary' style={{marginRight: 10}} onClick={this.check}>盘点</Button> : null
+                }
+                {
+                  info.checkStatus === 5 ?
+                  <Button icon='printer' style={{marginRight: 10}} onClick={this.print}>打印</Button> : null
+                }
+              </Col> 
           </Row>
           <Row>
             <Col span={8}>

@@ -28,7 +28,6 @@ export default {
       }
       if(callback) callback();
     },
-    
   },
   subscriptions: {}
 }

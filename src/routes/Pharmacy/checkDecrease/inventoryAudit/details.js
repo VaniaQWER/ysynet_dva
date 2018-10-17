@@ -68,7 +68,11 @@ class Details extends PureComponent {
         };
       }
     });
-    
+  }
+  //打印
+  print = () => {
+    const {checkBillNo} = this.state.query;
+    window.open(`${checkDecrease.CHECK_BILL_SHEVE_PRINT}?checkBillNo=${checkBillNo}`);
   }
   render() {
     let {info, query, loading} = this.state;
@@ -143,7 +147,7 @@ class Details extends PureComponent {
       },
       {
         title: '生产日期',
-        dataIndex: 'productDate',
+        dataIndex: 'accountProductTime',
         width: 168,
       },
       {
@@ -179,13 +183,21 @@ class Details extends PureComponent {
             <Col span={12}>
               <h2>盘点单: <span>{info.checkBillNo || ''}</span></h2>
             </Col>
-            {
-              info.checkStatus === 3 ? 
-              <Col span={12} style={{ textAlign: 'right' }}>
-                <Button loading={loading} type='primary' style={{marginRight: 8}} onClick={this.auditPass.bind(this, '1')}>审核通过</Button>
-                <Button loading={loading} onClick={this.auditPass.bind(this, '0')}>不通过</Button>
-              </Col> : null
-            }
+            <Col span={12} style={{ textAlign: 'right' }}>
+              {
+                info.checkStatus === 3 ? 
+                  [
+                    <Button key="1" loading={loading} type='primary' style={{marginRight: 8}} onClick={this.auditPass.bind(this, '1')}>审核通过</Button>,
+                    <Button key="2" loading={loading} onClick={this.auditPass.bind(this, '0')}>不通过</Button>
+                  ]
+                : null
+              }
+              {
+                info.checkStatus === 4 ? 
+                    <Button icon="printer" onClick={this.print}>打印</Button>
+                : null
+              }
+            </Col>
           </Row>
           <Row>
             <Col span={8}>

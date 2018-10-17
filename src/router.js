@@ -10,6 +10,8 @@ import PageNotFound from './routes/Error/error';
 import SubSystem from './routes/System';
 import NewAdd from './routes/Purchase/replenishment/replenishmentPlan/add';
 import CatalogAdd from './routes/Purchase/replenishment/outCatalogPurchase/add';
+import SinceReplenishment from './routes/Purchase/sinceMining/replenishmentPlan/add';
+import SinceOutCatalog from './routes/Purchase/sinceMining/outCatalogPurchase/add';
 import AddDrugsFor from './routes/Pharmacy/wareHouse/drugsFor/add';
 import AddNewAcceptance from './routes/Pharmacy/wareHouse/acceptance/add';
 import AddOutput from './routes/DrugStorage/outStorage/withdraw/add';
@@ -107,6 +109,8 @@ function RouterConfig({ history, app }) {
           <Route path="/baseAddDrugsApply" component={BaseAddDrugsApply} />
           <Route path="/baseAddNewAcceptance" component={BaseAddNewAcceptance}/>
           <Route path="/newRecon" component={NewRecon}/>
+          <Route path="/createSinceReplenishment" component={SinceReplenishment}/>
+          <Route path="/createSinceOutCatalog" component={SinceOutCatalog}/>
           {/* <Route path="/home" component={Home}/> */}
           {/* <Route path="/app" render={props => <WorkplaceLayout {...props} {...passProps} />} /> */}
           <Route path="/" exact render={()=> (

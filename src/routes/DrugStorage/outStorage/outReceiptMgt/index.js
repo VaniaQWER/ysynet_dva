@@ -194,7 +194,7 @@ class SearchFormWrapper extends PureComponent {
       };
       console.log('搜索条件：', values);
       this.props.formProps.dispatch({
-        type:'base/setQueryConditions',
+        type:'base/updateConditions',
         payload: values
       });
     });

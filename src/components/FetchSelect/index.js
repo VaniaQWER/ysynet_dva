@@ -126,8 +126,7 @@ class FetchSelect extends React.Component {
         defaultValue={this.props.defaultValue}
         onSearch={this.handleChange}
         value={this.props.value}
-        // onChange={(value,option)=>this.getValues(value,option)}
-        onChange={(value,option)=>this.getValues(value,option)}
+        onChange={this.props.onChange || this.getValues}
         notFoundContent={fetching ? <Spin size="small" /> : "暂无搜索结果"}
         style={this.props.style}
         defaultActiveFirstOption={false}

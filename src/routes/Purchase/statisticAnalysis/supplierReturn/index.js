@@ -9,7 +9,7 @@
  * @file 采购计划 - 补货管理--补货计划
  */
 import React, { PureComponent } from 'react';
-import { Form, Row, Col, Button, DatePicker, Select, Input, Icon } from 'antd';
+import { Form, Row, Col, Button, DatePicker, Select, Icon, message } from 'antd';
 import RemoteTable from '../../../../components/TableGrid';
 import { connect } from 'dva';
 import {statisticAnalysis} from '../../../../api/purchase/purchase';
@@ -29,18 +29,49 @@ const formItemLayout = {
 };
 
 class SearchForm extends PureComponent{
+  state = {
+    sortList: [],
+    supplierList: []
+  }
+  componentDidMount() {
+    const {dispatch} = this.props.formProps;
+    dispatch({
+      type: 'statistics/supplierAll',
+      callback: ({data, code, msg}) => {
+        if(code === 200) {
+          this.setState({
+            supplierList: data
+          });
+        }else {
+          message.error(msg);
+        }
+      }
+    });
+    dispatch({
+      type: 'base/orderStatusOrorderType',
+      payload: {
+        type: 'order_by'
+      },
+      callback: (data) => {
+        this.setState({
+          sortList: data
+        });
+      }
+    })
+  }
   handleSearch = e => {
     e.preventDefault();
     this.props.form.validateFields((err, values) => {
       if (!err) {
         const closeDate = values.closeDate === undefined ? '' : values.invoiceDate;
         if (closeDate.length > 0) {
-          values.invoiceStartTime = closeDate[0].format('YYYY-MM-DD');
-          values.invoiceEndTime = closeDate[1].format('YYYY-MM-DD');
+          values.startTime = closeDate[0].format('YYYY-MM-DD');
+          values.endTime = closeDate[1].format('YYYY-MM-DD');
         }else {
-          values.invoiceStartTime = '';
-          values.invoiceEndTime = '';
+          values.startTime = '';
+          values.endTime = '';
         };
+        delete values.closeDate;
         this.props._handlQuery(values);
       }
     })
@@ -58,14 +89,25 @@ class SearchForm extends PureComponent{
     const { getFieldDecorator } = this.props.form;
     const {display} = this.props.formProps.base;
     const expand = display === 'block';
+    const { sortList, supplierList } = this.state;
     return (
       <Form className="ant-advanced-search-form" onSubmit={this.handleSearch}>
         <Row gutter={30}>
           <Col span={8}>
             <FormItem {...formItemLayout} label={`供应商`}>
               {
-                getFieldDecorator(`closeDate`)(
-                  <Input placeholder="请输入供应商名称检索"/>
+                getFieldDecorator(`supplierCode`)(
+                  <Select
+                    style={{width: '100%'}}
+                    placeholder="请选择供应商名称检索"
+                  >
+                    <Option key="" value="">全部</Option>
+                    {
+                      supplierList.map(item => (
+                        <Option key={item.ctmaSupplierCode} value={item.ctmaSupplierCode}>{item.ctmaSupplierName}</Option>
+                      ))
+                    }
+                  </Select>
                 )
               }
             </FormItem>
@@ -82,14 +124,17 @@ class SearchForm extends PureComponent{
           <Col span={8}>
             <FormItem {...formItemLayout} style={{display}} label={`排序`}>
               {
-                getFieldDecorator(`invoiceDate`)(
-                  <Select 
-                    placeholder="请选择"
-                    style={{
-                      width: '100%'
-                    }}
+                getFieldDecorator(`orderBy`)(
+                  <Select
+                    style={{width: '100%'}}
+                    placeholder="请选择排序方式搜索"
                   >
-                    <Option value={""} key={""}>全部</Option>
+                    <Option key="" value="">全部</Option>
+                    {
+                      sortList.map(item => (
+                        <Option key={item.value} value={item.value}>{item.label}</Option>
+                      ))
+                    }
                   </Select>
                 )
               }
@@ -117,41 +162,45 @@ class SupplierReturn extends PureComponent {
     this.setState({query});
   }
   export = () => {
-    
+    const {query} = this.state;
+    this.props.dispatch({
+      type: 'statistics/supplierReturnExport',
+      payload: query,
+    })
   }
   render() {
     const columns = [
       {
         title: '供应商',
-        dataIndex: 'invoiceCode',
+        dataIndex: 'ctmaSupplierName',
         width: 168,
       }, {
         title: '退货总单数',
-        dataIndex: 'settleBillNo',
+        dataIndex: 'backCount',
         width: 168,
       }, {
         title: '退货品类数',
-        dataIndex: 'thpls',
+        dataIndex: 'backdetailDrugCount',
         width: 168,
       }, {
         title: '退货总金额(万元)',
-        dataIndex: 'invoiceTime',
+        dataIndex: 'backPrice',
         width: 168,
       }, {
         title: '采购总单数',
-        dataIndex: 'pjdhts',
+        dataIndex: 'backCount	',
         width: 168
       }, {
         title: '采购品类数',
-        dataIndex: 'cgpzs',
+        dataIndex: 'orderdetailDrugCount',
         width: 168
       }, {
         title: '采购总金额(万元)',
-        dataIndex: 'pspzs',
+        dataIndex: 'orderPrice',
         width: 168
       }, {
         title: '退货金额占比(%)',
-        dataIndex: 'cgsl',
+        dataIndex: 'backProportion',
         width: 168
       }
     ];
@@ -174,7 +223,7 @@ class SupplierReturn extends PureComponent {
           style={{marginTop: 20}}
           ref='table'
           rowKey={'id'}
-          url={statisticAnalysis.INVOICE_LIST}
+          url={statisticAnalysis.SUPPLIER_RETURN_LIST}
         />
       </div>
     )

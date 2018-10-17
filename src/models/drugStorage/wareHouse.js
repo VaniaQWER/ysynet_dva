@@ -40,7 +40,7 @@ export default {
           type: "setPutStorageInfo",
           payload: data.data
         });
-        callback && callback();
+        callback && callback(data);
       }else {
         message.error(data.msg);
       }
@@ -51,6 +51,12 @@ export default {
         callback && callback(data);
       }else {
         message.error(data.msg);
+      }
+    },
+    *export({ payload, callback }, {put, call}) {
+      const data = yield call(wareHouse.instoreExport, payload);
+      if(typeof callback === 'function') {
+        callback && callback(data);
       }
     }
   },

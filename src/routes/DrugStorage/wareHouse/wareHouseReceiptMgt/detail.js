@@ -9,9 +9,10 @@
 */
 import React, { PureComponent } from 'react';
 
-import { Table ,Row, Col,Tooltip } from 'antd';
+import { Table ,Row, Col,Tooltip, Button, message } from 'antd';
 
 import {connect} from 'dva';
+import wareHouse from '../../../../api/drugStorage/wareHouse';
 
 const columns = [
   {
@@ -90,21 +91,45 @@ const columns = [
 ];
 
 class ReplenishmentDetail extends PureComponent{
+  state = {
+    data: {}
+  }
   componentDidMount = () => {
     this.props.dispatch({
       type: 'wareHouse/getPutStorageInfo',
       payload: {
         inStoreCode: this.props.match.params.id,
+      },
+      callback: ({data, code, msg}) => {
+        if(code === 200) {
+          this.setState({
+            data
+          });
+        }else {
+          message.error(msg);
+        }
       }
     })
   }
+  //打印
+  print = () => {//printInstoreDetail
+    const {id} = this.props.match.params;
+    window.open(`${wareHouse.PRINT_INSTORE_DETAIL}?inStoreCode=${id}`);
+  }
   render(){
-    let {putStorageInfo: data} = this.props;
+    let {data} = this.state;
     let {list} = data;
     return (
       <div  className="fullCol fadeIn">
         <div className='fullCol-fullChild'>
-          <h3>单据信息</h3>
+          <Row>
+            <Col span={12}>
+              <h3>单据信息</h3>
+            </Col>
+            <Col span={12} style={{textAlign: 'right'}}>
+              <Button onClick={this.print}>打印</Button>
+            </Col>
+          </Row>
           <Row>
             <Col span={8}>
               <div className="ant-form-item-label ant-col-xs-24 ant-col-sm-5">

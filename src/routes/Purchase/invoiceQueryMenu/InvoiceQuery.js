@@ -69,7 +69,7 @@ class SearchForm extends PureComponent{
           values.settleEndTime = '';
         };
         this.props.formProps.dispatch({
-          type:'base/setQueryConditions',
+          type:'base/updateConditions',
           payload: values
         });
       }

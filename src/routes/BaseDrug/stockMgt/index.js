@@ -105,7 +105,7 @@ class StockInquiry extends PureComponent {
       values.hisDrugCodeList = this.state.value ? [this.state.value] : [];
 
       this.props.dispatch({
-        type:'base/setQueryConditions',
+        type:'base/updateConditions',
         payload: values
       });
     });

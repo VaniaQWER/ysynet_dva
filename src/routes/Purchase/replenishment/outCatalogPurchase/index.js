@@ -68,7 +68,7 @@ class SearchForm extends PureComponent{
           values.endTime = '';
         };
         this.props.formProps.dispatch({
-          type:'base/setQueryConditions',
+          type:'base/updateConditions',
           payload: values
         });
       }

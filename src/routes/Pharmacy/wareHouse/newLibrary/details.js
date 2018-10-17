@@ -4,9 +4,9 @@
 * @Last Modified time: 2018-07-24 13:13:55 
  */
 import React, { PureComponent } from 'react';
-import { Table ,Row, Col, Button, Modal, Spin, message , Tooltip} from 'antd';
+import { Table ,Row, Col, Button, Spin , Tooltip} from 'antd';
 import {connect} from 'dva';
-const Conform = Modal.confirm;
+import {wareHouse} from '../../../../api/pharmacy/wareHouse';
 const columns = [
   {
     title: '通用名',
@@ -114,28 +114,9 @@ class DetailsNewLibrary extends PureComponent{
     })
   }
   //打印
-  onBPrint = () =>{
-    Conform({
-      content:"您确定要执行此操作？",
-      onOk:()=>{
-        message.success('操作成功！')
-        const { history } = this.props;
-        history.push({pathname:"/pharmacy/manage/newLibrary"})
-      },
-      onCancel:()=>{}
-    })
-  }
-  //确认
-  onSubmit = () =>{
-    Conform({
-      content:"您确定要执行此操作？",
-      onOk:()=>{
-        message.success('操作成功！')
-        const { history } = this.props;
-        history.push({pathname:"/pharmacy/manage/newLibrary"})
-      },
-      onCancel:()=>{}
-    })
+  print = () => {
+    const {id} = this.props.match.params;
+    window.open(`${wareHouse.PRINT_INSTORE_DETAIL}?inStoreCode=${id}`, '_blank');
   }
 
   render(){
@@ -144,8 +125,7 @@ class DetailsNewLibrary extends PureComponent{
     return (
       <div className='ysynet-main-content' >
         <h3>单据信息 
-          <Button style={{float:'right'}} onClick={()=>this.onBPrint()} >导出</Button>
-          <Button type='primary' className='button-gap' style={{float:'right'}} onClick={()=>this.onSubmit()}>打印</Button>
+          <Button className='button-gap' style={{float:'right'}} onClick={this.print}>打印</Button>
         </h3>
         <Spin delay={500} spinning={loading}>
           <Row>

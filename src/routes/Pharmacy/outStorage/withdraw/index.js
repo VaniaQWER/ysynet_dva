@@ -65,7 +65,7 @@ class SearchFormWrapper extends PureComponent {
           values.endTime = values.Time[1].format('YYYY-MM-DD');
         }
         this.props.formProps.dispatch({
-          type:'base/setQueryConditions',
+          type:'base/updateConditions',
           payload: values
         });
       }

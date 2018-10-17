@@ -9,10 +9,12 @@
  * @file 采购计划 - 补货管理--补货计划
  */
 import React, { PureComponent } from 'react';
-import { Form, Row, Col, Button, Input, Icon, Select, Tooltip } from 'antd';
+import { Form, Row, Col, Button, Icon, Select, Tooltip } from 'antd';
 import RemoteTable from '../../../../components/TableGrid';
+import FetchSelect from '../../../../components/FetchSelect';
 import { connect } from 'dva';
 import {statisticAnalysis} from '../../../../api/purchase/purchase';
+import {common} from '../../../../api/purchase/purchase';
 const FormItem = Form.Item;
 const { Option } = Select;
 const formItemLayout = {
@@ -28,8 +30,53 @@ const formItemLayout = {
 
 
 class SearchForm extends PureComponent{
+  state = {
+    timeList: [],
+    deptList: [],
+    supplierList: []
+  }
   componentDidMount() {
-    
+    const {dispatch} = this.props.formProps;
+    dispatch({
+      type: 'statistics/getTimeList',
+      callback: ({data, code, msg}) => {
+        if(code === 200) {
+          this.setState({
+            timeList: data
+          });
+          let id;
+          data.forEach(item => {
+            if(item.desc === 30) {
+              id = item.id;
+            };
+          });
+          this.props.form.setFieldsValue({
+            diffDay: id
+          });
+          this.props._handlQuery({diffDay: id});
+        }
+      }
+    });
+    dispatch({
+      type: 'statistics/getDeptByParam',
+      callback: ({data, code, msg}) => {
+        if(code === 200) {
+          this.setState({
+            deptList: data
+          });
+        }
+      }
+    });
+    dispatch({
+      type: 'statistics/supplierAll',
+      callback: ({data, code, msg}) => {
+        if(code === 200) {
+          this.setState({
+            supplierList: data
+          });
+        }
+      }
+    });
   }
   toggle = () => {
     this.props.formProps.dispatch({
@@ -40,26 +87,42 @@ class SearchForm extends PureComponent{
     e.preventDefault();
     this.props.form.validateFields((err, values) => {
       if (!err) {
+        values.deptCodeList = values.deptCodeList ? [values.deptCodeList] : [];
+        values.hisDrugCodeList = values.hisDrugCodeList ? [values.hisDrugCodeList] : [];
+        values.supplierCodeList = values.supplierCodeList ? [values.supplierCodeList] : [];
         this.props._handlQuery(values);
       }
     })
   }
   //重置
   handleReset = () => {
-    this.props.form.resetFields();
+    this.props.form.resetFields(['supplierCodeList', 'hisDrugCodeList', 'deptCodeList']);
   }
   render(){
     const { getFieldDecorator } = this.props.form;
     const {display} = this.props.formProps.base;
     const expand = display === 'block';
+    const { timeList, deptList, supplierList } = this.state;
     return (
       <Form className="ant-advanced-search-form" onSubmit={this.handleSearch}>
         <Row gutter={30}>
           <Col span={8}>
             <FormItem {...formItemLayout} label={`供应商`}>
               {
-                getFieldDecorator(`supplierName`)(
-                  <Input placeholder='请输入' className={'ysynet-formItem-width'}/>
+                getFieldDecorator(`supplierCodeList`)(
+                  <Select 
+                    placeholder="请选择"
+                    style={{
+                      width: '100%'
+                    }}
+                  >
+                    <Option key="" value="">全部</Option>
+                    {
+                      supplierList.map(item => (
+                        <Option key={item.ctmaSupplierCode} value={item.ctmaSupplierCode}>{item.ctmaSupplierName}</Option>
+                      ))
+                    }
+                  </Select>
                 )
               }
             </FormItem>
@@ -67,8 +130,13 @@ class SearchForm extends PureComponent{
           <Col span={8}>
             <FormItem {...formItemLayout} label={'商品名/通用名'}>
               {
-                getFieldDecorator(`settleBillNo`)(
-                  <Input placeholder='请输入' />
+                getFieldDecorator(`hisDrugCodeList`)(
+                  <FetchSelect
+                    allowClear={true}
+                    placeholder='通用名/商品名'
+                    query={{queryType: 3}}
+                    url={common.QUERY_DRUG_BY_LIST}
+                  />
                 )
               }
             </FormItem>
@@ -76,18 +144,18 @@ class SearchForm extends PureComponent{
           <Col span={8} style={{ display: display }}>
             <FormItem {...formItemLayout} label={`临效期选择`}>
               {
-                getFieldDecorator(`invoiceParam`, {
-                  initialValue: "30"
-                })(
+                getFieldDecorator(`diffDay`)(
                   <Select 
                     placeholder="请选择"
                     style={{
                       width: '100%'
                     }}
                   >
-                    <Option value={"30"} key={"30"}>30</Option>
-                    <Option value={"60"} key={"60"}>60</Option>
-                    <Option value={"90"} key={"90"}>90</Option>
+                    {
+                      timeList.map(item => (
+                        <Option key={item.id} value={item.id}>{item.desc}</Option>
+                      ))
+                    }
                   </Select>
                 )
               }
@@ -96,14 +164,19 @@ class SearchForm extends PureComponent{
           <Col span={8} style={{ display: display }}>
             <FormItem {...formItemLayout} label={`部门`}>
               {
-                getFieldDecorator(`invoiceDate`)(
+                getFieldDecorator(`deptCodeList`)(
                   <Select 
                     placeholder="请选择"
                     style={{
                       width: '100%'
                     }}
                   >
-                    <Option value={""} key={""}>全部</Option>
+                    <Option key="" value="">全部</Option>
+                    {
+                      deptList.map(item => (
+                        <Option key={item.id} value={item.id}>{item.deptName}</Option>
+                      ))
+                    }
                   </Select>
                 )
               }
@@ -126,60 +199,70 @@ const WrapperForm = Form.create()(SearchForm);
 class NearlyEffective extends PureComponent {
   state = {
     query: {
-      invoiceParam: 30
+      queryType: 2
     },
   }
   handlQuery = (query) => {
-    this.setState({query});
+    this.setState({
+      query: {
+        ...this.state.query,
+        ...query
+      }
+    });
   }
   export = () => {
-    
+    this.props.dispatch({
+      type: 'statistics/ypjxqExport',
+      payload: {
+        ...this.state.query
+      }
+    })
   }
   render() {
     const columns = [
       {
         title: '部门',
-        dataIndex: 'invoiceNo',
+        dataIndex: 'deptName',
         width: 168,
       }, {
         title: '临效期天数',
-        dataIndex: 'invoiceCode',
+        dataIndex: 'diffDay',
         width: 168,
       }, {
         title: '货位',
-        dataIndex: 'settleBillNo',
+        dataIndex: 'goodsName',
         width: 168,
       }, {
         title: '货位类型',
-        dataIndex: 'invoiceTime',
+        dataIndex: 'locName',
         width: 168,
       }, {
         title: '库存',
-        dataIndex: 'invoiceAmount',
+        dataIndex: 'totalQuantity',
         width: 112
       }, {
         title: '通用名',
-        dataIndex: 'tym',
+        dataIndex: 'ctmmGenericName',
         width: 224
       }, {
         title: '商品名',
-        dataIndex: 'spm',
+        dataIndex: 'ctmmTradeName',
         width: 168
       }, {
         title: '规格',
-        dataIndex: 'gg',
+        dataIndex: 'ctmmSpecification',
         width: 168,
       }, {
         title: '生产厂家',
-        dataIndex: 'sccj',
+        dataIndex: 'ctmmManufacturerName',
         width: 224,
         className:'ellipsis',
         render:(text)=>(
-          <Tooltip placement="topLeft" title={text}>{text}</Tooltip>
+          <Tooltip placement="right" title={text}>{text}</Tooltip>
         )
       }, {
         title: '单位',
-        dataIndex: 'unit',
+        dataIndex: 'replanUnit',
         width: 112,
       }, {
         title: '生产批号',
@@ -187,31 +270,31 @@ class NearlyEffective extends PureComponent {
         width: 168,
       }, {
         title: '生产日期',
-        dataIndex: 'scrq',
+        dataIndex: 'productDate',
         width: 168,
       }, {
         title: '有效期止',
-        dataIndex: 'yxqz',
+        dataIndex: 'validEndDate',
         width: 168,
       }, {
         title: '包装规格',
-        dataIndex: 'bzgg',
+        dataIndex: 'packageSpecification',
         width: 168,
       }, {
         title: '剂型',
-        dataIndex: 'jx',
+        dataIndex: 'ctmmDosageFormDesc',
         width: 168,
       }, {
         title: '供应商',
-        dataIndex: 'gys',
+        dataIndex: 'supplierName',
         width: 168,
       }, {
         title: '药品编号',
-        dataIndex: 'ypbm',
+        dataIndex: 'hisDrugCode',
         width: 168,
       }, {
         title: '批准文号',
-        dataIndex: 'pzwh',
+        dataIndex: 'approvalNo',
         width: 168,
       }
     ];
@@ -225,17 +308,21 @@ class NearlyEffective extends PureComponent {
         <div>
           <Button onClick={this.export}>导出</Button>
         </div>
-        <RemoteTable
-          onChange={this._tableChange}
-          query={query}
-          isJson
-          columns={columns}
-          scroll={{x: 3024}}
-          style={{marginTop: 20}}
-          ref='table'
-          rowKey={'id'}
-          url={statisticAnalysis.INVOICE_LIST}
-        />
+        {
+          query.diffDay ? 
+          <RemoteTable
+            onChange={this._tableChange}
+            query={query}
+            isJson
+            columns={columns}
+            scroll={{x: 3024}}
+            style={{marginTop: 20}}
+            ref='table'
+            rowKey={'batchNo'}
+            url={statisticAnalysis.STATICS_LIST}
+          /> : null
+        }
+        
       </div>
     )
   }

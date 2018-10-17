@@ -7,6 +7,7 @@ import React, { PureComponent } from 'react';
 import { Table ,Row, Col, Button, Modal, Tabs, message , InputNumber, Tooltip } from 'antd';
 import { connect } from 'dva';
 import { Link } from 'react-router-dom';
+import { outStorage } from '../../../../api/drugStorage/outStorage';
 const TabPane = Tabs.TabPane; 
 const Conform = Modal.confirm;
 class DetailsPickSoldOut extends PureComponent{
@@ -24,7 +25,7 @@ class DetailsPickSoldOut extends PureComponent{
     }
   }
   
-  componentDidMount = () =>{
+  componentDidMount = () => {
     this.getDetail();
   }
   //获取详情
@@ -53,7 +54,7 @@ class DetailsPickSoldOut extends PureComponent{
     };
   }
   //确认拣货
-  onSubmit = () =>{
+  onSubmit = () => {
     let { selectedRows, detailsData } = this.state;
     if(selectedRows.length === 0) {
       return message.warning('至少选择一条数据');
@@ -84,6 +85,11 @@ class DetailsPickSoldOut extends PureComponent{
       },
       onCancel:()=>{}
     })
+  }
+  //打印
+  print = () => {
+    const {pickingOrderNo} = this.props.match.params;
+    window.open(`${outStorage.PICKING_PRINT}?pickingOrderNo=${pickingOrderNo}`);
   }
 
   render(){
@@ -185,7 +191,7 @@ class DetailsPickSoldOut extends PureComponent{
                 <Button style={{marginRight: 8}} type="primary">下一步: 复核</Button>
               </Link> : null
             }
-            <Button  icon='printer' onClick={()=> message.warning('敬请期待下个版本迭代内容')}>打印</Button>
+            <Button  icon='printer' onClick={this.print}>打印</Button>
           </Col>
         </Row>
         <Row>
